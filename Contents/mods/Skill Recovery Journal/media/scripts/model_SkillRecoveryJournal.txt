@@ -1,0 +1,8 @@
+ module Base
+ {
+    model SkillRecoveryJournal
+    {
+    	mesh = Book,
+    	texture = SkillRecoveryJournal,
+    }
+}

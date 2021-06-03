@@ -1,0 +1,26 @@
+module Base
+{
+    recipe Bind Journal
+        {
+           Notebook/Journal,
+           LeatherStrips=3,
+           Woodglue/Glue,
+           Thread,
+
+           Result:SkillRecoveryJournal,
+
+           Time:200.0,
+        }
+
+    recipe Transcribe Journal
+        {
+           keep SkillRecoveryJournal,
+           keep [SRJ.writingItems],
+
+           Result:SkillRecoveryJournal,
+           RemoveResultItem:true,
+
+           Time:150.0,
+           OnCreate:SRJ.writeJournal,
+        }
+}

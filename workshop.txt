@@ -1,0 +1,8 @@
+version=1
+id=2503622437
+title=Skill Recovery Journal
+description=[img]https://i.imgur.com/p7Fv1Z6.gif[/img]
+description=
+description=Craft a journal which when read will recover character's skill levels over time. Journals are locked to player accounts.
+tags=
+visibility=private
