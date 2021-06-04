@@ -1,5 +1,11 @@
 SRJ = {}
 
+--TODO:
+--[[ Read: Ideal: Timed actions as a means to increase/decrease time needed to relearn skills. 
+	Alternative: Use recipe to have each skill level require a reading session - problem: which skill first? - repetitive and not ideal. ]]
+--[[ Write time: Ideal: Used timed action so that writing time reflects the number of skills involved. 
+	Additional: Writing time should reduce time for adding to journals as opposed to writing from scratch. 
+	Alternative: Each level requires a pass wit hthe recipe - repetitive and not ideal. ]]
 
 function SRJ.writingItems(scriptItems)
 	scriptItems:addAll(getScriptManager():getItemsTag("Write"))
