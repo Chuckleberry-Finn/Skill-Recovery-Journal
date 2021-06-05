@@ -2,22 +2,11 @@ module Base
 {
     item SkillRecoveryJournal
     {
-        /*NumberOfPages	=	1,*/
         Weight	=	0.8,
         Type	=	Literature,
         DisplayName	=	Bound Journal,
-
-        ReplaceOnUse = SkillRecoveryJournal,
-
+        DisappearOnUse = FALSE,
         Icon	=	SkillRecoveryJournal,
         StaticModel = SkillRecoveryJournal,
-
-        UnhappyChange = 5
-        StressChange = 5
-
-        /*SkillTrained = Trapping,*/
-        /*LvlSkillTrained = 3,*/
-        /*NumLevelsTrained = 2,*/
-        /*BoredomChange	=	-30,*/
     }
 }

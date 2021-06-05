@@ -1,12 +1,5 @@
 SRJ = {}
 
---TODO:
---[[ Read: Ideal: Timed actions as a means to increase/decrease time needed to relearn skills. 
-	Alternative: Use recipe to have each skill level require a reading session - problem: which skill first? - repetitive and not ideal. ]]
---[[ Write time: Ideal: Used timed action so that writing time reflects the number of skills involved. 
-	Additional: Writing time should reduce time for adding to journals as opposed to writing from scratch. 
-	Alternative: Each level requires a pass wit hthe recipe - repetitive and not ideal. ]]
-
 function SRJ.writingItems(scriptItems)
 	scriptItems:addAll(getScriptManager():getItemsTag("Write"))
 end
@@ -15,13 +8,62 @@ end
 if ISToolTipInv then
 	function ISToolTipInv:setItem(item)
 		if item:getType() == "SkillRecoveryJournal" then
-			local modData = item:getModData()
-			if modData and modData["ToolTip"] then
-				item:setTooltip(modData["ToolTip"])
+
+			local journalModData = item:getModData()
+			local JMD = journalModData["SRJ"]
+
+			if JMD and JMD["ToolTip"] then
+				item:setTooltip(JMD["ToolTip"])
 			end
 		end
 		self.item = item
 	end
+end
+
+
+STORED_ISReadABook_update = ISReadABook.update
+function ISReadABook:update()
+	STORED_ISReadABook_update(self)
+
+	--local jobDeltaBy10 = math.floor(self:getJobDelta()*10)
+
+	---@type Literature
+	local journal = self.item
+	local journalModData = journal:getModData()
+	local JMD = journalModData["SRJ"]
+	local skillLevels = JMD["skillLevels"]
+
+	---@type IsoGameCharacter | IsoPlayer
+	local player = self.character
+
+	local gainedXp = false
+
+	for skill,level in pairs(skillLevels) do
+		local currentPerkLevel = player:getPerkLevel(Perks[skill])
+		if currentPerkLevel < level then
+			player:getXp():AddXP(Perks[skill], currentPerkLevel+1)
+			gainedXp = true
+		end
+	end
+
+	if not gainedXp then
+		self.action:setLoopedAction(false)
+	else
+		self:resetJobDelta()
+	end
+end
+
+
+STORED_ISReadABook_new = ISReadABook.new
+function ISReadABook:new(player, item, time)
+	local o = STORED_ISReadABook_new(self, player, item, time)
+
+	if o and item:getType() == "SkillRecoveryJournal" and (not player:isTimedActionInstant()) then
+		o.loopedAction = true
+		o.useProgressBar = false
+	end
+
+	return o
 end
 
 
@@ -49,7 +91,7 @@ function SRJ.writeJournal(recipe, result, player)
 
 	local recoverableSkills, skillNames = SRJ.calculateGainedSkills(player)
 	if recoverableSkills == nil then
-		player:Say("I don't have anything experiences to record.",0.75,0.75,0.75)
+		player:Say("I don't have anything experiences to record.", 0.75, 0.75, 0.75, UIFont.NewSmall, 0, "radio")
 		print("INFO: SkillRecoveryJournal: No recoverable skills to be saved.")
 		return
 	end
@@ -70,11 +112,11 @@ function SRJ.writeJournal(recipe, result, player)
 		end
 	end
 
-	local JMDSkills = JMD["SRJ_RecoverableSkills"] or {}
+	--TODO: make it so skill levels can be added to in the journal rather than overwritten
+	JMD["skillLevels"] = recoverableSkills
 	JMD["ID"] = {["steamID"]=player:getSteamID(),["userName"]=player:getUsername()}
 
 	for skill,level in pairs(recoverableSkills) do
-		level = math.max(level,(JMDSkills[skill] or 0))
 		if level > 0 then
 			skillsRecord = skillsRecord..skillNames[skill].."("..level..")\n"
 		end
@@ -82,10 +124,9 @@ function SRJ.writeJournal(recipe, result, player)
 
 	print("INFO: SkillRecoveryJournal: "..tostring(JMD["ID"]["steamID"]).." = "..tostring(JMD["ID"]["userName"]).." = "..player:getFullName())
 
-	local author = "\nA record of "..player:getFullName().."'s life.\n"
-
-	JMD["ToolTip"] = author..skillsRecord
-	journal:setTooltip(author..skillsRecord)
+	JMD["author"] = player:getFullName()
+	JMD["ToolTip"] = "\nA record of "..JMD["author"].."'s life.\n"..skillsRecord
+	journal:setTooltip(JMD["ToolTip"])
 end
 
 
@@ -100,12 +141,10 @@ function SRJ.calculateGainedSkills(player)
 			levely = levely+2
 		end
 		bonusLevels[perky] = levely
-		--print("-"..perky)
 	end
 
 	local gainedLevels = {}
 	local skillNames = {}
-
 	local storingSkills = false
 
 	print("INFO: SkillRecoveryJournal: calculating gained skills:  total skills: "..Perks.getMaxIndex())
