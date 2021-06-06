@@ -91,7 +91,7 @@ function SRJ.writeJournal(recipe, result, player)
 
 	local recoverableSkills = SRJ.calculateGainedSkills(player)
 	if recoverableSkills == nil then
-		player:Say("I don't have anything experiences to record.", 0.75, 0.75, 0.75, UIFont.NewSmall, 0, "radio")
+		player:Say("I don't have any experiences to record.", 0.75, 0.75, 0.75, UIFont.NewSmall, 0, "radio")
 		print("INFO: SkillRecoveryJournal: No recoverable skills to be saved.")
 		return
 	end
