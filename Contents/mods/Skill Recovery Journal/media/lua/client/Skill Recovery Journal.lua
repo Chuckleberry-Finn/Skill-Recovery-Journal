@@ -89,7 +89,7 @@ function SRJ.writeJournal(recipe, result, player)
 
 	local skillsRecord = ""
 
-	local recoverableSkills, skillNames = SRJ.calculateGainedSkills(player)
+	local recoverableSkills = SRJ.calculateGainedSkills(player)
 	if recoverableSkills == nil then
 		player:Say("I don't have anything experiences to record.", 0.75, 0.75, 0.75, UIFont.NewSmall, 0, "radio")
 		print("INFO: SkillRecoveryJournal: No recoverable skills to be saved.")
@@ -112,14 +112,23 @@ function SRJ.writeJournal(recipe, result, player)
 		end
 	end
 
-	--TODO: make it so skill levels can be added to in the journal rather than overwritten
-	JMD["skillLevels"] = recoverableSkills
+	JMD["skillLevels"] = JMD["skillLevels"] or {}
+	local storedSkills = JMD["skillLevels"]
 	JMD["ID"] = {["steamID"]=player:getSteamID(),["userName"]=player:getUsername()}
 
 	for skill,level in pairs(recoverableSkills) do
 		if level > 0 then
-			skillsRecord = skillsRecord..skillNames[skill].."("..level..")\n"
+			if storedSkills[skill] and storedSkills[skill] > level then
+				level = storedSkills[skill]
+			end
+			storedSkills[skill] = level
 		end
+	end
+
+	for skill,level in pairs(storedSkills) do
+		local perk = PerkFactory.getPerk(Perks[skill])
+		local perkName = perk:getName()
+		skillsRecord = skillsRecord..perkName.."("..level..")\n"
 	end
 
 	print("INFO: SkillRecoveryJournal: "..tostring(JMD["ID"]["steamID"]).." = "..tostring(JMD["ID"]["userName"]).." = "..player:getFullName())
@@ -144,7 +153,6 @@ function SRJ.calculateGainedSkills(player)
 	end
 
 	local gainedLevels = {}
-	local skillNames = {}
 	local storingSkills = false
 
 	print("INFO: SkillRecoveryJournal: calculating gained skills:  total skills: "..Perks.getMaxIndex())
@@ -159,15 +167,13 @@ function SRJ.calculateGainedSkills(player)
 			if perk then
 				local perkLevel = player:getPerkLevel(perks)
 				local perkType = tostring(perk:getType())
-				local perkName = perk:getName()
 				local bonusFromTrait = bonusLevels[perkType] or 0
 				local recoverableLevels = math.max(perkLevel-bonusFromTrait, 0)
 
 				if recoverableLevels > 0 then
 					gainedLevels[perkType] = recoverableLevels
-					skillNames[perkType] = perkName
 					storingSkills = true
-					print("  "..i.." "..perkType.."/"..perkName.." = "..perkLevel.."(-"..tostring(bonusFromTrait)..")".." : "..tostring(recoverableLevels))
+					print("  "..i.." "..perkType.." = "..perkLevel.."(-"..tostring(bonusFromTrait)..")".." : "..tostring(recoverableLevels))
 				end
 			end
 		end
@@ -177,5 +183,5 @@ function SRJ.calculateGainedSkills(player)
 		return nil, nil
 	end
 
-	return gainedLevels, skillNames
+	return gainedLevels
 end
