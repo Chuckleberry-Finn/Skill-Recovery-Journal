@@ -5,10 +5,6 @@ if getDebug() then
 
 		if key == Keyboard.KEY_1 then
 			SRJ.calculateGainedSkills(player)
-
-		elseif key == Keyboard.KEY_2 then
-			SRJ.writeJournal(nil, nil, player)
-
 		end
 
 	end)
