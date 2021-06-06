@@ -174,9 +174,6 @@ function SRJ.calculateGainedSkills(player)
 	for perk,level in pairs(traitXpMap) do
 		local perky = tostring(perk)
 		local levely = tonumber(tostring(level))
-		if perky=="Strength" or perky=="Fitness" then
-			levely = levely+2
-		end
 		bonusLevels[perky] = levely
 	end
 
@@ -197,6 +194,10 @@ function SRJ.calculateGainedSkills(player)
 				local perkType = tostring(perk:getType())
 				local bonusFromTrait = bonusLevels[perkType] or 0
 				local recoverableLevels = math.max(perkLevel-bonusFromTrait, 0)
+
+				if perkType == "Strength" or perkType == "Fitness" then
+					recoverableLevels = 0
+				end
 
 				if recoverableLevels > 0 then
 					gainedLevels[perkType] = recoverableLevels
