@@ -39,14 +39,22 @@ function ISReadABook:update()
 	local sayText
 	local sayTextChoices = {"IGUI_PlayerText_DontUnderstand", "IGUI_PlayerText_TooComplicated", "IGUI_PlayerText_DontGet"}
 
-	if self.character:HasTrait("Illiterate") then
-		delayedStop = true
-		sayText = sayTextChoices[ZombRand(#sayTextChoices)+1]
-	end
+	local pSteamID = player:getSteamID()
 
 	if (not JMD) then
 		delayedStop = true
 		sayText = "There's nothing written here."
+
+	elseif self.character:HasTrait("Illiterate") then
+		delayedStop = true
+		sayText = sayTextChoices[ZombRand(#sayTextChoices)+1]
+
+	elseif pSteamID ~= 0 then
+		local journalID = JMD["ID"]
+		if journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
+			delayedStop = true
+			sayText = sayTextChoices[ZombRand(#sayTextChoices)+1]
+		end
 	end
 
 	if not delayedStop then
