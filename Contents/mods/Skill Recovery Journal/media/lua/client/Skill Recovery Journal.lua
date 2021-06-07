@@ -24,8 +24,7 @@ end
 STORED_ISReadABook_update = ISReadABook.update
 function ISReadABook:update()
 	STORED_ISReadABook_update(self)
-
-	--local jobDeltaBy10 = math.floor(self:getJobDelta()*10)
+	
 	---@type IsoGameCharacter | IsoPlayer
 	local player = self.character
 
@@ -86,6 +85,29 @@ function ISReadABook:update()
 			self:forceStop()
 		end
 	end
+end
+
+
+STORED_ISCraftAction_new = ISCraftAction.new
+function ISCraftAction:new(character, item, time, recipe, container, containers)
+	local o = STORED_ISCraftAction_new(self, character, item, time, recipe, container, containers)
+
+	if recipe and recipe:getName() == "Transcribe Journal" then
+
+		local levelCount = 1
+		for i=0, Perks.getMaxIndex() do
+			---@type PerkFactory.Perks
+			local perks = Perks.fromIndex(i)
+
+			if perks ~= Perks.Strength and perks ~= Perks.Fitness then
+				local perkLevel = character:getPerkLevel(perks)
+				levelCount = levelCount+perkLevel
+			end
+		end
+		o.maxTime = o.maxTime*levelCount
+	end
+
+	return o
 end
 
 

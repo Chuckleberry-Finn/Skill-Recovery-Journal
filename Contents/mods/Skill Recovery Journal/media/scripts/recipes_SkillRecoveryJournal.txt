@@ -9,7 +9,7 @@ module Base
 
            Result:SkillRecoveryJournal,
 
-           Time:200.0,
+           Time:20.0,
         }
 
     recipe Transcribe Journal
@@ -20,7 +20,7 @@ module Base
            Result:SkillRecoveryJournal,
            RemoveResultItem:true,
 
-           Time:150.0,
+           Time:20.0,
            OnCreate:SRJ.writeJournal,
         }
 }
