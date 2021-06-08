@@ -5,6 +5,54 @@ function SRJ.writingItems(scriptItems)
 end
 
 
+---@param journal InventoryItem | Literature
+---@param player IsoGameCharacter | IsoPlayer
+function SRJ.generateTooltip(journal, player)
+
+	local journalModData = journal:getModData()
+	local JMD = journalModData["SRJ"]
+	local gainedXP = JMD["gainedXP"]
+
+	if not gainedXP then
+		return
+	end
+
+	local skillsRecord = ""
+	for skill,xp in pairs(gainedXP) do
+		local perk = PerkFactory.getPerk(Perks[skill])
+		local perkName = perk:getName()
+		local levelBasedOnPlayer = 0
+		local xpBasedOnPlayer = xp
+
+		--if player then
+		--	local mult = player:getXp():getMultiplier(Perks[skill])
+		--	print("mult:"..mult)
+		--	xp = xp*mult
+		--end
+
+		--[[for l=1, 10 do
+			if xpBasedOnPlayer > 0 then
+				local xpToRemove = perk:getTotalXpForLevel(l)
+				if xpBasedOnPlayer >= xpToRemove then
+					xpBasedOnPlayer = xpBasedOnPlayer-xpToRemove
+					levelBasedOnPlayer = l
+				else
+					xpBasedOnPlayer = 0
+				end
+			end
+		end
+
+		if levelBasedOnPlayer > 0 then
+			levelBasedOnPlayer = " ("..levelBasedOnPlayer..")"
+		end
+		skillsRecord = skillsRecord..perkName..levelBasedOnPlayer.."\n"
+		]]
+		skillsRecord = skillsRecord..perkName.." ("..xpBasedOnPlayer.." xp)".."\n"
+	end
+	skillsRecord = "\nA record of "..JMD["author"].."'s life.\n"..skillsRecord
+	return skillsRecord
+end
+
 if ISToolTipInv then
 	function ISToolTipInv:setItem(item)
 		if item:getType() == "SkillRecoveryJournal" then
@@ -12,9 +60,12 @@ if ISToolTipInv then
 			local journalModData = item:getModData()
 			local JMD = journalModData["SRJ"]
 
-			if JMD and JMD["ToolTip"] then
-				item:setTooltip(JMD["ToolTip"])
+			--- wipe item in case of older versions - sorry
+			if JMD and JMD["skillLevels"] then
+				JMD = nil
 			end
+
+			item:setTooltip(SRJ.generateTooltip(item, self.tooltip:getCharacter()))
 		end
 		self.item = item
 	end
@@ -57,11 +108,12 @@ function ISReadABook:update()
 	end
 
 	if not delayedStop then
-		local skillLevels = JMD["skillLevels"]
+		local gainedXP = JMD["gainedXP"]
 
-		for skill,level in pairs(skillLevels) do
+		for skill,xp in pairs(gainedXP) do
 			local currentPerkLevel = player:getPerkLevel(Perks[skill])
-			if currentPerkLevel < level then
+			local currentPerkLevelXP = PerkFactory.getPerk(Perks[skill]):getTotalXpForLevel(currentPerkLevel)
+			if currentPerkLevelXP < xp then
 				player:getXp():AddXP(Perks[skill], currentPerkLevel+1)
 				gainedXp = true
 			end
@@ -145,10 +197,8 @@ function SRJ.writeJournal(recipe, result, player)
 		end
 	end
 
-	local skillsRecord = ""
-
-	local recoverableSkills = SRJ.calculateGainedSkills(player)
-	if recoverableSkills == nil then
+	local recoverableXP = SRJ.calculateGainedSkills(player)
+	if recoverableXP == nil then
 		player:Say("I don't have any experiences to record.", 0.55, 0.55, 0.55, UIFont.NewSmall, 0, "radio")
 		print("INFO: SkillRecoveryJournal: No recoverable skills to be saved.")
 		return
@@ -160,12 +210,13 @@ function SRJ.writeJournal(recipe, result, player)
 	journalModData["SRJ"] = journalModData["SRJ"] or {}
 	local JMD = journalModData["SRJ"]
 
-	JMD["skillLevels"] = JMD["skillLevels"] or {}
-	local storedSkills = JMD["skillLevels"]
+	JMD["gainedXP"] = JMD["gainedXP"] or {}
+	local gainedXP = JMD["gainedXP"]
 
 	JMD["ID"] = JMD["ID"] or {}
 	local journalID = JMD["ID"]
 
+	JMD["author"] = player:getFullName()
 	local pSteamID = player:getSteamID()
 	local pOnlineID = player:getOnlineID()
 	print("-- SRJ INFO:".." pSteamID: "..pSteamID.." pOnlineID: "..pOnlineID.." --")
@@ -175,24 +226,14 @@ function SRJ.writeJournal(recipe, result, player)
 	end
 	journalID["onlineID"] = pOnlineID
 
-	for skill,level in pairs(recoverableSkills) do
-		if level > 0 then
-			if storedSkills[skill] and storedSkills[skill] > level then
-				level = storedSkills[skill]
+	for skill,xp in pairs(recoverableXP) do
+		if xp > 0 then
+			if gainedXP[skill] and gainedXP[skill] > xp then
+				xp = gainedXP[skill]
 			end
-			storedSkills[skill] = level
+			gainedXP[skill] = xp
 		end
 	end
-
-	for skill,level in pairs(storedSkills) do
-		local perk = PerkFactory.getPerk(Perks[skill])
-		local perkName = perk:getName()
-		skillsRecord = skillsRecord..perkName.."("..level..")\n"
-	end
-
-	JMD["author"] = player:getFullName()
-	JMD["ToolTip"] = "\nA record of "..JMD["author"].."'s life.\n"..skillsRecord
-	journal:setTooltip(JMD["ToolTip"])
 end
 
 
@@ -207,7 +248,7 @@ function SRJ.calculateGainedSkills(player)
 		bonusLevels[perky] = levely
 	end
 
-	local gainedLevels = {}
+	local gainedXP = {}
 	local storingSkills = false
 
 	print("INFO: SkillRecoveryJournal: calculating gained skills:  total skills: "..Perks.getMaxIndex())
@@ -222,17 +263,18 @@ function SRJ.calculateGainedSkills(player)
 			if perk then
 				local perkLevel = player:getPerkLevel(perks)
 				local perkType = tostring(perk:getType())
-				local bonusFromTrait = bonusLevels[perkType] or 0
-				local recoverableLevels = math.max(perkLevel-bonusFromTrait, 0)
+				local bonusLevelsFromTrait = bonusLevels[perkType] or 0
+				local recoverableLevels = math.max(perkLevel-bonusLevelsFromTrait, 0)
+				local recoverableXP = perk:getTotalXpForLevel(perkLevel)-perk:getTotalXpForLevel(bonusLevelsFromTrait)
 
 				if perkType == "Strength" or perkType == "Fitness" then
-					recoverableLevels = 0
+					recoverableXP = 0
 				end
 
-				if recoverableLevels > 0 then
-					gainedLevels[perkType] = recoverableLevels
+				if recoverableXP > 0 then
+					gainedXP[perkType] = recoverableXP
 					storingSkills = true
-					print("  "..i.." "..perkType.." = "..perkLevel.."(-"..tostring(bonusFromTrait)..")".." : "..tostring(recoverableLevels))
+					print("  "..i.." "..perkType.." = ("..perkLevel.."-"..tostring(bonusLevelsFromTrait)..") = "..recoverableLevels.." : "..tostring(recoverableXP))
 				end
 			end
 		end
@@ -242,5 +284,5 @@ function SRJ.calculateGainedSkills(player)
 		return
 	end
 
-	return gainedLevels
+	return gainedXP
 end
