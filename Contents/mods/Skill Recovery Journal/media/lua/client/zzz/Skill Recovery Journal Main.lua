@@ -75,9 +75,9 @@ end
 
 
 
-STORED_ISReadABook_update = ISReadABook.update
+SRJOVERWRITE_ISReadABook_update = ISReadABook.update
 function ISReadABook:update()
-	STORED_ISReadABook_update(self)
+	SRJOVERWRITE_ISReadABook_update(self)
 	
 	---@type IsoGameCharacter | IsoPlayer
 	local player = self.character
@@ -143,9 +143,9 @@ function ISReadABook:update()
 end
 
 
-STORED_ISCraftAction_new = ISCraftAction.new
+SRJOVERWRITE_ISCraftAction_new = ISCraftAction.new
 function ISCraftAction:new(character, item, time, recipe, container, containers)
-	local o = STORED_ISCraftAction_new(self, character, item, time, recipe, container, containers)
+	local o = SRJOVERWRITE_ISCraftAction_new(self, character, item, time, recipe, container, containers)
 
 	if recipe and recipe:getName() == "Transcribe Journal" then
 
@@ -166,9 +166,9 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 end
 
 
-STORED_ISReadABook_new = ISReadABook.new
+SRJOVERWRITE_ISReadABook_new = ISReadABook.new
 function ISReadABook:new(player, item, time)
-	local o = STORED_ISReadABook_new(self, player, item, time)
+	local o = SRJOVERWRITE_ISReadABook_new(self, player, item, time)
 
 	if o and item:getType() == "SkillRecoveryJournal" then
 		o.loopedAction = true
