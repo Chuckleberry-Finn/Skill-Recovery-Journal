@@ -58,8 +58,6 @@ function SRJ.generateTooltip(journal, player)
 	return skillsRecord
 end
 
-if ISToolTipInv then
-	function ISToolTipInv:setItem(item)
 
 ISToolTipInv_setItem = ISToolTipInv.setItem
 function ISToolTipInv:setItem(item)
