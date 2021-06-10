@@ -60,23 +60,21 @@ end
 
 if ISToolTipInv then
 	function ISToolTipInv:setItem(item)
-		if item:getType() == "SkillRecoveryJournal" then
 
-			local journalModData = item:getModData()
-			local JMD = journalModData["SRJ"]
+ISToolTipInv_setItem = ISToolTipInv.setItem
+function ISToolTipInv:setItem(item)
+	if item:getType() == "SkillRecoveryJournal" then
 
-			--- wipe item in case of older versions - sorry
-			if JMD and JMD["skillLevels"] then
-				JMD = nil
-			end
+		local journalModData = item:getModData()
+		local JMD = journalModData["SRJ"]
 
-			if JMD then
-				item:setTooltip(SRJ.generateTooltip(item, self.tooltip:getCharacter()))
-			end
+		if JMD then
+			item:setTooltip(SRJ.generateTooltip(item, self.tooltip:getCharacter()))
 		end
-		self.item = item
 	end
+	ISToolTipInv_setItem(self, item)
 end
+
 
 
 STORED_ISReadABook_update = ISReadABook.update
