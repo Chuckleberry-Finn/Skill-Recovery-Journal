@@ -11,6 +11,11 @@ function SRJ.generateTooltip(journal, player)
 
 	local journalModData = journal:getModData()
 	local JMD = journalModData["SRJ"]
+
+	if not JMD then
+		return
+	end
+
 	local gainedXP = JMD["gainedXP"]
 
 	if not gainedXP then
@@ -65,7 +70,9 @@ if ISToolTipInv then
 				JMD = nil
 			end
 
-			item:setTooltip(SRJ.generateTooltip(item, self.tooltip:getCharacter()))
+			if JMD then
+				item:setTooltip(SRJ.generateTooltip(item, self.tooltip:getCharacter()))
+			end
 		end
 		self.item = item
 	end
