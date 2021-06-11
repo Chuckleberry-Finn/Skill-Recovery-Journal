@@ -78,66 +78,69 @@ end
 SRJOVERWRITE_ISReadABook_update = ISReadABook.update
 function ISReadABook:update()
 	SRJOVERWRITE_ISReadABook_update(self)
-	
-	---@type IsoGameCharacter | IsoPlayer
-	local player = self.character
 
 	---@type Literature
 	local journal = self.item
-	local journalModData = journal:getModData()
-	local JMD = journalModData["SRJ"]
-	local gainedXp = false
 
-	local delayedStop = false
-	local sayText
-	local sayTextChoices = {"IGUI_PlayerText_DontUnderstand", "IGUI_PlayerText_TooComplicated", "IGUI_PlayerText_DontGet"}
+	if journal:getType() == "SkillRecoveryJournal" then
+		---@type IsoGameCharacter | IsoPlayer
+		local player = self.character
 
-	local pSteamID = player:getSteamID()
+		local journalModData = journal:getModData()
+		local JMD = journalModData["SRJ"]
+		local gainedXp = false
 
-	if (not JMD) then
-		delayedStop = true
-		sayText = "There's nothing written here."
+		local delayedStop = false
+		local sayText
+		local sayTextChoices = {"IGUI_PlayerText_DontUnderstand", "IGUI_PlayerText_TooComplicated", "IGUI_PlayerText_DontGet"}
 
-	elseif self.character:HasTrait("Illiterate") then
-		delayedStop = true
-		sayText = sayTextChoices[ZombRand(#sayTextChoices)+1]
+		local pSteamID = player:getSteamID()
 
-	elseif pSteamID ~= 0 then
-		local journalID = JMD["ID"]
-		if journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
+		if (not JMD) then
+			delayedStop = true
+			sayText = "There's nothing written here."
+
+		elseif self.character:HasTrait("Illiterate") then
 			delayedStop = true
 			sayText = sayTextChoices[ZombRand(#sayTextChoices)+1]
-		end
-	end
 
-	if not delayedStop then
-		local gainedXP = JMD["gainedXP"]
-
-		for skill,xp in pairs(gainedXP) do
-			local currentPerkLevel = player:getPerkLevel(Perks[skill])
-			local currentPerkLevelXP = PerkFactory.getPerk(Perks[skill]):getTotalXpForLevel(currentPerkLevel)
-			if currentPerkLevelXP < xp then
-				player:getXp():AddXP(Perks[skill], currentPerkLevel+1)
-				gainedXp = true
+		elseif pSteamID ~= 0 then
+			local journalID = JMD["ID"]
+			if journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
+				delayedStop = true
+				sayText = sayTextChoices[ZombRand(#sayTextChoices)+1]
 			end
 		end
 
-		if not gainedXp then
-			delayedStop = true
-			sayTextChoices = {"IGUI_PlayerText_KnowSkill","IGUI_PlayerText_BookObsolete"}
-			sayText = sayTextChoices[ZombRand(#sayTextChoices)+1]
-		else
-			self:resetJobDelta()
-		end
-	end
+		if not delayedStop then
+			local gainedXP = JMD["gainedXP"]
 
-	if delayedStop then
-		if self.pageTimer >= self.maxTime then
-			self.pageTimer = 0
-			if sayText then
-				player:Say(getText(sayText), 0.55, 0.55, 0.55, UIFont.NewSmall, 0, "radio")
+			for skill,xp in pairs(gainedXP) do
+				local currentPerkLevel = player:getPerkLevel(Perks[skill])
+				local currentPerkLevelXP = PerkFactory.getPerk(Perks[skill]):getTotalXpForLevel(currentPerkLevel)
+				if currentPerkLevelXP < xp then
+					player:getXp():AddXP(Perks[skill], currentPerkLevel+1)
+					gainedXp = true
+				end
 			end
-			self:forceStop()
+
+			if not gainedXp then
+				delayedStop = true
+				sayTextChoices = {"IGUI_PlayerText_KnowSkill","IGUI_PlayerText_BookObsolete"}
+				sayText = sayTextChoices[ZombRand(#sayTextChoices)+1]
+			else
+				self:resetJobDelta()
+			end
+		end
+
+		if delayedStop then
+			if self.pageTimer >= self.maxTime then
+				self.pageTimer = 0
+				if sayText then
+					player:Say(getText(sayText), 0.55, 0.55, 0.55, UIFont.NewSmall, 0, "radio")
+				end
+				self:forceStop()
+			end
 		end
 	end
 end
