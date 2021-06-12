@@ -1,10 +1,5 @@
 SRJ = {}
 
-function SRJ.writingItems(scriptItems)
-	scriptItems:addAll(getScriptManager():getItemsTag("Write"))
-end
-
-
 ---@param journal InventoryItem | Literature
 ---@param player IsoGameCharacter | IsoPlayer
 function SRJ.generateTooltip(journal, player)
