@@ -1,0 +1,13 @@
+name: upload-workshop-item
+  # You may pin to the exact commit or the version.
+  # uses: AnarkisGaming/workshop@273e29ae7980f68c0124ffdc2bbee9fbe51e84bd
+uses: AnarkisGaming/workshop@v1
+  with:
+    # The App ID of the game/app to upload to (https://steamcommunity.com/app/[APPID]/workshop)
+    appID: 108600
+    # The Workshop ID of your item (https://steamcommunity.com/sharedfiles/filedetails/?id=[WORKSHOPID])
+    publishedFileID: 2503622437
+    # The path to the content to upload, relative to your repository's root. Omit to use your repository's root
+    path: # optional, default is 
+    # An optional note to accompany your update
+    changelog: # optional, default is 
