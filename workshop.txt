@@ -1,8 +1,13 @@
 version=1
 id=2503622437
 title=Skill Recovery Journal
-description=[img]https://i.imgur.com/p7Fv1Z6.gif[/img]
-description=
 description=Craft a journal which can transcribe (record) one's skill levels; later, when read, will recover those skill levels.
-tags=
+description=
+description=[img]https://i.imgur.com/p7Fv1Z6.gif[/img]
+description= 
+description=[url=https://ko-fi.com/chuckleberryfinn][img]https://i.imgur.com/GxZ38nz.png[/img] [b]Consider supporting Chuck[/b][/url]
+description=
+description=
+description=Tags:B41,Books,Literature,Traits,Easy,Easier
+tags=Build 41;Literature;Traits;Easier
 visibility=public
