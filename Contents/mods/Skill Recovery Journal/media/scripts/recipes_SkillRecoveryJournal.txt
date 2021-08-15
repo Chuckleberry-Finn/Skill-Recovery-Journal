@@ -15,32 +15,15 @@ module Base
     recipe Transcribe Journal
         {
            keep SkillRecoveryJournal,
-           keep Pen/RedPen/BluePen,
+           keep Pen/RedPen/BluePen/Pencil,
 
            Result:SkillRecoveryJournal,
-		   Sound:PenWriteSounds,
            RemoveResultItem:true,
 		   AnimNode 	: Disassemble,
-		   Prop1 		: Pen,
-		   Prop2 		: SkillRecoveryJournal,
+		   Prop1 		: Source=2,
+		   Prop2 		: Source=1,
 
            Time:20.0,
            OnCreate:SRJ.writeJournal,
         }
-
-	recipe Transcribe Journal
-        {
-           keep SkillRecoveryJournal,
-           keep Pencil,
-
-           Result:SkillRecoveryJournal,
-		   Sound:PencilWriteSounds,
-           RemoveResultItem:true,
-		   AnimNode 	: Disassemble,
-		   Prop1 		: Pencil,
-		   Prop2 		: SkillRecoveryJournal,
-
-           Time:20.0,
-           OnCreate:SRJ.writeJournal,
-        }	
 }
