@@ -7,14 +7,15 @@ function SRJ.generateTooltip(journal, player)
 	local journalModData = journal:getModData()
 	local JMD = journalModData["SRJ"]
 
+	local blankJournalTooltip = "An empty journal ready to be recorded into."
+
 	if not JMD then
-		return
+		return blankJournalTooltip
 	end
 
 	local gainedXP = JMD["gainedXP"]
-
 	if not gainedXP then
-		return
+		return blankJournalTooltip
 	end
 
 	local skillsRecord = ""
@@ -50,6 +51,7 @@ function SRJ.generateTooltip(journal, player)
 		skillsRecord = skillsRecord..perkName.." ("..xpBasedOnPlayer.." xp)".."\n"
 	end
 	skillsRecord = "\nA record of "..JMD["author"].."'s life.\n"..skillsRecord
+
 	return skillsRecord
 end
 
@@ -57,13 +59,7 @@ end
 ISToolTipInv_setItem = ISToolTipInv.setItem
 function ISToolTipInv:setItem(item)
 	if item:getType() == "SkillRecoveryJournal" then
-
-		local journalModData = item:getModData()
-		local JMD = journalModData["SRJ"]
-
-		if JMD then
-			item:setTooltip(SRJ.generateTooltip(item, self.tooltip:getCharacter()))
-		end
+		item:setTooltip(SRJ.generateTooltip(item, self.tooltip:getCharacter()))
 	end
 	ISToolTipInv_setItem(self, item)
 end
@@ -188,12 +184,15 @@ function SRJ.writeJournal(recipe, result, player)
 
 	---@type InventoryItem | Literature
 	local oldJournal
+	local writingToolSound = "PenWriteSounds"
 
 	if recipe then
 		for i=0, recipe:size()-1 do
 			local item = recipe:get(i)
 			if (item:getType() == "SkillRecoveryJournal") then
 				oldJournal = recipe:get(i)
+			elseif (item:getType() == "Pencil") then
+				writingToolSound = "PencilWriteSounds"
 			end
 		end
 	end
@@ -235,6 +234,8 @@ function SRJ.writeJournal(recipe, result, player)
 			gainedXP[skill] = xp
 		end
 	end
+
+	player:playSound(writingToolSound)
 end
 
 
