@@ -11,5 +11,5 @@ description=[url=https://ko-fi.com/chuckleberryfinn][img]https://i.imgur.com/GxZ
 description=
 description=
 description=Tags:B41,Books,Literature,Traits,Easy,Easier
-tags=Build 41;Literature;Traits;Easier
+tags=Build 41;Balance;Literature;Traits
 visibility=public
