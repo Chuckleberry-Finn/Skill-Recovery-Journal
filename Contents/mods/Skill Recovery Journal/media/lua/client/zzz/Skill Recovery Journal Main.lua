@@ -201,6 +201,7 @@ function SRJ.writeJournal(recipe, result, player)
 	if recoverableXP == nil then
 		player:Say("I don't have any experiences to record.", 0.55, 0.55, 0.55, UIFont.NewSmall, 0, "radio")
 		print("INFO: SkillRecoveryJournal: No recoverable skills to be saved.")
+		ISTimedActionQueue.clear(player)
 		return
 	end
 
@@ -236,6 +237,7 @@ function SRJ.writeJournal(recipe, result, player)
 	end
 
 	player:playSound(writingToolSound)
+	ISTimedActionQueue.clear(player)
 end
 
 
