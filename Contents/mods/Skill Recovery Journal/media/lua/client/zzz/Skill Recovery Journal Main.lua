@@ -167,7 +167,7 @@ function ISReadABook:new(player, item, time)
 	if o and item:getType() == "SkillRecoveryJournal" then
 		o.loopedAction = true
 		o.useProgressBar = false
-		o.maxTime = o.maxTime*0.05
+		o.maxTime = math.max(1,o.maxTime*0.05)
 	end
 
 	return o
