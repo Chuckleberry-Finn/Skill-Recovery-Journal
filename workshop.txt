@@ -4,12 +4,12 @@ title=Skill Recovery Journal
 description= Lore friendly solution to the loss of a character.
 description= You must craft an empty bound-journal first - and then write in it to store skills overtime.
 description= You can read the journal later to gain skill xp as you read; update the journal over time.
-description= 
+description=
 description=[img]https://i.imgur.com/p7Fv1Z6.gif[/img]
 description=
 description=[url=https://ko-fi.com/chuckleberryfinn][img]https://i.imgur.com/GxZ38nz.png[/img] [b]Consider supporting Chuck[/b][/url]
 description=
 description=
 description=Tags:B41,Books,Literature,Traits,Easy,Easier
-tags=Build 41;Balance;Literature;Traits
+tags=Build 41;Balance;Literature;Multiplayer;Traits
 visibility=public
