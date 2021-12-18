@@ -113,8 +113,7 @@ function ISReadABook:update()
 				end
 			end
 			local xpRate = math.min(1,(maxXP/self.maxTime))
-
-			print ("TESTING:  xpRate:"..xpRate.."  maxXP:"..maxXP.."  self.maxTime:"..self.maxTime)
+			--print ("TESTING:  xpRate:"..xpRate.."  maxXP:"..maxXP.."  self.maxTime:"..self.maxTime)
 
 			for skill,xp in pairs(gainedXP) do
 				local currentPerkLevel = player:getPerkLevel(Perks[skill])
