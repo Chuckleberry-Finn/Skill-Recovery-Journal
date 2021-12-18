@@ -106,11 +106,21 @@ function ISReadABook:update()
 		if not delayedStop then
 			local gainedXP = JMD["gainedXP"]
 
+			local maxXP = 0
+			for skill,xp in pairs(gainedXP) do
+				if xp > maxXP then
+					maxXP = xp
+				end
+			end
+			local xpRate = math.min(1,(maxXP/self.maxTime))
+
+			print ("TESTING:  xpRate:"..xpRate.."  maxXP:"..maxXP.."  self.maxTime:"..self.maxTime)
+
 			for skill,xp in pairs(gainedXP) do
 				local currentPerkLevel = player:getPerkLevel(Perks[skill])
 				local currentPerkLevelXP = PerkFactory.getPerk(Perks[skill]):getTotalXpForLevel(currentPerkLevel)
 				if currentPerkLevelXP < xp then
-					player:getXp():AddXP(Perks[skill], currentPerkLevel+1)
+					player:getXp():AddXP(Perks[skill], currentPerkLevel+xpRate)
 					gainedXp = true
 				end
 			end
@@ -119,16 +129,17 @@ function ISReadABook:update()
 				delayedStop = true
 				sayTextChoices = {"IGUI_PlayerText_KnowSkill","IGUI_PlayerText_BookObsolete"}
 				sayText = sayTextChoices[ZombRand(#sayTextChoices)+1]
-			else
-				self:resetJobDelta()
+			--else
+			--	self:resetJobDelta()
 			end
 		end
 
 		if delayedStop then
 			if self.pageTimer >= self.maxTime then
 				self.pageTimer = 0
+				self.maxTime = 0
 				if sayText then
-					player:Say(getText(sayText), 0.55, 0.55, 0.55, UIFont.NewSmall, 0, "radio")
+					player:Say(getText(sayText), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 				end
 				self:forceStop()
 			end
@@ -165,9 +176,35 @@ function ISReadABook:new(player, item, time)
 	local o = SRJOVERWRITE_ISReadABook_new(self, player, item, time)
 
 	if o and item:getType() == "SkillRecoveryJournal" then
-		o.loopedAction = true
-		o.useProgressBar = false
-		o.maxTime = math.max(1,o.maxTime*0.05)
+		o.loopedAction = false
+		o.useProgressBar = true
+		o.maxTime = 100
+
+		local journalModData = item:getModData()
+		local JMD = journalModData["SRJ"]
+		if JMD then
+			local gainedXP = JMD["gainedXP"]
+			if gainedXP then
+
+				local maxTimeBasedOnXP = 0
+
+				for skill,xp in pairs(gainedXP) do
+					local perk = PerkFactory.getPerk(Perks[skill]):getName()
+
+					local currentPerkLevel = player:getPerkLevel(Perks[skill])
+					local currentPerkLevelXP = PerkFactory.getPerk(Perks[skill]):getTotalXpForLevel(currentPerkLevel)
+					if currentPerkLevelXP < xp then
+						print("SRJ: Skills Read: "..perk.." ("..xp.." xp)")
+						local currentTimeBasedOnXP = (xp-currentPerkLevelXP)
+						if currentTimeBasedOnXP > maxTimeBasedOnXP then
+							maxTimeBasedOnXP = currentTimeBasedOnXP
+						end
+					end
+				end
+
+				o.maxTime = math.max(o.maxTime, maxTimeBasedOnXP)
+			end
+		end
 	end
 
 	return o
@@ -199,7 +236,7 @@ function SRJ.writeJournal(recipe, result, player)
 
 	local recoverableXP = SRJ.calculateGainedSkills(player)
 	if recoverableXP == nil then
-		player:Say("I don't have any experiences to record.", 0.55, 0.55, 0.55, UIFont.NewSmall, 0, "radio")
+		player:Say("I don't have any experiences to record.", 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 		print("INFO: SkillRecoveryJournal: No recoverable skills to be saved.")
 		ISTimedActionQueue.clear(player)
 		return

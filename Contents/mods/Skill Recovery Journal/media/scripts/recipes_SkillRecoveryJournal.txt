@@ -23,7 +23,7 @@ module Base
 		   Prop1 		: Source=2,
 		   Prop2 		: Source=1,
 
-           Time:20.0,
+           Time:50.0,
            OnCreate:SRJ.writeJournal,
         }
 }
