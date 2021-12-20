@@ -8,5 +8,6 @@ module Base
         DisappearOnUse = FALSE,
         Icon	=	SkillRecoveryJournal,
         StaticModel = SkillRecoveryJournal,
+        WorldStaticModel = SkillRecoveryJournal_ground,
     }
 }
