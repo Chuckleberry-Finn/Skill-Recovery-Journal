@@ -50,6 +50,20 @@ function SRJ.generateTooltip(journal, player)
 		]]
 		skillsRecord = skillsRecord..perkName.." ("..xpBasedOnPlayer.." xp)".."\n"
 	end
+
+	local learnedRecipes = JMD["learnedRecipes"]
+	local recipeNum = 0
+	for k,v in pairs(learnedRecipes) do
+		recipeNum = recipeNum+1
+	end
+	if recipeNum>0 then
+		local properPlural = "recipe"
+		if recipeNum>1 then
+			properPlural = "recipes"
+		end
+		skillsRecord = skillsRecord..recipeNum.." "..properPlural..".".."\n"
+	end
+
 	skillsRecord = "\nA record of "..JMD["author"].."'s life.\n"..skillsRecord
 
 	return skillsRecord
@@ -104,6 +118,15 @@ function ISReadABook:update()
 		end
 
 		if not delayedStop then
+
+			local learnedRecipes = JMD["learnedRecipes"]
+			for recipeID,_ in pairs(learnedRecipes) do
+				if not player:isRecipeKnown(recipeID) then
+					player:learnRecipe(recipeID)
+					gainedXp = true
+				end
+			end
+
 			local gainedXP = JMD["gainedXP"]
 
 			local maxXP = 0
@@ -207,7 +230,7 @@ function ISReadABook:new(player, item, time)
 					local currentPerkLevelXP = PerkFactory.getPerk(Perks[skill]):getTotalXpForLevel(currentPerkLevel)
 					if currentPerkLevelXP < xp then
 						print("SRJ: Skills Read: "..perk.." ("..xp.." xp)")
-						local currentTimeBasedOnXP = (xp-currentPerkLevelXP)/10
+						local currentTimeBasedOnXP = (xp-currentPerkLevelXP)/5
 
 						if currentTimeBasedOnXP > maxTimeBasedOnXP then
 							maxTimeBasedOnXP = currentTimeBasedOnXP
@@ -284,6 +307,16 @@ function SRJ.writeJournal(recipe, result, player)
 			end
 			gainedXP[skill] = xp
 		end
+	end
+
+	JMD["learnedRecipes"] = JMD["learnedRecipes"] or {}
+	local learnedRecipes = JMD["learnedRecipes"]
+	---@type ArrayList
+	local knownRecipes = player:getKnownRecipes()
+
+	for i=0, knownRecipes:size()-1 do
+		local recipeID = knownRecipes:get(i)
+		learnedRecipes[recipeID] = true
 	end
 
 	player:playSound(writingToolSound)
