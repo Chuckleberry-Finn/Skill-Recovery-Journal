@@ -112,15 +112,28 @@ function ISReadABook:update()
 					maxXP = xp
 				end
 			end
-			local xpRate = math.min(1,(maxXP/self.maxTime))
+
+			local XpMultiplier = SandboxVars.XpMultiplier or 1
+			local xpRate = (maxXP/self.maxTime)/XpMultiplier
 			--print ("TESTING:  xpRate:"..xpRate.."  maxXP:"..maxXP.."  self.maxTime:"..self.maxTime)
 
 			for skill,xp in pairs(gainedXP) do
 				local currentPerkLevel = player:getPerkLevel(Perks[skill])
 				local currentPerkLevelXP = PerkFactory.getPerk(Perks[skill]):getTotalXpForLevel(currentPerkLevel)
 				if currentPerkLevelXP < xp then
-					player:getXp():AddXP(Perks[skill], currentPerkLevel+xpRate)
-					gainedXp = true
+
+					if currentPerkLevelXP+xpRate > xp then
+						xpRate = xp-(currentPerkLevelXP+xpRate)
+					end
+
+					if xpRate>0 then
+						player:getXp():AddXP(Perks[skill], xpRate)
+						gainedXp = true
+						self:resetJobDelta()
+					else
+						gainedXp = false
+						delayedStop = true
+					end
 				end
 			end
 
@@ -176,7 +189,7 @@ function ISReadABook:new(player, item, time)
 
 	if o and item:getType() == "SkillRecoveryJournal" then
 		o.loopedAction = false
-		o.useProgressBar = true
+		o.useProgressBar = false
 		o.maxTime = 100
 
 		local journalModData = item:getModData()
@@ -194,7 +207,8 @@ function ISReadABook:new(player, item, time)
 					local currentPerkLevelXP = PerkFactory.getPerk(Perks[skill]):getTotalXpForLevel(currentPerkLevel)
 					if currentPerkLevelXP < xp then
 						print("SRJ: Skills Read: "..perk.." ("..xp.." xp)")
-						local currentTimeBasedOnXP = (xp-currentPerkLevelXP)
+						local currentTimeBasedOnXP = (xp-currentPerkLevelXP)/10
+
 						if currentTimeBasedOnXP > maxTimeBasedOnXP then
 							maxTimeBasedOnXP = currentTimeBasedOnXP
 						end
@@ -277,7 +291,6 @@ function SRJ.writeJournal(recipe, result, player)
 end
 
 
---TODO: Calculate gained XP rather than levels - causing issue with professions not being able to store max level gains
 function SRJ.calculateGainedSkills(player)
 
 	local bonusLevels = {}
