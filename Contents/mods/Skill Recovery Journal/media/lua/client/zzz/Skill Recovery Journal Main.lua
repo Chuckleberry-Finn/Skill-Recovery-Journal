@@ -212,33 +212,7 @@ function ISReadABook:new(player, item, time)
 		o.loopedAction = false
 		o.useProgressBar = false
 		o.maxTime = 100
---[[
-		local journalModData = item:getModData()
-		local JMD = journalModData["SRJ"]
-		if JMD then
-			local gainedXP = JMD["gainedXP"]
-			if gainedXP then
 
-				local maxTimeBasedOnXP = 0
-
-				for skill,xp in pairs(gainedXP) do
-					local perk = PerkFactory.getPerk(Perks[skill]):getName()
-					local currentPerkLevel = player:getPerkLevel(Perks[skill])
-					local currentPerkLevelXP = PerkFactory.getPerk(Perks[skill]):getTotalXpForLevel(currentPerkLevel)
-					if currentPerkLevelXP < xp then
-						print("SRJ: Skills Read: "..perk.." current"..currentPerkLevelXP.."xp  (stored: "..xp.." xp)")
-						local currentTimeBasedOnXP = (xp-currentPerkLevelXP)/5
-
-						if currentTimeBasedOnXP > maxTimeBasedOnXP then
-							maxTimeBasedOnXP = currentTimeBasedOnXP
-						end
-					end
-				end
-
-				o.maxTime = math.max(o.maxTime, maxTimeBasedOnXP)
-			end
-		end
-		--]]
 	end
 
 	return o
