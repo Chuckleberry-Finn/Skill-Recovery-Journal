@@ -51,7 +51,7 @@ function SRJ.generateTooltip(journal, player)
 		skillsRecord = skillsRecord..perkName.." ("..xpBasedOnPlayer.." xp)".."\n"
 	end
 
-	local learnedRecipes = JMD["learnedRecipes"]
+	local learnedRecipes = JMD["learnedRecipes"] or {}
 	local recipeNum = 0
 	for k,v in pairs(learnedRecipes) do
 		recipeNum = recipeNum+1
@@ -119,7 +119,7 @@ function ISReadABook:update()
 
 		if not delayedStop then
 
-			local learnedRecipes = JMD["learnedRecipes"]
+			local learnedRecipes = JMD["learnedRecipes"] or {}
 			for recipeID,_ in pairs(learnedRecipes) do
 				if not player:isRecipeKnown(recipeID) then
 					player:learnRecipe(recipeID)
