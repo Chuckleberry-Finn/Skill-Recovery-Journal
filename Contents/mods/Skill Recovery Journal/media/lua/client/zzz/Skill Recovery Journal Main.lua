@@ -137,7 +137,7 @@ function ISReadABook:update()
 			end
 
 			local XpMultiplier = SandboxVars.XpMultiplier or 1
-			local xpRate = (maxXP/self.maxTime)/XpMultiplier
+			local xpRate = ((maxXP/self.maxTime)/XpMultiplier)/5
 
 
 			for skill,xp in pairs(gainedXP) do
