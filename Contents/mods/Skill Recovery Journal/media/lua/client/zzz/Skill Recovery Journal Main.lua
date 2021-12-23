@@ -138,24 +138,22 @@ function ISReadABook:update()
 
 			local XpMultiplier = SandboxVars.XpMultiplier or 1
 			local xpRate = (maxXP/self.maxTime)/XpMultiplier
-			--print ("TESTING:  xpRate:"..xpRate.."  maxXP:"..maxXP.."  self.maxTime:"..self.maxTime)
+
 
 			for skill,xp in pairs(gainedXP) do
-				local currentPerkLevel = player:getPerkLevel(Perks[skill])
-				local currentPerkLevelXP = PerkFactory.getPerk(Perks[skill]):getTotalXpForLevel(currentPerkLevel)
-				if currentPerkLevelXP < xp then
+				local currentXP = player:getXp():getXP(Perks[skill])
 
-					if currentPerkLevelXP+xpRate > xp then
-						xpRate = xp-(currentPerkLevelXP+xpRate)
+				if (currentXP) < xp then
+					--print ("TESTING:  xpRate:"..xpRate.."  xpStored:"..xp.."  currentXP:"..currentXP)
+					if currentXP+xpRate > xp then
+						xpRate = xpRate-(currentXP-xp)
+						--print(" --xp overflow: xpRate:"..xpRate)
 					end
 
 					if xpRate>0 then
 						player:getXp():AddXP(Perks[skill], xpRate)
 						gainedXp = true
 						self:resetJobDelta()
-					else
-						gainedXp = false
-						delayedStop = true
 					end
 				end
 			end
@@ -214,7 +212,7 @@ function ISReadABook:new(player, item, time)
 		o.loopedAction = false
 		o.useProgressBar = false
 		o.maxTime = 100
-
+--[[
 		local journalModData = item:getModData()
 		local JMD = journalModData["SRJ"]
 		if JMD then
@@ -225,11 +223,10 @@ function ISReadABook:new(player, item, time)
 
 				for skill,xp in pairs(gainedXP) do
 					local perk = PerkFactory.getPerk(Perks[skill]):getName()
-
 					local currentPerkLevel = player:getPerkLevel(Perks[skill])
 					local currentPerkLevelXP = PerkFactory.getPerk(Perks[skill]):getTotalXpForLevel(currentPerkLevel)
 					if currentPerkLevelXP < xp then
-						print("SRJ: Skills Read: "..perk.." ("..xp.." xp)")
+						print("SRJ: Skills Read: "..perk.." current"..currentPerkLevelXP.."xp  (stored: "..xp.." xp)")
 						local currentTimeBasedOnXP = (xp-currentPerkLevelXP)/5
 
 						if currentTimeBasedOnXP > maxTimeBasedOnXP then
@@ -241,6 +238,7 @@ function ISReadABook:new(player, item, time)
 				o.maxTime = math.max(o.maxTime, maxTimeBasedOnXP)
 			end
 		end
+		--]]
 	end
 
 	return o
@@ -350,17 +348,24 @@ function SRJ.calculateGainedSkills(player)
 				local perkLevel = player:getPerkLevel(perks)
 				local perkType = tostring(perk:getType())
 				local bonusLevelsFromTrait = bonusLevels[perkType] or 0
-				local recoverableLevels = math.max(perkLevel-bonusLevelsFromTrait, 0)
-				local recoverableXP = perk:getTotalXpForLevel(perkLevel)-perk:getTotalXpForLevel(bonusLevelsFromTrait)
+				local gainedLevels = math.max(perkLevel-bonusLevelsFromTrait, 0)
+				local recoverableXPFactor = (SandboxVars.SkillRecoveryJournal.RecoveryPercentage/100) or 1
+				local recoverableLevels = gainedLevels*recoverableXPFactor
+				local recoverableXP = perk:getTotalXpForLevel(recoverableLevels)
+				local remainder = recoverableLevels-math.floor(recoverableLevels)
+				if remainder then
+					recoverableXP = recoverableXP+(perk:getXpForLevel(recoverableLevels+1)*remainder)
+				end
 
 				if perkType == "Strength" or perkType == "Fitness" then
 					recoverableXP = 0
 				end
 
+				print("  "..i.." "..perkType.." = ("..perkLevel.."-"..tostring(bonusLevelsFromTrait)..") = "..recoverableLevels.." : "..tostring(recoverableXP))
+
 				if recoverableXP > 0 then
 					gainedXP[perkType] = recoverableXP
 					storingSkills = true
-					print("  "..i.." "..perkType.." = ("..perkLevel.."-"..tostring(bonusLevelsFromTrait)..") = "..recoverableLevels.." : "..tostring(recoverableXP))
 				end
 			end
 		end
