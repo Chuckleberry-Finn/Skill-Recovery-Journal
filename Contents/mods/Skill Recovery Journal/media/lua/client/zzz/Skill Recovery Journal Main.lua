@@ -245,7 +245,7 @@ function SRJ.writeJournal(recipe, result, player)
 	local recoverableXP = SRJ.calculateGainedSkills(player)
 	if recoverableXP == nil then
 		player:Say("I don't have any experiences to record.", 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
-		print("INFO: SkillRecoveryJournal: No recoverable skills to be saved.")
+		--print("INFO: SkillRecoveryJournal: No recoverable skills to be saved.")
 		ISTimedActionQueue.clear(player)
 		return
 	end
@@ -268,6 +268,11 @@ function SRJ.writeJournal(recipe, result, player)
 	print("-- SRJ INFO:".." pSteamID: "..pSteamID.." pOnlineID: "..pOnlineID.." --")
 
 	if pSteamID ~= 0 then
+		if journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
+			player:Say("Doesn't feel right to write in someone else's journal.", 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+			ISTimedActionQueue.clear(player)
+			return
+		end
 		journalID["steamID"] = pSteamID
 	end
 	journalID["onlineID"] = pOnlineID
