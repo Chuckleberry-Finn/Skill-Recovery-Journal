@@ -327,14 +327,15 @@ function SRJ.calculateGainedSkills(player)
 				local perkLevel = player:getPerkLevel(perks)
 				local perkType = tostring(perk:getType())
 				local bonusLevelsFromTrait = bonusLevels[perkType] or 0
-				local gainedLevels = math.max(perkLevel-bonusLevelsFromTrait, 0)
 				local recoverableXPFactor = (SandboxVars.SkillRecoveryJournal.RecoveryPercentage/100) or 1
-				local recoverableLevels = gainedLevels*recoverableXPFactor
+				local recoverableLevels = perkLevel*recoverableXPFactor
 				local recoverableXP = perk:getTotalXpForLevel(recoverableLevels)
 				local remainder = recoverableLevels-math.floor(recoverableLevels)
 				if remainder then
 					recoverableXP = recoverableXP+(perk:getXpForLevel(recoverableLevels+1)*remainder)
 				end
+
+				recoverableXP = recoverableXP-perk:getXpForLevel(bonusLevelsFromTrait)
 
 				if perkType == "Strength" or perkType == "Fitness" then
 					recoverableXP = 0
