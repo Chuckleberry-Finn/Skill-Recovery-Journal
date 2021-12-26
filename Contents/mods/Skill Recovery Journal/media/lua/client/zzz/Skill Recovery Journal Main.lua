@@ -1,5 +1,29 @@
 SRJ = {}
 
+
+function SRJ.CleanseFalseSkills(gainedXP)
+	for skill,xp in pairs(gainedXP) do
+
+		local perkList = PerkFactory.PerkList
+		local junk = true
+
+		if xp>1 then
+			for i=0, perkList:size()-1 do
+				---@type PerkFactory.Perk
+				local perk = perkList:get(i)
+				if perk and tostring(perk:getType()) == skill then
+					junk = false
+				end
+			end
+		end
+
+		if junk then
+			gainedXP[skill] = nil
+		end
+	end
+end
+
+
 ---@param journal InventoryItem | Literature
 ---@param player IsoGameCharacter | IsoPlayer
 function SRJ.generateTooltip(journal, player)
@@ -16,38 +40,15 @@ function SRJ.generateTooltip(journal, player)
 	local gainedXP = JMD["gainedXP"]
 	if not gainedXP then
 		return blankJournalTooltip
+	else
+		SRJ.CleanseFalseSkills(JMD["gainedXP"])
 	end
 
 	local skillsRecord = ""
 	for skill,xp in pairs(gainedXP) do
 		local perk = PerkFactory.getPerk(Perks[skill])
 		local perkName = perk:getName()
-		local levelBasedOnPlayer = 0
 		local xpBasedOnPlayer = xp
-
-		--if player then
-		--	local mult = player:getXp():getMultiplier(Perks[skill])
-		--	print("mult:"..mult)
-		--	xp = xp*mult
-		--end
-
-		--[[for l=1, 10 do
-			if xpBasedOnPlayer > 0 then
-				local xpToRemove = perk:getTotalXpForLevel(l)
-				if xpBasedOnPlayer >= xpToRemove then
-					xpBasedOnPlayer = xpBasedOnPlayer-xpToRemove
-					levelBasedOnPlayer = l
-				else
-					xpBasedOnPlayer = 0
-				end
-			end
-		end
-
-		if levelBasedOnPlayer > 0 then
-			levelBasedOnPlayer = " ("..levelBasedOnPlayer..")"
-		end
-		skillsRecord = skillsRecord..perkName..levelBasedOnPlayer.."\n"
-		]]
 		skillsRecord = skillsRecord..perkName.." ("..xpBasedOnPlayer.." xp)".."\n"
 	end
 
@@ -130,9 +131,14 @@ function ISReadABook:update()
 			local gainedXP = JMD["gainedXP"]
 
 			local maxXP = 0
+
 			for skill,xp in pairs(gainedXP) do
-				if xp > maxXP then
-					maxXP = xp
+				if skill and skill~="NONE" or skill~="MAX" then
+					if xp > maxXP then
+						maxXP = xp
+					end
+				else
+					gainedXP[skill] = nil
 				end
 			end
 
@@ -188,13 +194,12 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 	if recipe and recipe:getName() == "Transcribe Journal" then
 
 		local levelCount = 1
-		for i=0, Perks.getMaxIndex() do
+		for i=1, Perks.getMaxIndex()-1 do
 			---@type PerkFactory.Perks
 			local perks = Perks.fromIndex(i)
 
 			if perks ~= Perks.Strength and perks ~= Perks.Fitness then
 				local perkLevel = character:getPerkLevel(perks)
-				levelCount = levelCount+perkLevel
 			end
 		end
 		o.maxTime = o.maxTime*levelCount
@@ -212,6 +217,13 @@ function ISReadABook:new(player, item, time)
 		o.loopedAction = false
 		o.useProgressBar = false
 		o.maxTime = 100
+
+		local journalModData = item:getModData()
+		local JMD = journalModData["SRJ"]
+		local gainedXP = JMD["gainedXP"]
+		if gainedXP then
+			SRJ.CleanseFalseSkills(JMD["gainedXP"])
+		end
 
 	end
 
@@ -315,7 +327,7 @@ function SRJ.calculateGainedSkills(player)
 	local storingSkills = false
 
 	print("INFO: SkillRecoveryJournal: calculating gained skills:  total skills: "..Perks.getMaxIndex())
-	for i=0, Perks.getMaxIndex() do
+	for i=1, Perks.getMaxIndex()-1 do
 		---@type PerkFactory.Perks
 		local perks = Perks.fromIndex(i)
 
@@ -324,28 +336,36 @@ function SRJ.calculateGainedSkills(player)
 			local perk = PerkFactory.getPerk(perks)
 
 			if perk then
-				local perkLevel = player:getPerkLevel(perks)
-				local perkType = tostring(perk:getType())
-				local bonusLevelsFromTrait = bonusLevels[perkType] or 0
-				local recoverableXPFactor = (SandboxVars.SkillRecoveryJournal.RecoveryPercentage/100) or 1
-				local recoverableLevels = perkLevel*recoverableXPFactor
-				local recoverableXP = perk:getTotalXpForLevel(recoverableLevels)
-				local remainder = recoverableLevels-math.floor(recoverableLevels)
-				if remainder then
-					recoverableXP = recoverableXP+(perk:getXpForLevel(recoverableLevels+1)*remainder)
-				end
+				---@type IsoGameCharacter.PerkInfo
+				local perkInfo = player:getPerkInfo(perks)
+				if perkInfo then
 
-				recoverableXP = recoverableXP-perk:getXpForLevel(bonusLevelsFromTrait)
+					local perkLevel = perkInfo:getLevel()
+					local perkType = tostring(perk:getType())
+					local bonusLevelsFromTrait = bonusLevels[perkType] or 0
 
-				if perkType == "Strength" or perkType == "Fitness" then
-					recoverableXP = 0
-				end
+					local recoverableXPFactor = (SandboxVars.SkillRecoveryJournal.RecoveryPercentage/100) or 1
 
-				print("  "..i.." "..perkType.." = ("..perkLevel.."-"..tostring(bonusLevelsFromTrait)..") = "..recoverableLevels.." : "..tostring(recoverableXP))
+					local recoverableLevels = perkLevel*recoverableXPFactor
+					local recoverableXP = perk:getTotalXpForLevel(recoverableLevels)
 
-				if recoverableXP > 0 then
-					gainedXP[perkType] = recoverableXP
-					storingSkills = true
+					local remainder = recoverableLevels-math.floor(recoverableLevels)
+					if remainder then
+						recoverableXP = recoverableXP+(perk:getXpForLevel(recoverableLevels+1)*remainder)
+					end
+
+					recoverableXP = recoverableXP-perk:getXpForLevel(bonusLevelsFromTrait)
+
+					if perkType == "Strength" or perkType == "Fitness" then
+						recoverableXP = 0
+					end
+
+					print("  "..i.." "..perkType.." = ("..perkLevel.."-"..tostring(bonusLevelsFromTrait)..") = "..recoverableLevels.." : "..tostring(recoverableXP))
+
+					if recoverableXP > 0 then
+						gainedXP[perkType] = recoverableXP
+						storingSkills = true
+					end
 				end
 			end
 		end
