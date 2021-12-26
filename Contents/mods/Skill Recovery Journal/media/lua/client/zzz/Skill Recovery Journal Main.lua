@@ -191,13 +191,20 @@ SRJOVERWRITE_ISCraftAction_new = ISCraftAction.new
 ---@param character IsoGameCharacter
 function ISCraftAction:new(character, item, time, recipe, container, containers)
 	local o = SRJOVERWRITE_ISCraftAction_new(self, character, item, time, recipe, container, containers)
-	
+
 	if recipe and recipe:getName() == "Transcribe Journal" then
 
 		local journalModData = item:getModData()
 		local JMD = journalModData["SRJ"]
-		local gainedXP = JMD["gainedXP"]
 
+		local knownRecipesCount = character:getKnownRecipes():size()
+		local storedRecipesCount = 0
+		if JMD["learnedRecipes"] then
+			storedRecipesCount = #JMD["learnedRecipes"]
+		end
+		local recipeDiff = math.max(0, knownRecipesCount-storedRecipesCount)
+
+		local gainedXP = JMD["gainedXP"]
 		local gainedSkills = SRJ.calculateGainedSkills(character)
 
 		local xpDiff = 0
@@ -222,7 +229,7 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 				end
 			end
 		end
-		o.maxTime = o.maxTime+(xpDiff/100)
+		o.maxTime = o.maxTime+(xpDiff/100)+(recipeDiff*50)
 	end
 
 	return o
