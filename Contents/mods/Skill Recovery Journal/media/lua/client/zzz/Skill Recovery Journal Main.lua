@@ -199,12 +199,16 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 
 		local knownRecipesCount = character:getKnownRecipes():size()
 		local storedRecipesCount = 0
-		if JMD["learnedRecipes"] then
-			storedRecipesCount = #JMD["learnedRecipes"]
-		end
-		local recipeDiff = math.max(0, knownRecipesCount-storedRecipesCount)
+		local storedJournalXP
 
-		local gainedXP = JMD["gainedXP"]
+		if JMD then
+			if JMD["learnedRecipes"] then
+				storedRecipesCount = #JMD["learnedRecipes"]
+			end
+			storedJournalXP = JMD["gainedXP"]
+		end
+
+		local recipeDiff = math.max(0, knownRecipesCount-storedRecipesCount)
 		local gainedSkills = SRJ.calculateGainedSkills(character)
 
 		local xpDiff = 0
@@ -221,11 +225,12 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 					local perk = PerkFactory.getPerk(perks)
 					local perkType = tostring(perk:getType())
 
-					local storedXP = 0
-					if gainedXP then
-						storedXP = gainedXP[perkType]
+					local storedXPForPerk = 0
+					if storedJournalXP then
+						storedXPForPerk = storedJournalXP[perkType] or 0
 					end
-					xpDiff = xpDiff + math.max(0,gainedSkills[perkType]-storedXP)
+					local currentXP = gainedSkills[perkType] or 0
+					xpDiff = xpDiff + math.max(0,currentXP-storedXPForPerk)
 				end
 			end
 		end
@@ -247,9 +252,11 @@ function ISReadABook:new(player, item, time)
 
 		local journalModData = item:getModData()
 		local JMD = journalModData["SRJ"]
-		local gainedXP = JMD["gainedXP"]
-		if gainedXP then
-			SRJ.CleanseFalseSkills(JMD["gainedXP"])
+		if JMD then
+			local gainedXP = JMD["gainedXP"]
+			if gainedXP then
+				SRJ.CleanseFalseSkills(JMD["gainedXP"])
+			end
 		end
 
 	end
