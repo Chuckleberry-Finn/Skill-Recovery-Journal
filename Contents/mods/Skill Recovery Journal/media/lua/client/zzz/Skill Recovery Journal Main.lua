@@ -188,21 +188,41 @@ end
 
 
 SRJOVERWRITE_ISCraftAction_new = ISCraftAction.new
+---@param character IsoGameCharacter
 function ISCraftAction:new(character, item, time, recipe, container, containers)
 	local o = SRJOVERWRITE_ISCraftAction_new(self, character, item, time, recipe, container, containers)
-
+	
 	if recipe and recipe:getName() == "Transcribe Journal" then
 
-		local levelCount = 1
+		local journalModData = item:getModData()
+		local JMD = journalModData["SRJ"]
+		local gainedXP = JMD["gainedXP"]
+
+		local gainedSkills = SRJ.calculateGainedSkills(character)
+
+		local xpDiff = 0
 		for i=1, Perks.getMaxIndex()-1 do
 			---@type PerkFactory.Perks
 			local perks = Perks.fromIndex(i)
 
 			if perks ~= Perks.Strength and perks ~= Perks.Fitness then
-				local perkLevel = character:getPerkLevel(perks)
+
+				---@type IsoGameCharacter.PerkInfo
+				local perkInfo = character:getPerkInfo(perks)
+				if perkInfo then
+
+					local perk = PerkFactory.getPerk(perks)
+					local perkType = tostring(perk:getType())
+
+					local storedXP = 0
+					if gainedXP then
+						storedXP = gainedXP[perkType]
+					end
+					xpDiff = xpDiff + math.max(0,gainedSkills[perkType]-storedXP)
+				end
 			end
 		end
-		o.maxTime = o.maxTime*levelCount
+		o.maxTime = o.maxTime+(xpDiff/100)
 	end
 
 	return o
@@ -289,8 +309,15 @@ function SRJ.writeJournal(recipe, result, player)
 	end
 	journalID["onlineID"] = pOnlineID
 
+	local changesMade = false
+
 	for skill,xp in pairs(recoverableXP) do
 		if xp > 0 then
+
+			if xp~=gainedXP[skill] then
+				changesMade = true
+			end
+
 			if gainedXP[skill] and gainedXP[skill] > xp then
 				xp = gainedXP[skill]
 			end
@@ -306,9 +333,16 @@ function SRJ.writeJournal(recipe, result, player)
 	for i=0, knownRecipes:size()-1 do
 		local recipeID = knownRecipes:get(i)
 		learnedRecipes[recipeID] = true
+		changesMade=true
 	end
 
 	player:playSound(writingToolSound)
+
+	if not changesMade then
+		player:Say("There's nothing to add.", 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+	else
+		player:Say("All done.", 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+	end
 	ISTimedActionQueue.clear(player)
 end
 
@@ -356,7 +390,7 @@ function SRJ.calculateGainedSkills(player)
 
 					recoverableXP = recoverableXP-perk:getXpForLevel(bonusLevelsFromTrait)
 
-					if perkType == "Strength" or perkType == "Fitness" then
+					if perkType == "Strength" or perkType == "Fitness" or recoverableXP==1 then
 						recoverableXP = 0
 					end
 
