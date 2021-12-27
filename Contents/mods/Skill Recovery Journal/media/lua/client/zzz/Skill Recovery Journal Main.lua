@@ -229,7 +229,10 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 					if storedJournalXP then
 						storedXPForPerk = storedJournalXP[perkType] or 0
 					end
-					local currentXP = gainedSkills[perkType] or 0
+					local currentXP = 0
+					if gainedSkills then
+						currentXP = gainedSkills[perkType] or 0
+					end
 					xpDiff = xpDiff + math.max(0,currentXP-storedXPForPerk)
 				end
 			end
@@ -288,6 +291,8 @@ function SRJ.writeJournal(recipe, result, player)
 		end
 	end
 
+	---
+
 	local recoverableXP = SRJ.calculateGainedSkills(player)
 	if recoverableXP == nil then
 		player:Say("I don't have any experiences to record.", 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
@@ -343,15 +348,43 @@ function SRJ.writeJournal(recipe, result, player)
 	local learnedRecipes = JMD["learnedRecipes"]
 	---@type ArrayList
 	local knownRecipes = player:getKnownRecipes()
-
+	local gainedRecipes = {}
 	for i=0, knownRecipes:size()-1 do
 		local recipeID = knownRecipes:get(i)
+		gainedRecipes[recipeID] = true
+	end
+
+	---@type SurvivorDesc
+	local playerDesc = player:getDescriptor()
+	local playerProfessionID = playerDesc:getProfession()
+	local playerProfession = ProfessionFactory.getProfession(playerProfessionID)
+
+	---@type TraitCollection
+	local playerTraits = player:getTraits()
+	for i=0, playerTraits:size()-1 do
+		local trait = playerTraits:get(i)
+		---@type TraitFactory.Trait
+		local traitTrait = TraitFactory.getTrait(trait)
+		local traitRecipes = traitTrait:getFreeRecipes()
+		for ii=0, traitRecipes:size()-1 do
+			local traitRecipe = traitRecipes:get(ii)
+			gainedRecipes[traitRecipe] = nil
+		end
+	end
+
+	local profFreeRecipes = playerProfession:getFreeRecipes()
+	for i=0, profFreeRecipes:size()-1 do
+		local profRecipe = profFreeRecipes:get(i)
+		gainedRecipes[profRecipe] = nil
+	end
+
+	for recipeID,v in pairs(gainedRecipes) do
+		print("-storing recipe: "..recipeID)
 		learnedRecipes[recipeID] = true
 		changesMade=true
 	end
 
 	player:playSound(writingToolSound)
-
 	if not changesMade then
 		player:Say("There's nothing to add.", 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 	else
@@ -361,10 +394,15 @@ function SRJ.writeJournal(recipe, result, player)
 end
 
 
+---@param player IsoGameCharacter
 function SRJ.calculateGainedSkills(player)
 
 	local bonusLevels = {}
-	local traitXpMap = transformIntoKahluaTable(player:getDescriptor():getXPBoostMap())
+
+	---@type SurvivorDesc
+	local playerDesc = player:getDescriptor()
+	local traitXpMap = transformIntoKahluaTable(playerDesc:getXPBoostMap())
+
 	for perk,level in pairs(traitXpMap) do
 		local perky = tostring(perk)
 		local levely = tonumber(tostring(level))
@@ -402,13 +440,13 @@ function SRJ.calculateGainedSkills(player)
 						recoverableXP = recoverableXP+(perk:getXpForLevel(recoverableLevels+1)*remainder)
 					end
 
-					recoverableXP = recoverableXP-perk:getXpForLevel(bonusLevelsFromTrait)
+					recoverableXP = recoverableXP-perk:getTotalXpForLevel(bonusLevelsFromTrait)
 
 					if perkType == "Strength" or perkType == "Fitness" or recoverableXP==1 then
 						recoverableXP = 0
 					end
 
-					print("  "..i.." "..perkType.." = ("..perkLevel.."-"..tostring(bonusLevelsFromTrait)..") = "..recoverableLevels.." : "..tostring(recoverableXP))
+					print("  "..i.." "..perkType.." = ("..perkLevel.."-"..tostring(bonusLevelsFromTrait)..") = "..tostring(recoverableXP))
 
 					if recoverableXP > 0 then
 						gainedXP[perkType] = recoverableXP
