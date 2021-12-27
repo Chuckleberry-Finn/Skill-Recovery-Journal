@@ -1,0 +1,4 @@
+Recipe_EN = {
+    Recipe_Transcribe_Journal = "Spisz Pamiêtnik",
+    Recipe_Bind_Journal = "Stwórz Pamiêtnik",
+}
