@@ -1,5 +1,6 @@
 SRJ = {}
 
+Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.2-profTraitRecipe"))
 
 function SRJ.CleanseFalseSkills(gainedXP)
 	for skill,xp in pairs(gainedXP) do
