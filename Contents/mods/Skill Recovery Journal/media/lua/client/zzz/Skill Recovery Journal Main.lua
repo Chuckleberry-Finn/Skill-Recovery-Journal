@@ -401,9 +401,9 @@ function SRJ.calculateGainedSkills(player)
 
 	---@type SurvivorDesc
 	local playerDesc = player:getDescriptor()
-	local traitXpMap = transformIntoKahluaTable(playerDesc:getXPBoostMap())
+	local descXpMap = transformIntoKahluaTable(playerDesc:getXPBoostMap())
 
-	for perk,level in pairs(traitXpMap) do
+	for perk,level in pairs(descXpMap) do
 		local perky = tostring(perk)
 		local levely = tonumber(tostring(level))
 		bonusLevels[perky] = levely
