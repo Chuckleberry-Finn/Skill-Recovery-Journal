@@ -1,0 +1,12 @@
+IGUI_EN = {
+    IGUI_PlayerText_NothingWritten = "There's nothing written here.",
+    IGUI_PlayerText_DontHaveAnyXP = "I don't have any experiences to record.",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "Doesn't feel right to write in someone else's journal.",
+    IGUI_PlayerText_NothingToAddToJournal = "There's nothing to add.",
+    IGUI_PlayerText_AllDoneWithJournal = "All done.",
+    IGUI_Tooltip_Empty = "An empty journal ready to be recorded into.",
+    IGUI_Tooltip_Start = "A record of",
+    IGUI_Tooltip_End = "'s life.",
+    IGUI_Tooltip_Recipe = "recipe",
+    IGUI_Tooltip_Recipes = "recipes"
+}

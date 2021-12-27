@@ -31,7 +31,7 @@ function SRJ.generateTooltip(journal, player)
 	local journalModData = journal:getModData()
 	local JMD = journalModData["SRJ"]
 
-	local blankJournalTooltip = "An empty journal ready to be recorded into."
+	local blankJournalTooltip = getText("IGUI_Tooltip_Empty")
 
 	if not JMD then
 		return blankJournalTooltip
@@ -58,14 +58,14 @@ function SRJ.generateTooltip(journal, player)
 		recipeNum = recipeNum+1
 	end
 	if recipeNum>0 then
-		local properPlural = "recipe"
+		local properPlural = getText("IGUI_Tooltip_Recipe")
 		if recipeNum>1 then
-			properPlural = "recipes"
+			properPlural = getText("IGUI_Tooltip_Recipes")
 		end
 		skillsRecord = skillsRecord..recipeNum.." "..properPlural..".".."\n"
 	end
 
-	skillsRecord = "\nA record of "..JMD["author"].."'s life.\n"..skillsRecord
+	skillsRecord = "\n"..getText("IGUI_Tooltip_Start").." "..JMD["author"]..getText("IGUI_Tooltip_End").."\n"..skillsRecord
 
 	return skillsRecord
 end
@@ -104,7 +104,7 @@ function ISReadABook:update()
 
 		if (not JMD) then
 			delayedStop = true
-			sayText = "There's nothing written here."
+			sayText = "IGUI_PlayerText_NothingWritten"
 
 		elseif self.character:HasTrait("Illiterate") then
 			delayedStop = true
@@ -295,7 +295,7 @@ function SRJ.writeJournal(recipe, result, player)
 
 	local recoverableXP = SRJ.calculateGainedSkills(player)
 	if recoverableXP == nil then
-		player:Say("I don't have any experiences to record.", 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+		player:Say(getText("IGUI_PlayerText_DontHaveAnyXP"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 		--print("INFO: SkillRecoveryJournal: No recoverable skills to be saved.")
 		ISTimedActionQueue.clear(player)
 		return
@@ -320,7 +320,7 @@ function SRJ.writeJournal(recipe, result, player)
 
 	if pSteamID ~= 0 then
 		if journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
-			player:Say("Doesn't feel right to write in someone else's journal.", 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+			player:Say(getText("IGUI_PlayerText_DoesntFeelRightToWrite"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 			ISTimedActionQueue.clear(player)
 			return
 		end
@@ -386,9 +386,9 @@ function SRJ.writeJournal(recipe, result, player)
 
 	player:playSound(writingToolSound)
 	if not changesMade then
-		player:Say("There's nothing to add.", 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+		player:Say(getText("IGUI_PlayerText_NothingToAddToJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 	else
-		player:Say("All done.", 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+		player:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 	end
 	ISTimedActionQueue.clear(player)
 end
