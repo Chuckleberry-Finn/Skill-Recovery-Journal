@@ -234,11 +234,11 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 					if gainedSkills then
 						currentXP = gainedSkills[perkType] or 0
 					end
-					xpDiff = xpDiff + math.max(0,currentXP-storedXPForPerk)
+					xpDiff = xpDiff + (math.sqrt(math.max(0,currentXP-storedXPForPerk))*2)
 				end
 			end
 		end
-		o.maxTime = o.maxTime+(xpDiff/100)+(recipeDiff*50)
+		o.maxTime = o.maxTime+(xpDiff)+(recipeDiff*50)
 	end
 
 	return o
