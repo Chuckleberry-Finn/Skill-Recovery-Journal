@@ -150,11 +150,11 @@ function ISReadABook:update()
 			for skill,xp in pairs(gainedXP) do
 				local currentXP = player:getXp():getXP(Perks[skill])
 
-				if (currentXP) < xp then
-					--print ("TESTING:  xpRate:"..xpRate.."  xpStored:"..xp.."  currentXP:"..currentXP)
+				if currentXP < xp then
+					print ("TESTING:  xpRate:"..xpRate.."  xpStored:"..xp.."  currentXP:"..currentXP)
 					if currentXP+xpRate > xp then
-						xpRate = xpRate-(currentXP-xp)
-						--print(" --xp overflow: xpRate:"..xpRate)
+						xpRate = xpRate-(xp-currentXP)
+						print(" --xp overflow: xpRate:"..xpRate)
 					end
 
 					if xpRate>0 then
@@ -430,24 +430,16 @@ function SRJ.calculateGainedSkills(player)
 					local perkLevel = perkInfo:getLevel()
 					local perkType = tostring(perk:getType())
 					local bonusLevelsFromTrait = bonusLevels[perkType] or 0
-
 					local recoverableXPFactor = (SandboxVars.SkillRecoveryJournal.RecoveryPercentage/100) or 1
+					local recoverableXP = perk:getTotalXpForLevel(perkLevel)
 
-					local recoverableLevels = perkLevel*recoverableXPFactor
-					local recoverableXP = perk:getTotalXpForLevel(recoverableLevels)
-
-					local remainder = recoverableLevels-math.floor(recoverableLevels)
-					if remainder then
-						recoverableXP = recoverableXP+(perk:getXpForLevel(recoverableLevels+1)*remainder)
-					end
-
-					recoverableXP = recoverableXP-perk:getTotalXpForLevel(bonusLevelsFromTrait)
+					recoverableXP = (recoverableXP-perk:getTotalXpForLevel(bonusLevelsFromTrait))*recoverableXPFactor
 
 					if perkType == "Strength" or perkType == "Fitness" or recoverableXP==1 then
 						recoverableXP = 0
 					end
 
-					print("  "..i.." "..perkType.." = ("..perkLevel.."-"..tostring(bonusLevelsFromTrait)..") = "..tostring(recoverableXP))
+					print("  "..i.." "..perkType.." = ("..perkLevel.."-"..bonusLevelsFromTrait..") = "..tostring(recoverableXP))
 
 					if recoverableXP > 0 then
 						gainedXP[perkType] = recoverableXP
