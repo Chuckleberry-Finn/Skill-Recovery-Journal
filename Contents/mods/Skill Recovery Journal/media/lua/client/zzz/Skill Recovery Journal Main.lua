@@ -151,10 +151,10 @@ function ISReadABook:update()
 				local currentXP = player:getXp():getXP(Perks[skill])
 
 				if currentXP < xp then
-					print ("TESTING:  xpRate:"..xpRate.."  xpStored:"..xp.."  currentXP:"..currentXP)
+					--print ("TESTING:  xpRate:"..xpRate.."  xpStored:"..xp.."  currentXP:"..currentXP)
 					if currentXP+xpRate > xp then
 						xpRate = xpRate-(xp-currentXP)
-						print(" --xp overflow: xpRate:"..xpRate)
+						--print(" --xp overflow: xpRate:"..xpRate)
 					end
 
 					if xpRate>0 then
