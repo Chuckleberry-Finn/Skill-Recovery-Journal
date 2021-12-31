@@ -144,8 +144,13 @@ function ISReadABook:update()
 			end
 
 			local XpMultiplier = SandboxVars.XpMultiplier or 1
-			local xpRate = ((maxXP/self.maxTime)/XpMultiplier)/5
+			local xpRate = ((maxXP/self.maxTime)/XpMultiplier)/2
 
+			local minutesPerPage = 1
+			if isClient() then
+				minutesPerPage = getServerOptions():getFloat("MinutesPerPage") or 1
+			end
+			xpRate = minutesPerPage / minutesPerPage
 
 			for skill,xp in pairs(gainedXP) do
 				local currentXP = player:getXp():getXP(Perks[skill])
