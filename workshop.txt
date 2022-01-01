@@ -1,13 +1,17 @@
 version=1
 id=2503622437
 title=Skill Recovery Journal
-description=[i]Lore-friendly(ish) solution to the loss of a character.[/i]
+description=[h3][i]Lore-friendly(ish) solution to the loss of a character.[/i][/h3]
 description=
-description=[b]Do I need to start a new save / Is it safe to add/remove this mod mid-play?[/b] Yes. However, removing it will delete the journals held and any progress stored in them; Players will have to re-craft them.
+description=[b]Do I need to start a new game?[/b] No.
+description=
+description=[b]Is it safe to remove this mod mid-play?[/b] Yes. However, removing it will delete the journals held and any progress stored in them; Players will have to re-craft them.
 description=
 description=[b]Where do I find the journals?[/b] You craft them. The recipe can be found under "bind journal".
 description=
-description=[b]How do I use the journal?[/b] You will see the option to "transcribe journal" when you have a writing tool and bound journal (that is unclaimed or you've written in before.) Trying to transcribe or read another person's journal in MP will not let you. [b]In-progress skill levels are not transcribed.[/b]
+description=[b]How do I use the journal?[/b] You will see the option to "transcribe journal" when you have a writing tool and bound journal (that is unclaimed or you've written in before.) Trying to transcribe or read another person's journal in MP will not let you.
+description=
+description=[b]How does it work?[/b] The journals save unlocked skill levels' respective XP - ignoring profession/trait starter levels. There is also a sandbox option to lower return percentage (default is 100%). [b]In-progress skill levels are not transcribed.[/b]
 description=
 description=[b]Are recipes saved?[/b] Yes, except for profession/trait gained (just like skill levels).
 description=
@@ -28,6 +32,5 @@ description=
 description=[url=https://ko-fi.com/chuckleberryfinn][img]https://i.imgur.com/GxZ38nz.png[/img] [b]Consider supporting Chuck[/b][/url]
 description=
 description=
-description=Tags:B41,Books,Literature,Traits,Easy,Easier
 tags=Build 41;Balance;Literature;Multiplayer;Traits
 visibility=public
