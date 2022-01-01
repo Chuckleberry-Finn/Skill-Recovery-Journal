@@ -32,5 +32,7 @@ description=
 description=[url=https://ko-fi.com/chuckleberryfinn][img]https://i.imgur.com/GxZ38nz.png[/img] [b]Consider supporting Chuck[/b][/url]
 description=
 description=
+description=Workshop ID: 2503622437
+description=Mod ID: SkillRecoveryJournal
 tags=Build 41;Balance;Literature;Multiplayer;Traits
 visibility=public
