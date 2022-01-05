@@ -18,6 +18,11 @@ description=
 description=[b]Warning:[/b] Journals have to be manually updated using a pen or pencil. You can check the tool-tip for XP and recipes. Careful if you die holding your journal as it may be difficult to retrieve it from your moving corpse or it could be stolen/destroyed by other players.
 description=
 description=
+description=[img]https://i.imgur.com/p7Fv1Z6.gif[/img]
+description=
+description=[img]https://raw.githubusercontent.com/sharkster91/ExpandedHelicopterEvents/main/Contents/mods/Expanded%20Helicopter%20Events/SteamDescSpacer.png[/img][img]https://raw.githubusercontent.com/sharkster91/ExpandedHelicopterEvents/main/Contents/mods/Expanded%20Helicopter%20Events/SteamDescSpacer.png[/img][img]https://raw.githubusercontent.com/sharkster91/ExpandedHelicopterEvents/main/Contents/mods/Expanded%20Helicopter%20Events/SteamDescSpacer.png[/img][img]https://raw.githubusercontent.com/sharkster91/ExpandedHelicopterEvents/main/Contents/mods/Expanded%20Helicopter%20Events/SteamDescSpacer.png[/img][url=https://ko-fi.com/chuckleberryfinn][img]https://raw.githubusercontent.com/sharkster91/ExpandedHelicopterEvents/main/Contents/mods/Expanded%20Helicopter%20Events/supportLogo_alt.png[/img][/url]
+description=
+description=
 description=[h1]If you're having an issue or encountering errors:[/h1]
 description=[h3]First, [b]resubscribe[/b] to this mod, and any related mod.[/h3]
 description=(This will force a download of the latest version.)
@@ -25,11 +30,6 @@ description=[b]If the problem persists, please supply a error log, which can be 
 description=[quote]`C:\Users\<username>\Zomboid\console.txt`[/quote]
 description=Uploaded to any online text viewer, [url=https://pastebin.com/]pastebin[/url] is recomended.
 description=Share the link in a comment below.
-description=
-description=
-description=[img]https://i.imgur.com/p7Fv1Z6.gif[/img]
-description=
-description=[url=https://ko-fi.com/chuckleberryfinn][img]https://i.imgur.com/GxZ38nz.png[/img] [b]Consider supporting Chuck[/b][/url]
 description=
 description=
 description=Workshop ID: 2503622437
