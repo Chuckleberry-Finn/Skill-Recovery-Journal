@@ -157,15 +157,15 @@ function ISReadABook:update()
 
 				if currentXP < xp then
 					local perkLevel = player:getPerkLevel(Perks[skill])+1
-					xpRate = (xpRate^perkLevel)*(10*perkLevel)
-					--print ("TESTING:  xpRate:"..xpRate.."  perkLevel:"..perkLevel.."  xpStored:"..xp.."  currentXP:"..currentXP)
-					if currentXP+xpRate > xp then
-						xpRate = xpRate-(xp-currentXP)
-						--print(" --xp overflow: xpRate:"..xpRate)
+					local perPerkXpRate = math.floor(((xpRate^perkLevel)*(10*perkLevel))*1000)/1000
+					print ("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..perkLevel.."  xpStored:"..xp.."  currentXP:"..currentXP)
+					if currentXP+perPerkXpRate > xp then
+						perPerkXpRate = (xp-(currentXP-0.01))
+						print(" --xp overflowed, capped at:"..perPerkXpRate)
 					end
 
-					if xpRate>0 then
-						player:getXp():AddXP(Perks[skill], xpRate)
+					if perPerkXpRate>0 then
+						player:getXp():AddXP(Perks[skill], perPerkXpRate)
 						gainedXp = true
 						self:resetJobDelta()
 					end
