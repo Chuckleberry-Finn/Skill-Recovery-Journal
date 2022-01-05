@@ -144,7 +144,7 @@ function ISReadABook:update()
 			end
 
 			local XpMultiplier = SandboxVars.XpMultiplier or 1
-			local xpRate = ((maxXP/self.maxTime)/XpMultiplier)/2
+			local xpRate = (maxXP/self.maxTime)/XpMultiplier
 
 			local minutesPerPage = 1
 			if isClient() then
@@ -156,7 +156,9 @@ function ISReadABook:update()
 				local currentXP = player:getXp():getXP(Perks[skill])
 
 				if currentXP < xp then
-					--print ("TESTING:  xpRate:"..xpRate.."  xpStored:"..xp.."  currentXP:"..currentXP)
+					local perkLevel = player:getPerkLevel(Perks[skill])+1
+					xpRate = (xpRate^perkLevel)*(10*perkLevel)
+					--print ("TESTING:  xpRate:"..xpRate.."  perkLevel:"..perkLevel.."  xpStored:"..xp.."  currentXP:"..currentXP)
 					if currentXP+xpRate > xp then
 						xpRate = xpRate-(xp-currentXP)
 						--print(" --xp overflow: xpRate:"..xpRate)
@@ -239,6 +241,7 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 					if gainedSkills then
 						currentXP = gainedSkills[perkType] or 0
 					end
+					--print("JOURNAL: xpDiff:"..(math.sqrt(math.max(0,currentXP-storedXPForPerk))*2).."  currentXP:"..currentXP.." storedXPForPerk:"..storedXPForPerk)
 					xpDiff = xpDiff + (math.sqrt(math.max(0,currentXP-storedXPForPerk))*2)
 				end
 			end
