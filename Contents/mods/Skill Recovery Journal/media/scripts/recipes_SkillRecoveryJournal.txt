@@ -9,7 +9,7 @@ module Base
 
            Result:SkillRecoveryJournal,
 
-           Time:20.0,
+           Time:150.0,
         }
 
     recipe Transcribe Journal
@@ -23,7 +23,8 @@ module Base
 		   Prop1 		: Source=2,
 		   Prop2 		: Source=1,
 
-           Time:20.0,
-           OnCreate:SRJ.writeJournal,
+           Time:10.0,
+           OnCanPerform:SRJ.writingJournal,
+           OnCreate:SRJ.writtenJournal,
         }
 }

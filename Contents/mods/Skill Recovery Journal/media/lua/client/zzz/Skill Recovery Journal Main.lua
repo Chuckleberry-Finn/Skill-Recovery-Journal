@@ -1,6 +1,6 @@
 SRJ = {}
 
-Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.2-profTraitRecipe"))
+Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3-transcribeOverTime"))
 
 function SRJ.CleanseFalseSkills(gainedXP)
 	for skill,xp in pairs(gainedXP) do
@@ -158,6 +158,9 @@ function ISReadABook:update()
 				if currentXP < xp then
 					local perkLevel = player:getPerkLevel(Perks[skill])+1
 					local perPerkXpRate = math.floor(((xpRate^perkLevel)*(10*perkLevel))*1000)/1000
+					if perkLevel == 11 then
+						perPerkXpRate=0
+					end
 					print ("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..perkLevel.."  xpStored:"..xp.."  currentXP:"..currentXP)
 					if currentXP+perPerkXpRate > xp then
 						perPerkXpRate = (xp-(currentXP-0.01))
@@ -195,6 +198,52 @@ function ISReadABook:update()
 end
 
 
+
+SRJOVERWRITE_ISCraftAction_update = ISCraftAction.update
+function ISCraftAction:update()
+	SRJOVERWRITE_ISCraftAction_update(self)
+
+	if self.recipe and self.recipe:getName() == "Transcribe Journal" and self.item:getType() == "SkillRecoveryJournal" then
+
+		local journalModData = self.item:getModData()
+		journalModData["SRJ"] = journalModData["SRJ"] or {}
+		local JMD = journalModData["SRJ"]
+		local journalID = JMD["ID"]
+		local pSteamID = self.character:getSteamID()
+
+		local writing = true
+
+		if pSteamID ~= 0 and journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
+			writing = false
+		end
+
+		local recoverableXP = SRJ.calculateGainedSkills(self.character)
+		if recoverableXP == nil then
+			writing = false
+		end
+
+		JMD["gainedXP"] = JMD["gainedXP"] or {}
+		local gainedXP = JMD["gainedXP"]
+		--local debug_text = "ISCraftAction:update - "
+
+		if writing and gainedXP then
+			for skill,xp in pairs(recoverableXP) do
+				if xp > 0 then
+					--debug_text = debug_text.." xp:"..xp
+					gainedXP[skill] = gainedXP[skill] or 0
+					if xp > gainedXP[skill] then
+						local xpAdd = math.floor(xp/self.maxTime)+1
+						--debug_text = debug_text.." adding:"..xpAdd
+						gainedXP[skill] = math.min(xp, gainedXP[skill]+xpAdd)
+					end
+				end
+			end
+		end
+
+		--print(debug_text)
+	end
+end
+
 SRJOVERWRITE_ISCraftAction_new = ISCraftAction.new
 ---@param character IsoGameCharacter
 function ISCraftAction:new(character, item, time, recipe, container, containers)
@@ -202,8 +251,16 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 
 	if recipe and recipe:getName() == "Transcribe Journal" then
 
-		local journalModData = item:getModData()
+		local oldJournal = item
+		local journalModData = oldJournal:getModData()
+		journalModData["SRJ"] = journalModData["SRJ"] or {}
 		local JMD = journalModData["SRJ"]
+
+		local writingToolSound = "PenWriteSounds"
+		if character:getInventory():contains("Pencil") then
+			writingToolSound = "PencilWriteSounds"
+		end
+		o.craftSound = writingToolSound
 
 		local knownRecipesCount = character:getKnownRecipes():size()
 		local storedRecipesCount = 0
@@ -218,31 +275,55 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 
 		local recipeDiff = math.max(0, knownRecipesCount-storedRecipesCount)
 		local gainedSkills = SRJ.calculateGainedSkills(character)
+		local willWrite = true
+
+		if gainedSkills == nil then
+			character:Say(getText("IGUI_PlayerText_DontHaveAnyXP"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+			willWrite = false
+		else
+			JMD["ID"] = JMD["ID"] or {}
+			local journalID = JMD["ID"]
+			JMD["author"] = character:getFullName()
+			local pSteamID = character:getSteamID()
+			local pOnlineID = character:getOnlineID()
+			print("-- SRJ INFO:".." pSteamID: "..pSteamID.." pOnlineID: "..pOnlineID.." --")
+
+			if pSteamID ~= 0 then
+				if journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
+					character:Say(getText("IGUI_PlayerText_DoesntFeelRightToWrite"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+					willWrite = false
+				end
+				journalID["steamID"] = pSteamID
+			end
+			journalID["onlineID"] = pOnlineID
+		end
 
 		local xpDiff = 0
-		for i=1, Perks.getMaxIndex()-1 do
-			---@type PerkFactory.Perks
-			local perks = Perks.fromIndex(i)
+		if willWrite then
+			for i=1, Perks.getMaxIndex()-1 do
+				---@type PerkFactory.Perks
+				local perks = Perks.fromIndex(i)
 
-			if perks ~= Perks.Strength and perks ~= Perks.Fitness then
+				if perks ~= Perks.Strength and perks ~= Perks.Fitness then
 
-				---@type IsoGameCharacter.PerkInfo
-				local perkInfo = character:getPerkInfo(perks)
-				if perkInfo then
+					---@type IsoGameCharacter.PerkInfo
+					local perkInfo = character:getPerkInfo(perks)
+					if perkInfo then
 
-					local perk = PerkFactory.getPerk(perks)
-					local perkType = tostring(perk:getType())
+						local perk = PerkFactory.getPerk(perks)
+						local perkType = tostring(perk:getType())
 
-					local storedXPForPerk = 0
-					if storedJournalXP then
-						storedXPForPerk = storedJournalXP[perkType] or 0
+						local storedXPForPerk = 0
+						if storedJournalXP then
+							storedXPForPerk = storedJournalXP[perkType] or 0
+						end
+						local currentXP = 0
+						if gainedSkills then
+							currentXP = gainedSkills[perkType] or 0
+						end
+						print("JOURNAL: xpDiff:"..(math.sqrt(math.max(0,currentXP-storedXPForPerk))*2).."  currentXP:"..currentXP.." storedXPForPerk:"..storedXPForPerk)
+						xpDiff = xpDiff + (math.sqrt(math.max(0,currentXP-storedXPForPerk))*2)
 					end
-					local currentXP = 0
-					if gainedSkills then
-						currentXP = gainedSkills[perkType] or 0
-					end
-					--print("JOURNAL: xpDiff:"..(math.sqrt(math.max(0,currentXP-storedXPForPerk))*2).."  currentXP:"..currentXP.." storedXPForPerk:"..storedXPForPerk)
-					xpDiff = xpDiff + (math.sqrt(math.max(0,currentXP-storedXPForPerk))*2)
 				end
 			end
 		end
@@ -277,9 +358,17 @@ function ISReadABook:new(player, item, time)
 end
 
 
+---@param player IsoGameCharacter | IsoPlayer
+function SRJ.writingJournal(recipe, player, item)
+	if item and (item:getType() == "SkillRecoveryJournal") then
+		return true
+	end
+	return false
+end
+
 ---@param recipe InventoryItem | Literature
 ---@param player IsoGameCharacter | IsoPlayer
-function SRJ.writeJournal(recipe, result, player)
+function SRJ.writtenJournal(recipe, result, player)
 
 	if not player then
 		return
@@ -287,71 +376,25 @@ function SRJ.writeJournal(recipe, result, player)
 
 	---@type InventoryItem | Literature
 	local oldJournal
-	local writingToolSound = "PenWriteSounds"
-
 	if recipe then
 		for i=0, recipe:size()-1 do
 			local item = recipe:get(i)
 			if (item:getType() == "SkillRecoveryJournal") then
 				oldJournal = recipe:get(i)
-			elseif (item:getType() == "Pencil") then
-				writingToolSound = "PencilWriteSounds"
 			end
 		end
 	end
 
-	---
-
-	local recoverableXP = SRJ.calculateGainedSkills(player)
-	if recoverableXP == nil then
-		player:Say(getText("IGUI_PlayerText_DontHaveAnyXP"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
-		--print("INFO: SkillRecoveryJournal: No recoverable skills to be saved.")
-		ISTimedActionQueue.clear(player)
+	---@type InventoryItem | Literature
+	local journal = oldJournal --or player:getInventory():AddItem("Base.SkillRecoveryJournal")
+	if not journal then
 		return
 	end
-
-	---@type InventoryItem | Literature
-	local journal = oldJournal or player:getInventory():AddItem("Base.SkillRecoveryJournal")
 	local journalModData = journal:getModData()
 	journalModData["SRJ"] = journalModData["SRJ"] or {}
 	local JMD = journalModData["SRJ"]
 
-	JMD["gainedXP"] = JMD["gainedXP"] or {}
-	local gainedXP = JMD["gainedXP"]
-
-	JMD["ID"] = JMD["ID"] or {}
-	local journalID = JMD["ID"]
-
-	JMD["author"] = player:getFullName()
-	local pSteamID = player:getSteamID()
-	local pOnlineID = player:getOnlineID()
-	print("-- SRJ INFO:".." pSteamID: "..pSteamID.." pOnlineID: "..pOnlineID.." --")
-
-	if pSteamID ~= 0 then
-		if journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
-			player:Say(getText("IGUI_PlayerText_DoesntFeelRightToWrite"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
-			ISTimedActionQueue.clear(player)
-			return
-		end
-		journalID["steamID"] = pSteamID
-	end
-	journalID["onlineID"] = pOnlineID
-
 	local changesMade = false
-
-	for skill,xp in pairs(recoverableXP) do
-		if xp > 0 then
-
-			if xp~=gainedXP[skill] then
-				changesMade = true
-			end
-
-			if gainedXP[skill] and gainedXP[skill] > xp then
-				xp = gainedXP[skill]
-			end
-			gainedXP[skill] = xp
-		end
-	end
 
 	JMD["learnedRecipes"] = JMD["learnedRecipes"] or {}
 	local learnedRecipes = JMD["learnedRecipes"]
@@ -388,12 +431,13 @@ function SRJ.writeJournal(recipe, result, player)
 	end
 
 	for recipeID,v in pairs(gainedRecipes) do
-		print("-storing recipe: "..recipeID)
-		learnedRecipes[recipeID] = true
-		changesMade=true
+		--print("-storing recipe: "..recipeID)
+		if learnedRecipes[recipeID]~= true then
+			learnedRecipes[recipeID] = true
+			changesMade=true
+		end
 	end
 
-	player:playSound(writingToolSound)
 	if not changesMade then
 		player:Say(getText("IGUI_PlayerText_NothingToAddToJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 	else
@@ -421,7 +465,7 @@ function SRJ.calculateGainedSkills(player)
 	local gainedXP = {}
 	local storingSkills = false
 
-	print("INFO: SkillRecoveryJournal: calculating gained skills:  total skills: "..Perks.getMaxIndex())
+	--print("INFO: SkillRecoveryJournal: calculating gained skills:  total skills: "..Perks.getMaxIndex())
 	for i=1, Perks.getMaxIndex()-1 do
 		---@type PerkFactory.Perks
 		local perks = Perks.fromIndex(i)
@@ -447,7 +491,7 @@ function SRJ.calculateGainedSkills(player)
 						recoverableXP = 0
 					end
 
-					print("  "..i.." "..perkType.." = ("..perkLevel.."-"..bonusLevelsFromTrait..") = "..tostring(recoverableXP))
+					--print("  "..i.." "..perkType.." = ("..perkLevel.."-"..bonusLevelsFromTrait..") = "..tostring(recoverableXP))
 
 					if recoverableXP > 0 then
 						gainedXP[perkType] = recoverableXP

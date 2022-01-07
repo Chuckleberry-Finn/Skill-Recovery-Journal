@@ -13,6 +13,8 @@ description=[b]How do I use the journal?[/b] You will see the option to "transcr
 description=
 description=[b]How does it work?[/b] The journals save unlocked skill levels' respective XP - ignoring profession/trait starter levels. There is also a sandbox option to lower return percentage (default is 100%). [b]In-progress skill levels are not transcribed.[/b]
 description=
+description=[b]Are these journals one time use?[/b] No, you are expected to keep using the same journal and updating it over time.
+description=
 description=[b]Are recipes saved?[/b] Yes, except for profession/trait gained (just like skill levels).
 description=
 description=[b]Warning:[/b] Journals have to be manually updated using a pen or pencil. You can check the tool-tip for XP and recipes. Careful if you die holding your journal as it may be difficult to retrieve it from your moving corpse or it could be stolen/destroyed by other players.
@@ -29,10 +31,6 @@ description=[b]If the problem persists, please supply a error log, which can be 
 description=[quote]`C:\Users\<username>\Zomboid\console.txt`[/quote]
 description=Uploaded to any online text viewer, [url=https://pastebin.com/]pastebin[/url] is recomended.
 description=Share the link in a comment below.
-description=
-description=
-description=Workshop ID: 2503622437
-description=Mod ID: SkillRecoveryJournal
 description=
 description=
 description=[img]https://raw.githubusercontent.com/sharkster91/ExpandedHelicopterEvents/main/Contents/mods/Expanded%20Helicopter%20Events/SteamDescSpacer.png[/img][img]https://raw.githubusercontent.com/sharkster91/ExpandedHelicopterEvents/main/Contents/mods/Expanded%20Helicopter%20Events/SteamDescSpacer.png[/img][img]https://raw.githubusercontent.com/sharkster91/ExpandedHelicopterEvents/main/Contents/mods/Expanded%20Helicopter%20Events/SteamDescSpacer.png[/img][img]https://raw.githubusercontent.com/sharkster91/ExpandedHelicopterEvents/main/Contents/mods/Expanded%20Helicopter%20Events/SteamDescSpacer.png[/img][url=https://ko-fi.com/chuckleberryfinn][img]https://raw.githubusercontent.com/sharkster91/ExpandedHelicopterEvents/main/Contents/mods/Expanded%20Helicopter%20Events/supportLogo_alt.png[/img][/url]
