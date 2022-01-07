@@ -1,6 +1,6 @@
 SRJ = {}
 
-Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3-transcribeOverTime"))
+Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3-transcribeOverTime-LANG-HOTFIX"))
 
 function SRJ.CleanseFalseSkills(gainedXP)
 	for skill,xp in pairs(gainedXP) do
@@ -112,6 +112,7 @@ function ISReadABook:update()
 			sayText = sayTextChoices[ZombRand(#sayTextChoices)+1]
 
 		elseif pSteamID ~= 0 then
+			JMD["ID"] = JMD["ID"] or {}
 			local journalID = JMD["ID"]
 			if journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
 				delayedStop = true
@@ -198,12 +199,24 @@ function ISReadABook:update()
 end
 
 
+SRJOVERWRITE_ISCraftAction_perform = ISCraftAction.perform
+function ISCraftAction:perform()
+	if self.recipe and self.recipe:getOriginalname() == "Transcribe Journal" and self.item:getType() == "SkillRecoveryJournal" then
+		if self.changesMade and self.changesMade==true then
+			self.character:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+		else
+			self.character:Say(getText("IGUI_PlayerText_NothingToAddToJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+		end
+	end
+	SRJOVERWRITE_ISCraftAction_perform(self)
+end
+
 
 SRJOVERWRITE_ISCraftAction_update = ISCraftAction.update
 function ISCraftAction:update()
 	SRJOVERWRITE_ISCraftAction_update(self)
 
-	if self.recipe and self.recipe:getName() == "Transcribe Journal" and self.item:getType() == "SkillRecoveryJournal" then
+	if self.recipe and self.recipe:getOriginalname() == "Transcribe Journal" and self.item:getType() == "SkillRecoveryJournal" then
 
 		local journalModData = self.item:getModData()
 		journalModData["SRJ"] = journalModData["SRJ"] or {}
@@ -234,6 +247,7 @@ function ISCraftAction:update()
 					if xp > gainedXP[skill] then
 						local xpAdd = math.floor(xp/self.maxTime)+1
 						--debug_text = debug_text.." adding:"..xpAdd
+						self.changesMade = true
 						gainedXP[skill] = math.min(xp, gainedXP[skill]+xpAdd)
 					end
 				end
@@ -249,7 +263,7 @@ SRJOVERWRITE_ISCraftAction_new = ISCraftAction.new
 function ISCraftAction:new(character, item, time, recipe, container, containers)
 	local o = SRJOVERWRITE_ISCraftAction_new(self, character, item, time, recipe, container, containers)
 
-	if recipe and recipe:getName() == "Transcribe Journal" then
+	if recipe and recipe:getOriginalname() == "Transcribe Journal" then
 
 		local oldJournal = item
 		local journalModData = oldJournal:getModData()
@@ -434,8 +448,7 @@ function SRJ.writtenJournal(recipe, result, player)
 			learnedRecipes[recipeID] = true
 		end
 	end
-	player:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
-	ISTimedActionQueue.clear(player)
+	--ISTimedActionQueue.clear(player)
 end
 
 
