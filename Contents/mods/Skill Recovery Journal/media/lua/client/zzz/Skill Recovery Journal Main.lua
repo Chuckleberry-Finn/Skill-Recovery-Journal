@@ -321,13 +321,13 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 						if gainedSkills then
 							currentXP = gainedSkills[perkType] or 0
 						end
-						print("JOURNAL: xpDiff:"..(math.sqrt(math.max(0,currentXP-storedXPForPerk))*2).."  currentXP:"..currentXP.." storedXPForPerk:"..storedXPForPerk)
+						--print("JOURNAL: xpDiff:"..(math.sqrt(math.max(0,currentXP-storedXPForPerk))*2).."  currentXP:"..currentXP.." storedXPForPerk:"..storedXPForPerk)
 						xpDiff = xpDiff + (math.sqrt(math.max(0,currentXP-storedXPForPerk))*2)
 					end
 				end
 			end
 		end
-		o.maxTime = o.maxTime+(xpDiff)+(recipeDiff*50)
+		o.maxTime = o.maxTime+(xpDiff)+(math.floor(math.sqrt(recipeDiff)+0.5)*50)
 	end
 
 	return o
@@ -386,15 +386,13 @@ function SRJ.writtenJournal(recipe, result, player)
 	end
 
 	---@type InventoryItem | Literature
-	local journal = oldJournal --or player:getInventory():AddItem("Base.SkillRecoveryJournal")
+	local journal = oldJournal
 	if not journal then
 		return
 	end
 	local journalModData = journal:getModData()
 	journalModData["SRJ"] = journalModData["SRJ"] or {}
 	local JMD = journalModData["SRJ"]
-
-	local changesMade = false
 
 	JMD["learnedRecipes"] = JMD["learnedRecipes"] or {}
 	local learnedRecipes = JMD["learnedRecipes"]
@@ -434,15 +432,9 @@ function SRJ.writtenJournal(recipe, result, player)
 		--print("-storing recipe: "..recipeID)
 		if learnedRecipes[recipeID]~= true then
 			learnedRecipes[recipeID] = true
-			changesMade=true
 		end
 	end
-
-	if not changesMade then
-		player:Say(getText("IGUI_PlayerText_NothingToAddToJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
-	else
-		player:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
-	end
+	player:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 	ISTimedActionQueue.clear(player)
 end
 
