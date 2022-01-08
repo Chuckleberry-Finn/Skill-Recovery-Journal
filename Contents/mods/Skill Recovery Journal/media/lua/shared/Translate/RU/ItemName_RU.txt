@@ -1,0 +1,3 @@
+ItemName_RU = {
+    DisplayName_Bound_Journal= "Личный дневник игрока",
+}

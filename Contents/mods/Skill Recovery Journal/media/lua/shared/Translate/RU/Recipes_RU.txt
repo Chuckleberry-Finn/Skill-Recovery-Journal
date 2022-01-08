@@ -1,0 +1,4 @@
+Recipe_RU = {
+    Recipe_Transcribe_Journal = "Заполнить дневник",
+    Recipe_Bind_Journal = "Создать личный дневник игрока",
+}

@@ -1,0 +1,12 @@
+IGUI_RU = {
+    IGUI_PlayerText_NothingWritten = "Мне пока нечего сюда записывать",
+    IGUI_PlayerText_DontHaveAnyXP = "Я не научился чему то новому, что бы это записать в дневник",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "Я не имею права писать в чужом дневнике!",
+    IGUI_PlayerText_NothingToAddToJournal = "Больше нечего добавить",
+    IGUI_PlayerText_AllDoneWithJournal = "Все сделано !",
+    IGUI_Tooltip_Empty = "Пустой дневник, готовый к записям",
+    IGUI_Tooltip_Start = "Запись ",
+    IGUI_Tooltip_End = " жизни",
+    IGUI_Tooltip_Recipe = "рецепт",
+    IGUI_Tooltip_Recipes = "рецептов"
+}
