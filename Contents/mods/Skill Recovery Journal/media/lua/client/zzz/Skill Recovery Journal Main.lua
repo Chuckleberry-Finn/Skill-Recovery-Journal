@@ -109,7 +109,6 @@ function ISReadABook:update()
 
 		elseif self.character:HasTrait("Illiterate") then
 			delayedStop = true
-			sayText = getText(sayTextChoices[ZombRand(#sayTextChoices)+1]).." ("..getText("UI_trait_Illiterate")..")"
 
 		elseif pSteamID ~= 0 then
 			JMD["ID"] = JMD["ID"] or {}
@@ -202,10 +201,12 @@ end
 SRJOVERWRITE_ISCraftAction_perform = ISCraftAction.perform
 function ISCraftAction:perform()
 	if self.recipe and self.recipe:getOriginalname() == "Transcribe Journal" and self.item:getType() == "SkillRecoveryJournal" then
-		if self.changesMade and self.changesMade==true then
-			self.character:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
-		else
-			self.character:Say(getText("IGUI_PlayerText_NothingToAddToJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+		if not self.character:HasTrait("Illiterate") then
+			if self.changesMade and self.changesMade==true then
+				self.character:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+			else
+				self.character:Say(getText("IGUI_PlayerText_NothingToAddToJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+			end
 		end
 	end
 	SRJOVERWRITE_ISCraftAction_perform(self)
@@ -290,9 +291,10 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 		local recipeDiff = math.max(0, knownRecipesCount-storedRecipesCount)
 		local gainedSkills = SRJ.calculateGainedSkills(character)
 		local willWrite = true
+		local sayText
 
 		if gainedSkills == nil then
-			character:Say(getText("IGUI_PlayerText_DontHaveAnyXP"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+			sayText=getText("IGUI_PlayerText_DontHaveAnyXP"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default"
 			willWrite = false
 		else
 			JMD["ID"] = JMD["ID"] or {}
@@ -304,7 +306,7 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 
 			if pSteamID ~= 0 then
 				if journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
-					character:Say(getText("IGUI_PlayerText_DoesntFeelRightToWrite"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+					sayText=getText("IGUI_PlayerText_DoesntFeelRightToWrite"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default"
 					willWrite = false
 				end
 				journalID["steamID"] = pSteamID
@@ -314,8 +316,12 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 
 		if character:HasTrait("Illiterate") then
 			local sayTextChoices = {"IGUI_PlayerText_DontUnderstand", "IGUI_PlayerText_TooComplicated", "IGUI_PlayerText_DontGet"}
-			character:Say(getText(sayTextChoices[ZombRand(#sayTextChoices)+1]).." ("..getText("UI_trait_Illiterate")..")")
+			sayText=getText(sayTextChoices[ZombRand(#sayTextChoices)+1]).." ("..getText("UI_trait_Illiterate")..")"
 			willWrite = false
+		end
+
+		if sayText then
+			character:Say(sayText)
 		end
 
 		local xpDiff = 0
