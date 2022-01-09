@@ -109,14 +109,14 @@ function ISReadABook:update()
 
 		elseif self.character:HasTrait("Illiterate") then
 			delayedStop = true
-			sayText = sayTextChoices[ZombRand(#sayTextChoices)+1]
+			sayText = getText(sayTextChoices[ZombRand(#sayTextChoices)+1]).." ("..getText("UI_trait_Illiterate")..")"
 
 		elseif pSteamID ~= 0 then
 			JMD["ID"] = JMD["ID"] or {}
 			local journalID = JMD["ID"]
 			if journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
 				delayedStop = true
-				sayText = sayTextChoices[ZombRand(#sayTextChoices)+1]
+				sayText = getText("IGUI_PlayerText_DoesntFeelRightToRead")
 			end
 		end
 
@@ -179,7 +179,7 @@ function ISReadABook:update()
 			if not gainedXp then
 				delayedStop = true
 				sayTextChoices = {"IGUI_PlayerText_KnowSkill","IGUI_PlayerText_BookObsolete"}
-				sayText = sayTextChoices[ZombRand(#sayTextChoices)+1]
+				sayText = getText(sayTextChoices[ZombRand(#sayTextChoices)+1])
 			--else
 			--	self:resetJobDelta()
 			end
@@ -190,7 +190,7 @@ function ISReadABook:update()
 				self.pageTimer = 0
 				self.maxTime = 0
 				if sayText then
-					player:Say(getText(sayText), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+					player:Say(sayText, 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 				end
 				self:forceStop()
 			end
@@ -310,6 +310,12 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 				journalID["steamID"] = pSteamID
 			end
 			journalID["onlineID"] = pOnlineID
+		end
+
+		if character:HasTrait("Illiterate") then
+			local sayTextChoices = {"IGUI_PlayerText_DontUnderstand", "IGUI_PlayerText_TooComplicated", "IGUI_PlayerText_DontGet"}
+			character:Say(getText(sayTextChoices[ZombRand(#sayTextChoices)+1]).." ("..getText("UI_trait_Illiterate")..")")
+			willWrite = false
 		end
 
 		local xpDiff = 0
