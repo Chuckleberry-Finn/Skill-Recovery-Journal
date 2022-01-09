@@ -34,7 +34,7 @@ function SRJ.generateTooltip(journal, player)
 
 	local blankJournalTooltip = getText("IGUI_Tooltip_Empty")
 
-	if not JMD then
+	if not JMD or not JMD["author"] then
 		return blankJournalTooltip
 	end
 
