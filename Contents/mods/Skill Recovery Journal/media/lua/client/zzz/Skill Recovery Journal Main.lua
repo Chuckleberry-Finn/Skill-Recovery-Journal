@@ -38,6 +38,9 @@ function SRJ.generateTooltip(journal, player)
 		return blankJournalTooltip
 	end
 
+	journal:setNumberOfPages(-1)
+	journal:setCanBeWrite(false)
+
 	local gainedXP = JMD["gainedXP"]
 	if not gainedXP then
 		return blankJournalTooltip

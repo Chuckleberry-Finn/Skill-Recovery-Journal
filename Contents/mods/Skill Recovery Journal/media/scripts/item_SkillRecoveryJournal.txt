@@ -7,8 +7,6 @@ module Base
         DisplayName	=	Bound Journal,
         DisappearOnUse = FALSE,
         Icon	=	SkillRecoveryJournal,
-        CanBeWrite=true,
-        PageToWrite=0,
         StaticModel = SkillRecoveryJournal,
         WorldStaticModel = SkillRecoveryJournal_ground,
     }

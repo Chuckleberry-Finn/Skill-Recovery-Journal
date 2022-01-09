@@ -1,3 +1,4 @@
+--[[
 require "ISUI/ISUIWriteJournal"
 require "ISUI/ISInventoryPaneContextMenu"
 
@@ -128,3 +129,4 @@ ISInventoryPaneContextMenu.onWriteSomething = function(notebook, editable, playe
 		setJoypadFocus(player, modal)
 	end
 end
+-]]
