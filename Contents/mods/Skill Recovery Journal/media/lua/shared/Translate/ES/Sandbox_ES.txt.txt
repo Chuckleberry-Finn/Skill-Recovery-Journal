@@ -1,0 +1,5 @@
+Sandbox_ES = {
+	Sandbox_SkillRecoveryJournal = "Diario de recuperación de habilidades",
+	Sandbox_SkillRecoveryJournalPercentage = "Porcentaje de recuperación de habilidades",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "La cantidad de experiencia recuperada al leer diarios ligados.",
+	}

@@ -1,0 +1,11 @@
+GUI_ES = {
+    IGUI_PlayerText_NothingWritten = "No hay nada escrito aquí.",
+    IGUI_PlayerText_DontHaveAnyXP = "No tengo ninguna experiencia que registrar.",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "No me parece bien escribir en el diario de alguien.",
+    IGUI_PlayerText_NothingToAddToJournal = "No hay nada más que añadir.",
+    IGUI_PlayerText_AllDoneWithJournal = "Listo.",
+    IGUI_Tooltip_Empty = "Un diario vacío listo para ser escrito.",
+    IGUI_Tooltip_Start = "Un registro de",
+    IGUI_Tooltip_End = "",
+    IGUI_Tooltip_Recipe = "receta",
+    IGUI_Tooltip_Recipes = "recetas"
