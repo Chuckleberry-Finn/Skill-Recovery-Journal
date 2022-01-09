@@ -1,3 +1,3 @@
-Items_PL = {
+ItemName_PL = {
     DisplayName_Bound_Journal= "Pamiêtnik",
 }
