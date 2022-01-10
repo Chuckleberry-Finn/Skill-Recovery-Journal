@@ -2,4 +2,8 @@ Sandbox_EN = {
 	Sandbox_SkillRecoveryJournal = "Skill Recovery Journal",
 	Sandbox_SkillRecoveryJournalPercentage = "Skill Recovery Percentage",
 	Sandbox_SkillRecoveryJournalPercentage_tooltip = "The amount of experienced recovered from reading bound journals.",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "Transcribe Speed",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "Amount of xp transcribed per time. 0 = Auto (Fast)"
+	Sandbox_SkillRecoveryJournalReadTimeMulti = "Skill Recovery Time Multiplier",
+	Sandbox_SkillRecoveryJournalReadTimeMulti_tooltip = "A multiplier on the time needed to read bound journals."
 	}

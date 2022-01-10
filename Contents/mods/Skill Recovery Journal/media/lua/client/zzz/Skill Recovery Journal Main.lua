@@ -31,7 +31,7 @@ function SRJ.generateTooltip(journal, player)
 
 	journal:setNumberOfPages(-1)
 	journal:setCanBeWrite(false)
-	
+
 	local journalModData = journal:getModData()
 	local JMD = journalModData["SRJ"]
 
@@ -159,8 +159,9 @@ function ISReadABook:update()
 				local currentXP = player:getXp():getXP(Perks[skill])
 
 				if currentXP < xp then
+					local readTimeMulti = SandboxVars.SkillRecoveryJournal.ReadTimeMulti or 1
 					local perkLevel = player:getPerkLevel(Perks[skill])+1
-					local perPerkXpRate = math.floor(((xpRate^perkLevel)*(10*perkLevel))*1000)/1000
+					local perPerkXpRate = (math.floor(((xpRate^perkLevel)*(10*perkLevel))*1000)/1000) / readTimeMulti
 					if perkLevel == 11 then
 						perPerkXpRate=0
 					end
@@ -243,18 +244,33 @@ function ISCraftAction:update()
 		local gainedXP = JMD["gainedXP"]
 		--local debug_text = "ISCraftAction:update - "
 
+		local transcribeSpeed = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 0
 		if writing and gainedXP then
+			local transcribing = false
 			for skill,xp in pairs(recoverableXP) do
 				if xp > 0 then
 					--debug_text = debug_text.." xp:"..xp
 					gainedXP[skill] = gainedXP[skill] or 0
 					if xp > gainedXP[skill] then
-						local xpAdd = math.floor(xp/self.maxTime)+1
-						--debug_text = debug_text.." adding:"..xpAdd
-						self.changesMade = true
-						gainedXP[skill] = math.min(xp, gainedXP[skill]+xpAdd)
+						if transcribeSpeed > 0 then
+							local xpAdd = transcribeSpeed
+							print("TESTING: XP:"..xp.." gainedXP["..skill.."]:"..gainedXP[skill].." xpAdd:"..xpAdd)
+							self.changesMade = true
+							transcribing = true
+							gainedXP[skill] = math.min(xp, gainedXP[skill]+xpAdd)
+							self:resetJobDelta()
+						else
+							local xpAdd = math.floor(xp/self.maxTime)+1
+							--debug_text = debug_text.." adding:"..xpAdd
+							self.changesMade = true
+							gainedXP[skill] = math.min(xp, gainedXP[skill]+xpAdd)
+						end
 					end
 				end
+			end
+			if transcribeSpeed > 0 and not transcribing then
+				self:forceStop()
+				self.character:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 			end
 		end
 
@@ -357,6 +373,12 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 			end
 		end
 		o.maxTime = o.maxTime+(xpDiff)+(math.floor(math.sqrt(recipeDiff)+0.5)*50)
+		
+		local transcribeSpeed = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 0
+		if transcribeSpeed > 0 then
+			o.loopedAction = false
+			o.useProgressBar = false
+		end
 	end
 
 	return o

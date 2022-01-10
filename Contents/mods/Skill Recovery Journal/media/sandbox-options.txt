@@ -5,3 +5,15 @@ option SkillRecoveryJournal.RecoveryPercentage
 	type = integer, min = 1, max = 100, default = 100,
 	page = Character, translation = SkillRecoveryJournalPercentage,
 }
+
+option SkillRecoveryJournal.TranscribeSpeed
+{
+	type = double, min = 0, max = 10000, default = 0,
+	page = Character, translation = SkillRecoveryJournalTranscribeSpeed,
+}
+
+option SkillRecoveryJournal.ReadTimeMulti
+{
+	type = integer, min = 1, max = 10000, default = 1,
+	page = Character, translation = SkillRecoveryJournalReadTimeMulti,
+}
