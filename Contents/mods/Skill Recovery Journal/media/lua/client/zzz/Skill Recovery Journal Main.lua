@@ -1,6 +1,6 @@
 SRJ = {}
 
-Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3-transcribeOverTime-LANG-HOTFIX"))
+Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3.2-Renaming-Reading-HOTFIX"))
 
 function SRJ.CleanseFalseSkills(gainedXP)
 	for skill,xp in pairs(gainedXP) do
@@ -29,6 +29,9 @@ end
 ---@param player IsoGameCharacter | IsoPlayer
 function SRJ.generateTooltip(journal, player)
 
+	journal:setNumberOfPages(-1)
+	journal:setCanBeWrite(false)
+	
 	local journalModData = journal:getModData()
 	local JMD = journalModData["SRJ"]
 
@@ -37,9 +40,6 @@ function SRJ.generateTooltip(journal, player)
 	if not JMD or not JMD["author"] then
 		return blankJournalTooltip
 	end
-
-	journal:setNumberOfPages(-1)
-	journal:setCanBeWrite(false)
 
 	local gainedXP = JMD["gainedXP"]
 	if not gainedXP then
