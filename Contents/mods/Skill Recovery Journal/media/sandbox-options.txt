@@ -8,12 +8,12 @@ option Character.RecoveryPercentage
 
 option Character.TranscribeSpeed
 {
-	type = double, min = -1000, max = 1000, default = 1,
+	type = double, min = 0.001, max = 1000, default = 1,
 	page = Character, translation = SkillRecoveryJournalTranscribeSpeed,
 }
 
 option Character.ReadTimeSpeed
 {
-	type = double, min = -1000, max = 1000, default = 1,
+	type = double, min = 0.001, max = 1000, default = 1,
 	page = Character, translation = SkillRecoveryJournalReadTimeSpeed,
 }
