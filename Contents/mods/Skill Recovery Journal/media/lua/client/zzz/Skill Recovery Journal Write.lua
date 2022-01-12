@@ -1,19 +1,10 @@
 require "Skill Recovery Journal Main"
 
 
-ISToolTipInv_setItem = ISToolTipInv.setItem
-function ISToolTipInv:setItem(item)
-	if item:getType() == "SkillRecoveryJournal" then
-		item:setTooltip(SRJ.generateTooltip(item, self.tooltip:getCharacter()))
-	end
-	ISToolTipInv_setItem(self, item)
-end
-
-
 SRJOVERWRITE_ISCraftAction_perform = ISCraftAction.perform
 function ISCraftAction:perform()
 	if self.recipe and self.recipe:getOriginalname() == "Transcribe Journal" and self.item:getType() == "SkillRecoveryJournal" then
-		if not self.character:HasTrait("Illiterate") then
+		if self.willWrite==true and (not self.character:HasTrait("Illiterate")) then
 			if self.changesMade and self.changesMade==true then
 				self.character:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 			else
@@ -52,36 +43,21 @@ function ISCraftAction:update()
 		local gainedXP = JMD["gainedXP"]
 		--local debug_text = "ISCraftAction:update - "
 
-		local transcribeSpeed = SandboxVars.Character.TranscribeSpeed or 0
 		if writing and gainedXP then
-			local transcribing = false
 			for skill,xp in pairs(recoverableXP) do
 				if xp > 0 then
 					--debug_text = debug_text.." xp:"..xp
 					gainedXP[skill] = gainedXP[skill] or 0
 					if xp > gainedXP[skill] then
-						if transcribeSpeed > 0 then
-							local xpAdd = transcribeSpeed
-							print("TESTING: XP:"..xp.." gainedXP["..skill.."]:"..gainedXP[skill].." xpAdd:"..xpAdd)
-							self.changesMade = true
-							transcribing = true
-							gainedXP[skill] = math.min(xp, gainedXP[skill]+xpAdd)
-							self:resetJobDelta()
-						else
-							local xpAdd = math.floor(xp/self.maxTime)+1
-							--debug_text = debug_text.." adding:"..xpAdd
-							self.changesMade = true
-							gainedXP[skill] = math.min(xp, gainedXP[skill]+xpAdd)
-						end
+						local xpAdd = math.floor(xp/self.maxTime)+1
+						--print("TESTING: XP:"..xp.." gainedXP["..skill.."]:"..gainedXP[skill].." xpAdd:"..xpAdd)
+						--debug_text = debug_text.." adding:"..xpAdd
+						self.changesMade = true
+						gainedXP[skill] = math.min(xp, gainedXP[skill]+xpAdd)
 					end
 				end
 			end
-			if transcribeSpeed > 0 and not transcribing then
-				self:forceStop()
-				self.character:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
-			end
 		end
-
 		--print(debug_text)
 	end
 end
@@ -116,30 +92,32 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 		end
 
 		local recipeDiff = math.max(0, knownRecipesCount-storedRecipesCount)
-		local gainedSkills = SRJ.calculateGainedSkills(character)
-		local willWrite = true
+		local gainedSkills = SRJ.calculateGainedSkills(character) or false
+		o.willWrite = true
 		local sayText
 
-		if gainedSkills == nil then
+		--print("gainedSkills: "..tostring(gainedSkills))
+
+		if not gainedSkills then
 			sayText=getText("IGUI_PlayerText_DontHaveAnyXP"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default"
-			willWrite = false
+			o.willWrite = false
 		else
 			JMD["ID"] = JMD["ID"] or {}
 			local journalID = JMD["ID"]
 			local pSteamID = character:getSteamID()
 			local pOnlineID = character:getOnlineID()
-			print("-- SRJ INFO:".." pSteamID: "..pSteamID.." pOnlineID: "..pOnlineID.." --")
+			--print("-- SRJ INFO:".." pSteamID: "..pSteamID.." pOnlineID: "..pOnlineID.." --")
 
 			if pSteamID ~= 0 then
 				if journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
 					sayText=getText("IGUI_PlayerText_DoesntFeelRightToWrite"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default"
-					willWrite = false
+					o.willWrite = false
 				end
-				if willWrite and pSteamID then
+				if o.willWrite and pSteamID then
 					journalID["steamID"] = pSteamID
 				end
 			end
-			if willWrite and pOnlineID then
+			if o.willWrite and pOnlineID then
 				journalID["onlineID"] = pOnlineID
 			end
 		end
@@ -147,7 +125,7 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 		if character:HasTrait("Illiterate") then
 			local sayTextChoices = {"IGUI_PlayerText_DontUnderstand", "IGUI_PlayerText_TooComplicated", "IGUI_PlayerText_DontGet"}
 			sayText=getText(sayTextChoices[ZombRand(#sayTextChoices)+1]).." ("..getText("UI_trait_Illiterate")..")"
-			willWrite = false
+			o.willWrite = false
 		end
 
 		if sayText then
@@ -155,7 +133,7 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 		end
 
 		local xpDiff = 0
-		if willWrite then
+		if o.willWrite then
 
 			JMD["author"] = character:getFullName()
 
@@ -181,18 +159,13 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 							currentXP = gainedSkills[perkType] or 0
 						end
 						--print("JOURNAL: xpDiff:"..(math.sqrt(math.max(0,currentXP-storedXPForPerk))*2).."  currentXP:"..currentXP.." storedXPForPerk:"..storedXPForPerk)
-						xpDiff = xpDiff + (math.sqrt(math.max(0,currentXP-storedXPForPerk))*2)
+						xpDiff = xpDiff + (math.sqrt(math.max(0,currentXP-storedXPForPerk))*10)
 					end
 				end
 			end
 		end
-		o.maxTime = o.maxTime+(xpDiff)+(math.floor(math.sqrt(recipeDiff)+0.5)*50)
-
-		local transcribeSpeed = SandboxVars.Character.TranscribeSpeed or 0
-		if transcribeSpeed > 0 then
-			o.loopedAction = false
-			o.useProgressBar = false
-		end
+		local transcribeSpeed = SandboxVars.Character.TranscribeSpeed or 1
+		o.maxTime = (o.maxTime+(xpDiff)+(math.floor(math.sqrt(recipeDiff)+0.5)*50)) * transcribeSpeed
 	end
 
 	return o

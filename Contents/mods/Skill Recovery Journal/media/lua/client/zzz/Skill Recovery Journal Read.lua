@@ -24,7 +24,7 @@ function ISReadABook:update()
 
 		if (not JMD) then
 			delayedStop = true
-			sayText = "IGUI_PlayerText_NothingWritten"
+			sayText = getText("IGUI_PlayerText_NothingWritten")
 
 		elseif self.character:HasTrait("Illiterate") then
 			delayedStop = true
@@ -77,14 +77,14 @@ function ISReadABook:update()
 				if currentXP < xp then
 					local readTimeMulti = SandboxVars.Character.ReadTimeMulti or 1
 					local perkLevel = player:getPerkLevel(Perks[skill])+1
-					local perPerkXpRate = (math.floor(((xpRate^perkLevel)*(10*perkLevel))*1000)/1000) / readTimeMulti
+					local perPerkXpRate = (math.floor(((xpRate^perkLevel)*(2*perkLevel))*1000)/1000) * readTimeMulti
 					if perkLevel == 11 then
 						perPerkXpRate=0
 					end
-					print ("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..perkLevel.."  xpStored:"..xp.."  currentXP:"..currentXP)
+					--print ("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..perkLevel.."  xpStored:"..xp.."  currentXP:"..currentXP)
 					if currentXP+perPerkXpRate > xp then
 						perPerkXpRate = (xp-(currentXP-0.01))
-						print(" --xp overflowed, capped at:"..perPerkXpRate)
+						--print(" --xp overflowed, capped at:"..perPerkXpRate)
 					end
 
 					if perPerkXpRate>0 then
@@ -95,7 +95,7 @@ function ISReadABook:update()
 				end
 			end
 
-			if not gainedXp then
+			if JMD and (not gainedXp) then
 				delayedStop = true
 				sayTextChoices = {"IGUI_PlayerText_KnowSkill","IGUI_PlayerText_BookObsolete"}
 				sayText = getText(sayTextChoices[ZombRand(#sayTextChoices)+1])

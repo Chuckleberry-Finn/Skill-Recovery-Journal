@@ -75,6 +75,15 @@ function SRJ.generateTooltip(journal, player)
 end
 
 
+ISToolTipInv_setItem = ISToolTipInv.setItem
+function ISToolTipInv:setItem(item)
+	if item:getType() == "SkillRecoveryJournal" then
+		item:setTooltip(SRJ.generateTooltip(item, self.tooltip:getCharacter()))
+	end
+	ISToolTipInv_setItem(self, item)
+end
+
+
 ---@param player IsoGameCharacter
 function SRJ.calculateGainedSkills(player)
 
