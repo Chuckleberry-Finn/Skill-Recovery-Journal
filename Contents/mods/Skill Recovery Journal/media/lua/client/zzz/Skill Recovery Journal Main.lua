@@ -159,7 +159,7 @@ function ISReadABook:update()
 				local currentXP = player:getXp():getXP(Perks[skill])
 
 				if currentXP < xp then
-					local readTimeMulti = SandboxVars.SkillRecoveryJournal.ReadTimeMulti or 1
+					local readTimeMulti = SandboxVars.Character.ReadTimeMulti or 1
 					local perkLevel = player:getPerkLevel(Perks[skill])+1
 					local perPerkXpRate = (math.floor(((xpRate^perkLevel)*(10*perkLevel))*1000)/1000) / readTimeMulti
 					if perkLevel == 11 then
@@ -244,7 +244,7 @@ function ISCraftAction:update()
 		local gainedXP = JMD["gainedXP"]
 		--local debug_text = "ISCraftAction:update - "
 
-		local transcribeSpeed = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 0
+		local transcribeSpeed = SandboxVars.Character.TranscribeSpeed or 0
 		if writing and gainedXP then
 			local transcribing = false
 			for skill,xp in pairs(recoverableXP) do
@@ -374,7 +374,7 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 		end
 		o.maxTime = o.maxTime+(xpDiff)+(math.floor(math.sqrt(recipeDiff)+0.5)*50)
 		
-		local transcribeSpeed = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 0
+		local transcribeSpeed = SandboxVars.Character.TranscribeSpeed or 0
 		if transcribeSpeed > 0 then
 			o.loopedAction = false
 			o.useProgressBar = false
@@ -524,7 +524,7 @@ function SRJ.calculateGainedSkills(player)
 					local perkLevel = perkInfo:getLevel()
 					local perkType = tostring(perk:getType())
 					local bonusLevelsFromTrait = bonusLevels[perkType] or 0
-					local recoverableXPFactor = (SandboxVars.SkillRecoveryJournal.RecoveryPercentage/100) or 1
+					local recoverableXPFactor = (SandboxVars.Character.RecoveryPercentage/100) or 1
 					local recoverableXP = perk:getTotalXpForLevel(perkLevel)
 
 					recoverableXP = (recoverableXP-perk:getTotalXpForLevel(bonusLevelsFromTrait))*recoverableXPFactor
