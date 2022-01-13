@@ -1,6 +1,6 @@
 SRJ = {}
 
-Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3.2-Renaming-Reading-HOTFIX"))
+Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3.3-NewSandBoxSettings"))
 
 function SRJ.CleanseFalseSkills(gainedXP)
 	for skill,xp in pairs(gainedXP) do
