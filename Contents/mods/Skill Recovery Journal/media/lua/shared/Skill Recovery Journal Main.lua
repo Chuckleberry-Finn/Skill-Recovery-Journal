@@ -1,6 +1,7 @@
-SRJ = {}
-
+require "ISUI/ISToolTipInv"
 Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3.3-NewSandBoxSettings"))
+
+SRJ = {}
 
 function SRJ.CleanseFalseSkills(gainedXP)
 	for skill,xp in pairs(gainedXP) do
