@@ -165,7 +165,7 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 			end
 		end
 		local transcribeSpeed = SandboxVars.Character.TranscribeSpeed or 1
-		o.maxTime = (o.maxTime+(xpDiff)+(math.floor(math.sqrt(recipeDiff)+0.5)*50)) / transcribeSpeed
+		o.maxTime = o.maxTime + (((xpDiff) + (math.floor(math.sqrt(recipeDiff)+0.5)*50)) / transcribeSpeed)
 	end
 
 	return o
