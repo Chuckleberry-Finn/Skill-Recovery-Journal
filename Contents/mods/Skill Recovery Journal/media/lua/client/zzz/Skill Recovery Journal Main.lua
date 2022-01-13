@@ -106,35 +106,30 @@ function SRJ.calculateGainedSkills(player)
 	for i=1, Perks.getMaxIndex()-1 do
 		---@type PerkFactory.Perks
 		local perks = Perks.fromIndex(i)
-
 		if perks then
 			---@type PerkFactory.Perk
 			local perk = PerkFactory.getPerk(perks)
-
 			if perk then
-				---@type IsoGameCharacter.PerkInfo
-				local perkInfo = player:getPerkInfo(perks)
-				if perkInfo then
+				local currentXP = player:getXp():getXP(perk)
+				local perkType = tostring(perk:getType())
 
-					local perkLevel = perkInfo:getLevel()
-					local perkType = tostring(perk:getType())
-					local bonusLevelsFromTrait = bonusLevels[perkType] or 0
-					local recoverableXPFactor = (SandboxVars.Character.RecoveryPercentage/100) or 1
-					local recoverableXP = perk:getTotalXpForLevel(perkLevel)
+				local bonusLevelsFromTrait = bonusLevels[perkType] or 0
+				local recoverableXPFactor = (SandboxVars.Character.RecoveryPercentage/100) or 1
 
-					recoverableXP = (recoverableXP-perk:getTotalXpForLevel(bonusLevelsFromTrait))*recoverableXPFactor
+				local recoverableXP = currentXP
 
-					if perkType == "Strength" or perkType == "Fitness" or recoverableXP==1 then
-						recoverableXP = 0
-					end
-
-					--print("  "..i.." "..perkType.." = ("..perkLevel.."-"..bonusLevelsFromTrait..") = "..tostring(recoverableXP))
-
-					if recoverableXP > 0 then
-						gainedXP[perkType] = recoverableXP
-						storingSkills = true
-					end
+				recoverableXP = math.floor(((recoverableXP-perk:getTotalXpForLevel(bonusLevelsFromTrait))*recoverableXPFactor)*1000)/1000
+				if perkType == "Strength" or perkType == "Fitness" or recoverableXP==1 then
+					recoverableXP = 0
 				end
+
+				--print("  "..i.." "..perkType.." = "..tostring(recoverableXP).."xp  (current:"..currentXP.." - "..perk:getTotalXpForLevel(bonusLevelsFromTrait))
+
+				if recoverableXP > 0 then
+					gainedXP[perkType] = recoverableXP
+					storingSkills = true
+				end
+				--end
 			end
 		end
 	end
