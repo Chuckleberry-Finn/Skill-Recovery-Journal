@@ -2,3 +2,4 @@ name=Skill Recovery Journal
 id=SkillRecoveryJournal
 description=Craft a journal which can transcribe (record) one's skill levels; later, when read, will recover those skill levels.
 poster=poster.png
+icon=icon.png
