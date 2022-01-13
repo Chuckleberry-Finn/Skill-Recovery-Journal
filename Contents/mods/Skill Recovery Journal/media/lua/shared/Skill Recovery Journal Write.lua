@@ -49,8 +49,8 @@ function ISCraftAction:update()
 					--debug_text = debug_text.." xp:"..xp
 					gainedXP[skill] = gainedXP[skill] or 0
 					if xp > gainedXP[skill] then
-						local xpAdd = math.floor(xp/self.maxTime)+1
-						--print("TESTING: XP:"..xp.." gainedXP["..skill.."]:"..gainedXP[skill].." xpAdd:"..xpAdd)
+						local xpAdd = math.floor((xp/self.maxTime)*1000)/1000
+						print("TESTING: XP:"..xp.." gainedXP["..skill.."]:"..gainedXP[skill].." xpAdd:"..xpAdd)
 						--debug_text = debug_text.." adding:"..xpAdd
 						self.changesMade = true
 						gainedXP[skill] = math.min(xp, gainedXP[skill]+xpAdd)
