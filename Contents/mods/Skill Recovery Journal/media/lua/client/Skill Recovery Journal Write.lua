@@ -1,5 +1,4 @@
-require "Skill Recovery Journal Main"
-
+require "TimedActions/ISCraftAction"
 
 SRJOVERWRITE_ISCraftAction_perform = ISCraftAction.perform
 function ISCraftAction:perform()

@@ -1,4 +1,3 @@
-require "Skill Recovery Journal Main"
 require "TimedActions/ISReadABook"
 
 SRJOVERWRITE_ISReadABook_update = ISReadABook.update
