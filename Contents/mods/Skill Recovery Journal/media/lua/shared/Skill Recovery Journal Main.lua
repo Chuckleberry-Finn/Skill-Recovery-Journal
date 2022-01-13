@@ -1,4 +1,8 @@
+require "ISBaseObject"
+require "ISUI/ISUIElement"
+require "ISUI/ISPanel"
 require "ISUI/ISToolTipInv"
+
 Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3.3-NewSandBoxSettings"))
 
 SRJ = {}
