@@ -1,4 +1,4 @@
-Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3.3-recoveryJournalXpLog"))
+Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3.3-recoveryJournalXpLog-HOTFIX"))
 
 SRJ = {}
 
