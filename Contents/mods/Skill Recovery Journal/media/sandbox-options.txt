@@ -17,3 +17,9 @@ option Character.ReadTimeSpeed
 	type = double, min = 0.001, max = 1000, default = 1,
 	page = Character, translation = SkillRecoveryJournalReadTimeSpeed,
 }
+
+option Character.UseProgress
+{
+	type = boolean, default = true,
+	page = Character, translation = SkillRecoveryJournalUseProgress,
+}

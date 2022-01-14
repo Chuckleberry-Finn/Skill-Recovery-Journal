@@ -46,16 +46,27 @@ function ISCraftAction:update()
 		pMD.recoveryJournalXpLog = pMD.recoveryJournalXpLog or {}
 		local readXp = pMD.recoveryJournalXpLog
 
+		local useProgressBar = SandboxVars.Character.UseProgress
+
 		if writing and gainedXP then
+			local transcribing = false
 			for skill,xp in pairs(recoverableXP) do
 				if xp > 0 then
 					--debug_text = debug_text.." xp:"..xp
 					gainedXP[skill] = gainedXP[skill] or 0
 					if xp > gainedXP[skill] then
-						local xpAdd = math.floor((xp/self.maxTime)*1000)/1000
-						--print("TESTING: XP:"..xp.." gainedXP["..skill.."]:"..gainedXP[skill].." xpAdd:"..xpAdd)
-						--debug_text = debug_text.." adding:"..xpAdd
+						local xpAdd = 0
+						if not useProgressBar then
+							self:resetJobDelta()
+							xpAdd = SandboxVars.Character.TranscribeSpeed or 1
+						else
+							xpAdd = math.floor((xp/self.maxTime)*1000)/1000
+							--debug_text = debug_text.." adding:"..xpAdd
+						end
+						
+						print("TESTING: XP:"..xp.." gainedXP["..skill.."]:"..gainedXP[skill].." xpAdd:"..xpAdd)
 						self.changesMade = true
+						transcribing = true
 
 						JMD["transcribedBefore"] = true
 
@@ -64,6 +75,10 @@ function ISCraftAction:update()
 						readXp[skill] = resultingXp
 					end
 				end
+			end
+			if not transcribing and not useProgressBar then
+				self:forceStop()
+				self.character:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 			end
 		end
 		--print(debug_text)
@@ -172,9 +187,16 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 				end
 			end
 		end
+
+
 		local transcribeSpeed = SandboxVars.Character.TranscribeSpeed or 1
-		if xpDiff>0 or recipeDiff>0 then
+		local useProgressBar = SandboxVars.Character.UseProgress
+		if (xpDiff>0 or recipeDiff>0) then
 			o.maxTime = o.maxTime + (((xpDiff) + (math.floor(math.sqrt(recipeDiff)+0.5)*50)) / transcribeSpeed)
+		end
+		if not useProgressBar then
+			o.loopedAction = false
+			o.useProgressBar = false
 		end
 	end
 

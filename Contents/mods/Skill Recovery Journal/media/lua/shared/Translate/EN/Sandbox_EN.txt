@@ -5,5 +5,7 @@ Sandbox_EN = {
 	Sandbox_SkillRecoveryJournalTranscribeSpeed = "Skill Recovery Transcribe Speed Multiplier",
 	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "A multiplier on the speed of transcribing journals."
 	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Skill Recovery Read Speed Multiplier",
-	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "A multiplier on the speed of reading bound journals."
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "A multiplier on the speed of reading bound journals.",
+	Sandbox_SkillRecoveryJournalUseProgress = "Use Progressbar",
+	Sandbox_SkillRecoveryJournalUseProgress_tooltip = "TODO"
 	}
