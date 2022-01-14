@@ -42,6 +42,10 @@ function ISCraftAction:update()
 		local gainedXP = JMD["gainedXP"]
 		--local debug_text = "ISCraftAction:update - "
 
+		local pMD = self.character:getModData()
+		pMD.recoveryJournalXpLog = pMD.recoveryJournalXpLog or {}
+		local readXp = pMD.recoveryJournalXpLog
+
 		if writing and gainedXP then
 			for skill,xp in pairs(recoverableXP) do
 				if xp > 0 then
@@ -52,7 +56,9 @@ function ISCraftAction:update()
 						print("TESTING: XP:"..xp.." gainedXP["..skill.."]:"..gainedXP[skill].." xpAdd:"..xpAdd)
 						--debug_text = debug_text.." adding:"..xpAdd
 						self.changesMade = true
-						gainedXP[skill] = math.min(xp, gainedXP[skill]+xpAdd)
+						local resultingXp = math.min(xp, gainedXP[skill]+xpAdd)
+						gainedXP[skill] = resultingXp
+						readXp[skill] = resultingXp
 					end
 				end
 			end
