@@ -96,7 +96,7 @@ function ISReadABook:update()
 
 					if perPerkXpRate>0 then
 						readXp[skill] = readXp[skill]+perPerkXpRate
-						player:getXp():AddXP(Perks[skill], perPerkXpRate)
+						player:getXp():AddXP(Perks[skill], perPerkXpRate, true, true, false, true)
 						gainedXp = true
 						self:resetJobDelta()
 					end
