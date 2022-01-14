@@ -8,7 +8,7 @@ function ISReadABook:update()
 	local journal = self.item
 
 	if journal:getType() == "SkillRecoveryJournal" then
-		---@type IsoGameCharacter | IsoPlayer
+		---@type IsoGameCharacter | IsoPlayer | IsoMovingObject | IsoObject
 		local player = self.character
 
 		local journalModData = journal:getModData()
@@ -48,7 +48,6 @@ function ISReadABook:update()
 			end
 
 			local gainedXP = JMD["gainedXP"]
-
 			local maxXP = 0
 
 			for skill,xp in pairs(gainedXP) do
@@ -70,8 +69,17 @@ function ISReadABook:update()
 			end
 			xpRate = minutesPerPage / minutesPerPage
 
+			local pMD = player:getModData()
+			pMD.recoveryJournalXpLog = pMD.recoveryJournalXpLog or {}
+			local readXp = pMD.recoveryJournalXpLog
+
 			for skill,xp in pairs(gainedXP) do
-				local currentXP = player:getXp():getXP(Perks[skill])
+
+				local currentXP = readXp[skill]
+				if not currentXP then
+					readXp[skill] = 0
+					currentXP = readXp[skill]
+				end
 
 				if currentXP < xp then
 					local readTimeMulti = SandboxVars.Character.ReadTimeMulti or 1
@@ -87,6 +95,7 @@ function ISReadABook:update()
 					end
 
 					if perPerkXpRate>0 then
+						readXp[skill] = readXp[skill]+perPerkXpRate
 						player:getXp():AddXP(Perks[skill], perPerkXpRate)
 						gainedXp = true
 						self:resetJobDelta()
