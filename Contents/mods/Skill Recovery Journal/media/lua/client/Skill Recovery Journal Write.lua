@@ -167,7 +167,7 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 							currentXP = gainedSkills[perkType] or 0
 						end
 						--print("JOURNAL: xpDiff:"..(math.sqrt(math.max(0,currentXP-storedXPForPerk))*2).."  currentXP:"..currentXP.." storedXPForPerk:"..storedXPForPerk)
-						xpDiff = xpDiff + (math.sqrt(math.max(0,currentXP-storedXPForPerk))*10)
+						xpDiff = xpDiff + (math.sqrt(math.max(0,currentXP-storedXPForPerk))*100)
 					end
 				end
 			end
