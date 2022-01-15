@@ -138,32 +138,7 @@ function ISReadABook:new(player, item, time)
 		local journalModData = item:getModData()
 		local JMD = journalModData["SRJ"]
 		if JMD then
-
 			local gainedXP = JMD["gainedXP"]
-
-			--TODO: REMOVE LATER - This is a temporary fix for the "recoveryJournalXpLog" update
-			local transcribedBefore = JMD["transcribedBefore"]
-			if not transcribedBefore then
-				local journalID = JMD["ID"]
-				local pSteamID = player:getSteamID()
-				local owner = true
-				if pSteamID ~= 0 and journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
-					owner = false
-				end
-				if owner then
-					JMD["transcribedBefore"] = true
-					local pMD = player:getModData()
-					pMD.recoveryJournalXpLog = pMD.recoveryJournalXpLog or {}
-					if gainedXP then
-						for skill,xp in pairs(gainedXP) do
-							local perk = PerkFactory.getPerk(Perks[skill])
-							local currentXP = player:getXp():getXP(perk)
-							pMD.recoveryJournalXpLog[skill] = currentXP
-						end
-					end
-				end
-			end
-
 			if gainedXP then
 				SRJ.CleanseFalseSkills(JMD["gainedXP"])
 			end
