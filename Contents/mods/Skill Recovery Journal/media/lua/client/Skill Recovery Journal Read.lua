@@ -75,11 +75,8 @@ function ISReadABook:update()
 
 			for skill,xp in pairs(gainedXP) do
 
+				readXp[skill] = readXp[skill] or 0
 				local currentXP = readXp[skill]
-				if not currentXP then
-					readXp[skill] = 0
-					currentXP = readXp[skill]
-				end
 
 				if currentXP < xp then
 					local readTimeMulti = SandboxVars.Character.ReadTimeMulti or 1
