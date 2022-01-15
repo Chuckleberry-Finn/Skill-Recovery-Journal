@@ -20,48 +20,55 @@ function ISCraftAction:update()
 	SRJOVERWRITE_ISCraftAction_update(self)
 
 	if self.recipe and self.recipe:getOriginalname() == "Transcribe Journal" and self.item:getType() == "SkillRecoveryJournal" then
+		self.craftTimer = self.craftTimer + getGameTime():getMultiplier();
+		
+		-- normalize update time via in game time. Adjust updateInterval as needed
+		local updateInterval = 10
+		if self.craftTimer >= updateInterval then
+			self.craftTimer = 0
+			
+			local journalModData = self.item:getModData()
+			journalModData["SRJ"] = journalModData["SRJ"] or {}
+			local JMD = journalModData["SRJ"]
+			local journalID = JMD["ID"]
+			local pSteamID = self.character:getSteamID()
 
-		local journalModData = self.item:getModData()
-		journalModData["SRJ"] = journalModData["SRJ"] or {}
-		local JMD = journalModData["SRJ"]
-		local journalID = JMD["ID"]
-		local pSteamID = self.character:getSteamID()
+			local writing = true
 
-		local writing = true
+			if pSteamID ~= 0 and journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
+				writing = false
+			end
 
-		if pSteamID ~= 0 and journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
-			writing = false
-		end
+			local recoverableXP = SRJ.calculateGainedSkills(self.character)
+			if recoverableXP == nil then
+				writing = false
+			end
 
-		local recoverableXP = SRJ.calculateGainedSkills(self.character)
-		if recoverableXP == nil then
-			writing = false
-		end
+			JMD["gainedXP"] = JMD["gainedXP"] or {}
+			local gainedXP = JMD["gainedXP"]
+			--local debug_text = "ISCraftAction:update - "
 
-		JMD["gainedXP"] = JMD["gainedXP"] or {}
-		local gainedXP = JMD["gainedXP"]
-		--local debug_text = "ISCraftAction:update - "
+			local pMD = self.character:getModData()
+			pMD.recoveryJournalXpLog = pMD.recoveryJournalXpLog or {}
+			local readXp = pMD.recoveryJournalXpLog
 
-		local pMD = self.character:getModData()
-		pMD.recoveryJournalXpLog = pMD.recoveryJournalXpLog or {}
-		local readXp = pMD.recoveryJournalXpLog
+			if writing and gainedXP then
+				for skill,xp in pairs(recoverableXP) do
+					if xp > 0 then
+						--debug_text = debug_text.." xp:"..xp
+						gainedXP[skill] = gainedXP[skill] or 0
+						if xp > gainedXP[skill] then
+							local xpAdd = math.floor((xp/self.maxTime)*1000)/1000
+							print("TESTING: XP:"..xp.." gainedXP["..skill.."]:"..gainedXP[skill].." xpAdd:"..xpAdd)
+							--debug_text = debug_text.." adding:"..xpAdd
+							self.changesMade = true
 
-		if writing and gainedXP then
-			for skill,xp in pairs(recoverableXP) do
-				if xp > 0 then
-					--debug_text = debug_text.." xp:"..xp
-					gainedXP[skill] = gainedXP[skill] or 0
-					if xp > gainedXP[skill] then
-						local xpAdd = math.floor((xp/self.maxTime)*1000)/1000
-						--print("TESTING: XP:"..xp.." gainedXP["..skill.."]:"..gainedXP[skill].." xpAdd:"..xpAdd)
-						--debug_text = debug_text.." adding:"..xpAdd
-						self.changesMade = true
+							JMD["transcribedBefore"] = true
 
-						JMD["transcribedBefore"] = true
-
-						local resultingXp = math.min(xp, gainedXP[skill]+xpAdd)
-						gainedXP[skill] = resultingXp
-						readXp[skill] = resultingXp
+							local resultingXp = math.min(xp, gainedXP[skill]+xpAdd)
+							gainedXP[skill] = resultingXp
+							readXp[skill] = resultingXp
+						end
 					end
 				end
 			end
@@ -175,6 +182,7 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 		local transcribeSpeed = SandboxVars.Character.TranscribeSpeed or 1
 		if xpDiff>0 or recipeDiff>0 then
 			o.maxTime = o.maxTime + (((xpDiff) + (math.floor(math.sqrt(recipeDiff)+0.5)*50)) / transcribeSpeed)
+			o.craftTimer = 0;
 		end
 	end
 
