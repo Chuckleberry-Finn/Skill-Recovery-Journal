@@ -1,4 +1,4 @@
-Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3.4-no-progress-SNAPSHOT"))
+Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3.3-no-progress-SNAPSHOT"))
 
 SRJ = {}
 

@@ -6,6 +6,6 @@ Sandbox_EN = {
 	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "A multiplier on the speed of transcribing journals."
 	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Skill Recovery Read Speed Multiplier",
 	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "A multiplier on the speed of reading bound journals.",
-	Sandbox_SkillRecoveryJournalUseProgress = "Use Progressbar",
-	Sandbox_SkillRecoveryJournalUseProgress_tooltip = "TODO"
+	Sandbox_SkillRecoveryJournalUseProgress = "Show Progressbar when transcribing.",
+	Sandbox_SkillRecoveryJournalUseProgress_tooltip = "If set to false, transcribing will simply stop when its finished and not show a progressbar."
 	}
