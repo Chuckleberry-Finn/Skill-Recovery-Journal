@@ -63,8 +63,6 @@ function ISCraftAction:update()
 							--debug_text = debug_text.." adding:"..xpAdd
 							self.changesMade = true
 
-							JMD["transcribedBefore"] = true
-
 							local resultingXp = math.min(xp, gainedXP[skill]+xpAdd)
 							gainedXP[skill] = resultingXp
 							readXp[skill] = resultingXp
