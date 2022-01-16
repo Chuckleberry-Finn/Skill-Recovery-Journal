@@ -1,19 +1,19 @@
 VERSION = 1,
 
-option Character.RecoveryPercentage
+option SkillRecoveryJournal.RecoveryPercentage
 {
 	type = integer, min = 1, max = 100, default = 100,
-	page = Character, translation = SkillRecoveryJournalPercentage,
+	page = SkillRecoveryJournal, translation = SkillRecoveryJournalPercentage,
 }
 
-option Character.TranscribeSpeed
+option SkillRecoveryJournal.TranscribeSpeed
 {
 	type = double, min = 0.001, max = 1000, default = 1,
-	page = Character, translation = SkillRecoveryJournalTranscribeSpeed,
+	page = SkillRecoveryJournal, translation = SkillRecoveryJournalTranscribeSpeed,
 }
 
-option Character.ReadTimeSpeed
+option SkillRecoveryJournal.ReadTimeSpeed
 {
 	type = double, min = 0.001, max = 1000, default = 1,
-	page = Character, translation = SkillRecoveryJournalReadTimeSpeed,
+	page = SkillRecoveryJournal, translation = SkillRecoveryJournalReadTimeSpeed,
 }

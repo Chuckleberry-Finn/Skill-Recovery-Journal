@@ -20,8 +20,7 @@ function ISReadABook:update()
 
 			local journalModData = journal:getModData()
 			local JMD = journalModData["SRJ"]
-			local gainedXp = false
-
+			local changesMade = false
 			local delayedStop = false
 			local sayText
 			local sayTextChoices = {"IGUI_PlayerText_DontUnderstand", "IGUI_PlayerText_TooComplicated", "IGUI_PlayerText_DontGet"}
@@ -46,86 +45,77 @@ function ISReadABook:update()
 
 			if not delayedStop then
 
-				local learnedRecipes = JMD["learnedRecipes"] or {}
-				for recipeID,_ in pairs(learnedRecipes) do
-					if not player:isRecipeKnown(recipeID) then
+				if (#self.learnedRecipes > 0) then
+					self.recipeIntervals = self.recipeIntervals+1
+					self.changesMade = true
+					if self.recipeIntervals > 5 then
+						local recipeID = self.learnedRecipes[#self.learnedRecipes]
 						player:learnRecipe(recipeID)
-						gainedXp = true
+						table.remove(self.learnedRecipes,#self.learnedRecipes)
+						self.recipeIntervals = 0
+						changesMade = true
 					end
 				end
 
-				local gainedXP = JMD["gainedXP"]
-				local maxXP = 0
+				local XpStoredInJournal = JMD["gainedXP"]
+				local greatestXp = 0
 
-				for skill,xp in pairs(gainedXP) do
+				for skill,xp in pairs(XpStoredInJournal) do
 					if skill and skill~="NONE" or skill~="MAX" then
-						if xp > maxXP then
-							maxXP = xp
+						if xp > greatestXp then
+							greatestXp = xp
 						end
 					else
-						gainedXP[skill] = nil
+						XpStoredInJournal[skill] = nil
 					end
 				end
 
-				local XpMultiplier = SandboxVars.XpMultiplier or 1
-				local xpRate = (maxXP/self.maxTime)/XpMultiplier
-
-				local minutesPerPage = 1
-				if isClient() then
-					minutesPerPage = getServerOptions():getFloat("MinutesPerPage") or 1
-				end
-				xpRate = xpRate / minutesPerPage
+				local xpRate = math.sqrt(greatestXp)/25
 
 				local pMD = player:getModData()
 				pMD.recoveryJournalXpLog = pMD.recoveryJournalXpLog or {}
 				local readXp = pMD.recoveryJournalXpLog
 
-				for skill,xp in pairs(gainedXP) do
+				for skill,xp in pairs(XpStoredInJournal) do
 
 				  readXp[skill] = readXp[skill] or 0
 				  local currentXP = readXp[skill]
 
 					if currentXP < xp then
-						local readTimeMulti = SandboxVars.Character.ReadTimeMulti or 1
-						local perkLevel = player:getPerkLevel(Perks[skill])+1
-						local perPerkXpRate = math.floor(((xpRate*math.sqrt(perkLevel))*1000)/1000) * readTimeMulti
-						if perkLevel == 11 then
-							perPerkXpRate=0
+						local readTimeMulti = SandboxVars.SkillRecoveryJournal.ReadTimeSpeed or 1
+						local perkLevelPlusOne = player:getPerkLevel(Perks[skill])+1
+						local perPerkXpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * readTimeMulti
+						if perkLevelPlusOne == 11 then
+							perPerkXpRate=false
 						end
 						--print ("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..perkLevel.."  xpStored:"..xp.."  currentXP:"..currentXP)
 						if currentXP+perPerkXpRate > xp then
-							perPerkXpRate = (xp-(currentXP-0.01))
+							perPerkXpRate = (xp-currentXP)
 							--print(" --xp overflowed, capped at:"..perPerkXpRate)
 						end
 
-						if perPerkXpRate>0 then
+						if perPerkXpRate~=false then
 							readXp[skill] = readXp[skill]+perPerkXpRate
 							player:getXp():AddXP(Perks[skill], perPerkXpRate, true, true, false, true)
-							gainedXp = true
+							changesMade = true
 							self:resetJobDelta()
 						end
 					end
 				end
 
-				if JMD and (not gainedXp) then
+				if JMD and (not changesMade) then
 					delayedStop = true
 					sayTextChoices = {"IGUI_PlayerText_KnowSkill","IGUI_PlayerText_BookObsolete"}
 					sayText = getText(sayTextChoices[ZombRand(#sayTextChoices)+1])
-					--else
-					--	self:resetJobDelta()
 				end
 			end
 
 			if delayedStop then
-				if self.pageTimer >= self.maxTime then
-					self.pageTimer = 0
-					self.maxTime = 0
-					self.readTimer = 0
-					if sayText then
-						player:Say(sayText, 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
-					end
-					self:forceStop()
+				if sayText and not self.spoke then
+					self.spoke = true
+					player:Say(sayText, 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 				end
+				updateInterval = self.maxTime
 			end
 		end
 	end
@@ -139,18 +129,24 @@ function ISReadABook:new(player, item, time)
 	if o and item:getType() == "SkillRecoveryJournal" then
 		o.loopedAction = false
 		o.useProgressBar = false
-		o.maxTime = 100
+		o.forceProgressBar = false
+		o.maxTime = 55
 		o.readTimer = 0
+
+		o.gainedRecipes = SRJ.getGainedRecipes(player)
 
 		local journalModData = item:getModData()
 		local JMD = journalModData["SRJ"]
-		if JMD then
-			local gainedXP = JMD["gainedXP"]
-			if gainedXP then
-				SRJ.CleanseFalseSkills(JMD["gainedXP"])
+
+		local learnedRecipes = JMD["learnedRecipes"]
+		o.learnedRecipes = {}
+		for recipeID,_ in pairs(learnedRecipes) do
+			if not player:isRecipeKnown(recipeID) then
+				table.insert(o.learnedRecipes, recipeID)
 			end
 		end
 
+		o.recipeIntervals = 0
 	end
 
 	return o

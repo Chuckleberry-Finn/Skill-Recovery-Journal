@@ -2,26 +2,49 @@ Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3.3-ingame-time-SNAPS
 
 SRJ = {}
 
-function SRJ.CleanseFalseSkills(gainedXP)
-	for skill,xp in pairs(gainedXP) do
+function SRJ.getGainedRecipes(player)
+	local gainedRecipes = {}
 
-		local perkList = PerkFactory.PerkList
-		local junk = true
+	---@type ArrayList
+	local knownRecipes = player:getKnownRecipes()
 
-		if xp>1 then
-			for i=0, perkList:size()-1 do
-				---@type PerkFactory.Perk
-				local perk = perkList:get(i)
-				if perk and tostring(perk:getType()) == skill then
-					junk = false
-				end
-			end
-		end
+	for i=0, knownRecipes:size()-1 do
+		local recipeID = knownRecipes:get(i)
+		gainedRecipes[recipeID] = true
+	end
 
-		if junk then
-			gainedXP[skill] = nil
+	---@type SurvivorDesc
+	local playerDesc = player:getDescriptor()
+
+	---@type TraitCollection
+	local playerTraits = player:getTraits()
+	for i=0, playerTraits:size()-1 do
+		local trait = playerTraits:get(i)
+		---@type TraitFactory.Trait
+		local traitTrait = TraitFactory.getTrait(trait)
+		local traitRecipes = traitTrait:getFreeRecipes()
+		for ii=0, traitRecipes:size()-1 do
+			local traitRecipe = traitRecipes:get(ii)
+			gainedRecipes[traitRecipe] = nil
 		end
 	end
+
+	---Profession
+	local playerProfessionID = playerDesc:getProfession()
+	local playerProfession = ProfessionFactory.getProfession(playerProfessionID)
+	local profFreeRecipes = playerProfession:getFreeRecipes()
+	for i=0, profFreeRecipes:size()-1 do
+		local profRecipe = profFreeRecipes:get(i)
+		gainedRecipes[profRecipe] = nil
+	end
+
+	---return iterable list
+	local returnedGainedRecipes = {}
+	for recipeID,_ in pairs(gainedRecipes) do
+		table.insert(returnedGainedRecipes, recipeID)
+	end
+
+	return returnedGainedRecipes
 end
 
 
@@ -55,7 +78,7 @@ function SRJ.calculateGainedSkills(player)
 				local perkType = tostring(perk:getType())
 
 				local bonusLevelsFromTrait = bonusLevels[perkType] or 0
-				local recoverableXPFactor = (SandboxVars.Character.RecoveryPercentage/100) or 1
+				local recoverableXPFactor = (SandboxVars.SkillRecoveryJournal.RecoveryPercentage/100) or 1
 
 				local recoverableXP = currentXP
 
@@ -75,9 +98,7 @@ function SRJ.calculateGainedSkills(player)
 		end
 	end
 
-	if not storingSkills then
-		return
+	if storingSkills then
+		return gainedXP
 	end
-
-	return gainedXP
 end

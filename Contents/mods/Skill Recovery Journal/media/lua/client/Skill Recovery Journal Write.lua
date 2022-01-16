@@ -10,6 +10,7 @@ function ISCraftAction:perform()
 				self.character:Say(getText("IGUI_PlayerText_NothingToAddToJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 			end
 		end
+		self.character:playSound("CloseBook")
 	end
 	SRJOVERWRITE_ISCraftAction_perform(self)
 end
@@ -20,60 +21,74 @@ function ISCraftAction:update()
 	SRJOVERWRITE_ISCraftAction_update(self)
 
 	if self.recipe and self.recipe:getOriginalname() == "Transcribe Journal" and self.item:getType() == "SkillRecoveryJournal" then
-		self.craftTimer = self.craftTimer + getGameTime():getMultiplier();
-		
-		-- normalize update time via in game time. Adjust updateInterval as needed
+		self.craftTimer = self.craftTimer + getGameTime():getMultiplier()
+
 		local updateInterval = 10
 		if self.craftTimer >= updateInterval then
 			self.craftTimer = 0
-			
+
+			self.changesMade = false
+
 			local journalModData = self.item:getModData()
 			journalModData["SRJ"] = journalModData["SRJ"] or {}
 			local JMD = journalModData["SRJ"]
 			local journalID = JMD["ID"]
 			local pSteamID = self.character:getSteamID()
 
-			local writing = true
-
+			local bOwner = true
 			if pSteamID ~= 0 and journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
-				writing = false
+				bOwner = false
 			end
 
-			local recoverableXP = SRJ.calculateGainedSkills(self.character)
-			if recoverableXP == nil then
-				writing = false
+			if bOwner and (#self.gainedRecipes > 0) then
+				self.recipeIntervals = self.recipeIntervals+1
+				self.changesMade = true
+				if self.recipeIntervals > 5 then
+					local recipeID = self.gainedRecipes[#self.gainedRecipes]
+					JMD["learnedRecipes"][recipeID] = true
+					table.remove(self.gainedRecipes,#self.gainedRecipes)
+					self.recipeIntervals = 0
+				end
 			end
 
-			JMD["gainedXP"] = JMD["gainedXP"] or {}
-			local gainedXP = JMD["gainedXP"]
-			--local debug_text = "ISCraftAction:update - "
+			local storedJournalXP = JMD["gainedXP"]
 
 			local pMD = self.character:getModData()
 			pMD.recoveryJournalXpLog = pMD.recoveryJournalXpLog or {}
 			local readXp = pMD.recoveryJournalXpLog
+			local recoverableXP = SRJ.calculateGainedSkills(self.character)
 
-			if writing and gainedXP then
+			if bOwner and storedJournalXP then
 				for skill,xp in pairs(recoverableXP) do
 					if xp > 0 then
-						--debug_text = debug_text.." xp:"..xp
-						gainedXP[skill] = gainedXP[skill] or 0
-						if xp > gainedXP[skill] then
-							local xpAdd = math.floor((xp/self.maxTime)*1000)/1000
-							print("TESTING: XP:"..xp.." gainedXP["..skill.."]:"..gainedXP[skill].." xpAdd:"..xpAdd)
-							--debug_text = debug_text.." adding:"..xpAdd
-							self.changesMade = true
+						storedJournalXP[skill] = storedJournalXP[skill] or 0
+						if xp > storedJournalXP[skill] then
 
-							local resultingXp = math.min(xp, gainedXP[skill]+xpAdd)
-							gainedXP[skill] = resultingXp
-							readXp[skill] = resultingXp
+							local transcribeTimeMulti = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 1
+							local perkLevelPlusOne = self.character:getPerkLevel(Perks[skill])+1
+
+							local xpRate = math.sqrt(xp)/25
+							xpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * transcribeTimeMulti
+
+							if xpRate>0 then
+								self.changesMade = true
+								local resultingXp = math.min(xp, storedJournalXP[skill]+xpRate)
+								--print("TESTING: "..skill.." recoverable:"..xp.." gained:"..storedJournalXP[skill].." +"..xpRate)
+								JMD["gainedXP"][skill] = resultingXp
+								readXp[skill] = resultingXp
+							end
 						end
 					end
 				end
 			end
+
+			if self.changesMade==true then
+				self:resetJobDelta()
+			end
 		end
-		--print(debug_text)
 	end
 end
+
 
 SRJOVERWRITE_ISCraftAction_new = ISCraftAction.new
 ---@param character IsoGameCharacter
@@ -82,8 +97,8 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 
 	if recipe and recipe:getOriginalname() == "Transcribe Journal" then
 
-		local oldJournal = item
-		local journalModData = oldJournal:getModData()
+		local journal = item
+		local journalModData = journal:getModData()
 		journalModData["SRJ"] = journalModData["SRJ"] or {}
 		local JMD = journalModData["SRJ"]
 
@@ -91,27 +106,27 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 		if character:getInventory():contains("Pencil") then
 			writingToolSound = "PencilWriteSounds"
 		end
-		o.craftSound = writingToolSound
+		o.craftSound = character:getEmitter():playSound(writingToolSound)
 
-		local knownRecipesCount = character:getKnownRecipes():size()
-		local storedRecipesCount = 0
-		local storedJournalXP
+		JMD["gainedXP"] = JMD["gainedXP"] or {}
+		JMD["learnedRecipes"] = JMD["learnedRecipes"] or {}
+		local learnedRecipes = JMD["learnedRecipes"]
 
-		if JMD then
-			if JMD["learnedRecipes"] then
-				storedRecipesCount = #JMD["learnedRecipes"]
+		local gainedRecipes = SRJ.getGainedRecipes(character)
+		o.gainedRecipes = {}
+		for _,recipeID in pairs(gainedRecipes) do
+			if learnedRecipes[recipeID] ~= true then
+				table.insert(o.gainedRecipes,recipeID)
 			end
-			storedJournalXP = JMD["gainedXP"]
 		end
 
-		local recipeDiff = math.max(0, knownRecipesCount-storedRecipesCount)
 		local gainedSkills = SRJ.calculateGainedSkills(character) or false
 		o.willWrite = true
 		local sayText
 
 		--print("gainedSkills: "..tostring(gainedSkills))
 
-		if not gainedSkills then
+		if not gainedSkills and (#o.gainedRecipes <= 0) then
 			sayText=getText("IGUI_PlayerText_DontHaveAnyXP"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default"
 			o.willWrite = false
 		else
@@ -145,43 +160,15 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 			character:Say(sayText)
 		end
 
-		local xpDiff = 0
 		if o.willWrite then
-
 			JMD["author"] = character:getFullName()
-
-			for i=1, Perks.getMaxIndex()-1 do
-				---@type PerkFactory.Perks
-				local perks = Perks.fromIndex(i)
-
-				if perks ~= Perks.Strength and perks ~= Perks.Fitness then
-
-					---@type IsoGameCharacter.PerkInfo
-					local perkInfo = character:getPerkInfo(perks)
-					if perkInfo then
-
-						local perk = PerkFactory.getPerk(perks)
-						local perkType = tostring(perk:getType())
-
-						local storedXPForPerk = 0
-						if storedJournalXP then
-							storedXPForPerk = storedJournalXP[perkType] or 0
-						end
-						local currentXP = 0
-						if gainedSkills then
-							currentXP = gainedSkills[perkType] or 0
-						end
-						--print("JOURNAL: xpDiff:"..(math.sqrt(math.max(0,currentXP-storedXPForPerk))*2).."  currentXP:"..currentXP.." storedXPForPerk:"..storedXPForPerk)
-						xpDiff = xpDiff + (math.sqrt(math.max(0,currentXP-storedXPForPerk))*100)
-					end
-				end
-			end
 		end
-		local transcribeSpeed = SandboxVars.Character.TranscribeSpeed or 1
-		if xpDiff>0 or recipeDiff>0 then
-			o.maxTime = o.maxTime + (((xpDiff) + (math.floor(math.sqrt(recipeDiff)+0.5)*50)) / transcribeSpeed)
-			o.craftTimer = 0;
-		end
+
+		o.craftTimer = 0
+		o.recipeIntervals = 0
+		o.useProgressBar = false
+		o.forceProgressBar = false
+		o.loopedAction = false
 	end
 
 	return o
@@ -195,75 +182,4 @@ function SRJ.writingJournal(recipe, player, item)
 		return true
 	end
 	return false
-end
-
----@param recipe InventoryItem | Literature
----@param player IsoGameCharacter | IsoPlayer
-function SRJ.writtenJournal(recipe, result, player)
-
-	if not player then
-		return
-	end
-
-	---@type InventoryItem | Literature
-	local oldJournal
-	if recipe then
-		for i=0, recipe:size()-1 do
-			local item = recipe:get(i)
-			if (item:getType() == "SkillRecoveryJournal") then
-				oldJournal = recipe:get(i)
-			end
-		end
-	end
-
-	---@type InventoryItem | Literature
-	local journal = oldJournal
-	if not journal then
-		return
-	end
-	local journalModData = journal:getModData()
-	journalModData["SRJ"] = journalModData["SRJ"] or {}
-	local JMD = journalModData["SRJ"]
-
-	JMD["learnedRecipes"] = JMD["learnedRecipes"] or {}
-	local learnedRecipes = JMD["learnedRecipes"]
-	---@type ArrayList
-	local knownRecipes = player:getKnownRecipes()
-	local gainedRecipes = {}
-	for i=0, knownRecipes:size()-1 do
-		local recipeID = knownRecipes:get(i)
-		gainedRecipes[recipeID] = true
-	end
-
-	---@type SurvivorDesc
-	local playerDesc = player:getDescriptor()
-	local playerProfessionID = playerDesc:getProfession()
-	local playerProfession = ProfessionFactory.getProfession(playerProfessionID)
-
-	---@type TraitCollection
-	local playerTraits = player:getTraits()
-	for i=0, playerTraits:size()-1 do
-		local trait = playerTraits:get(i)
-		---@type TraitFactory.Trait
-		local traitTrait = TraitFactory.getTrait(trait)
-		local traitRecipes = traitTrait:getFreeRecipes()
-		for ii=0, traitRecipes:size()-1 do
-			local traitRecipe = traitRecipes:get(ii)
-			gainedRecipes[traitRecipe] = nil
-		end
-	end
-
-	local profFreeRecipes = playerProfession:getFreeRecipes()
-	for i=0, profFreeRecipes:size()-1 do
-		local profRecipe = profFreeRecipes:get(i)
-		gainedRecipes[profRecipe] = nil
-	end
-
-	for recipeID,v in pairs(gainedRecipes) do
-		--print("-storing recipe: "..recipeID)
-		if learnedRecipes[recipeID]~= true then
-			learnedRecipes[recipeID] = true
-		end
-	end
-	--ISTimedActionQueue.clear(player)
 end

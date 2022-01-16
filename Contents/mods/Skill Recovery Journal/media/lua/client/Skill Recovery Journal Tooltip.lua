@@ -19,15 +19,13 @@ function SRJ.generateTooltip(journal, player)
 	local gainedXP = JMD["gainedXP"]
 	if not gainedXP then
 		return blankJournalTooltip
-	else
-		SRJ.CleanseFalseSkills(JMD["gainedXP"])
 	end
 
 	local skillsRecord = ""
 	for skill,xp in pairs(gainedXP) do
 		local perk = PerkFactory.getPerk(Perks[skill])
 		local perkName = perk:getName()
-		local xpBasedOnPlayer = xp
+		local xpBasedOnPlayer = math.floor(xp*1000)/1000
 		skillsRecord = skillsRecord..perkName.." ("..xpBasedOnPlayer.." xp)".."\n"
 	end
 
@@ -52,8 +50,8 @@ end
 
 ISToolTipInv_setItem = ISToolTipInv.setItem
 function ISToolTipInv:setItem(item)
+	ISToolTipInv_setItem(self, item)
 	if item:getType() == "SkillRecoveryJournal" then
 		item:setTooltip(SRJ.generateTooltip(item, self.tooltip:getCharacter()))
 	end
-	ISToolTipInv_setItem(self, item)
 end
