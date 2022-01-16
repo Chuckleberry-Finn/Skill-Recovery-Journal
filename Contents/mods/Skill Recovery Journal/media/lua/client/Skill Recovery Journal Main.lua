@@ -22,20 +22,24 @@ function SRJ.getGainedRecipes(player)
 		local trait = playerTraits:get(i)
 		---@type TraitFactory.Trait
 		local traitTrait = TraitFactory.getTrait(trait)
-		local traitRecipes = traitTrait:getFreeRecipes()
-		for ii=0, traitRecipes:size()-1 do
-			local traitRecipe = traitRecipes:get(ii)
-			gainedRecipes[traitRecipe] = nil
+		if traitTrait then
+			local traitRecipes = traitTrait:getFreeRecipes()
+			for ii=0, traitRecipes:size()-1 do
+				local traitRecipe = traitRecipes:get(ii)
+				gainedRecipes[traitRecipe] = nil
+			end
 		end
 	end
 
 	---Profession
 	local playerProfessionID = playerDesc:getProfession()
 	local playerProfession = ProfessionFactory.getProfession(playerProfessionID)
-	local profFreeRecipes = playerProfession:getFreeRecipes()
-	for i=0, profFreeRecipes:size()-1 do
-		local profRecipe = profFreeRecipes:get(i)
-		gainedRecipes[profRecipe] = nil
+	if playerProfession then
+		local profFreeRecipes = playerProfession:getFreeRecipes()
+		for i=0, profFreeRecipes:size()-1 do
+			local profRecipe = profFreeRecipes:get(i)
+			gainedRecipes[profRecipe] = nil
+		end
 	end
 
 	---return iterable list
