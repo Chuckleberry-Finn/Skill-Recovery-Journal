@@ -3,7 +3,6 @@ module
 
     sound PencilWriteSounds
     {
-        loop = true,
         clip { file = media/sound/Pencil1.ogg, }
         clip { file = media/sound/Pencil2.ogg, }
         clip { file = media/sound/Pencil3.ogg, }
@@ -14,7 +13,6 @@ module
 
 	sound PenWriteSounds
     {
-        loop = true,
         clip { file = media/sound/Pen1.ogg, }
         clip { file = media/sound/Pen2.ogg, }
         clip { file = media/sound/Pen3.ogg, }

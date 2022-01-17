@@ -9,7 +9,7 @@ function ISReadABook:update()
 
 	if journal:getType() == "SkillRecoveryJournal" then
 		self.readTimer = self.readTimer + getGameTime():getMultiplier();
-
+		self.item:setJobDelta(0.0)
 		-- normalize update time via in game time. Adjust updateInterval as needed
 		local updateInterval = 10
 		if self.readTimer >= updateInterval then

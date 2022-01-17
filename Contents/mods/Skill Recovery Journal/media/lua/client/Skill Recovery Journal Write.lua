@@ -2,6 +2,7 @@ require "TimedActions/ISCraftAction"
 
 SRJOVERWRITE_ISCraftAction_perform = ISCraftAction.perform
 function ISCraftAction:perform()
+	SRJOVERWRITE_ISCraftAction_perform(self)
 	if self.recipe and self.recipe:getOriginalname() == "Transcribe Journal" and self.item:getType() == "SkillRecoveryJournal" then
 		if self.willWrite==true and (not self.character:HasTrait("Illiterate")) then
 			if self.changesMade and self.changesMade==true then
@@ -12,7 +13,6 @@ function ISCraftAction:perform()
 		end
 		self.character:playSound("CloseBook")
 	end
-	SRJOVERWRITE_ISCraftAction_perform(self)
 end
 
 
@@ -22,12 +22,12 @@ function ISCraftAction:update()
 
 	if self.recipe and self.recipe:getOriginalname() == "Transcribe Journal" and self.item:getType() == "SkillRecoveryJournal" then
 		self.craftTimer = self.craftTimer + getGameTime():getMultiplier()
-
+		self.item:setJobDelta(0.0)
 		local updateInterval = 10
 		if self.craftTimer >= updateInterval then
 			self.craftTimer = 0
-
 			self.changesMade = false
+			self.character:playSound(self.writingToolSound)
 
 			local journalModData = self.item:getModData()
 			journalModData["SRJ"] = journalModData["SRJ"] or {}
@@ -43,6 +43,7 @@ function ISCraftAction:update()
 			if bOwner and (#self.gainedRecipes > 0) then
 				self.recipeIntervals = self.recipeIntervals+1
 				self.changesMade = true
+
 				if self.recipeIntervals > 5 then
 					local recipeID = self.gainedRecipes[#self.gainedRecipes]
 					JMD["learnedRecipes"][recipeID] = true
@@ -76,6 +77,7 @@ function ISCraftAction:update()
 								--print("TESTING: "..skill.." recoverable:"..xp.." gained:"..storedJournalXP[skill].." +"..xpRate)
 								JMD["gainedXP"][skill] = resultingXp
 								readXp[skill] = resultingXp
+
 							end
 						end
 					end
@@ -102,11 +104,11 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 		journalModData["SRJ"] = journalModData["SRJ"] or {}
 		local JMD = journalModData["SRJ"]
 
-		local writingToolSound = "PenWriteSounds"
+		o.writingToolSound = "PenWriteSounds"
 		if character:getInventory():contains("Pencil") then
-			writingToolSound = "PencilWriteSounds"
+			o.writingToolSound = "PencilWriteSounds"
 		end
-		o.craftSound = character:getEmitter():playSound(writingToolSound)
+
 
 		JMD["gainedXP"] = JMD["gainedXP"] or {}
 		JMD["learnedRecipes"] = JMD["learnedRecipes"] or {}
