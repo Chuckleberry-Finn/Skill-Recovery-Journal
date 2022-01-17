@@ -11,8 +11,29 @@ function SRJ.addRenameContext(player, context, items)
 		end
 
 		if item:getType() == "SkillRecoveryJournal" then
-			context:addOption(getText("Rename"), item, SRJ.onRenameJournal, player)
-			break
+
+			local addOption = true
+			if player and player.getSteamID then
+				local journalModData = item:getModData()
+				local JMD = journalModData["SRJ"]
+				local pSteamID = player:getSteamID()
+				if (not JMD) then
+					addOption = false
+				elseif player:HasTrait("Illiterate") then
+					addOption = false
+				elseif pSteamID ~= 0 then
+					JMD["ID"] = JMD["ID"] or {}
+					local journalID = JMD["ID"]
+					if journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
+						addOption = false
+					end
+				end
+			end
+
+			if addOption then
+				context:addOption(getText("Rename"), item, SRJ.onRenameJournal, player)
+				break
+			end
 		end
 	end
 end
