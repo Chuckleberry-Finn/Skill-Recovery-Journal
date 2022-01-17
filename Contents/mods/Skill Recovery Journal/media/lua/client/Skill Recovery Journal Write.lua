@@ -27,7 +27,14 @@ function ISCraftAction:update()
 		if self.craftTimer >= updateInterval then
 			self.craftTimer = 0
 			self.changesMade = false
-			self.character:playSound(self.writingToolSound)
+
+			self.playSoundLater = self.playSoundLater or 0
+			if self.playSoundLater > 0 then
+				self.playSoundLater = self.playSoundLater-1
+			else
+				self.playSoundLater = ZombRand(1,4)
+				self.character:playSound(self.writingToolSound)
+			end
 
 			local journalModData = self.item:getModData()
 			journalModData["SRJ"] = journalModData["SRJ"] or {}
