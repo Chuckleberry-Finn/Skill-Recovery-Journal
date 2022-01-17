@@ -58,7 +58,7 @@ function ISCraftAction:update()
 			local readXp = pMD.recoveryJournalXpLog
 			local recoverableXP = SRJ.calculateGainedSkills(self.character)
 
-			if bOwner and storedJournalXP then
+			if bOwner and storedJournalXP and recoverableXP then
 				for skill,xp in pairs(recoverableXP) do
 					if xp > 0 then
 						storedJournalXP[skill] = storedJournalXP[skill] or 0
@@ -167,7 +167,6 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 		o.craftTimer = 0
 		o.recipeIntervals = 0
 		o.useProgressBar = false
-		o.forceProgressBar = false
 		o.loopedAction = false
 	end
 

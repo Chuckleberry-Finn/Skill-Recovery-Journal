@@ -129,7 +129,6 @@ function ISReadABook:new(player, item, time)
 	if o and item:getType() == "SkillRecoveryJournal" then
 		o.loopedAction = false
 		o.useProgressBar = false
-		o.forceProgressBar = false
 		o.maxTime = 55
 		o.readTimer = 0
 
