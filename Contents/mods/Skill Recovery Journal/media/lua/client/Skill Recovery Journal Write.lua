@@ -32,7 +32,7 @@ function ISCraftAction:update()
 			if self.playSoundLater > 0 then
 				self.playSoundLater = self.playSoundLater-1
 			else
-				self.playSoundLater = ZombRand(1,4)
+				self.playSoundLater = (ZombRand(2,6) + getGameTime():getMultiplier())
 				self.character:playSound(self.writingToolSound)
 			end
 
