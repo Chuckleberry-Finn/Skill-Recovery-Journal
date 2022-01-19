@@ -52,9 +52,12 @@ function ISCraftAction:update()
 				self.changesMade = true
 
 				if self.recipeIntervals > 5 then
-					local recipeID = self.gainedRecipes[#self.gainedRecipes]
-					JMD["learnedRecipes"][recipeID] = true
-					table.remove(self.gainedRecipes,#self.gainedRecipes)
+					local recipeChunk = math.floor(1.09^math.sqrt(#self.gainedRecipes))
+					for i=0, recipeChunk do
+						local recipeID = self.gainedRecipes[#self.gainedRecipes]
+						JMD["learnedRecipes"][recipeID] = true
+						table.remove(self.gainedRecipes,#self.gainedRecipes)
+					end
 					self.recipeIntervals = 0
 				end
 			end
