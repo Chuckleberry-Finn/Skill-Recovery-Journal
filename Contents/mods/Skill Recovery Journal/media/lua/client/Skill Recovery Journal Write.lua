@@ -28,14 +28,6 @@ function ISCraftAction:update()
 			self.craftTimer = 0
 			self.changesMade = false
 
-			self.playSoundLater = self.playSoundLater or 0
-			if self.playSoundLater > 0 then
-				self.playSoundLater = self.playSoundLater-1
-			else
-				self.playSoundLater = (ZombRand(2,6) + getGameTime():getMultiplier())
-				self.character:playSound(self.writingToolSound)
-			end
-
 			local journalModData = self.item:getModData()
 			journalModData["SRJ"] = journalModData["SRJ"] or {}
 			local JMD = journalModData["SRJ"]
@@ -95,6 +87,15 @@ function ISCraftAction:update()
 			end
 
 			if self.changesMade==true then
+
+				self.playSoundLater = self.playSoundLater or 0
+				if self.playSoundLater > 0 then
+					self.playSoundLater = self.playSoundLater-1
+				else
+					self.playSoundLater = (ZombRand(2,6) + getGameTime():getMultiplier())
+					self.character:playSound(self.writingToolSound)
+				end
+				
 				self:resetJobDelta()
 			end
 		end
