@@ -126,9 +126,8 @@ function SRJ.calculateGainedSkills(player)
 					recoverableXP = 0
 				end
 
-				print("  "..i.." "..perkType.." = "..tostring(recoverableXP).."xp  (current:"..currentXP.." - "..perk:getTotalXpForLevel(bonusLevels))
-
 				if recoverableXP > 0 then
+					print(" - "..perkType.." = "..tostring(recoverableXP).."xp  current:"..currentXP.." - "..perk:getTotalXpForLevel(bonusLevels))
 					gainedXP[perkType] = recoverableXP
 					storingSkills = true
 				end
