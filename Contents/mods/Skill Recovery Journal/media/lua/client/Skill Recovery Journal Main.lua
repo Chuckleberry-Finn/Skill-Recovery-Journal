@@ -110,7 +110,7 @@ function SRJ.calculateGainedSkills(player)
 	local gainedXP = {}
 	local storingSkills = false
 
-	print("INFO: SkillRecoveryJournal: calculating gained skills:  total skills: "..Perks.getMaxIndex())
+	--print("INFO: SkillRecoveryJournal: calculating gained skills:  total skills: "..Perks.getMaxIndex())
 	for i=1, Perks.getMaxIndex()-1 do
 		---@type PerkFactory.Perks
 		local perks = Perks.fromIndex(i)
