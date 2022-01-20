@@ -52,25 +52,63 @@ function SRJ.getGainedRecipes(player)
 end
 
 
----@param player IsoGameCharacter
-function SRJ.calculateGainedSkills(player)
-
+function SRJ.getFreeLevelsFromProfession(player)
 	local bonusLevels = {}
 
-	---@type SurvivorDesc
 	local playerDesc = player:getDescriptor()
-	local descXpMap = transformIntoKahluaTable(playerDesc:getXPBoostMap())
+	local playerProfessionID = playerDesc:getProfession()
+	local playerProfession = ProfessionFactory.getProfession(playerProfessionID)
+
+	local descXpMap = transformIntoKahluaTable(playerProfession:getXPBoostMap())
 
 	for perk,level in pairs(descXpMap) do
 		local perky = tostring(perk)
-		local levely = tonumber(tostring(level))
-		bonusLevels[perky] = levely
+		if perky ~= "Strength" and perky ~= "Fitness" then
+			local levely = tonumber(tostring(level))
+			bonusLevels[perky] = levely
+		end
 	end
+
+	return bonusLevels
+end
+
+
+function SRJ.getFreeLevelsFromTraits(player)
+	local bonusLevels = {}
+
+	local playerTraits = player:getTraits()
+	for i=0, playerTraits:size()-1 do
+		local trait = playerTraits:get(i)
+		---@type TraitFactory.Trait
+		local traitTrait = TraitFactory.getTrait(trait)
+		local traitXpMap = transformIntoKahluaTable(traitTrait:getXPBoostMap())
+
+		for perk,level in pairs(traitXpMap) do
+			local perky = tostring(perk)
+			if perky ~= "Strength" and perky ~= "Fitness" then
+				local levely = tonumber(tostring(level))
+				bonusLevels[perky] = (bonusLevels[perky] or 0) + levely
+			end
+		end
+	end
+
+	return bonusLevels
+end
+
+
+---@param player IsoGameCharacter
+function SRJ.calculateGainedSkills(player)
+
+	-- calc professtion skills
+	local bonusSkillLevels = SRJ.getFreeLevelsFromProfession(player)
+
+	--calc trait skills
+	local bonusTraitLevels = SRJ.getFreeLevelsFromTraits(player)
 
 	local gainedXP = {}
 	local storingSkills = false
 
-	--print("INFO: SkillRecoveryJournal: calculating gained skills:  total skills: "..Perks.getMaxIndex())
+	print("INFO: SkillRecoveryJournal: calculating gained skills:  total skills: "..Perks.getMaxIndex())
 	for i=1, Perks.getMaxIndex()-1 do
 		---@type PerkFactory.Perks
 		local perks = Perks.fromIndex(i)
@@ -80,29 +118,27 @@ function SRJ.calculateGainedSkills(player)
 			if perk then
 				local currentXP = player:getXp():getXP(perk)
 				local perkType = tostring(perk:getType())
-
-				local bonusLevelsFromTrait = bonusLevels[perkType] or 0
+				local bonusLevels = (bonusSkillLevels[perkType] or 0) + (bonusTraitLevels[perkType] or 0)
 				local recoverableXPFactor = (SandboxVars.SkillRecoveryJournal.RecoveryPercentage/100) or 1
 
-				local recoverableXP = currentXP
-
-				recoverableXP = math.floor(((recoverableXP-perk:getTotalXpForLevel(bonusLevelsFromTrait))*recoverableXPFactor)*1000)/1000
+				local recoverableXP = math.floor(((currentXP-perk:getTotalXpForLevel(bonusLevels))*recoverableXPFactor)*1000)/1000
 				if perkType == "Strength" or perkType == "Fitness" or recoverableXP==1 then
 					recoverableXP = 0
 				end
 
-				--print("  "..i.." "..perkType.." = "..tostring(recoverableXP).."xp  (current:"..currentXP.." - "..perk:getTotalXpForLevel(bonusLevelsFromTrait))
+				print("  "..i.." "..perkType.." = "..tostring(recoverableXP).."xp  (current:"..currentXP.." - "..perk:getTotalXpForLevel(bonusLevels))
 
 				if recoverableXP > 0 then
 					gainedXP[perkType] = recoverableXP
 					storingSkills = true
 				end
-				--end
 			end
 		end
 	end
 
-	if storingSkills then
-		return gainedXP
+	if not storingSkills then
+		return
 	end
+
+	return gainedXP
 end
