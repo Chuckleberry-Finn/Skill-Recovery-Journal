@@ -90,7 +90,7 @@ function ISReadABook:update()
 						end
 						--print ("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..perkLevel.."  xpStored:"..xp.."  currentXP:"..currentXP)
 						if currentXP+perPerkXpRate > xp then
-							perPerkXpRate = (xp-currentXP)
+							perPerkXpRate = (xp-(currentXP-0.001))
 							--print(" --xp overflowed, capped at:"..perPerkXpRate)
 						end
 
