@@ -49,11 +49,13 @@ function ISReadABook:update()
 					self.recipeIntervals = self.recipeIntervals+1
 					self.changesMade = true
 					if self.recipeIntervals > 5 then
-						local recipeID = self.learnedRecipes[#self.learnedRecipes]
-						player:learnRecipe(recipeID)
-						table.remove(self.learnedRecipes,#self.learnedRecipes)
+						local recipeChunk = math.min(#self.learnedRecipes, math.floor(1.09^math.sqrt(#self.learnedRecipes)))
+						for i=0, recipeChunk do
+							local recipeID = self.learnedRecipes[#self.learnedRecipes]
+							player:learnRecipe(recipeID)
+							table.remove(self.learnedRecipes,#self.learnedRecipes)
+						end
 						self.recipeIntervals = 0
-						changesMade = true
 					end
 				end
 

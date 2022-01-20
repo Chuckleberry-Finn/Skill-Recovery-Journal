@@ -44,7 +44,7 @@ function ISCraftAction:update()
 				self.changesMade = true
 
 				if self.recipeIntervals > 5 then
-					local recipeChunk = math.floor(1.09^math.sqrt(#self.gainedRecipes))
+					local recipeChunk = math.min(#self.gainedRecipes, math.floor(1.09^math.sqrt(#self.gainedRecipes)))
 					for i=0, recipeChunk do
 						local recipeID = self.gainedRecipes[#self.gainedRecipes]
 						JMD["learnedRecipes"][recipeID] = true
