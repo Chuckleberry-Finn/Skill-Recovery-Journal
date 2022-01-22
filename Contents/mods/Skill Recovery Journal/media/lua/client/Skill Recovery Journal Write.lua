@@ -28,6 +28,8 @@ function ISCraftAction:update()
 			self.craftTimer = 0
 			self.changesMade = false
 
+			local changesBeingMade = {}
+
 			local journalModData = self.item:getModData()
 			journalModData["SRJ"] = journalModData["SRJ"] or {}
 			local JMD = journalModData["SRJ"]
@@ -45,6 +47,7 @@ function ISCraftAction:update()
 
 				if self.recipeIntervals > 5 then
 					local recipeChunk = math.min(#self.gainedRecipes, math.floor(1.09^math.sqrt(#self.gainedRecipes)))
+					table.insert(changesBeingMade, recipeChunk.." recipes")
 					for i=0, recipeChunk do
 						local recipeID = self.gainedRecipes[#self.gainedRecipes]
 						JMD["learnedRecipes"][recipeID] = true
@@ -75,6 +78,7 @@ function ISCraftAction:update()
 
 							if xpRate>0 then
 								self.changesMade = true
+								table.insert(changesBeingMade, skill)
 								local resultingXp = math.min(xp, storedJournalXP[skill]+xpRate)
 								--print("TESTING: "..skill.." recoverable:"..xp.." gained:"..storedJournalXP[skill].." +"..xpRate)
 								JMD["gainedXP"][skill] = resultingXp
@@ -87,6 +91,18 @@ function ISCraftAction:update()
 			end
 
 			if self.changesMade==true then
+
+				local changesBeingMadeText = ""
+				for k,v in pairs(changesBeingMade) do
+					changesBeingMadeText = changesBeingMadeText.." "..v
+					if k~=#changesBeingMade then
+						changesBeingMadeText = changesBeingMadeText..", "
+					end
+				end
+				if #changesBeingMade>0 then
+					changesBeingMadeText = "Transcribing: "..changesBeingMadeText
+				end
+				HaloTextHelper.addText(self.character, changesBeingMadeText, HaloTextHelper.getColorWhite())
 
 				self.playSoundLater = self.playSoundLater or 0
 				if self.playSoundLater > 0 then
