@@ -135,19 +135,22 @@ function ISReadABook:new(player, item, time)
 		o.readTimer = 0
 
 		o.gainedRecipes = SRJ.getGainedRecipes(player)
-
+		o.learnedRecipes = {}
+		o.recipeIntervals = 0
+		
 		local journalModData = item:getModData()
 		local JMD = journalModData["SRJ"]
-
-		local learnedRecipes = JMD["learnedRecipes"]
-		o.learnedRecipes = {}
-		for recipeID,_ in pairs(learnedRecipes) do
-			if not player:isRecipeKnown(recipeID) then
-				table.insert(o.learnedRecipes, recipeID)
+		if JMD then
+			local learnedRecipes = JMD["learnedRecipes"]
+			if learnedRecipes then
+				for recipeID,_ in pairs(learnedRecipes) do
+					if not player:isRecipeKnown(recipeID) then
+						table.insert(o.learnedRecipes, recipeID)
+					end
+				end
 			end
 		end
 
-		o.recipeIntervals = 0
 	end
 
 	return o
