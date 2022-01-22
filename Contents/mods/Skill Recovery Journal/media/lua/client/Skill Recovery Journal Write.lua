@@ -47,7 +47,13 @@ function ISCraftAction:update()
 
 				if self.recipeIntervals > 5 then
 					local recipeChunk = math.min(#self.gainedRecipes, math.floor(1.09^math.sqrt(#self.gainedRecipes)))
-					table.insert(changesBeingMade, recipeChunk.." recipes")
+
+					local properPlural = getText("IGUI_Tooltip_Recipe")
+					if recipeChunk>1 then
+						properPlural = getText("IGUI_Tooltip_Recipes")
+					end
+					table.insert(changesBeingMade, recipeChunk.." "..properPlural)
+
 					for i=0, recipeChunk do
 						local recipeID = self.gainedRecipes[#self.gainedRecipes]
 						JMD["learnedRecipes"][recipeID] = true
@@ -78,7 +84,7 @@ function ISCraftAction:update()
 
 							if xpRate>0 then
 								self.changesMade = true
-								table.insert(changesBeingMade, skill)
+								table.insert(changesBeingMade, getText("IGUI_perks_"..skill))
 								local resultingXp = math.min(xp, storedJournalXP[skill]+xpRate)
 								--print("TESTING: "..skill.." recoverable:"..xp.." gained:"..storedJournalXP[skill].." +"..xpRate)
 								JMD["gainedXP"][skill] = resultingXp
@@ -100,7 +106,7 @@ function ISCraftAction:update()
 					end
 				end
 				if #changesBeingMade>0 then
-					changesBeingMadeText = "Transcribing: "..changesBeingMadeText
+					changesBeingMadeText = getText("IGUI_Tooltip_Transcribing")..": "..changesBeingMadeText
 				end
 				HaloTextHelper.addText(self.character, changesBeingMadeText, HaloTextHelper.getColorWhite())
 
