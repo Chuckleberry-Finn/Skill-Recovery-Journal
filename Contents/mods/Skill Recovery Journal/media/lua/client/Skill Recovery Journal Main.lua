@@ -63,10 +63,8 @@ function SRJ.getFreeLevelsFromProfession(player)
 	if descXpMap then
 		for perk,level in pairs(descXpMap) do
 			local perky = tostring(perk)
-			if perky ~= "Strength" and perky ~= "Fitness" then
-				local levely = tonumber(tostring(level))
-				bonusLevels[perky] = levely
-			end
+			local levely = tonumber(tostring(level))
+			bonusLevels[perky] = levely
 		end
 	end
 
@@ -86,10 +84,8 @@ function SRJ.getFreeLevelsFromTraits(player)
 		if traitXpMap then
 			for perk,level in pairs(traitXpMap) do
 				local perky = tostring(perk)
-				if perky ~= "Strength" and perky ~= "Fitness" then
-					local levely = tonumber(tostring(level))
-					bonusLevels[perky] = (bonusLevels[perky] or 0) + levely
-				end
+				local levely = tonumber(tostring(level))
+				bonusLevels[perky] = (bonusLevels[perky] or 0) + levely
 			end
 		end
 	end
@@ -124,11 +120,11 @@ function SRJ.calculateGainedSkills(player)
 				local recoverableXPFactor = (SandboxVars.SkillRecoveryJournal.RecoveryPercentage/100) or 1
 
 				local recoverableXP = math.floor(((currentXP-perk:getTotalXpForLevel(bonusLevels))*recoverableXPFactor)*1000)/1000
-				if perkType == "Strength" or perkType == "Fitness" or recoverableXP==1 then
+				if perk:isPassiv() or perkType == "Strength" or perkType == "Fitness" or perkType == "Reading" or recoverableXP==1 then
 					recoverableXP = 0
 				end
 
-				if recoverableXP > 0 then
+				if recoverableXP > 0.001 then
 					print(" - "..perkType.." = "..tostring(recoverableXP).."xp  current:"..currentXP.." - "..perk:getTotalXpForLevel(bonusLevels))
 					gainedXP[perkType] = recoverableXP
 					storingSkills = true
