@@ -1,4 +1,4 @@
-Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3.4-BetterLiteracyPatch"))
+Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3.4-BetterLiteracyPatch+HaloTranscribe"))
 
 SRJ = {}
 
