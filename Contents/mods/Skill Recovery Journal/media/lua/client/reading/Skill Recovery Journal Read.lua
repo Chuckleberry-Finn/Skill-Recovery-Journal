@@ -2,12 +2,13 @@ require "TimedActions/ISReadABook"
 
 SRJOVERWRITE_ISReadABook_update = ISReadABook.update
 function ISReadABook:update()
-	SRJOVERWRITE_ISReadABook_update(self)
 
 	---@type Literature
 	local journal = self.item
 
-	if journal:getType() == "SkillRecoveryJournal" then
+	if journal:getType() ~= "SkillRecoveryJournal" then
+		SRJOVERWRITE_ISReadABook_update(self)
+	else
 		self.readTimer = self.readTimer + getGameTime():getMultiplier();
 		self.item:setJobDelta(0.0)
 		-- normalize update time via in game time. Adjust updateInterval as needed
