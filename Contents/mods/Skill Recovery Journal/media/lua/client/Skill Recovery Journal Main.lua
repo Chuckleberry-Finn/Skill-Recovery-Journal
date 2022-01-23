@@ -58,13 +58,14 @@ function SRJ.getFreeLevelsFromProfession(player)
 	local playerDesc = player:getDescriptor()
 	local playerProfessionID = playerDesc:getProfession()
 	local playerProfession = ProfessionFactory.getProfession(playerProfessionID)
-
-	local descXpMap = transformIntoKahluaTable(playerProfession:getXPBoostMap())
-	if descXpMap then
-		for perk,level in pairs(descXpMap) do
-			local perky = tostring(perk)
-			local levely = tonumber(tostring(level))
-			bonusLevels[perky] = levely
+	if playerProfession then
+		local descXpMap = transformIntoKahluaTable(playerProfession:getXPBoostMap())
+		if descXpMap then
+			for perk,level in pairs(descXpMap) do
+				local perky = tostring(perk)
+				local levely = tonumber(tostring(level))
+				bonusLevels[perky] = levely
+			end
 		end
 	end
 
@@ -80,12 +81,14 @@ function SRJ.getFreeLevelsFromTraits(player)
 		local trait = playerTraits:get(i)
 		---@type TraitFactory.Trait
 		local traitTrait = TraitFactory.getTrait(trait)
-		local traitXpMap = transformIntoKahluaTable(traitTrait:getXPBoostMap())
-		if traitXpMap then
-			for perk,level in pairs(traitXpMap) do
-				local perky = tostring(perk)
-				local levely = tonumber(tostring(level))
-				bonusLevels[perky] = (bonusLevels[perky] or 0) + levely
+		if traitTrait then
+			local traitXpMap = transformIntoKahluaTable(traitTrait:getXPBoostMap())
+			if traitXpMap then
+				for perk,level in pairs(traitXpMap) do
+					local perky = tostring(perk)
+					local levely = tonumber(tostring(level))
+					bonusLevels[perky] = (bonusLevels[perky] or 0) + levely
+				end
 			end
 		end
 	end
