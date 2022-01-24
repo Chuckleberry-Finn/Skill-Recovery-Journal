@@ -122,13 +122,21 @@ function SRJ.calculateGainedSkills(player)
 				local bonusLevels = (bonusProfessionLevels[perkType] or 0) + (bonusTraitLevels[perkType] or 0)
 				local recoverableXPFactor = (SandboxVars.SkillRecoveryJournal.RecoveryPercentage/100) or 1
 
+				if perk:isPassiv() and tostring(perk:getParent():getType())~="None" then
+					local pMD = player:getModData()
+					if pMD.recoveryJournalPassiveSkillsInit then
+						bonusLevels = pMD.recoveryJournalPassiveSkillsInit[perkType] or 0
+					end
+				end
+
 				local recoverableXP = math.floor(((currentXP-perk:getTotalXpForLevel(bonusLevels))*recoverableXPFactor)*1000)/1000
-				if perk:isPassiv() or perkType == "Strength" or perkType == "Fitness" or perkType == "Reading" or recoverableXP==1 then
+
+				if perk:isPassiv() and (SandboxVars.SkillRecoveryJournal.RecoverPassiveSkills == false) then
 					recoverableXP = 0
 				end
 
 				if recoverableXP > 0 then
-					--print(" - "..perkType.." = "..tostring(recoverableXP).."xp  current:"..currentXP.." - "..perk:getTotalXpForLevel(bonusLevels))
+					--[DEBUG]] print(" - "..perkType.." = "..tostring(recoverableXP).."xp  current:"..currentXP.." - "..bonusLevels.." ("..perk:getTotalXpForLevel(bonusLevels).."xp)")
 					gainedXP[perkType] = recoverableXP
 					storingSkills = true
 				end

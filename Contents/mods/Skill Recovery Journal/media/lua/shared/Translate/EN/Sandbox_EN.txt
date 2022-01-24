@@ -6,4 +6,6 @@ Sandbox_EN = {
 	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "A multiplier on the speed of transcribing journals."
 	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Skill Recovery Read Speed Multiplier",
 	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "A multiplier on the speed of reading bound journals."
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Recover Passive Skills"
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Toggle on to record passive skills like: Strength, Fitness, and custom passive skills."
 	}

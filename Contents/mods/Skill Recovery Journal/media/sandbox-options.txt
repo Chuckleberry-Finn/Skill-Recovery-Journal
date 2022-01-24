@@ -17,3 +17,9 @@ option SkillRecoveryJournal.ReadTimeSpeed
 	type = double, min = 0.001, max = 1000, default = 1,
 	page = SkillRecoveryJournal, translation = SkillRecoveryJournalReadTimeSpeed,
 }
+
+option SkillRecoveryJournal.RecoverPassiveSkills
+{
+	type = boolean, default = false,
+	page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverPassiveSkills,
+}
