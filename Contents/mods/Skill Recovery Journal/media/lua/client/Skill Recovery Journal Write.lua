@@ -84,7 +84,13 @@ function ISCraftAction:update()
 
 							if xpRate>0 then
 								self.changesMade = true
-								table.insert(changesBeingMade, getText("IGUI_perks_"..skill))
+
+								local skill_name = getText("IGUI_perks_"..skill)
+								if skill_name == ("IGUI_perks_"..skill) then
+									skill_name = skill
+								end
+								table.insert(changesBeingMade, skill_name)
+
 								local resultingXp = math.min(xp, storedJournalXP[skill]+xpRate)
 								--print("TESTING: "..skill.." recoverable:"..xp.." gained:"..storedJournalXP[skill].." +"..xpRate)
 								JMD["gainedXP"][skill] = resultingXp
