@@ -11,4 +11,5 @@ IGUI_EN = {
     IGUI_Tooltip_Recipe = "recipe",
     IGUI_Tooltip_Recipes = "recipes"
     IGUI_Tooltip_Transcribing = "Transcribing"
+    IGUI_Tooltip_Learning = "Learning"
 }

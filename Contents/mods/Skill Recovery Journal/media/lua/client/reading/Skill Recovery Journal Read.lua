@@ -22,6 +22,7 @@ function ISReadABook:update()
 			local journalModData = journal:getModData()
 			local JMD = journalModData["SRJ"]
 			local changesMade = false
+			local changesBeingMade = {}
 			local delayedStop = false
 			local sayText
 			local sayTextChoices = {"IGUI_PlayerText_DontUnderstand", "IGUI_PlayerText_TooComplicated", "IGUI_PlayerText_DontGet"}
@@ -51,6 +52,13 @@ function ISReadABook:update()
 					self.changesMade = true
 					if self.recipeIntervals > 5 then
 						local recipeChunk = math.min(#self.learnedRecipes, math.floor(1.09^math.sqrt(#self.learnedRecipes)))
+						
+						local properPlural = getText("IGUI_Tooltip_Recipe")
+						if recipeChunk>1 then
+							properPlural = getText("IGUI_Tooltip_Recipes")
+						end
+						table.insert(changesBeingMade, recipeChunk.." "..properPlural)
+
 						for i=0, recipeChunk do
 							local recipeID = self.learnedRecipes[#self.learnedRecipes]
 							player:learnRecipe(recipeID)
@@ -101,6 +109,13 @@ function ISReadABook:update()
 							readXp[skill] = readXp[skill]+perPerkXpRate
 							player:getXp():AddXP(Perks[skill], perPerkXpRate, true, true, false, true)
 							changesMade = true
+
+							local skill_name = getText("IGUI_perks_"..skill)
+								if skill_name == ("IGUI_perks_"..skill) then
+									skill_name = skill
+								end
+							table.insert(changesBeingMade, skill_name)
+							
 							self:resetJobDelta()
 						end
 					end
@@ -110,6 +125,18 @@ function ISReadABook:update()
 					delayedStop = true
 					sayTextChoices = {"IGUI_PlayerText_KnowSkill","IGUI_PlayerText_BookObsolete"}
 					sayText = getText(sayTextChoices[ZombRand(#sayTextChoices)+1])
+				elseif changesMade then
+					local changesBeingMadeText = ""
+					for k,v in pairs(changesBeingMade) do
+						changesBeingMadeText = changesBeingMadeText.." "..v
+						if k~=#changesBeingMade then
+							changesBeingMadeText = changesBeingMadeText..", "
+						end
+					end
+					if #changesBeingMade>0 then
+						changesBeingMadeText = getText("IGUI_Tooltip_Learning")..": "..changesBeingMadeText
+					end
+					HaloTextHelper.addText(self.character, changesBeingMadeText, HaloTextHelper.getColorWhite())
 				end
 			end
 
