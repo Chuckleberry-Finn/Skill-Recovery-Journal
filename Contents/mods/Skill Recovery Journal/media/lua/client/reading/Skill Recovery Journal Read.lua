@@ -111,9 +111,9 @@ function ISReadABook:update()
 							changesMade = true
 
 							local skill_name = getText("IGUI_perks_"..skill)
-								if skill_name == ("IGUI_perks_"..skill) then
-									skill_name = skill
-								end
+							if skill_name == ("IGUI_perks_"..skill) then
+								skill_name = skill
+							end
 							table.insert(changesBeingMade, skill_name)
 							
 							self:resetJobDelta()
