@@ -100,12 +100,13 @@ function ISReadABook:update()
 							perPerkXpRate=false
 						end
 						--print ("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..perkLevel.."  xpStored:"..xp.."  currentXP:"..currentXP)
-						if currentXP+perPerkXpRate > xp then
-							perPerkXpRate = (xp-(currentXP-0.001))
-							--print(" --xp overflowed, capped at:"..perPerkXpRate)
-						end
 
 						if perPerkXpRate~=false then
+
+							if currentXP+perPerkXpRate > xp then
+								perPerkXpRate = (xp-(currentXP-0.001))
+							end
+
 							readXp[skill] = readXp[skill]+perPerkXpRate
 							player:getXp():AddXP(Perks[skill], perPerkXpRate, true, true, false, true)
 							changesMade = true
