@@ -1,0 +1,11 @@
+Sandbox_CN = {
+	Sandbox_SkillRecoveryJournal = "技能恢复日记",
+	Sandbox_SkillRecoveryJournalPercentage = "技能恢复百分比",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "阅读完日记后所恢复的经验值。",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "撰写日记的速度倍数",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "用于控制撰写日记的速度。"
+	Sandbox_SkillRecoveryJournalReadTimeSpeed = "阅读日记的速度倍数",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "用于控制阅读日记的速度。"
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "恢复被动技能"
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "开启该选项后，你可以记录以下技能：力量，体格，和自定义的被动技能。"
+	}
