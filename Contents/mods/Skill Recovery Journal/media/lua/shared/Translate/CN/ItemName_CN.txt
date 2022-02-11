@@ -1,0 +1,3 @@
+ItemName_CN = {
+    DisplayName_Bound_Journal= "装订好的日记",
+}

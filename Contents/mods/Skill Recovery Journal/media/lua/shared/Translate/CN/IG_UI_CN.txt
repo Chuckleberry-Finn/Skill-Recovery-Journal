@@ -1,0 +1,17 @@
+IGUI_CN = {
+    IGUI_PlayerText_NothingWritten = "这里边啥都没写。",
+    IGUI_PlayerText_DontHaveAnyXP = "我没有任何经验可供记录。",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "在别人的日记里写东西总觉得不大对劲。",
+    IGUI_PlayerText_DoesntFeelRightToRead = "看别人的日记总觉得不大对劲。",
+    IGUI_PlayerText_NothingToAddToJournal = "没什么需要补充的东西。",
+    IGUI_PlayerText_AllDoneWithJournal = "完事儿了。",
+    IGUI_Tooltip_Empty = "用于记录的空日记本。",
+    IGUI_Tooltip_Start = "",
+    IGUI_Tooltip_End = "的一生。",
+    IGUI_Tooltip_Recipe = "recipe",
+    IGUI_Tooltip_Recipes = "recipes",
+    IGUI_Tooltip_Transcribing = "撰写",
+    IGUI_perks_Lightfoot = "轻盈",
+    IGUI_perks_Sneak = "潜行",
+    IGUI_perks_PlantScavenging = "采集",
+}

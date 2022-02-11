@@ -1,3 +1,0 @@
-Items_CN = {
-DisplayName_Bound_Journal = "技能学习心得笔记",
-}

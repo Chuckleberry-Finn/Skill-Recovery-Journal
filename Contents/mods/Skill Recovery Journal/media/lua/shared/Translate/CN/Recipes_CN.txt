@@ -1,4 +1,4 @@
 Recipe_CN = {
-Recipe_Bind_Journal = "制作 技能学习心得笔记",
-Recipe_Transcribe_Journal = "记录技能学习心得",
+    Recipe_Transcribe_Journal = "鎾板啓鏃ヨ",
+    Recipe_Bind_Journal = "瑁呰鏃ヨ",
 }
