@@ -108,7 +108,7 @@ function ISReadABook:update()
 							end
 
 							readXp[skill] = readXp[skill]+perPerkXpRate
-                                                        player:getXp():AddXP(Perks[skill], perPerkXpRate, true, false, true)
+							player:getXp():AddXP(Perks[skill], perPerkXpRate, true, false, true)
 							changesMade = true
 
 							local skill_name = getText("IGUI_perks_"..skill)
