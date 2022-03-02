@@ -1,5 +1,10 @@
 require "TimedActions/ISReadABook"
 
+local coreGameVersion = getCore():getGameVersion()
+local CGV_Major = coreGameVersion:getMajor()
+local CGV_Minor = coreGameVersion:getMinor()
+local isGameVersionPost4165 = (CGV_Major > 41 and CGV_Minor > 65)
+
 SRJOVERWRITE_ISReadABook_update = ISReadABook.update
 function ISReadABook:update()
 
@@ -108,7 +113,15 @@ function ISReadABook:update()
 							end
 
 							readXp[skill] = readXp[skill]+perPerkXpRate
-							player:getXp():AddXP(Perks[skill], perPerkXpRate, true, false, true)
+
+							if isGameVersionPost4165 then
+								--41.66
+								player:getXp():AddXP(Perks[skill], perPerkXpRate, true, false, true)
+							else
+								--41.65
+								player:getXp():AddXP(Perks[skill], perPerkXpRate, true, true, false, true)
+							end
+
 							changesMade = true
 
 							local skill_name = getText("IGUI_perks_"..skill)
