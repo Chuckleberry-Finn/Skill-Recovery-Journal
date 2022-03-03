@@ -3,7 +3,7 @@ require "TimedActions/ISReadABook"
 local coreGameVersion = getCore():getGameVersion()
 local CGV_Major = coreGameVersion:getMajor()
 local CGV_Minor = coreGameVersion:getMinor()
-local isGameVersionPost4165 = (CGV_Major > 41 and CGV_Minor > 65)
+local isGameVersionPost4165 = (CGV_Major >= 41 and CGV_Minor > 65)
 
 SRJOVERWRITE_ISReadABook_update = ISReadABook.update
 function ISReadABook:update()
