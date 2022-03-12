@@ -24,9 +24,11 @@ function SRJ.generateTooltip(journal, player)
 	local skillsRecord = ""
 	for skill,xp in pairs(gainedXP) do
 		local perk = PerkFactory.getPerk(Perks[skill])
-		local perkName = perk:getName()
-		local xpBasedOnPlayer = math.floor(xp*100)/100
-		skillsRecord = skillsRecord..perkName.." ("..xpBasedOnPlayer.." xp)".."\n"
+		if perk then
+			local perkName = perk:getName()
+			local xpBasedOnPlayer = math.floor(xp*100)/100
+			skillsRecord = skillsRecord..perkName.." ("..xpBasedOnPlayer.." xp)".."\n"
+		end
 	end
 
 	local learnedRecipes = JMD["learnedRecipes"] or {}
