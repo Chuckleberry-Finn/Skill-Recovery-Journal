@@ -3,7 +3,7 @@ require "TimedActions/ISReadABook"
 local coreGameVersion = getCore():getGameVersion()
 local CGV_Major = coreGameVersion:getMajor()
 local CGV_Minor = coreGameVersion:getMinor()
-local isGameVersionPost4165 = (CGV_Major >= 41 and CGV_Minor > 65)
+local isGameVersionPost4165 = ((CGV_Major >= 41) and (CGV_Minor > 65))
 
 SRJOVERWRITE_ISReadABook_update = ISReadABook.update
 function ISReadABook:update()
@@ -94,43 +94,46 @@ function ISReadABook:update()
 
 				for skill,xp in pairs(XpStoredInJournal) do
 
-				  readXp[skill] = readXp[skill] or 0
-				  local currentXP = readXp[skill]
+					if Perks[skill] then
 
-					if currentXP < xp then
-						local readTimeMulti = SandboxVars.SkillRecoveryJournal.ReadTimeSpeed or 1
-						local perkLevelPlusOne = player:getPerkLevel(Perks[skill])+1
-						local perPerkXpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * readTimeMulti
-						if perkLevelPlusOne == 11 then
-							perPerkXpRate=false
-						end
-						--print ("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..perkLevel.."  xpStored:"..xp.."  currentXP:"..currentXP)
+						readXp[skill] = readXp[skill] or 0
+						local currentXP = readXp[skill]
 
-						if perPerkXpRate~=false then
-
-							if currentXP+perPerkXpRate > xp then
-								perPerkXpRate = (xp-(currentXP-0.001))
+						if currentXP < xp then
+							local readTimeMulti = SandboxVars.SkillRecoveryJournal.ReadTimeSpeed or 1
+							local perkLevelPlusOne = player:getPerkLevel(Perks[skill])+1
+							local perPerkXpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * readTimeMulti
+							if perkLevelPlusOne == 11 then
+								perPerkXpRate=false
 							end
+							--print ("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..perkLevel.."  xpStored:"..xp.."  currentXP:"..currentXP)
 
-							readXp[skill] = readXp[skill]+perPerkXpRate
+							if perPerkXpRate~=false then
 
-							if isGameVersionPost4165 then
-								--41.66
-								player:getXp():AddXP(Perks[skill], perPerkXpRate, true, false, true)
-							else
-								--41.65
-								player:getXp():AddXP(Perks[skill], perPerkXpRate, true, true, false, true)
+								if currentXP+perPerkXpRate > xp then
+									perPerkXpRate = (xp-(currentXP-0.001))
+								end
+
+								readXp[skill] = readXp[skill]+perPerkXpRate
+
+								if isGameVersionPost4165 then
+									--41.66
+									player:getXp():AddXP(Perks[skill], perPerkXpRate, true, false, true)
+								else
+									--41.65
+									player:getXp():AddXP(Perks[skill], perPerkXpRate, true, true, false, true)
+								end
+
+								changesMade = true
+
+								local skill_name = getText("IGUI_perks_"..skill)
+								if skill_name == ("IGUI_perks_"..skill) then
+									skill_name = skill
+								end
+								table.insert(changesBeingMade, skill_name)
+
+								self:resetJobDelta()
 							end
-
-							changesMade = true
-
-							local skill_name = getText("IGUI_perks_"..skill)
-							if skill_name == ("IGUI_perks_"..skill) then
-								skill_name = skill
-							end
-							table.insert(changesBeingMade, skill_name)
-							
-							self:resetJobDelta()
 						end
 					end
 				end
