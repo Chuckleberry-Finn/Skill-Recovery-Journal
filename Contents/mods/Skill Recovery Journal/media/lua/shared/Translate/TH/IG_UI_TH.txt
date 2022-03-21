@@ -1,0 +1,18 @@
+IGUI_TH = {
+    IGUI_PlayerText_NothingWritten = "ไม่มีอะไรเขียนไว้เลย",
+    IGUI_PlayerText_DontHaveAnyXP = "ไม่มีประสบการณ์อะไรให้บันทึกเลย",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "การหยิบเอาไดอารีของคนอื่นมาเขียนต่อเป็นเรื่องที่ไม่สมควร",
+    IGUI_PlayerText_DoesntFeelRightToRead = "การหยิบเอาไดอารีของคนอื่นมาอ่านเป็นเรื่องที่ไม่สมควร",
+    IGUI_PlayerText_NothingToAddToJournal = "ไม่มีประสบการณ์ให้บันทึก",
+    IGUI_PlayerText_AllDoneWithJournal = "เรียบร้อยแล้ว",
+    IGUI_Tooltip_Empty = "พร้อมถ่ายทอดประสบการณ์ให้คนรุ่นหลัง",
+    IGUI_Tooltip_Start = "บันทึกประสบการณ์ชีวิตของ",
+    IGUI_Tooltip_End = "",
+    IGUI_Tooltip_Recipe = "สูตรผสม",
+    IGUI_Tooltip_Recipes = "สูตรผสม",
+    IGUI_Tooltip_Transcribing = "กำลังเขียนบันทึก",
+    IGUI_Tooltip_Learning = "กำลังเรียนรู้ประสบการณ์",
+    IGUI_perks_Lightfoot = "ความคล่องตัว",
+    IGUI_perks_Sneak = "การหลบซ่อน",
+    IGUI_perks_PlantScavenging = "การค้นหาของป่า",
+}

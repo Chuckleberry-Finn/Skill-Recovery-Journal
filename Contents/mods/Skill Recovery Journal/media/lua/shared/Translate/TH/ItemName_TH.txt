@@ -1,0 +1,3 @@
+ItemName_TH = {
+    DisplayName_Bound_Journal= "บันทึกประสบการณ์ชีวิต",
+}
