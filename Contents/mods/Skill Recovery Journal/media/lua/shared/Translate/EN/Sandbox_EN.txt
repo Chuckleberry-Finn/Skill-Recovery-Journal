@@ -11,5 +11,5 @@ Sandbox_EN = {
 	Sandbox_SkillRecoveryJournalRecoverRecipes = "Recover Recipes"
     Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "Toggle off to prevent journals from recovering/transcribing recipes."
     Sandbox_SkillRecoveryJournalUsed = "Journal XP Used When Read"
-    Sandbox_SkillRecoveryJournalUsed = "If toggled on XP that is transcribed is spent when read."
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "If toggled on XP that is transcribed is spent when read."
 	}
