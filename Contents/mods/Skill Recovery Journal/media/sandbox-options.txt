@@ -29,4 +29,9 @@ option SkillRecoveryJournal.RecoverRecipes
 	type = boolean, default = true,
 	page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverRecipes,
 }
+
+option SkillRecoveryJournal.RecoveryJournalUsed
+{
+	type = boolean, default = false,
+	page = SkillRecoveryJournal, translation = SkillRecoveryJournalUsed,
 }

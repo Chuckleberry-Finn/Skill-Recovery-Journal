@@ -92,14 +92,23 @@ function ISReadABook:update()
 				pMD.recoveryJournalXpLog = pMD.recoveryJournalXpLog or {}
 				local readXp = pMD.recoveryJournalXpLog
 
+				journalModData.recoveryJournalXpLog = journalModData.recoveryJournalXpLog or {}
+				local jmdUsedXP = journalModData.recoveryJournalXpLog
+
 				for skill,xp in pairs(XpStoredInJournal) do
 
 					if Perks[skill] then
 
 						readXp[skill] = readXp[skill] or 0
 						local currentXP = readXp[skill]
+						local journalXP = xp
 
-						if currentXP < xp then
+						if SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true then
+							jmdUsedXP[skill] = jmdUsedXP[skill] or 0
+							journalXP = journalXP-jmdUsedXP[skill]
+						end
+
+						if currentXP < journalXP then
 							local readTimeMulti = SandboxVars.SkillRecoveryJournal.ReadTimeSpeed or 1
 							local perkLevelPlusOne = player:getPerkLevel(Perks[skill])+1
 							local perPerkXpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * readTimeMulti
@@ -110,11 +119,14 @@ function ISReadABook:update()
 
 							if perPerkXpRate~=false then
 
-								if currentXP+perPerkXpRate > xp then
-									perPerkXpRate = (xp-(currentXP-0.001))
+								if currentXP+perPerkXpRate > journalXP then
+									perPerkXpRate = (journalXP-(currentXP-0.001))
 								end
 
 								readXp[skill] = readXp[skill]+perPerkXpRate
+								if jmdUsedXP then
+									jmdUsedXP[skill] = jmdUsedXP[skill]+perPerkXpRate
+								end
 
 								if isGameVersionPost4165 then
 									--41.66

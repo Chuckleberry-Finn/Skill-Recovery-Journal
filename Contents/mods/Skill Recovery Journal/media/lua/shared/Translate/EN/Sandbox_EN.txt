@@ -10,4 +10,6 @@ Sandbox_EN = {
 	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Toggle on to record passive skills like: Strength, Fitness, and custom passive skills."
 	Sandbox_SkillRecoveryJournalRecoverRecipes = "Recover Recipes"
     Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "Toggle off to prevent journals from recovering/transcribing recipes."
+    Sandbox_SkillRecoveryJournalUsed = "Journal XP Used When Read"
+    Sandbox_SkillRecoveryJournalUsed = "If toggled on XP that is transcribed is spent when read."
 	}
