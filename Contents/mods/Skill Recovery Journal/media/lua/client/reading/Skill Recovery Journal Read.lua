@@ -103,7 +103,7 @@ function ISReadABook:update()
 						local currentXP = readXp[skill]
 						local journalXP = xp
 
-						if SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true then
+						if SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true and jmdUsedXP[skill] then
 							jmdUsedXP[skill] = jmdUsedXP[skill] or 0
 							journalXP = journalXP-jmdUsedXP[skill]
 						end
