@@ -104,7 +104,7 @@ function ISReadABook:update()
 						local journalXP = xp
 
 						if SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true and jmdUsedXP[skill] then
-							journalXP = journalXP-jmdUsedXP[skill]
+							currentXP = math.max(currentXP, jmdUsedXP[skill])
 						end
 
 						if currentXP < journalXP then
@@ -119,14 +119,12 @@ function ISReadABook:update()
 							if perPerkXpRate~=false then
 
 								if currentXP+perPerkXpRate > journalXP then
-									perPerkXpRate = (journalXP-(currentXP-0.001))
+									perPerkXpRate = math.max(journalXP-currentXP, 0.001)
 								end
 
 								readXp[skill] = readXp[skill]+perPerkXpRate
-								if jmdUsedXP then
-									jmdUsedXP[skill] = jmdUsedXP[skill] or 0
-									jmdUsedXP[skill] = jmdUsedXP[skill]+perPerkXpRate
-								end
+								jmdUsedXP[skill] = jmdUsedXP[skill] or 0
+								jmdUsedXP[skill] = jmdUsedXP[skill]+perPerkXpRate
 
 								if isGameVersionPost4165 then
 									--41.66

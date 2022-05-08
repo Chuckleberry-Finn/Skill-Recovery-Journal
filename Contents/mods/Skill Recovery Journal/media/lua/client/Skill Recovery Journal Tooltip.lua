@@ -37,7 +37,13 @@ function SRJ.generateTooltip(journal, player)
 
 			local perkName = perk:getName()
 			local xpBasedOnPlayer = math.floor(journalXP*100)/100
-			skillsRecord = skillsRecord..perkName.." ("..xpBasedOnPlayer.." xp)".."\n"
+			skillsRecord = skillsRecord..perkName.." ("..xpBasedOnPlayer
+
+			if SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true and jmdUsedXP[skill] then
+				skillsRecord = skillsRecord.."/"..xp
+			end
+
+			skillsRecord = skillsRecord.." xp)".."\n"
 		end
 	end
 
