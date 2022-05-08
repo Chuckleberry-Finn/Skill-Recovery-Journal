@@ -155,9 +155,12 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 
 		local gainedRecipes = SRJ.getGainedRecipes(character)
 		o.gainedRecipes = {}
-		for _,recipeID in pairs(gainedRecipes) do
-			if learnedRecipes[recipeID] ~= true then
-				table.insert(o.gainedRecipes,recipeID)
+
+		if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
+			for _,recipeID in pairs(gainedRecipes) do
+				if learnedRecipes[recipeID] ~= true then
+					table.insert(o.gainedRecipes,recipeID)
+				end
 			end
 		end
 

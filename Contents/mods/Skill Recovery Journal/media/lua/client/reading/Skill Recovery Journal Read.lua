@@ -186,14 +186,18 @@ function ISReadABook:new(player, item, time)
 		local journalModData = item:getModData()
 		local JMD = journalModData["SRJ"]
 		if JMD then
-			local learnedRecipes = JMD["learnedRecipes"]
-			if learnedRecipes then
-				for recipeID,_ in pairs(learnedRecipes) do
-					if not player:isRecipeKnown(recipeID) then
-						table.insert(o.learnedRecipes, recipeID)
+
+			if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
+				local learnedRecipes = JMD["learnedRecipes"]
+				if learnedRecipes then
+					for recipeID,_ in pairs(learnedRecipes) do
+						if not player:isRecipeKnown(recipeID) then
+							table.insert(o.learnedRecipes, recipeID)
+						end
 					end
 				end
 			end
+
 		end
 
 	end

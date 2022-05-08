@@ -23,3 +23,10 @@ option SkillRecoveryJournal.RecoverPassiveSkills
 	type = boolean, default = false,
 	page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverPassiveSkills,
 }
+
+option SkillRecoveryJournal.RecoverRecipes
+{
+	type = boolean, default = true,
+	page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverRecipes,
+}
+}
