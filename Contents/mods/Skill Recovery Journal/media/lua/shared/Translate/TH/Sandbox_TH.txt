@@ -1,0 +1,11 @@
+Sandbox_TH = {
+	Sandbox_SkillRecoveryJournal = "บันทึกประสบการณ์ชีวิต",
+	Sandbox_SkillRecoveryJournalPercentage = "อัตราการถ่ายโอนค่าประสบการณ์",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "ปริมาณค่าประสบการณ์ที่กู้คืนได้จากการอ่านบันทึกประสบการณ์ชีวิต",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "ความเร็วในการเขียนบันทึก",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "ตัวคูณความเร็วในการเขียนบันทึกถ่ายทอดประสบการณ์ชีวิต"
+	Sandbox_SkillRecoveryJournalReadTimeSpeed = "ความเร็วในการอ่านบันทึก",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "ตัวคูณความเร็วในการเรียนรู้ประสบการณ์จากการอ่านบันทึก"
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "ถ่ายโอนทักษะติดตัว"
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "เลือกช่องนี้เพื่อบันทึกและถ่ายโอนสมรรถภาพทางกาย เช่น: ความแข็งแรง พละกำลัง และทักษะพิเศษอื่น ๆ"
+	}
