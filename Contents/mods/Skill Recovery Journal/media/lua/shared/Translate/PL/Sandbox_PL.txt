@@ -1,5 +1,5 @@
 Sandbox_EN = {
-	Sandbox_SkillRecoveryJournal = "Expanded Helicopter Events",
-	Sandbox_SkillRecoveryJournalPercentage = "Procent odzyskanych umiejêtnoœci",
-	Sandbox_SkillRecoveryJournalPercentage_tooltip = "Iloœæ punktów doœwiadczenia odzyskana po przeczytaniu pamiêtnika.",
+	Sandbox_SkillRecoveryJournal = "Skill Recovery Journal",
+	Sandbox_SkillRecoveryJournalPercentage = "Procent odzyskanych umiejï¿½tnoï¿½ci",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "Iloï¿½ï¿½ punktï¿½w doï¿½wiadczenia odzyskana po przeczytaniu pamiï¿½tnika.",
 	}
