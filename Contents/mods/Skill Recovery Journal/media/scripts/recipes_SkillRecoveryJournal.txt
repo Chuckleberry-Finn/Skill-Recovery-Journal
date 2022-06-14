@@ -25,5 +25,6 @@ module Base
 
            Time:50.0,
            OnCanPerform:SRJ.writingJournal,
+           StopOnWalk:false,
         }
 }

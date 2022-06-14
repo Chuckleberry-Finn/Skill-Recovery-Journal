@@ -189,6 +189,7 @@ function ISReadABook:new(player, item, time)
 		o.maxTime = 55
 		o.readTimer = 0
 
+		o.stopOnWalk = false
 		o.gainedRecipes = SRJ.getGainedRecipes(player)
 		o.learnedRecipes = {}
 		o.recipeIntervals = 0
