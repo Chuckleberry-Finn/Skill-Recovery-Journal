@@ -1,4 +1,4 @@
-Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3.6-Jan31"))
+Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3.7-JUN15"))
 
 SRJ = {}
 
