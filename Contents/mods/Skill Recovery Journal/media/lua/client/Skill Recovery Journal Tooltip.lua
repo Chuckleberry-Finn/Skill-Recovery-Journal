@@ -70,7 +70,7 @@ function SRJ.generateTooltip(journal, player)
 end
 
 
-ISToolTipInv_setItem = ISToolTipInv.setItem
+local ISToolTipInv_setItem = ISToolTipInv.setItem
 function ISToolTipInv:setItem(item)
 	ISToolTipInv_setItem(self, item)
 	if item:getType() == "SkillRecoveryJournal" then
