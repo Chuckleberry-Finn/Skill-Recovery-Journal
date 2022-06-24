@@ -1,0 +1,18 @@
+IGUI_ES = {
+    IGUI_PlayerText_NothingWritten = "No hay nada escrito aquí.",
+    IGUI_PlayerText_DontHaveAnyXP = "No tengo ninguna experiencia que registrar.",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "No me parece bien escribir en el diario de otra persona.",
+    IGUI_PlayerText_DoesntFeelRightToRead = "No me parece bien leer el diario de otra persona.",
+    IGUI_PlayerText_NothingToAddToJournal = "No hay nada más que añadir.",
+    IGUI_PlayerText_AllDoneWithJournal = "Listo.",
+    IGUI_Tooltip_Empty = "Un diario vacío listo para ser escrito.",
+    IGUI_Tooltip_Start = "Un registro de la vida de",
+    IGUI_Tooltip_End = ".",
+    IGUI_Tooltip_Recipe = "receta",
+    IGUI_Tooltip_Recipes = "recetas"
+    IGUI_Tooltip_Transcribing = "Transcribiendo",
+    IGUI_Tooltip_Learning = "Aprendiendo",
+    IGUI_perks_Lightfoot = "Pies Ligeros",
+    IGUI_perks_Sneak = "Sigilo",
+    IGUI_perks_PlantScavenging = "Rebuscar",
+}
