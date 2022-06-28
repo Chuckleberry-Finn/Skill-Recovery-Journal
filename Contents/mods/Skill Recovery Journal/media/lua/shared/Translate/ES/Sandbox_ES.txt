@@ -1,0 +1,25 @@
+Sandbox_ES = {
+	Sandbox_SkillRecoveryJournal = "Diario de recuperación de habilidades",
+	Sandbox_SkillRecoveryJournalPercentage = "Porcentaje de recuperación de habilidades",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "La cantidad de experiencia recuperada al leer diarios encuadernados.",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "Multiplicador de velocidad de transcripción de recuperación de habilidades",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "Un multiplicador de la velocidad de transcripción de diarios."
+	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Multiplicador de velocidad de lectura de recuperación de habilidades",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "Un multiplicador de la velocidad de lectura de diarios encuadernados."
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Recuperar Habilidades Pasivas"
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Actívelo para registrar habilidades pasivas como: Fuerza, Estado Físico y habilidades pasivas personalizadas."
+	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "Recuperar Habilidades de Combate"
+    Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "Actívelo para registrar habilidades de combate."
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "Recuperar Habilidades de Armas de Fuego"
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "Actívelo para registrar habilidades de armas de fuego."
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "Recuperar Habilidades de Fabricación"
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Actívelo para registrar habilidades de fabricación."
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "Recuperar Habilidades de Supervivencia"
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Actívelo para registrar habilidades de Supervivencia."
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "Recuperar Habilidades de Agilidad"
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "Actívelo para registrar habilidades de agilidad."
+	Sandbox_SkillRecoveryJournalRecoverRecipes = "Recuperar Recetas"
+    Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "Desactívelo para evitar que las diarios recuperen/transcriban recetas."
+    Sandbox_SkillRecoveryJournalUsed = "La XP del diario se consume"
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "Si se activa, la XP transcrita en el diario se consume al leerse."
+	}
