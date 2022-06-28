@@ -164,6 +164,8 @@ function ISReadABook:update()
 					if #changesBeingMade>0 then
 						changesBeingMadeText = getText("IGUI_Tooltip_Learning")..": "..changesBeingMadeText
 					end
+
+					HaloTextHelper:update()
 					HaloTextHelper.addText(self.character, changesBeingMadeText, HaloTextHelper.getColorWhite())
 				end
 			end
