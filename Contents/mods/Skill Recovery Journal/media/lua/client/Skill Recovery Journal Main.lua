@@ -133,6 +133,16 @@ function SRJ.calculateGainedSkills(player)
 
 				if perk:isPassiv() and (SandboxVars.SkillRecoveryJournal.RecoverPassiveSkills == false) then
 					recoverableXP = 0
+				elseif perk:getParent():getId()=="Combat" and (SandboxVars.SkillRecoveryJournal.RecoverCombatSkills == false) then
+					recoverableXP = 0
+				elseif perk:getParent():getId()=="Firearm" and (SandboxVars.SkillRecoveryJournal.RecoverFirearmSkills == false) then
+					recoverableXP = 0
+				elseif perk:getParent():getId()=="Crafting" and (SandboxVars.SkillRecoveryJournal.RecoverCraftingSkills == false) then
+					recoverableXP = 0
+				elseif perk:getParent():getId()=="Survivalist" and (SandboxVars.SkillRecoveryJournal.RecoverSurvivalistSkills == false) then
+					recoverableXP = 0
+				elseif perk:getParent():getId()=="Agility" and (SandboxVars.SkillRecoveryJournal.RecoverAgilitySkills == false) then
+					recoverableXP = 0
 				end
 
 				if recoverableXP > 0 then

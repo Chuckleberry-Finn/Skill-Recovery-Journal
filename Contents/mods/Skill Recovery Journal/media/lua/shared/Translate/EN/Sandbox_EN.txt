@@ -6,8 +6,25 @@ Sandbox_EN = {
 	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "A multiplier on the speed of transcribing journals."
 	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Skill Recovery Read Speed Multiplier",
 	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "A multiplier on the speed of reading bound journals."
+
 	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Recover Passive Skills"
-	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Toggle on to record passive skills like: Strength, Fitness, and custom passive skills."
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Toggle on to record passive skills."
+
+	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "Recover Combat Skills"
+    Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "Toggle on to record combat skills."
+
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "Recover Firearm Skills"
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "Toggle on to record firearm skills."
+
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "Recover Crafting Skills"
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Toggle on to record crafting skills."
+
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "Recover Survivalist Skills"
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Toggle on to record survivalist skills."
+
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "Recover Agility Skills"
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "Toggle on to record agility skills."
+
 	Sandbox_SkillRecoveryJournalRecoverRecipes = "Recover Recipes"
     Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "Toggle off to prevent journals from recovering/transcribing recipes."
     Sandbox_SkillRecoveryJournalUsed = "Journal XP Used When Read"
