@@ -114,6 +114,8 @@ function ISCraftAction:update()
 				if #changesBeingMade>0 then
 					changesBeingMadeText = getText("IGUI_Tooltip_Transcribing")..": "..changesBeingMadeText
 				end
+
+				HaloTextHelper:update()
 				HaloTextHelper.addText(self.character, changesBeingMadeText, HaloTextHelper.getColorWhite())
 
 				self.playSoundLater = self.playSoundLater or 0
