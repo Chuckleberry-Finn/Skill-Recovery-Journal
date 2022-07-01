@@ -15,4 +15,5 @@ IGUI_EN = {
     IGUI_perks_Lightfoot = "Lightfooted",
     IGUI_perks_Sneak = "Sneaking",
     IGUI_perks_PlantScavenging = "Foraging",
+    IGUI_Rename = "Rename",
 }
