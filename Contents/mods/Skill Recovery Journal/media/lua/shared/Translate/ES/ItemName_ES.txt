@@ -1,3 +1,0 @@
-ItemName_ES = {
-    DisplayName_Bound_Journal= "Diario Encuadernado",
-}
