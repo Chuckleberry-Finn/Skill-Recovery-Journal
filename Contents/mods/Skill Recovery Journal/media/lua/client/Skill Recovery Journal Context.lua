@@ -40,7 +40,7 @@ end
 
 
 function SRJ.onRenameJournal(journal, player)
-	local modal = ISTextBox:new(0, 0, 280, 100, "Bound Journal:", journal:getName(), nil, SRJ.onRenameJournalClick, player, getSpecificPlayer(player), journal)
+	local modal = ISTextBox:new(0, 0, 280, 100, getText("DisplayName_Bound_Journal")..":", journal:getName(), nil, SRJ.onRenameJournalClick, player, getSpecificPlayer(player), journal)
 	modal:initialise()
 	modal:addToUIManager()
 end
