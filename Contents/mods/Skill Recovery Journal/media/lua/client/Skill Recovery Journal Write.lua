@@ -1,6 +1,6 @@
 require "TimedActions/ISCraftAction"
 
-SRJOVERWRITE_ISCraftAction_perform = ISCraftAction.perform
+local SRJOVERWRITE_ISCraftAction_perform = ISCraftAction.perform
 function ISCraftAction:perform()
 	SRJOVERWRITE_ISCraftAction_perform(self)
 	if self.recipe and self.recipe:getOriginalname() == "Transcribe Journal" and self.item:getType() == "SkillRecoveryJournal" then
@@ -16,7 +16,7 @@ function ISCraftAction:perform()
 end
 
 
-SRJOVERWRITE_ISCraftAction_update = ISCraftAction.update
+local SRJOVERWRITE_ISCraftAction_update = ISCraftAction.update
 function ISCraftAction:update()
 	SRJOVERWRITE_ISCraftAction_update(self)
 
@@ -40,6 +40,19 @@ function ISCraftAction:update()
 			if pSteamID ~= 0 and journalID and journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
 				bOwner = false
 			end
+
+
+			if bOwner and (#self.listenedToMedia > 0) then
+				self.changesMade = true
+				local mediaChunk = math.min(#self.listenedToMedia, math.floor(1.09^math.sqrt(#self.listenedToMedia)))
+				table.insert(changesBeingMade, "media")
+				for i=0, mediaChunk do
+					local line = self.listenedToMedia[#self.listenedToMedia]
+					JMD["listenedToMedia"][line] = true
+					table.remove(self.listenedToMedia,#self.listenedToMedia)
+				end
+			end
+
 
 			if bOwner and (#self.gainedRecipes > 0) then
 				self.recipeIntervals = self.recipeIntervals+1
@@ -133,7 +146,7 @@ function ISCraftAction:update()
 end
 
 
-SRJOVERWRITE_ISCraftAction_new = ISCraftAction.new
+local SRJOVERWRITE_ISCraftAction_new = ISCraftAction.new
 ---@param character IsoGameCharacter
 function ISCraftAction:new(character, item, time, recipe, container, containers)
 	local o = SRJOVERWRITE_ISCraftAction_new(self, character, item, time, recipe, container, containers)
@@ -154,10 +167,8 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 		JMD["gainedXP"] = JMD["gainedXP"] or {}
 		JMD["learnedRecipes"] = JMD["learnedRecipes"] or {}
 		local learnedRecipes = JMD["learnedRecipes"]
-
 		local gainedRecipes = SRJ.getGainedRecipes(character)
 		o.gainedRecipes = {}
-
 		if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
 			for _,recipeID in pairs(gainedRecipes) do
 				if learnedRecipes[recipeID] ~= true then
@@ -165,6 +176,19 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 				end
 			end
 		end
+
+
+		JMD["listenedToMedia"] = JMD["listenedToMedia"] or {}
+		local transcribedMedia = JMD["listenedToMedia"]
+
+		local listenedToMedia = {}--SRJ.getListenedToMedia(character)
+		o.listenedToMedia = {}
+		for _,line in pairs(listenedToMedia) do
+			if transcribedMedia[line] ~= true then
+				table.insert(o.listenedToMedia,line)
+			end
+		end
+
 
 		local gainedSkills = SRJ.calculateGainedSkills(character) or false
 		o.willWrite = true

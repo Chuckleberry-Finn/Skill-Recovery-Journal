@@ -1,6 +1,43 @@
-Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.3.8-JUN22"))
+Events.OnGameBoot.Add(print("Skill Recovery Journal: ver:0.4-JUL12"))
 
 SRJ = {}
+
+---@param player IsoPlayer|IsoGameCharacter
+function SRJ.getListenedToMedia(player)
+
+	local knownMediaLines = {}
+
+	local ZR = getZomboidRadio():getRecordedMedia()
+	local categories = ZR:getCategories()
+	for i=1,categories:size() do
+		local category = categories:get(i-1)
+		local mediaType = RecordedMedia.getMediaTypeForCategory(category)
+		local list = ZR:getAllMediaForType(mediaType)
+		for j=1,list:size() do
+			---@type MediaData
+			local mediaData = list:get(j-1)
+
+			print("Watched - mediaData: ".." ("..mediaData:getId()..")  "..mediaData:getLineCount())
+
+			for jj=1, mediaData:getLineCount() do
+
+				---@type MediaData.MediaLineData
+				local mediaLineData = mediaData:getLine(jj-1)
+				if mediaLineData then
+					print(" ---getTextGuid: "..mediaLineData:getTextGuid())
+					local lineGuid = mediaLineData:getTextGuid()
+					if lineGuid and player:isKnownMediaLine(lineGuid) then
+						print("Watched - "..tostring(lineGuid))
+						table.insert(knownMediaLines, lineGuid)
+					end
+				end
+			end
+		end
+	end
+
+	return knownMediaLines
+end
+
 
 function SRJ.getGainedRecipes(player)
 	local gainedRecipes = {}

@@ -1,11 +1,26 @@
 require "TimedActions/ISReadABook"
 
+local crossRefMods = {
+	["CatsWalkWhileReadMod"]="ReadFasterWhenSitting",
+	["CatsReadMod"]="ReadFasterWhenSitting",
+	["CatsReadMod(slower)"]="ReadFasterWhenSitting",
+}
+local loadedModIDs = {};
+local activeModIDs = getActivatedMods()
+for i=1, activeModIDs:size() do
+	local modID = activeModIDs:get(i-1)
+	if crossRefMods[modID] and not loadedModIDs[modID] then
+		require (crossRefMods[modID])
+		loadedModIDs[modID] = true
+	end
+end
+
 local coreGameVersion = getCore():getGameVersion()
 local CGV_Major = coreGameVersion:getMajor()
 local CGV_Minor = coreGameVersion:getMinor()
 local isGameVersionPost4165 = ((CGV_Major >= 41) and (CGV_Minor > 65))
 
-SRJOVERWRITE_ISReadABook_update = ISReadABook.update
+local SRJOVERWRITE_ISReadABook_update = ISReadABook.update
 function ISReadABook:update()
 
 	---@type Literature
@@ -52,6 +67,17 @@ function ISReadABook:update()
 			end
 
 			if not delayedStop then
+
+				if (#self.listenedToMedia > 0) then
+					self.changesMade = true
+					local mediaChunk = math.min(#self.listenedToMedia, math.floor(1.09^math.sqrt(#self.listenedToMedia)))
+					table.insert(changesBeingMade, "media")
+					for i=0, mediaChunk do
+						local line = self.listenedToMedia[#self.listenedToMedia]
+						player:addKnownMediaLine(line)
+						table.remove(self.listenedToMedia,#self.listenedToMedia)
+					end
+				end
 
 				if (#self.learnedRecipes > 0) then
 					self.recipeIntervals = self.recipeIntervals+1
@@ -182,7 +208,7 @@ function ISReadABook:update()
 end
 
 
-SRJOVERWRITE_ISReadABook_new = ISReadABook.new
+local SRJOVERWRITE_ISReadABook_new = ISReadABook.new
 function ISReadABook:new(player, item, time)
 	local o = SRJOVERWRITE_ISReadABook_new(self, player, item, time)
 
@@ -193,13 +219,25 @@ function ISReadABook:new(player, item, time)
 		o.readTimer = 0
 
 		o.stopOnWalk = false
-		o.gainedRecipes = SRJ.getGainedRecipes(player)
+		--o.gainedRecipes = SRJ.getGainedRecipes(player)
 		o.learnedRecipes = {}
+		o.listenedToMedia = {}
 		o.recipeIntervals = 0
 		
 		local journalModData = item:getModData()
 		local JMD = journalModData["SRJ"]
 		if JMD then
+
+
+			local listenedToMedia = JMD["listenedToMedia"]
+			if listenedToMedia then
+				for line,_ in pairs(listenedToMedia) do
+					if not player:isKnownMediaLine(line) then
+						table.insert(o.listenedToMedia, line)
+					end
+				end
+			end
+
 
 			if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
 				local learnedRecipes = JMD["learnedRecipes"]
