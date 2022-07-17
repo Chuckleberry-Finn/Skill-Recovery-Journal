@@ -1,0 +1,3 @@
+ItemName_ES = {
+    ItemName_Base.SkillRecoveryJournal = "Diario Encuadernado",
+}
