@@ -16,4 +16,5 @@ IGUI_EN = {
     IGUI_perks_Sneak = "Sneaking",
     IGUI_perks_PlantScavenging = "Foraging",
     IGUI_Rename = "Rename",
+    IGUI_JournalXPUsedUp = "The writing is too worn out to read... (XP used up)"
 }

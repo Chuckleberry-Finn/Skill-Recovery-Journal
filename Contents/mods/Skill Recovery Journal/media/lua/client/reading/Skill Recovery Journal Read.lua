@@ -119,6 +119,7 @@ function ISReadABook:update()
 
 				journalModData.recoveryJournalXpLog = journalModData.recoveryJournalXpLog or {}
 				local jmdUsedXP = journalModData.recoveryJournalXpLog
+				local bJournalUsedUp = false
 
 				for skill,xp in pairs(XpStoredInJournal) do
 
@@ -129,6 +130,9 @@ function ISReadABook:update()
 						local journalXP = xp
 
 						if SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true and jmdUsedXP[skill] then
+							if jmdUsedXP[skill] >= currentXP then
+								bJournalUsedUp = true
+							end
 							currentXP = math.max(currentXP, jmdUsedXP[skill])
 						end
 
@@ -175,8 +179,14 @@ function ISReadABook:update()
 
 				if JMD and (not changesMade) then
 					delayedStop = true
-					sayTextChoices = {"IGUI_PlayerText_KnowSkill","IGUI_PlayerText_BookObsolete"}
-					sayText = getText(sayTextChoices[ZombRand(#sayTextChoices)+1])
+
+					if bJournalUsedUp then
+						sayText = getText("IGUI_JournalXPUsedUp")
+					else
+						sayTextChoices = {"IGUI_PlayerText_KnowSkill","IGUI_PlayerText_BookObsolete"}
+						sayText = getText(sayTextChoices[ZombRand(#sayTextChoices)+1])
+					end
+
 				elseif changesMade then
 					local changesBeingMadeText = ""
 					for k,v in pairs(changesBeingMade) do
