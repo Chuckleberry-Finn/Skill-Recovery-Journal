@@ -33,7 +33,7 @@ description=[quote]`C:\Users\<username>\Zomboid\console.txt`[/quote]
 description=Uploaded to [url=https://pastebin.com/]pastebin[/url]) or [url=https://github.com/ChuckTheSheep/Skill-Recovery-Journal]Github[/url] as an issue.
 description=Share the link in a comment below.
 description=
-description=[url=https://ko-fi.com/chuckleberryfinn][img]https://i.imgur.com/GxZ38nz.png[/img] [b]Consider supporting Chuck![/b][/url] [url=https://www.patreon.com/bePatron?u=17239488][img]https://raw.githubusercontent.com/ChuckTheSheep/Vanilla-Weapons-Expanded/main/Contents/Patreon%20Logo.png[/img][/url]
+description=[url=https://ko-fi.com/chuckleberryfinn][img]https://i.imgur.com/GxZ38nz.png[/img] [b]Consider supporting Chuck![/b][/url] [url=https://www.patreon.com/bePatron?u=17239488][img]https://raw.githubusercontent.com/ChuckTheSheep/Vanilla-Weapons-Expanded/main/Contents/mods/VanillaWeaponsExpanded/patreon/Patreon%20Logo.png[/img][/url]
 description=
 tags=Build 41;Balance;Literature;Multiplayer;Traits
 visibility=public
