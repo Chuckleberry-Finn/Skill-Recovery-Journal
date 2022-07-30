@@ -12,7 +12,8 @@ IGUI_TH = {
     IGUI_Tooltip_Recipes = "สูตรผสม",
     IGUI_Tooltip_Transcribing = "กำลังเขียนบันทึก",
     IGUI_Tooltip_Learning = "กำลังเรียนรู้ประสบการณ์",
-    IGUI_perks_Lightfoot = "ความคล่องตัว",
-    IGUI_perks_Sneak = "การหลบซ่อน",
-    IGUI_perks_PlantScavenging = "การค้นหาของป่า",
+    IGUI_perks_Lightfoot = "เดินเสียงเบา",
+    IGUI_perks_Sneak = "การลอบเร้น",
+    IGUI_perks_PlantScavenging = "การค้นหาของ",
+    IGUI_Rename = "เปลี่ยนชื่อ",
 }
