@@ -3,7 +3,7 @@ require "TimedActions/ISCraftAction"
 local SRJOVERWRITE_ISCraftAction_perform = ISCraftAction.perform
 function ISCraftAction:perform()
 	SRJOVERWRITE_ISCraftAction_perform(self)
-	if self.recipe and self.recipe:getOriginalname() == "Transcribe Journal" and self.item:getType() == "SkillRecoveryJournal" then
+	if self.recipe and self.recipe:getOriginalname() == "Transcribe Journal" and self.item and self.item:getType() == "SkillRecoveryJournal" then
 		if self.willWrite==true and (not self.character:HasTrait("Illiterate")) then
 			if self.changesMade and self.changesMade==true then
 				self.character:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
