@@ -15,11 +15,6 @@ for i=1, activeModIDs:size() do
 	end
 end
 
-local coreGameVersion = getCore():getGameVersion()
-local CGV_Major = coreGameVersion:getMajor()
-local CGV_Minor = coreGameVersion:getMinor()
-local isGameVersionPost4165 = ((CGV_Major >= 41) and (CGV_Minor > 65))
-
 local SRJOVERWRITE_ISReadABook_update = ISReadABook.update
 function ISReadABook:update()
 
@@ -155,13 +150,7 @@ function ISReadABook:update()
 								jmdUsedXP[skill] = jmdUsedXP[skill] or 0
 								jmdUsedXP[skill] = jmdUsedXP[skill]+perPerkXpRate
 
-								if isGameVersionPost4165 then
-									--41.66
-									player:getXp():AddXP(Perks[skill], perPerkXpRate, true, false, true)
-								else
-									--41.65
-									player:getXp():AddXP(Perks[skill], perPerkXpRate, true, true, false, true)
-								end
+								player:getXp():AddXP(Perks[skill], perPerkXpRate, false, false, true)
 
 								changesMade = true
 
