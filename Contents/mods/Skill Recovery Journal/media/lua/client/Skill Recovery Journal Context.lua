@@ -31,7 +31,7 @@ function SRJ.addRenameContext(player, context, items)
 			end
 
 			if addOption then
-				context:addOption(getText("Rename"), item, SRJ.onRenameJournal, player)
+				context:addOption(getText("IGUI_Rename"), item, SRJ.onRenameJournal, player)
 				break
 			end
 		end
