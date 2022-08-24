@@ -9,7 +9,7 @@ function SRJ.generateTooltip(journal)
 	local journalModData = journal:getModData()
 	local JMD = journalModData["SRJ"]
 
-	local blankJournalTooltip = getText("IGUI_Tooltip_Empty")
+	local blankJournalTooltip = getText("IGUI_Tooltip_Empty").."\n"
 
 	if not JMD or not JMD["author"] then
 		return blankJournalTooltip
