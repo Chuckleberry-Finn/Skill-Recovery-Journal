@@ -1,0 +1,4 @@
+Recipe_CH = {
+    Recipe_Transcribe_Journal = "抄寫日誌",
+    Recipe_Bind_Journal = "指定日誌",
+}

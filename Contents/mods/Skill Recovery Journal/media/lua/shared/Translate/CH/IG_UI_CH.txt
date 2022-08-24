@@ -1,0 +1,20 @@
+IGUI_CH = {
+    IGUI_PlayerText_NothingWritten = "這裡什麼也沒寫.",
+    IGUI_PlayerText_DontHaveAnyXP = "我沒有任何值得紀錄的經驗.",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "在別人的筆記上紀錄感覺並不合適.",
+    IGUI_PlayerText_DoesntFeelRightToRead = "閱讀別人的筆記感覺並不合適.",
+    IGUI_PlayerText_NothingToAddToJournal = "差不多都記好了.",
+    IGUI_PlayerText_AllDoneWithJournal = "搞定了.",
+    IGUI_Tooltip_Empty = "一本可以添加紀錄的空白筆記本.",
+    IGUI_Tooltip_Start = "紀錄者為",
+    IGUI_Tooltip_End = "的生活.",
+    IGUI_Tooltip_Recipe = "配方",
+    IGUI_Tooltip_Recipes = "配方表",
+    IGUI_Tooltip_Transcribing = "正在抄寫",
+    IGUI_Tooltip_Learning = "正在學習",
+    IGUI_perks_Lightfoot = "靈巧",
+    IGUI_perks_Sneak = "潛行",
+    IGUI_perks_PlantScavenging = "採集",
+    IGUI_Rename = "重新命名",
+    IGUI_JournalXPUsedUp = "字跡已經過於斑駁淺淡... (經驗已消耗)"
+}
