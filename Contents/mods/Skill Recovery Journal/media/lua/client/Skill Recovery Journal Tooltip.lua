@@ -132,7 +132,7 @@ local function ISToolTipInv_render_Override(self,hardSetWidth)
 end
 
 local ISToolTipInv_render = ISToolTipInv.render
-function ISToolTipInv.render(self)
+function ISToolTipInv:render()
 	if not ISContextMenu.instance or not ISContextMenu.instance.visibleCheck then
 		local itemObj = self.item
 		if itemObj and itemObj:getType() == "SkillRecoveryJournal" then
