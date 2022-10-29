@@ -87,7 +87,7 @@ function ISReadABook:update()
 
 						for i=0, recipeChunk do
 							local recipeID = self.learnedRecipes[#self.learnedRecipes]
-							player:learnRecipe(recipeID)
+							if recipeID then player:learnRecipe(recipeID) end
 							table.remove(self.learnedRecipes,#self.learnedRecipes)
 						end
 						self.recipeIntervals = 0
