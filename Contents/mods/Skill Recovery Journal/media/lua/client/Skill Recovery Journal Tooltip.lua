@@ -65,13 +65,15 @@ function SRJ.generateTooltip(journal)
 		end
 	end
 
-	if recipeNum>0 then
-		local properPlural = getText("IGUI_Tooltip_Recipe")
-		if recipeNum>1 then
-			properPlural = getText("IGUI_Tooltip_Recipes")
+	local listenedToMedia = JMD["listenedToMedia"] or {}
+	if listenedToMedia then
+		local mediaNum = 0
+		for k,v in pairs(listenedToMedia) do
+			mediaNum = mediaNum+1
 		end
-		skillsRecord = skillsRecord..recipeNum.." "..properPlural..".".."\n"
+		skillsRecord = skillsRecord..recipeNum.." "..getText("IGUI_Tooltip_Media")..".".."\n"
 	end
+
 
 	local tooltipStart = getText("IGUI_Tooltip_Start").." "..JMD["author"]..getText("IGUI_Tooltip_End")
 
