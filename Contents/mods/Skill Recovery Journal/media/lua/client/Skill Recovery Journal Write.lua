@@ -182,6 +182,7 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 		local transcribedMedia = JMD["listenedToMedia"]
 
 		local listenedToMedia = {}--SRJ.getListenedToMedia(character)
+		--TODO: Bother Nasko about adding: `this.setExposed(MediaData.MediaLineData.class);` in `LuaManager.java`
 		o.listenedToMedia = {}
 		for _,line in pairs(listenedToMedia) do
 			if transcribedMedia[line] ~= true then
