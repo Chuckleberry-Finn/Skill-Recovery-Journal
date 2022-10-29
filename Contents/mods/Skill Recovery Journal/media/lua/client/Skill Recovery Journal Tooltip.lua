@@ -47,11 +47,21 @@ function SRJ.generateTooltip(journal)
 	end
 
 	local learnedRecipes = JMD["learnedRecipes"] or {}
-	local recipeNum = 0
+	if learnedRecipes then
+		local recipeNum = 0
 
-	if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
-		for k,v in pairs(learnedRecipes) do
-			recipeNum = recipeNum+1
+		if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
+			for k,v in pairs(learnedRecipes) do
+				recipeNum = recipeNum+1
+			end
+		end
+
+		if recipeNum>0 then
+			local properPlural = getText("IGUI_Tooltip_Recipe")
+			if recipeNum>1 then
+				properPlural = getText("IGUI_Tooltip_Recipes")
+			end
+			skillsRecord = skillsRecord..recipeNum.." "..properPlural..".".."\n"
 		end
 	end
 
