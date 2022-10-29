@@ -6,7 +6,7 @@ local crossRefMods = {
 	["CatsReadMod(slower)"]="ReadFasterWhenSitting",
 	["SnakeUtilsPack"]="tooltip",
 }
-local loadedModIDs = {};
+local loadedModIDs = {}
 local activeModIDs = getActivatedMods()
 for i=1, activeModIDs:size() do
 	local modID = activeModIDs:get(i-1)
