@@ -16,25 +16,38 @@ function SRJ.getListenedToMedia(player)
 		for j=1,list:size() do
 			---@type MediaData
 			local mediaData = list:get(j-1)
-
-			print("Watched - mediaData: ".." ("..mediaData:getId()..")  "..mediaData:getLineCount())
+			local mediaDataId = mediaData:getId()
 
 			for jj=1, mediaData:getLineCount() do
-
 				---@type MediaData.MediaLineData
 				local mediaLineData = mediaData:getLine(jj-1)
 				if mediaLineData then
-					print(" ---getTextGuid: "..mediaLineData:getTextGuid())
-					local lineGuid = mediaLineData:getTextGuid()
-					if lineGuid and player:isKnownMediaLine(lineGuid) then
-						print("Watched - "..tostring(lineGuid))
-						table.insert(knownMediaLines, lineGuid)
+
+					--TODO: Bother Nasko about adding: this.setExposed(MediaData.MediaLineData.class); in LuaManager.java
+					local lineGuid--= mediaLineData:getTextGuid()
+
+					for i = 0, getNumClassFields(mediaLineData) - 1 do
+						---@type Field
+						local field = getClassField(mediaLineData, i)
+						if string.find(tostring(field), "%.text") then
+							lineGuid = getClassFieldVal(mediaLineData, field)
+						end
+					end
+
+					if lineGuid then
+						if player:isKnownMediaLine(lineGuid) then
+							knownMediaLines[mediaDataId] = knownMediaLines[mediaDataId] or {}
+							table.insert(knownMediaLines[mediaDataId], lineGuid)
+						end
 					end
 				end
 			end
 		end
 	end
 
+	for k,v in pairs(knownMediaLines) do
+		print(" -- knownMedia: "..k.."  lines: "..#v)
+	end
 	return knownMediaLines
 end
 

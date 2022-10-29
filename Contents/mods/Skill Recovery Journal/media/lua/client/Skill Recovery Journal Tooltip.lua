@@ -65,13 +65,17 @@ function SRJ.generateTooltip(journal)
 		end
 	end
 
-	local listenedToMedia = JMD["listenedToMedia"] or {}
-	if listenedToMedia then
-		local mediaNum = 0
-		for k,v in pairs(listenedToMedia) do
-			mediaNum = mediaNum+1
+	if getDebug() then
+		local listenedToMedia = JMD["listenedToMedia"] or {}
+		if listenedToMedia then
+			local mediaNum = 0
+			for k,v in pairs(listenedToMedia) do
+				mediaNum = mediaNum+1
+			end
+			if mediaNum>0 then
+				skillsRecord = skillsRecord.."["..mediaNum.." media]\n"
+			end
 		end
-		skillsRecord = skillsRecord..recipeNum.." "..getText("IGUI_Tooltip_Media")..".".."\n"
 	end
 
 
