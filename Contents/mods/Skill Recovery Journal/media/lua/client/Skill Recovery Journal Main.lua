@@ -45,9 +45,7 @@ function SRJ.getListenedToMedia(player)
 		end
 	end
 
-	for k,v in pairs(knownMediaLines) do
-		print(" -- knownMedia: "..k.."  lines: "..#v)
-	end
+	if getDebug() then for k,v in pairs(knownMediaLines) do print(" -- knownMedia: "..k.."  lines: "..#v) end end
 	return knownMediaLines
 end
 
