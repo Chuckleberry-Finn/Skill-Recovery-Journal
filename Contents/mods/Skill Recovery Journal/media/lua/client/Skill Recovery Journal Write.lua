@@ -107,7 +107,7 @@ function ISCraftAction:update()
 								local resultingXp = math.min(xp, storedJournalXP[skill]+xpRate)
 								--print("TESTING: "..skill.." recoverable:"..xp.." gained:"..storedJournalXP[skill].." +"..xpRate)
 								JMD["gainedXP"][skill] = resultingXp
-								readXp[skill] = math.max(resultingXp,readXp[skill])
+								readXp[skill] = math.max(resultingXp,(readXp[skill] or 0))
 							end
 						end
 					end
