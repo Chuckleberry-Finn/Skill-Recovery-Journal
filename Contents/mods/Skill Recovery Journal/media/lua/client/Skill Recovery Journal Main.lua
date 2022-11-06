@@ -34,11 +34,9 @@ function SRJ.getListenedToMedia(player)
 						end
 					end
 
-					if lineGuid then
-						if player:isKnownMediaLine(lineGuid) then
-							knownMediaLines[mediaDataId] = knownMediaLines[mediaDataId] or {}
-							table.insert(knownMediaLines[mediaDataId], lineGuid)
-						end
+					if lineGuid and player.isKnownMediaLine and player:isKnownMediaLine(lineGuid) then
+						knownMediaLines[mediaDataId] = knownMediaLines[mediaDataId] or {}
+						table.insert(knownMediaLines[mediaDataId], lineGuid)
 					end
 				end
 			end
