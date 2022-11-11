@@ -5,6 +5,7 @@ local crossRefMods = {
 	["CatsReadMod"]="ReadFasterWhenSitting",
 	["CatsReadMod(slower)"]="ReadFasterWhenSitting",
 	["SnakeUtilsPack"]="tooltip",
+	["nicocokoSpeedReading"]="TimedActions/NSRReadABook",
 }
 local loadedModIDs = {}
 local activeModIDs = getActivatedMods()
