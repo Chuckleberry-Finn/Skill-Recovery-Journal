@@ -26,7 +26,6 @@ function ISReadABook:update()
 	if journal:getType() ~= "SkillRecoveryJournal" then
 		SRJOVERWRITE_ISReadABook_update(self)
 	else
-		self:setCurrentTime(1)
 		self.readTimer = self.readTimer + getGameTime():getMultiplier() or getGameTime():getMultiplier() or 0
 		-- normalize update time via in game time. Adjust updateInterval as needed
 		local updateInterval = 10
@@ -193,6 +192,7 @@ function ISReadABook:update()
 
 					HaloTextHelper:update()
 					HaloTextHelper.addText(self.character, changesBeingMadeText, HaloTextHelper.getColorWhite())
+					self:setCurrentTime(1)
 				end
 			end
 
@@ -223,7 +223,7 @@ function ISReadABook:new(player, item, time)
 		o.learnedRecipes = {}
 		o.listenedToMedia = {}
 		o.recipeIntervals = 0
-		
+
 		local journalModData = item:getModData()
 		local JMD = journalModData["SRJ"]
 		if JMD then
