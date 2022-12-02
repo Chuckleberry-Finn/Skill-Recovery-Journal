@@ -212,7 +212,7 @@ local SRJOVERWRITE_ISReadABook_new = ISReadABook.new
 function ISReadABook:new(player, item, time)
 	local o = SRJOVERWRITE_ISReadABook_new(self, player, item, time)
 
-	if o and item:getType() == "SkillRecoveryJournal" then
+	if o and player and item:getType() == "SkillRecoveryJournal" then
 		o.loopedAction = false
 		o.useProgressBar = false
 		o.maxTime = 55
@@ -249,9 +249,7 @@ function ISReadABook:new(player, item, time)
 					end
 				end
 			end
-
 		end
-
 	end
 
 	return o
