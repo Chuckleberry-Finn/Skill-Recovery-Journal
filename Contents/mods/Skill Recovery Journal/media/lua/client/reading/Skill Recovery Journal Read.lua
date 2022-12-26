@@ -51,6 +51,7 @@ function ISReadABook:update()
 
 			elseif self.character:HasTrait("Illiterate") then
 				delayedStop = true
+				sayText = getText("IGUI_PlayerText_IGUI_PlayerText_Illiterate"..ZombRand(2)+1)-- 0,1 + 1
 
 			elseif pSteamID ~= 0 then
 				JMD["ID"] = JMD["ID"] or {}
