@@ -82,9 +82,7 @@ function ISReadABook:update()
 						local recipeChunk = math.min(#self.learnedRecipes, math.floor(1.09^math.sqrt(#self.learnedRecipes)))
 						
 						local properPlural = getText("IGUI_Tooltip_Recipe")
-						if recipeChunk>1 then
-							properPlural = getText("IGUI_Tooltip_Recipes")
-						end
+						if recipeChunk>1 then properPlural = getText("IGUI_Tooltip_Recipes") end
 						table.insert(changesBeingMade, recipeChunk.." "..properPlural)
 
 						for i=0, recipeChunk do
@@ -101,9 +99,7 @@ function ISReadABook:update()
 
 				for skill,xp in pairs(XpStoredInJournal) do
 					if skill and skill~="NONE" or skill~="MAX" then
-						if xp > greatestXp then
-							greatestXp = xp
-						end
+						if xp > greatestXp then greatestXp = xp end
 					else
 						XpStoredInJournal[skill] = nil
 					end
@@ -128,9 +124,7 @@ function ISReadABook:update()
 						local journalXP = xp
 
 						if SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true and jmdUsedXP[skill] then
-							if jmdUsedXP[skill] >= currentXP then
-								bJournalUsedUp = true
-							end
+							if jmdUsedXP[skill] >= currentXP then bJournalUsedUp = true end
 							currentXP = math.max(currentXP, jmdUsedXP[skill])
 						end
 
@@ -145,9 +139,7 @@ function ISReadABook:update()
 
 							if perPerkXpRate~=false then
 
-								if currentXP+perPerkXpRate > journalXP then
-									perPerkXpRate = math.max(journalXP-currentXP, 0.001)
-								end
+								if currentXP+perPerkXpRate > journalXP then perPerkXpRate = math.max(journalXP-currentXP, 0.001) end
 
 								readXp[skill] = readXp[skill]+perPerkXpRate
 								jmdUsedXP[skill] = jmdUsedXP[skill] or 0
@@ -158,9 +150,7 @@ function ISReadABook:update()
 								changesMade = true
 
 								local skill_name = getText("IGUI_perks_"..skill)
-								if skill_name == ("IGUI_perks_"..skill) then
-									skill_name = skill
-								end
+								if skill_name == ("IGUI_perks_"..skill) then skill_name = skill end
 								table.insert(changesBeingMade, skill_name)
 
 								self:resetJobDelta()
@@ -220,7 +210,6 @@ function ISReadABook:new(player, item, time)
 		o.readTimer = 0
 
 		o.stopOnWalk = false
-		--o.gainedRecipes = SRJ.getGainedRecipes(player)
 		o.learnedRecipes = {}
 		o.listenedToMedia = {}
 		o.recipeIntervals = 0
@@ -228,7 +217,6 @@ function ISReadABook:new(player, item, time)
 		local journalModData = item:getModData()
 		local JMD = journalModData["SRJ"]
 		if JMD then
-
 
 			local listenedToMedia = JMD["listenedToMedia"]
 			if listenedToMedia then
@@ -238,7 +226,6 @@ function ISReadABook:new(player, item, time)
 					end
 				end
 			end
-
 
 			if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
 				local learnedRecipes = JMD["learnedRecipes"]
