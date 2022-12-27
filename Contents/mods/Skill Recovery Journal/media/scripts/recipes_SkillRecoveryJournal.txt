@@ -24,7 +24,6 @@ module Base
 		   Prop2 		: Source=1,
 
            Time:50.0,
-           OnCanPerform:SRJ.writingJournal,
            StopOnWalk:false,
         }
 }

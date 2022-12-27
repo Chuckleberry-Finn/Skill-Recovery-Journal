@@ -241,13 +241,3 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 
 	return o
 end
-
-
-
----@param player IsoGameCharacter | IsoPlayer
-function SRJ.writingJournal(recipe, player, item)
-	if item and (item:getType() == "SkillRecoveryJournal") then
-		return true
-	end
-	return false
-end
