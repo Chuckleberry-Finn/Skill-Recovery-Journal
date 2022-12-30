@@ -9,70 +9,27 @@ end
 
 
 SRJ.fileFuncNoReadXP = "update,Skill Recovery Journal Read"
+SRJ.fileFuncNoTVXP = "doSkill,ISRadioInteractions"
 
-SRJ.fileFuncSpecial = {
-	["doSkill,ISRadioInteractions"]={ sandboxVar="TranscribeTVXP", stacks=false, },
-}
 
 function SRJ.recordXPGain(player, perksType, XP, info)
-	if info and info[SRJ.fileFuncNoReadXP] then return end
+	if info then
+		if info[SRJ.fileFuncNoReadXP] then return end
+		print("SandboxVars.SkillRecoveryJournal.TranscribeTVXP:"..tostring(SandboxVars.SkillRecoveryJournal.TranscribeTVXP))
+		print("- a:"..tostring(not SandboxVars.SkillRecoveryJournal.TranscribeTVXP==true))
+		print("- b:"..tostring(info[SRJ.fileFuncNoTVXP]))
+		print("- a+b:"..tostring((not SandboxVars.SkillRecoveryJournal.TranscribeTVXP==true) and info[SRJ.fileFuncNoTVXP]))
+		if (not SandboxVars.SkillRecoveryJournal.TranscribeTVXP==true) and info[SRJ.fileFuncNoTVXP] then return end
+	end
 
 	local perkID = tostring(perksType)
 	local recoverableXP = SRJ.setOrGetRecoverableXP(player)
-
-	recoverableXP[perkID] = recoverableXP[perkID] or {}
-
-	local specialCase = false
-	local blocked = true
-
-	for funcFileID,_ in pairs(info) do
-		local specialFunc = SRJ.fileFuncSpecial[funcFileID]
-		if specialFunc then
-			local sandboxCheck = SRJ.fileFuncSpecial[funcFileID].sandboxVar and SandboxVars.SkillRecoveryJournal[SRJ.fileFuncSpecial[funcFileID].sandboxVar] or nil
-			--print("ERROR:SRJ.recordXPGain: sandboxCheck: INVALID:  "..tostring(SRJ.fileFuncSpecial[funcFileID].sandboxVar))
-			blocked = sandboxCheck~=nil and sandboxCheck==false
-			if not blocked then
-				recoverableXP[perkID][funcFileID] = (recoverableXP[perkID][funcFileID] or 0) + XP
-			end
-			specialCase = true
-		end
-	end
-
-	if not specialCase then recoverableXP[perkID]["normal"] = (recoverableXP[perkID]["normal"] or 0) + XP end
+	recoverableXP[perkID] = (recoverableXP[perkID] or 0) + XP
 end
-
-
----COMPAT WITH OLD VERSION--------------------------------------------------------------------------
---TODO: Remove in like 2-3 months 12/29/22
-function SRJ.compatOldJournalStoredXP(storedJournalXP)
-	for perkID,_ in pairs(storedJournalXP) do
-		local oldXP
-		if storedJournalXP[perkID] and type(storedJournalXP[perkID])~="table" then
-			if type(storedJournalXP[perkID]) == "number" then oldXP = storedJournalXP[perkID] end
-			storedJournalXP[perkID] = nil
-		end
-		storedJournalXP[perkID] = storedJournalXP[perkID] or {}
-		if oldXP then storedJournalXP[perkID]["normal"] = oldXP end
-	end
-end
-----------------------------------------------------------------------------------------------------
 
 
 function SRJ.getReadXP(player)
 	local pMD = player:getModData()
-
-	---COMPAT WITH OLD VERSION----------------------------------------------------------
-	if pMD.recoveryJournalXpLog then --TODO: Remove in like 2-3 months 12/29/22
-		for perkID,expectedTableOfXPs in pairs(pMD.recoveryJournalXpLog) do
-			local oldXP
-			if expectedTableOfXPs and type(expectedTableOfXPs)~="table" then
-				if expectedTableOfXPs == "number" then oldXP = expectedTableOfXPs end
-				pMD.recoveryJournalXpLog[perkID] = {}
-				pMD.recoveryJournalXpLog[perkID]["normal"] = oldXP
-			end
-		end
-	end
-	------------------------------------------------------------------------------------
 
 	pMD.recoveryJournalXpLog = pMD.recoveryJournalXpLog or {}
 	return pMD.recoveryJournalXpLog
@@ -86,7 +43,7 @@ function SRJ.calculateGainedSkills(player)
 	local recoverableXPFactor = (SandboxVars.SkillRecoveryJournal.RecoveryPercentage/100) or 1
 
 	--if getDebug() then print("INFO: SkillRecoveryJournal: calculating gained skills:") end
-	for perkID,xpData in pairs(recoverableXP) do
+	for perkID,XP in pairs(recoverableXP) do
 
 		---@type PerkFactory.Perk
 		local perkActual = Perks.FromString(perkID)
@@ -94,14 +51,9 @@ function SRJ.calculateGainedSkills(player)
 		local parentSandboxVarFalse = perkActual and SandboxVars.SkillRecoveryJournal["Recover"..perkActual:getParent():getId().."Skills"]==false
 
 		if perkActual and (not isPassiveFalse) and (not parentSandboxVarFalse) then
-
 			gainedXP = gainedXP or {}
-			gainedXP[perkID] = gainedXP[perkID] or {}
-
-			for funcFileID,XP in pairs(xpData) do
-				gainedXP[perkID][funcFileID] = XP*recoverableXPFactor
-				--if getDebug() then print(" - "..perkID.." = "..gainedXP[perkID][funcFileID].."xp  ("..XP.."xp * "..recoverableXPFactor..") ".."["..funcFileID.."]") end
-			end
+			gainedXP[perkID] = XP*recoverableXPFactor
+			--if getDebug() then print(" - "..perkID.." = "..gainedXP[perkID].."xp  ("..XP.."xp * "..recoverableXPFactor..") ") end
 		end
 
 	end

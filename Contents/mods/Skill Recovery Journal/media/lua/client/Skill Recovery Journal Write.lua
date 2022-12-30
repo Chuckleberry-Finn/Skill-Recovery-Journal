@@ -64,46 +64,36 @@ function ISCraftAction:update()
 			end
 
 			local storedJournalXP = JMD["gainedXP"]
-			SRJ.compatOldJournalStoredXP(storedJournalXP)
-
 			local readXp = SRJ.getReadXP(self.character)
 			local recoverableXP = SRJ.calculateGainedSkills(self.character)
 
 			if bOwner and storedJournalXP and recoverableXP then
-				--gainedXP[perkID][funcFileID]
-				for perkID,xpData in pairs(recoverableXP) do
+				for perkID,xp in pairs(recoverableXP) do
+					if xp > 0 then
 
-					storedJournalXP[perkID] = storedJournalXP[perkID] or {}
+						storedJournalXP[perkID] = storedJournalXP[perkID] or 0
+						if xp > storedJournalXP[perkID] then
 
-					for funcFileID,xp in pairs(xpData) do
-						if xp > 0 then
+							local transcribeTimeMulti = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 1
+							local perkLevelPlusOne = self.character:getPerkLevel(Perks[perkID])+1
 
-							storedJournalXP[perkID][funcFileID] = storedJournalXP[perkID][funcFileID] or 0
+							local xpRate = math.sqrt(xp)/25
+							xpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * transcribeTimeMulti
 
-							if xp > storedJournalXP[perkID][funcFileID] then
+							if xpRate>0 then
+								self.changesMade = true
 
-								local transcribeTimeMulti = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 1
-								local perkLevelPlusOne = self.character:getPerkLevel(Perks[perkID])+1
+								local skill_name = getTextOrNull("IGUI_perks_"..perkID) or perkID
 
-								local xpRate = math.sqrt(xp)/25
-								xpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * transcribeTimeMulti
-
-								if xpRate>0 then
-									self.changesMade = true
-
-									local skill_name = getTextOrNull("IGUI_perks_"..perkID) or perkID
-
-									if not changesBeingMadeIndex[skill_name] then
-										changesBeingMadeIndex[skill_name] = true
-										table.insert(changesBeingMade, skill_name)
-									end
-
-									local resultingXp = math.min(xp, storedJournalXP[perkID][funcFileID]+xpRate)
-									--print("TESTING: "..skill.." recoverable:"..xp.." gained:"..storedJournalXP[skill].." +"..xpRate)
-									storedJournalXP[perkID][funcFileID] = resultingXp
-									readXp[perkID] = readXp[perkID] or {}
-									readXp[perkID][funcFileID] = math.max(resultingXp,(readXp[perkID][funcFileID] or 0))
+								if not changesBeingMadeIndex[skill_name] then
+									changesBeingMadeIndex[skill_name] = true
+									table.insert(changesBeingMade, skill_name)
 								end
+
+								local resultingXp = math.min(xp, storedJournalXP[perkID]+xpRate)
+								--print("TESTING: "..skill.." recoverable:"..xp.." gained:"..storedJournalXP[skill].." +"..xpRate)
+								storedJournalXP[perkID] = resultingXp
+								readXp[perkID] = math.max(resultingXp,(readXp[perkID] or 0))
 							end
 						end
 					end

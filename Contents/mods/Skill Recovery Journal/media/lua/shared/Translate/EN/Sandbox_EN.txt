@@ -14,7 +14,7 @@ Sandbox_EN = {
     Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses_tooltip = "Starting with more than 1 point in a skill generally nets you bonus XP - with this toggled off that XP is not recorded. All XP recorded is that of a character with no starting skills. This does NOT recover starting levels - only the bonus XP earned."
 
 	Sandbox_SkillRecoveryJournalTranscribeTVXP = "Transcribe XP earned from TV/VHS",
-	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Toggling this off will prevent people from transcribing XP earned from watching TV/VHS. This means players will have to watch VHS/TV shows for every new character. Note: TV/VHS XP does not stack with the journal even with this setting set to true."
+	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Toggling this on will allow people to transcribe XP earned from watching TV/VHS. Note: This means players can carry over watched XP between characters cumulatively."
 
 	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Recover Passive Skills"
 	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Toggle on to record passive skills."

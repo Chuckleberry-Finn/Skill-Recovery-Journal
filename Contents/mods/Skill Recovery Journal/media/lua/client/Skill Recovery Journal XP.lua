@@ -73,10 +73,10 @@ function patchClassMethod.create(original_function)
         for i= count - 1, 0, -1 do
             local luaCallFrame = getCoroutineCallframeStack(coroutine,i)
             if luaCallFrame ~= nil then
-                local funcFileLine = KahluaUtil.rawTostring2(luaCallFrame)
-                if funcFileLine then
-                    local func = funcFileLine:match("function: (.*) %-%- file: ")
-                    local file = funcFileLine:match(" %-%- file: (.*).lua line # ")
+                local functionFileLine = KahluaUtil.rawTostring2(luaCallFrame)
+                if functionFileLine then
+                    local func = functionFileLine:match("function: (.*) %-%- file: ")
+                    local file = functionFileLine:match(" %-%- file: (.*).lua line # ")
                     if func and file then
                         info[func..","..file] = true
                     end

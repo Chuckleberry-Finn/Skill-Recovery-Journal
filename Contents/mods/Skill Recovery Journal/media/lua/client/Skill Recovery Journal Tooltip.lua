@@ -20,35 +20,26 @@ local function SRJ_generateTooltip(journal)
 
 	local storedJournalXP = JMD["gainedXP"]
 	if not storedJournalXP then return blankJournalTooltip end
-	SRJ.compatOldJournalStoredXP(storedJournalXP)
 
 	local skillsRecord = ""
-
 	local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
 
-	for perkID,XPs in pairs(storedJournalXP) do
-
-		storedJournalXP[perkID] = storedJournalXP[perkID] or {}
+	for perkID,xp in pairs(storedJournalXP) do
 
 		local perk = Perks[perkID]
 		if perk then
-			local journalXP = 0
-			local journalXPTotal = 0
-			for funcFileID,xp in pairs(XPs) do
-				journalXP = journalXP+xp
-				journalXPTotal = journalXPTotal+xp
+			local journalXP = xp
 
-				local jmdUsedXP = journalModData.recoveryJournalXpLog
-				if oneTimeUse and jmdUsedXP and jmdUsedXP[perkID] and jmdUsedXP[perkID][funcFileID] then
-					journalXP = journalXP-jmdUsedXP[perkID][funcFileID]
-				end
+			local jmdUsedXP = journalModData.recoveryJournalXpLog
+			if oneTimeUse and jmdUsedXP and jmdUsedXP[perkID] and jmdUsedXP[perkID] then
+				journalXP = journalXP-jmdUsedXP[perkID]
 			end
 
 			local perkName = perk:getName()
 			local xpBasedOnPlayer = math.floor(journalXP*100)/100
 
 			skillsRecord = skillsRecord..perkName.." ("..xpBasedOnPlayer
-			if oneTimeUse then skillsRecord = skillsRecord.."/"..journalXPTotal end
+			if oneTimeUse then skillsRecord = skillsRecord.."/"..xp end
 			skillsRecord = skillsRecord.." xp)".."\n"
 		end
 	end

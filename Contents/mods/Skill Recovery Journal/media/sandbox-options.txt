@@ -13,7 +13,7 @@ option SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses
 {type = boolean, default = false, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverProfessionAndTraitsBonuses,}
 
 option SkillRecoveryJournal.TranscribeTVXP
-{type = boolean, default = true, page = SkillRecoveryJournal, translation = SkillRecoveryJournalTranscribeTVXP,}
+{type = boolean, default = false, page = SkillRecoveryJournal, translation = SkillRecoveryJournalTranscribeTVXP,}
 
 option SkillRecoveryJournal.RecoverPassiveSkills
 {type = boolean, default = false, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverPassiveSkills,}
