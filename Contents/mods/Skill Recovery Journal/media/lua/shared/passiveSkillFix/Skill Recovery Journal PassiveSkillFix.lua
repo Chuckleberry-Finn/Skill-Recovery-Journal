@@ -1,3 +1,5 @@
+--TODO: REMOVE IN A MONTH OR TWO
+--[[
 ---@param id number
 ---@param player IsoPlayer|IsoGameCharacter
 function SRJ_setRecoverableLevels(id, player)
@@ -20,6 +22,7 @@ function SRJ_setRecoverableLevels(id, player)
 			end
 		end
 	end
-	--[[DEBUG]] for k,v in pairs(pMD.recoveryJournalPassiveSkillsInit) do print(" -- PASSIVE-INIT: "..k.." = "..v) end
+	--DEBUG for k,v in pairs(pMD.recoveryJournalPassiveSkillsInit) do print(" -- PASSIVE-INIT: "..k.." = "..v) end
 end
 Events.OnCreatePlayer.Add(SRJ_setRecoverableLevels)
+--]]

@@ -1,7 +1,166 @@
-Events.OnGameBoot.Add(function() print("Skill Recovery Journal: ver:0.8-NOV-6-HOTFIX2") end)
+local SRJ = {}
 
-SRJ = {}
 
+function SRJ.setOrGetRecoverableXP(player)
+	local pMD = player:getModData()
+	pMD.recoverableXP = pMD.recoverableXP or {}
+	return pMD.recoverableXP
+end
+
+
+SRJ.fileFuncNoReadXP = "update,Skill Recovery Journal Read"
+
+SRJ.fileFuncSpecial = {
+	["doSkill,ISRadioInteractions"]={ sandboxVar="TranscribeTVXP", stacks=false, },
+}
+
+function SRJ.recordXPGain(player, perksType, XP, info)
+	if info and info[SRJ.fileFuncNoReadXP] then return end
+
+	local perkID = tostring(perksType)
+	local recoverableXP = SRJ.setOrGetRecoverableXP(player)
+
+	recoverableXP[perkID] = recoverableXP[perkID] or {}
+
+	local specialCase = false
+	local blocked = true
+
+	for funcFileID,_ in pairs(info) do
+		local specialFunc = SRJ.fileFuncSpecial[funcFileID]
+		if specialFunc then
+			local sandboxCheck = SRJ.fileFuncSpecial[funcFileID].sandboxVar and SandboxVars.SkillRecoveryJournal[SRJ.fileFuncSpecial[funcFileID].sandboxVar] or nil
+			--print("ERROR:SRJ.recordXPGain: sandboxCheck: INVALID:  "..tostring(SRJ.fileFuncSpecial[funcFileID].sandboxVar))
+			blocked = sandboxCheck~=nil and sandboxCheck==false
+			if not blocked then
+				recoverableXP[perkID][funcFileID] = (recoverableXP[perkID][funcFileID] or 0) + XP
+			end
+			specialCase = true
+		end
+	end
+
+	if not specialCase then recoverableXP[perkID]["normal"] = (recoverableXP[perkID]["normal"] or 0) + XP end
+end
+
+
+---COMPAT WITH OLD VERSION--------------------------------------------------------------------------
+--TODO: Remove in like 2-3 months 12/29/22
+function SRJ.compatOldJournalStoredXP(storedJournalXP)
+	for perkID,_ in pairs(storedJournalXP) do
+		local oldXP
+		if storedJournalXP[perkID] and type(storedJournalXP[perkID])~="table" then
+			if type(storedJournalXP[perkID]) == "number" then oldXP = storedJournalXP[perkID] end
+			storedJournalXP[perkID] = nil
+		end
+		storedJournalXP[perkID] = storedJournalXP[perkID] or {}
+		if oldXP then storedJournalXP[perkID]["normal"] = oldXP end
+	end
+end
+----------------------------------------------------------------------------------------------------
+
+
+function SRJ.getReadXP(player)
+	local pMD = player:getModData()
+
+	---COMPAT WITH OLD VERSION----------------------------------------------------------
+	if pMD.recoveryJournalXpLog then --TODO: Remove in like 2-3 months 12/29/22
+		for perkID,expectedTableOfXPs in pairs(pMD.recoveryJournalXpLog) do
+			local oldXP
+			if expectedTableOfXPs and type(expectedTableOfXPs)~="table" then
+				if expectedTableOfXPs == "number" then oldXP = expectedTableOfXPs end
+				pMD.recoveryJournalXpLog[perkID] = {}
+				pMD.recoveryJournalXpLog[perkID]["normal"] = oldXP
+			end
+		end
+	end
+	------------------------------------------------------------------------------------
+
+	pMD.recoveryJournalXpLog = pMD.recoveryJournalXpLog or {}
+	return pMD.recoveryJournalXpLog
+end
+
+
+function SRJ.calculateGainedSkills(player)
+
+	local gainedXP-- = {}
+	local recoverableXP = SRJ.setOrGetRecoverableXP(player)
+	local recoverableXPFactor = (SandboxVars.SkillRecoveryJournal.RecoveryPercentage/100) or 1
+
+	--if getDebug() then print("INFO: SkillRecoveryJournal: calculating gained skills:") end
+	for perkID,xpData in pairs(recoverableXP) do
+
+		---@type PerkFactory.Perk
+		local perkActual = Perks.FromString(perkID)
+		local isPassiveFalse = perkActual and perkActual:isPassiv() and (SandboxVars.SkillRecoveryJournal.RecoverPassiveSkills == false)
+		local parentSandboxVarFalse = perkActual and SandboxVars.SkillRecoveryJournal["Recover"..perkActual:getParent():getId().."Skills"]==false
+
+		if perkActual and (not isPassiveFalse) and (not parentSandboxVarFalse) then
+
+			gainedXP = gainedXP or {}
+			gainedXP[perkID] = gainedXP[perkID] or {}
+
+			for funcFileID,XP in pairs(xpData) do
+				gainedXP[perkID][funcFileID] = XP*recoverableXPFactor
+				--if getDebug() then print(" - "..perkID.." = "..gainedXP[perkID][funcFileID].."xp  ("..XP.."xp * "..recoverableXPFactor..") ".."["..funcFileID.."]") end
+			end
+		end
+
+	end
+	return gainedXP
+end
+
+
+function SRJ.getGainedRecipes(player)
+	local gainedRecipes = {}
+
+	---@type ArrayList
+	local knownRecipes = player:getKnownRecipes()
+
+	for i=0, knownRecipes:size()-1 do
+		local recipeID = knownRecipes:get(i)
+		gainedRecipes[recipeID] = true
+	end
+
+	---@type SurvivorDesc
+	local playerDesc = player:getDescriptor()
+
+	---@type TraitCollection
+	local playerTraits = player:getTraits()
+	for i=0, playerTraits:size()-1 do
+		local trait = playerTraits:get(i)
+		---@type TraitFactory.Trait
+		local traitTrait = TraitFactory.getTrait(trait)
+		if traitTrait then
+			local traitRecipes = traitTrait:getFreeRecipes()
+			for ii=0, traitRecipes:size()-1 do
+				local traitRecipe = traitRecipes:get(ii)
+				gainedRecipes[traitRecipe] = nil
+			end
+		end
+	end
+
+	---Profession
+	local playerProfessionID = playerDesc:getProfession()
+	local playerProfession = ProfessionFactory.getProfession(playerProfessionID)
+	if playerProfession then
+		local profFreeRecipes = playerProfession:getFreeRecipes()
+		for i=0, profFreeRecipes:size()-1 do
+			local profRecipe = profFreeRecipes:get(i)
+			gainedRecipes[profRecipe] = nil
+		end
+	end
+
+	---return iterable list
+	local returnedGainedRecipes = {}
+	for recipeID,_ in pairs(gainedRecipes) do
+		table.insert(returnedGainedRecipes, recipeID)
+	end
+
+	return returnedGainedRecipes
+end
+
+return SRJ
+
+--[[
 ---@param player IsoPlayer|IsoGameCharacter
 function SRJ.getListenedToMedia(player)
 
@@ -192,7 +351,7 @@ function SRJ.calculateGainedSkills(player)
 				end
 
 				if recoverableXP > 0 then
-					--[DEBUG]] print(" - "..perkType.." = "..tostring(recoverableXP).."xp  current:"..currentXP.." - "..bonusLevels.." ("..perk:getTotalXpForLevel(bonusLevels).."xp)")
+					--print(" - "..perkType.." = "..tostring(recoverableXP).."xp  current:"..currentXP.." - "..bonusLevels.." ("..perk:getTotalXpForLevel(bonusLevels).."xp)")
 					gainedXP[perkType] = recoverableXP
 					storingSkills = true
 				end
@@ -206,3 +365,4 @@ function SRJ.calculateGainedSkills(player)
 
 	return gainedXP
 end
+--]]

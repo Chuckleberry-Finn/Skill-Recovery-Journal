@@ -1,5 +1,7 @@
 require "TimedActions/ISCraftAction"
 
+local SRJ = require "Skill Recovery Journal Main"
+
 local SRJOVERWRITE_ISCraftAction_perform = ISCraftAction.perform
 function ISCraftAction:perform()
 	SRJOVERWRITE_ISCraftAction_perform(self)
@@ -28,7 +30,7 @@ function ISCraftAction:update()
 			self.craftTimer = 0
 			self.changesMade = false
 
-			local changesBeingMade = {}
+			local changesBeingMade, changesBeingMadeIndex = {}, {}
 
 			local journalModData = self.item:getModData()
 			journalModData["SRJ"] = journalModData["SRJ"] or {}
@@ -37,22 +39,7 @@ function ISCraftAction:update()
 			local pSteamID = self.character:getSteamID()
 
 			local bOwner = true
-			if pSteamID ~= 0 and journalID and journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
-				bOwner = false
-			end
-
-
-			if bOwner and (#self.listenedToMedia > 0) then
-				self.changesMade = true
-				local mediaChunk = math.min(#self.listenedToMedia, math.floor(1.09^math.sqrt(#self.listenedToMedia)))
-				table.insert(changesBeingMade, "media")
-				for i=0, mediaChunk do
-					local line = self.listenedToMedia[#self.listenedToMedia]
-					JMD["listenedToMedia"][line] = true
-					table.remove(self.listenedToMedia,#self.listenedToMedia)
-				end
-			end
-
+			if pSteamID ~= 0 and journalID and journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then bOwner = false end
 
 			if bOwner and (#self.gainedRecipes > 0) then
 				self.recipeIntervals = self.recipeIntervals+1
@@ -77,37 +64,46 @@ function ISCraftAction:update()
 			end
 
 			local storedJournalXP = JMD["gainedXP"]
+			SRJ.compatOldJournalStoredXP(storedJournalXP)
 
-			local pMD = self.character:getModData()
-			pMD.recoveryJournalXpLog = pMD.recoveryJournalXpLog or {}
-			local readXp = pMD.recoveryJournalXpLog
+			local readXp = SRJ.getReadXP(self.character)
 			local recoverableXP = SRJ.calculateGainedSkills(self.character)
 
 			if bOwner and storedJournalXP and recoverableXP then
-				for skill,xp in pairs(recoverableXP) do
-					if xp > 0 then
-						storedJournalXP[skill] = storedJournalXP[skill] or 0
-						if xp > storedJournalXP[skill] then
+				--gainedXP[perkID][funcFileID]
+				for perkID,xpData in pairs(recoverableXP) do
 
-							local transcribeTimeMulti = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 1
-							local perkLevelPlusOne = self.character:getPerkLevel(Perks[skill])+1
+					storedJournalXP[perkID] = storedJournalXP[perkID] or {}
 
-							local xpRate = math.sqrt(xp)/25
-							xpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * transcribeTimeMulti
+					for funcFileID,xp in pairs(xpData) do
+						if xp > 0 then
 
-							if xpRate>0 then
-								self.changesMade = true
+							storedJournalXP[perkID][funcFileID] = storedJournalXP[perkID][funcFileID] or 0
 
-								local skill_name = getText("IGUI_perks_"..skill)
-								if skill_name == ("IGUI_perks_"..skill) then
-									skill_name = skill
+							if xp > storedJournalXP[perkID][funcFileID] then
+
+								local transcribeTimeMulti = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 1
+								local perkLevelPlusOne = self.character:getPerkLevel(Perks[perkID])+1
+
+								local xpRate = math.sqrt(xp)/25
+								xpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * transcribeTimeMulti
+
+								if xpRate>0 then
+									self.changesMade = true
+
+									local skill_name = getTextOrNull("IGUI_perks_"..perkID) or perkID
+
+									if not changesBeingMadeIndex[skill_name] then
+										changesBeingMadeIndex[skill_name] = true
+										table.insert(changesBeingMade, skill_name)
+									end
+
+									local resultingXp = math.min(xp, storedJournalXP[perkID][funcFileID]+xpRate)
+									--print("TESTING: "..skill.." recoverable:"..xp.." gained:"..storedJournalXP[skill].." +"..xpRate)
+									storedJournalXP[perkID][funcFileID] = resultingXp
+									readXp[perkID] = readXp[perkID] or {}
+									readXp[perkID][funcFileID] = math.max(resultingXp,(readXp[perkID][funcFileID] or 0))
 								end
-								table.insert(changesBeingMade, skill_name)
-
-								local resultingXp = math.min(xp, storedJournalXP[skill]+xpRate)
-								--print("TESTING: "..skill.." recoverable:"..xp.." gained:"..storedJournalXP[skill].." +"..xpRate)
-								JMD["gainedXP"][skill] = resultingXp
-								readXp[skill] = math.max(resultingXp,(readXp[skill] or 0))
 							end
 						end
 					end
@@ -116,19 +112,12 @@ function ISCraftAction:update()
 
 			if self.changesMade==true then
 
-				local changesBeingMadeText = ""
-				for k,v in pairs(changesBeingMade) do
-					changesBeingMadeText = changesBeingMadeText.." "..v
-					if k~=#changesBeingMade then
-						changesBeingMadeText = changesBeingMadeText..", "
-					end
-				end
 				if #changesBeingMade>0 then
-					changesBeingMadeText = getText("IGUI_Tooltip_Transcribing")..": "..changesBeingMadeText
+					local changesBeingMadeText = getText("IGUI_Tooltip_Transcribing")..":"
+					for k,v in pairs(changesBeingMade) do changesBeingMadeText = changesBeingMadeText.." "..v..((k~=#changesBeingMade and ", ") or "") end
+					HaloTextHelper:update()
+					HaloTextHelper.addText(self.character, changesBeingMadeText, HaloTextHelper.getColorWhite())
 				end
-
-				HaloTextHelper:update()
-				HaloTextHelper.addText(self.character, changesBeingMadeText, HaloTextHelper.getColorWhite())
 
 				self.playSoundLater = self.playSoundLater or 0
 				if self.playSoundLater > 0 then
@@ -173,18 +162,6 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 				if learnedRecipes[recipeID] ~= true then
 					table.insert(o.gainedRecipes,recipeID)
 				end
-			end
-		end
-
-
-		JMD["listenedToMedia"] = JMD["listenedToMedia"] or {}
-		local transcribedMedia = JMD["listenedToMedia"]
-
-		local listenedToMedia = SRJ.getListenedToMedia(character)
-		o.listenedToMedia = {}
-		for _,line in pairs(listenedToMedia) do
-			if transcribedMedia[line] ~= true then
-				table.insert(o.listenedToMedia,line)
 			end
 		end
 

@@ -1,47 +1,54 @@
 require "ISUI/ISToolTipInv"
 
----@param journal InventoryItem | Literature
-function SRJ.generateTooltip(journal)
+local SRJ = require "Skill Recovery Journal Main"
 
+---@param journal InventoryItem | Literature
+local function SRJ_generateTooltip(journal)
+
+	---fix old draft attempt at something------------------------
 	journal:setNumberOfPages(-1)
 	journal:setCanBeWrite(false)
+	--TODO: Should have been removed like a year ago - 12/29/22
+	-------------------------------------------------------------
 
 	local journalModData = journal:getModData()
 	local JMD = journalModData["SRJ"]
 
 	local blankJournalTooltip = getText("IGUI_Tooltip_Empty").."\n"
 
-	if not JMD or not JMD["author"] then
-		return blankJournalTooltip
-	end
+	if not JMD or not JMD["author"] then return blankJournalTooltip end
 
-	local gainedXP = JMD["gainedXP"]
-	if not gainedXP then
-		return blankJournalTooltip
-	end
+	local storedJournalXP = JMD["gainedXP"]
+	if not storedJournalXP then return blankJournalTooltip end
+	SRJ.compatOldJournalStoredXP(storedJournalXP)
 
 	local skillsRecord = ""
-	for skill,xp in pairs(gainedXP) do
-		local perk = PerkFactory.getPerk(Perks[skill])
+
+	local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
+
+	for perkID,XPs in pairs(storedJournalXP) do
+
+		storedJournalXP[perkID] = storedJournalXP[perkID] or {}
+
+		local perk = Perks[perkID]
 		if perk then
+			local journalXP = 0
+			local journalXPTotal = 0
+			for funcFileID,xp in pairs(XPs) do
+				journalXP = journalXP+xp
+				journalXPTotal = journalXPTotal+xp
 
-			local journalXP = xp
-
-			journalModData.recoveryJournalXpLog = journalModData.recoveryJournalXpLog or {}
-			local jmdUsedXP = journalModData.recoveryJournalXpLog
-
-			if SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true and jmdUsedXP[skill] then
-				journalXP = journalXP-jmdUsedXP[skill]
+				local jmdUsedXP = journalModData.recoveryJournalXpLog
+				if oneTimeUse and jmdUsedXP and jmdUsedXP[perkID] and jmdUsedXP[perkID][funcFileID] then
+					journalXP = journalXP-jmdUsedXP[perkID][funcFileID]
+				end
 			end
 
 			local perkName = perk:getName()
 			local xpBasedOnPlayer = math.floor(journalXP*100)/100
+
 			skillsRecord = skillsRecord..perkName.." ("..xpBasedOnPlayer
-
-			if SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true and jmdUsedXP[skill] then
-				skillsRecord = skillsRecord.."/"..xp
-			end
-
+			if oneTimeUse then skillsRecord = skillsRecord.."/"..journalXPTotal end
 			skillsRecord = skillsRecord.." xp)".."\n"
 		end
 	end
@@ -50,34 +57,14 @@ function SRJ.generateTooltip(journal)
 	if learnedRecipes then
 		local recipeNum = 0
 
-		if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
-			for k,v in pairs(learnedRecipes) do
-				recipeNum = recipeNum+1
-			end
-		end
+		if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then for k,v in pairs(learnedRecipes) do recipeNum = recipeNum+1 end end
 
 		if recipeNum>0 then
 			local properPlural = getText("IGUI_Tooltip_Recipe")
-			if recipeNum>1 then
-				properPlural = getText("IGUI_Tooltip_Recipes")
-			end
+			if recipeNum>1 then properPlural = getText("IGUI_Tooltip_Recipes") end
 			skillsRecord = skillsRecord..recipeNum.." "..properPlural..".".."\n"
 		end
 	end
-
-	if getDebug() then
-		local listenedToMedia = JMD["listenedToMedia"] or {}
-		if listenedToMedia then
-			local mediaNum = 0
-			for k,v in pairs(listenedToMedia) do
-				mediaNum = mediaNum+1
-			end
-			if mediaNum>0 then
-				skillsRecord = skillsRecord.."["..mediaNum.." media]\n"
-			end
-		end
-	end
-
 
 	local tooltipStart = getText("IGUI_Tooltip_Start").." "..JMD["author"]..getText("IGUI_Tooltip_End")
 
@@ -153,7 +140,7 @@ function ISToolTipInv:render()
 		local itemObj = self.item
 		if itemObj and itemObj:getType() == "SkillRecoveryJournal" then
 
-			local tooltipStart, skillsRecord = SRJ.generateTooltip(itemObj)
+			local tooltipStart, skillsRecord = SRJ_generateTooltip(itemObj)
 
 			local font = getCore():getOptionTooltipFont()
 			local fontType = fontDict[font] or UIFont.Medium

@@ -1,11 +1,20 @@
 Sandbox_EN = {
 	Sandbox_SkillRecoveryJournal = "Skill Recovery Journal",
+
 	Sandbox_SkillRecoveryJournalPercentage = "Skill Recovery Percentage",
 	Sandbox_SkillRecoveryJournalPercentage_tooltip = "The amount of experienced recovered from reading bound journals.",
+
 	Sandbox_SkillRecoveryJournalTranscribeSpeed = "Skill Recovery Transcribe Speed Multiplier",
 	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "A multiplier on the speed of transcribing journals."
+
 	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Skill Recovery Read Speed Multiplier",
 	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "A multiplier on the speed of reading bound journals."
+
+    Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses = "Recover Profession And Traits Bonus XP"
+    Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses_tooltip = "Starting with more than 1 point in a skill generally nets you bonus XP - with this toggled off that XP is not recorded. All XP recorded is that of a character with no starting skills. This does NOT recover starting levels - only the bonus XP earned."
+
+	Sandbox_SkillRecoveryJournalTranscribeTVXP = "Transcribe XP earned from TV/VHS",
+	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Toggling this off will prevent people from transcribing XP earned from watching TV/VHS. This means players will have to watch VHS/TV shows for every new character. Note: TV/VHS XP does not stack with the journal even with this setting set to true."
 
 	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Recover Passive Skills"
 	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Toggle on to record passive skills."
@@ -27,6 +36,7 @@ Sandbox_EN = {
 
 	Sandbox_SkillRecoveryJournalRecoverRecipes = "Recover Recipes"
     Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "Toggle off to prevent journals from recovering/transcribing recipes."
+
     Sandbox_SkillRecoveryJournalUsed = "Journal XP Used When Read"
-    Sandbox_SkillRecoveryJournalUsed_tooltip = "If toggled on XP that is transcribed is spent when read."
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "Normally you can reread the journal as many times as you like - with this toggled on each individual XP point can only be recovered once. You can still add onto the journal, but each point can only be recovered once on each journal. Note: the tooltip for the journal will now display a fraction for unused points."
 	}

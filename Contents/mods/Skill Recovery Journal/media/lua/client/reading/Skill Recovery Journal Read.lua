@@ -17,6 +17,10 @@ for i=1, activeModIDs:size() do
 	end
 end
 
+
+local SRJ = require "Skill Recovery Journal Main"
+
+
 local SRJOVERWRITE_ISReadABook_update = ISReadABook.update
 function ISReadABook:update()
 
@@ -64,17 +68,6 @@ function ISReadABook:update()
 
 			if not delayedStop then
 
-				if (#self.listenedToMedia > 0) then
-					self.changesMade = true
-					local mediaChunk = math.min(#self.listenedToMedia, math.floor(1.09^math.sqrt(#self.listenedToMedia)))
-					table.insert(changesBeingMade, "media")
-					for i=0, mediaChunk do
-						local line = self.listenedToMedia[#self.listenedToMedia]
-						player:addKnownMediaLine(line)
-						table.remove(self.listenedToMedia,#self.listenedToMedia)
-					end
-				end
-
 				if (#self.learnedRecipes > 0) then
 					self.recipeIntervals = self.recipeIntervals+1
 					self.changesMade = true
@@ -97,64 +90,89 @@ function ISReadABook:update()
 				local XpStoredInJournal = JMD["gainedXP"]
 				local greatestXp = 0
 
-				for skill,xp in pairs(XpStoredInJournal) do
-					if skill and skill~="NONE" or skill~="MAX" then
-						if xp > greatestXp then greatestXp = xp end
-					else
+				for skill,XPs in pairs(XpStoredInJournal) do
+					if skill=="NONE" or skill=="MAX" then
 						XpStoredInJournal[skill] = nil
+					else
+						local xp = 0
+						for _,XP in pairs(XPs) do xp = xp+XP end
+						if xp > greatestXp then greatestXp = xp end
 					end
 				end
 
 				local xpRate = math.sqrt(greatestXp)/25
 
-				local pMD = player:getModData()
-				pMD.recoveryJournalXpLog = pMD.recoveryJournalXpLog or {}
-				local readXp = pMD.recoveryJournalXpLog
+				local readXP = SRJ.getReadXP(player)
+
+				local gainedXP = SRJ.calculateGainedSkills(player)
 
 				journalModData.recoveryJournalXpLog = journalModData.recoveryJournalXpLog or {}
 				local jmdUsedXP = journalModData.recoveryJournalXpLog
 				local bJournalUsedUp = false
 
-				for skill,xp in pairs(XpStoredInJournal) do
+				local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
 
+
+				for skill,XPs in pairs(XpStoredInJournal) do
 					if Perks[skill] then
+						local listSkill = false
+						for funcFileID,xp in pairs(XPs) do
 
-						readXp[skill] = readXp[skill] or 0
-						local currentXP = readXp[skill]
-						local journalXP = xp
+							readXP[skill] = readXP[skill] or {}
+							readXP[skill][funcFileID] = readXP[skill][funcFileID] or 0
+							local currentlyReadXP = readXP[skill][funcFileID]
+							local journalXP = xp
 
-						if SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true and jmdUsedXP[skill] then
-							if jmdUsedXP[skill] >= currentXP then bJournalUsedUp = true end
-							currentXP = math.max(currentXP, jmdUsedXP[skill])
+							if oneTimeUse and jmdUsedXP[skill] and jmdUsedXP[skill][funcFileID] then
+								if jmdUsedXP[skill][funcFileID] >= currentlyReadXP then
+									bJournalUsedUp = true
+								end
+								currentlyReadXP = math.max(currentlyReadXP, jmdUsedXP[skill][funcFileID])
+							end
+
+							--[[
+							local bStacking = (SRJ.fileFuncSpecial[funcFileID] and SRJ.fileFuncSpecial[funcFileID].stacks)
+							if bStacking then
+								local gainedSkillFileFuncXP = gainedXP and gainedXP[skill] and gainedXP[skill][funcFileID]
+								currentlyReadXP = currentlyReadXP + (gainedSkillFileFuncXP or 0)
+							end
+							--]]
+
+							if currentlyReadXP < journalXP then
+								local readTimeMulti = SandboxVars.SkillRecoveryJournal.ReadTimeSpeed or 1
+								local perkLevelPlusOne = player:getPerkLevel(Perks[skill])+1
+								local perPerkXpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * readTimeMulti
+								if perkLevelPlusOne == 11 then
+									perPerkXpRate=false
+								end
+								--print("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..perkLevel.."  xpStored:"..xp.."  currentXP:"..currentXP)
+
+								if perPerkXpRate~=false then
+
+									if currentlyReadXP+perPerkXpRate > journalXP then
+										perPerkXpRate = math.max(journalXP-currentlyReadXP, 0.001)
+									end
+
+									readXP[skill][funcFileID] = readXP[skill][funcFileID]+perPerkXpRate
+
+									jmdUsedXP[skill] = jmdUsedXP[skill] or {}
+									jmdUsedXP[skill][funcFileID] = jmdUsedXP[skill][funcFileID] or 0
+									jmdUsedXP[skill][funcFileID] = jmdUsedXP[skill][funcFileID]+perPerkXpRate
+
+									---- perksType, XP, passHook, applyXPBoosts, transmitMP)
+									player:getXp():AddXP(Perks[skill], perPerkXpRate, false, false, true)
+									SRJ.recordXPGain(player, skill, perPerkXpRate, {[funcFileID]=true})
+
+									changesMade = true
+									listSkill = true
+									self:resetJobDelta()
+								end
+							end
 						end
-
-						if currentXP < journalXP then
-							local readTimeMulti = SandboxVars.SkillRecoveryJournal.ReadTimeSpeed or 1
-							local perkLevelPlusOne = player:getPerkLevel(Perks[skill])+1
-							local perPerkXpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * readTimeMulti
-							if perkLevelPlusOne == 11 then
-								perPerkXpRate=false
-							end
-							--print ("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..perkLevel.."  xpStored:"..xp.."  currentXP:"..currentXP)
-
-							if perPerkXpRate~=false then
-
-								if currentXP+perPerkXpRate > journalXP then perPerkXpRate = math.max(journalXP-currentXP, 0.001) end
-
-								readXp[skill] = readXp[skill]+perPerkXpRate
-								jmdUsedXP[skill] = jmdUsedXP[skill] or 0
-								jmdUsedXP[skill] = jmdUsedXP[skill]+perPerkXpRate
-
-								player:getXp():AddXP(Perks[skill], perPerkXpRate, false, false, true)
-
-								changesMade = true
-
-								local skill_name = getText("IGUI_perks_"..skill)
-								if skill_name == ("IGUI_perks_"..skill) then skill_name = skill end
-								table.insert(changesBeingMade, skill_name)
-
-								self:resetJobDelta()
-							end
+						if listSkill then
+							local skill_name = getText("IGUI_perks_"..skill)
+							if skill_name == ("IGUI_perks_"..skill) then skill_name = skill end
+							table.insert(changesBeingMade, skill_name)
 						end
 					end
 				end
@@ -211,21 +229,11 @@ function ISReadABook:new(player, item, time)
 
 		o.stopOnWalk = false
 		o.learnedRecipes = {}
-		o.listenedToMedia = {}
 		o.recipeIntervals = 0
 
 		local journalModData = item:getModData()
 		local JMD = journalModData["SRJ"]
 		if JMD then
-
-			local listenedToMedia = JMD["listenedToMedia"]
-			if listenedToMedia then
-				for line,_ in pairs(listenedToMedia) do
-					if not player:isKnownMediaLine(line) then
-						table.insert(o.listenedToMedia, line)
-					end
-				end
-			end
 
 			if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
 				local learnedRecipes = JMD["learnedRecipes"]

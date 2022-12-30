@@ -1,8 +1,8 @@
-require "Skill Recovery Journal Main"
 require "ISUI/ISInventoryPaneContextMenu"
 
+local contextSRJ = {}
 
-function SRJ.addRenameContext(player, context, items)
+function contextSRJ.addRenameContext(player, context, items)
 	for _, v in ipairs(items) do
 
 		local item = v
@@ -31,7 +31,7 @@ function SRJ.addRenameContext(player, context, items)
 			end
 
 			if addOption then
-				context:addOption(getText("IGUI_Rename"), item, SRJ.onRenameJournal, player)
+				context:addOption(getText("IGUI_Rename"), item, contextSRJ.onRenameJournal, player)
 				break
 			end
 		end
@@ -40,14 +40,14 @@ end
 
 
 ---@param journal InventoryItem|Literature
-function SRJ.onRenameJournal(journal, player)
-	local modal = ISTextBox:new(0, 0, 280, 100, journal:getDisplayName()..":", journal:getName(), nil, SRJ.onRenameJournalClick, player, getSpecificPlayer(player), journal)
+function contextSRJ.onRenameJournal(journal, player)
+	local modal = ISTextBox:new(0, 0, 280, 100, journal:getDisplayName()..":", journal:getName(), nil, contextSRJ.onRenameJournalClick, player, getSpecificPlayer(player), journal)
 	modal:initialise()
 	modal:addToUIManager()
 end
 
 
-function SRJ:onRenameJournalClick(button, player, item)
+function contextSRJ:onRenameJournalClick(button, player, item)
 	if button.internal == "OK" and button.parent.entry:getText() and button.parent.entry:getText() ~= "" then
 		item:setName(button.parent.entry:getText())
 		local pdata = getPlayerData(player:getPlayerNum())
@@ -56,4 +56,4 @@ function SRJ:onRenameJournalClick(button, player, item)
 	end
 end
 
-Events.OnPreFillInventoryObjectContextMenu.Add(SRJ.addRenameContext)
+Events.OnPreFillInventoryObjectContextMenu.Add(contextSRJ.addRenameContext)
