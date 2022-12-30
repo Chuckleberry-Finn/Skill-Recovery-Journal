@@ -2,6 +2,27 @@ require "ISUI/ISToolTipInv"
 
 local SRJ = require "Skill Recovery Journal Main"
 
+
+local function flagPlayerWithBoostedXP(id, player)
+	local pMD = player:getModData()
+	if pMD.bBoostedXP then return end
+
+	local pXP = player:getXp()
+	local boosted
+
+	for i=1, Perks.getMaxIndex()-1 do
+		---@type PerkFactory.Perk
+		local perk = Perks.fromIndex(i)
+		boosted = boosted or pXP:getPerkBoost(perk)>0
+	end
+
+	pMD.bBoostedXP = boosted
+	return pMD.bBoostedXP
+end
+Events.OnCreatePlayer.Add(flagPlayerWithBoostedXP)
+local function getBoostedXPFlag(player) return player:getModData().bBoostedXP or flagPlayerWithBoostedXP(player) end
+
+
 ---@param journal InventoryItem | Literature
 local function SRJ_generateTooltip(journal)
 
@@ -20,6 +41,9 @@ local function SRJ_generateTooltip(journal)
 
 	local storedJournalXP = JMD["gainedXP"]
 	if not storedJournalXP then return blankJournalTooltip end
+
+	local warnAboutBonusXP = SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses ~= true
+	local warning = warnAboutBonusXP and getBoostedXPFlag(getPlayer())
 
 	local skillsRecord = ""
 	local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
@@ -59,17 +83,22 @@ local function SRJ_generateTooltip(journal)
 
 	local tooltipStart = getText("IGUI_Tooltip_Start").." "..JMD["author"]..getText("IGUI_Tooltip_End")
 
-	return tooltipStart, skillsRecord
+
+	return tooltipStart, skillsRecord, warning
 end
 
 
-local function drawDetailsTooltip(tooltip, tooltipStart, skillsRecord, x, y, fontType)
-	local lineHeight = getTextManager():getFontFromEnum(fontType):getLineHeight()
+local function drawDetailsTooltip(tooltip, tooltipStart, skillsRecord, warning, x, y, fontType)
+	local fontHeight = getTextManager():getFontHeight(fontType)
 	local fnt = {r=0.9, g=0.9, b=0.9, a=1}
-	tooltip:drawText(tooltipStart, x, (y+(15-lineHeight)/2), fnt.r, fnt.g, fnt.b, fnt.a, fontType)
+	tooltip:drawText(tooltipStart, x, y, fnt.r, fnt.g, fnt.b, fnt.a, fontType)
 	if skillsRecord then
-		y=y+(lineHeight*1.5)
-		tooltip:drawText(skillsRecord, x+1, (y+(15-lineHeight)/2), fnt.r, fnt.g, fnt.b, fnt.a, fontType)
+		y=y+(fontHeight*1.5)
+		tooltip:drawText(skillsRecord, x+1, y, fnt.r, fnt.g, fnt.b, fnt.a, fontType)
+	end
+	if warning then
+		y=y+getTextManager():MeasureStringY(fontType, skillsRecord)
+		tooltip:drawText(warning, x+1, y, fnt.r, 0.3, 0.3, 0.5, fontType)
 	end
 end
 
@@ -125,20 +154,56 @@ local function ISToolTipInv_render_Override(self,hardSetWidth)
 	end
 end
 
+
+local wrappedWarningMessage
+---@param itemObj InventoryItem
+local function wrapWarningMessage(itemObj, fontType)
+	local maxWidth = getTextManager():MeasureStringX(fontType,"Mod: "..itemObj:getModName())
+	local warningMessage = getText("IGUI_Bonus_XP_Warning")
+	local warningWidth = getTextManager():MeasureStringX(fontType, warningMessage)
+
+	if warningWidth > maxWidth then
+		local words = warningMessage:gmatch("%S+")
+		local rebuilt, currentLine = "", ""
+		for word in words do
+			local currentLineWidth = getTextManager():MeasureStringX(fontType, currentLine)
+		 	local wordWidth = getTextManager():MeasureStringX(fontType, word)
+			local inBetween = (wordWidth+currentLineWidth > maxWidth) and "\n" or " "
+			currentLine = currentLine..inBetween..word
+			rebuilt = rebuilt..inBetween..word
+			if inBetween == "\n" then currentLine = word end
+		end
+		warningMessage = rebuilt
+	end
+	wrappedWarningMessage = warningMessage
+	return wrappedWarningMessage
+end
+
+
 local ISToolTipInv_render = ISToolTipInv.render
 function ISToolTipInv:render()
 	if not ISContextMenu.instance or not ISContextMenu.instance.visibleCheck then
 		local itemObj = self.item
 		if itemObj and itemObj:getType() == "SkillRecoveryJournal" then
 
-			local tooltipStart, skillsRecord = SRJ_generateTooltip(itemObj)
+			local tooltipStart, skillsRecord, warning = SRJ_generateTooltip(itemObj)
 
 			local font = getCore():getOptionTooltipFont()
 			local fontType = fontDict[font] or UIFont.Medium
+			local fontHeight = getTextManager():getFontHeight(fontType)
 			local textWidth = math.max(getTextManager():MeasureStringX(fontType, tooltipStart),getTextManager():MeasureStringX(fontType, skillsRecord))
-			local textHeight = getTextManager():MeasureStringY(fontType, tooltipStart)
+			local textHeight = fontHeight
 
-			if skillsRecord then textHeight=textHeight+getTextManager():MeasureStringY(fontType, skillsRecord)+8 end
+			if skillsRecord then
+				textHeight=textHeight+(fontHeight)+getTextManager():MeasureStringY(fontType, skillsRecord)
+			end
+
+			if warning==true then
+				warning = wrappedWarningMessage or wrapWarningMessage(itemObj, fontType)
+				textHeight = textHeight+getTextManager():MeasureStringY(fontType, warning)
+			end
+
+			textHeight=textHeight+fontHeight
 
 			local journalTooltipWidth = textWidth+fontBounds[font]
 			ISToolTipInv_render_Override(self,journalTooltipWidth)
@@ -151,9 +216,9 @@ function ISToolTipInv:render()
 				local bgColor = self.backgroundColor
 				local bdrColor = self.borderColor
 
-				self:drawRect(0, tooltipY, journalTooltipWidth, textHeight + 8, math.min(1,bgColor.a+0.4), bgColor.r, bgColor.g, bgColor.b)
-				self:drawRectBorder(0, tooltipY, journalTooltipWidth, textHeight + 8, bdrColor.a, bdrColor.r, bdrColor.g, bdrColor.b)
-				drawDetailsTooltip(self, tooltipStart, skillsRecord, 15, yoff, fontType)
+				self:drawRect(0, tooltipY, journalTooltipWidth, textHeight, math.min(1,bgColor.a+0.4), bgColor.r, bgColor.g, bgColor.b)
+				self:drawRectBorder(0, tooltipY, journalTooltipWidth, textHeight, bdrColor.a, bdrColor.r, bdrColor.g, bdrColor.b)
+				drawDetailsTooltip(self, tooltipStart, skillsRecord, warning, 15, yoff, fontType)
 				yoff = yoff + 12
 			end
 		else
