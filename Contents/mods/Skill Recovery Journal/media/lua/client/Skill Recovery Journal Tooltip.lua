@@ -168,7 +168,7 @@ local function wrapWarningMessage(itemObj, fontType)
 		for word in words do
 			local currentLineWidth = getTextManager():MeasureStringX(fontType, currentLine)
 		 	local wordWidth = getTextManager():MeasureStringX(fontType, word)
-			local inBetween = (wordWidth+currentLineWidth > maxWidth) and "\n" or " "
+			local inBetween = ((wordWidth+currentLineWidth > maxWidth) and "\n") or (currentLineWidth>0 and " ") or ""
 			currentLine = currentLine..inBetween..word
 			rebuilt = rebuilt..inBetween..word
 			if inBetween == "\n" then currentLine = word end
