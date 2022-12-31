@@ -41,9 +41,9 @@ local function SRJ_generateTooltip(journal)
 
 	local storedJournalXP = JMD["gainedXP"]
 	if not storedJournalXP then return blankJournalTooltip end
-
+	
 	local warnAboutBonusXP = SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses ~= true
-	local warning = warnAboutBonusXP and getBoostedXPFlag(getPlayer())
+	local warning = warnAboutBonusXP and getBoostedXPFlag(getPlayer()) and (not JMD.usedRenameOption)
 
 	local skillsRecord = ""
 	local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
@@ -179,11 +179,18 @@ local function wrapWarningMessage(itemObj, fontType)
 	return wrappedWarningMessage
 end
 
-
+local tooltipRenderOverTime = {item=nil,ticks=0}
 local ISToolTipInv_render = ISToolTipInv.render
 function ISToolTipInv:render()
 	if not ISContextMenu.instance or not ISContextMenu.instance.visibleCheck then
+		---@type InventoryItem
 		local itemObj = self.item
+
+		if tooltipRenderOverTime.item ~= itemObj then
+			tooltipRenderOverTime.item = itemObj
+			tooltipRenderOverTime.ticks = 1
+		end
+
 		if itemObj and itemObj:getType() == "SkillRecoveryJournal" then
 
 			local tooltipStart, skillsRecord, warning = SRJ_generateTooltip(itemObj)
@@ -195,15 +202,20 @@ function ISToolTipInv:render()
 			local textHeight = fontHeight
 
 			if skillsRecord then
-				textHeight=textHeight+(fontHeight)+getTextManager():MeasureStringY(fontType, skillsRecord)
+				textHeight=(textHeight*0.5)+getTextManager():MeasureStringY(fontType, skillsRecord)
+			end
+
+			if tooltipRenderOverTime.item == itemObj then
+				tooltipRenderOverTime.ticks = tooltipRenderOverTime.ticks+1
+				if tooltipRenderOverTime.ticks < 15 then warning = false end
 			end
 
 			if warning==true then
 				warning = wrappedWarningMessage or wrapWarningMessage(itemObj, fontType)
-				textHeight = textHeight+getTextManager():MeasureStringY(fontType, warning)
+				textHeight = textHeight+fontHeight+getTextManager():MeasureStringY(fontType, warning)
 			end
 
-			textHeight=textHeight+fontHeight
+			textHeight=textHeight+(fontHeight*1.5)
 
 			local journalTooltipWidth = textWidth+fontBounds[font]
 			ISToolTipInv_render_Override(self,journalTooltipWidth)

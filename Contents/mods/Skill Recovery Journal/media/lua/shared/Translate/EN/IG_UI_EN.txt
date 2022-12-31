@@ -19,5 +19,5 @@ IGUI_EN = {
     IGUI_perks_PlantScavenging = "Foraging",
     IGUI_Rename = "Rename",
     IGUI_JournalXPUsedUp = "The writing is too worn out to read... (XP used up)"
-    IGUI_Bonus_XP_Warning = "This character earns bonus XP based on their traits or profession. Bonus XP transcription is currently disabled."
+    IGUI_Bonus_XP_Warning = "This character earns bonus XP based on their traits or profession. Bonus XP transcription is currently disabled. Rename this journal to disable this alert."
 }

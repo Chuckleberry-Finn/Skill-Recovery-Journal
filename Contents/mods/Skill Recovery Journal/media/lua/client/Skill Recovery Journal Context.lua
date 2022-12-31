@@ -47,8 +47,12 @@ function contextSRJ.onRenameJournal(journal, player)
 end
 
 
+---@param item InventoryItem
 function contextSRJ:onRenameJournalClick(button, player, item)
 	if button.internal == "OK" and button.parent.entry:getText() and button.parent.entry:getText() ~= "" then
+		local journalModData = item:getModData()
+		local JMD = journalModData["SRJ"]
+		JMD.usedRenameOption = true
 		item:setName(button.parent.entry:getText())
 		local pdata = getPlayerData(player:getPlayerNum())
 		pdata.playerInventory:refreshBackpacks()
