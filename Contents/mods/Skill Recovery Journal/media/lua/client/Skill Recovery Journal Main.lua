@@ -15,10 +15,6 @@ SRJ.fileFuncNoTVXP = "doSkill,ISRadioInteractions"
 function SRJ.recordXPGain(player, perksType, XP, info)
 	if info then
 		if info[SRJ.fileFuncNoReadXP] then return end
-		print("SandboxVars.SkillRecoveryJournal.TranscribeTVXP:"..tostring(SandboxVars.SkillRecoveryJournal.TranscribeTVXP))
-		print("- a:"..tostring(not SandboxVars.SkillRecoveryJournal.TranscribeTVXP==true))
-		print("- b:"..tostring(info[SRJ.fileFuncNoTVXP]))
-		print("- a+b:"..tostring((not SandboxVars.SkillRecoveryJournal.TranscribeTVXP==true) and info[SRJ.fileFuncNoTVXP]))
 		if (not SandboxVars.SkillRecoveryJournal.TranscribeTVXP==true) and info[SRJ.fileFuncNoTVXP] then return end
 	end
 
