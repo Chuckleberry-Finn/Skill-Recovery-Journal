@@ -25,7 +25,8 @@ local function syncOldXP(id, player)
 		local perk = Perks.fromIndex(i)
 		if perk then
 			local perkID = tostring(perk)
-			local currentRecoverableXP = pMD.recoveryJournalPassiveSkillsInit[perkID] or recoverableXP[perkID] or 0
+			local oldPassiveFixXP = pMD.recoveryJournalPassiveSkillsInit and pMD.recoveryJournalPassiveSkillsInit[perkID]
+			local currentRecoverableXP = oldPassiveFixXP or recoverableXP[perkID] or 0
 			if currentRecoverableXP and currentRecoverableXP>0 then
 				recoverableXP[perkID] = math.max(pXP:getXP(perk),currentRecoverableXP)
 			end
