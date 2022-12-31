@@ -8,6 +8,34 @@ function SRJ.setOrGetRecoverableXP(player)
 end
 
 
+---COMPAT ISSUE WITH OLD SAVES
+--TODO: REMOVE IN A YEAR 12/31/2022
+---@param player IsoPlayer|IsoGameCharacter
+local function syncOldXP(id, player)
+	local pMD = player:getModData()
+	if pMD.bSyncedOldXP then return end
+	pMD.bSyncedOldXP = true
+
+	---@type IsoGameCharacter.XP
+	local pXP = player:getXp()
+
+	local recoverableXP = SRJ.setOrGetRecoverableXP(player)
+	for i=1, Perks.getMaxIndex()-1 do
+		---@type PerkFactory.Perk
+		local perk = Perks.fromIndex(i)
+		if perk then
+			local perkID = tostring(perk)
+			local currentRecoverableXP = pMD.recoveryJournalPassiveSkillsInit[perkID] or recoverableXP[perkID] or 0
+			if currentRecoverableXP and currentRecoverableXP>0 then
+				recoverableXP[perkID] = math.max(pXP:getXP(perk),currentRecoverableXP)
+			end
+		end
+	end
+	pMD.recoveryJournalPassiveSkillsInit = nil
+end
+Events.OnCreatePlayer.Add(syncOldXP)
+
+
 SRJ.fileFuncNoReadXP = "update,Skill Recovery Journal Read"
 SRJ.fileFuncNoTVXP = "doSkill,ISRadioInteractions"
 
