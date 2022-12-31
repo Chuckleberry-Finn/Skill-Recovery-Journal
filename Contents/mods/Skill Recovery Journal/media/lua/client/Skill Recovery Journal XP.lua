@@ -86,8 +86,15 @@ function patchClassMethod.create(original_function)
 
         ---@type IsoGameCharacter
         local player = getPlayer()
-        local unBoostedXP = (applyXPBoosts==false and XP) or unBoostXP(player, perksType, XP)
-        SRJ.recordXPGain(player, perksType, unBoostedXP, info)
+        ---@type IsoGameCharacter.XP
+        local pXP = player:getXp()
+        local currentXP = pXP:getXP(perksType)
+        local maxLevelXP = perksType:getTotalXpForLevel(10)
+
+        if currentXP <= maxLevelXP then
+            local unBoostedXP = (applyXPBoosts==false and XP) or unBoostXP(player, perksType, XP)
+            SRJ.recordXPGain(player, perksType, unBoostedXP, info, maxLevelXP)
+        end
 
         if passHook==nil then passHook = true end
         if applyXPBoosts==nil then applyXPBoosts = true end

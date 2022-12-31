@@ -11,8 +11,7 @@ end
 SRJ.fileFuncNoReadXP = "update,Skill Recovery Journal Read"
 SRJ.fileFuncNoTVXP = "doSkill,ISRadioInteractions"
 
-
-function SRJ.recordXPGain(player, perksType, XP, info)
+function SRJ.recordXPGain(player, perksType, XP, info, maxLevelXP)
 	if info then
 		if info[SRJ.fileFuncNoReadXP] then return end
 		if (not SandboxVars.SkillRecoveryJournal.TranscribeTVXP==true) and info[SRJ.fileFuncNoTVXP] then return end
@@ -20,7 +19,9 @@ function SRJ.recordXPGain(player, perksType, XP, info)
 
 	local perkID = tostring(perksType)
 	local recoverableXP = SRJ.setOrGetRecoverableXP(player)
+
 	recoverableXP[perkID] = (recoverableXP[perkID] or 0) + XP
+	if maxLevelXP then recoverableXP[perkID] = math.min(recoverableXP[perkID],maxLevelXP) end
 end
 
 
