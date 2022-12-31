@@ -137,6 +137,7 @@ function ISReadABook:update()
 
 								---- perksType, XP, passHook, applyXPBoosts, transmitMP)
 								player:getXp():AddXP(Perks[skill], perPerkXpRate, false, false, true)
+								SRJ.recordXPGain(player, skill, perPerkXpRate, {})
 
 								changesMade = true
 								self:resetJobDelta()
