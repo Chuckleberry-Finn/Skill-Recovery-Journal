@@ -88,6 +88,8 @@ function patchClassMethod.create(original_function)
         local player = getPlayer()
         ---@type IsoGameCharacter.XP
         local pXP = player:getXp()
+        if pXP ~= self then return end
+
         local currentXP = pXP:getXP(perksType)
         local maxLevelXP = perksType:getTotalXpForLevel(10)
 
@@ -100,7 +102,7 @@ function patchClassMethod.create(original_function)
         if applyXPBoosts==nil then applyXPBoosts = true end
         if transmitMP==nil then transmitMP = false end
 
-        --print("SkillRecoveryJournal: --addXP: "..tostring(perksType).." +"..XP.."("..unBoostedXP..")   hook:"..tostring(passHook)..", boost:"..tostring(applyXPBoosts)..", mp:"..tostring(transmitMP))
+        --print("SkillRecoveryJournal: --"addXP: "..tostring(perksType).." +"..XP.."("..unBoostedXP..")   hook:"..tostring(passHook)..", boost:"..tostring(applyXPBoosts)..", mp:"..tostring(transmitMP))
         --local infoText for k,v in pairs(info) do infoText = (infoText or "").."; "..k end print(" -- --info: "..infoText)
         return original_function(self, perksType, XP, passHook, applyXPBoosts, transmitMP)
     end
