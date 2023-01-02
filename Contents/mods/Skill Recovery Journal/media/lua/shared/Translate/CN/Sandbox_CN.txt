@@ -1,0 +1,32 @@
+Sandbox_CN = {
+	Sandbox_SkillRecoveryJournal = "技能回复日志",
+	Sandbox_SkillRecoveryJournalPercentage = "技能回复百分比率",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "藉由阅读日志将得以回复多少技能经验.",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "技能回复日志的抄写速率",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "抄写技能时所花费的时间乘数."
+	Sandbox_SkillRecoveryJournalReadTimeSpeed = "技能回复日志的阅读速率",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "阅读日志时所花费的时间乘数."
+
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "回复被动技能"
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "开启以纪录被动技能."
+
+	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "回复战斗技能"
+    Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "开启以纪录战斗相关技能."
+
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "回复枪械技能"
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "开启以纪录枪械相关技能."
+
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "回复制造技能"
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "开启以纪录制造相关技能."
+
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "回复求生技能"
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "开启以纪录求生相关技能."
+
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "回复敏捷技能"
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "开启以纪录敏捷相关技能."
+
+	Sandbox_SkillRecoveryJournalRecoverRecipes = "回复配方表"
+    Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "关闭以防止纪录或回复已习得的配方"
+    Sandbox_SkillRecoveryJournalUsed = "消耗已阅读日志中记载的经验"
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "若开启则将在阅读後耗损日志中记载的经验."
+	}
