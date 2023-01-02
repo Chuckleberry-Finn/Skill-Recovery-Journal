@@ -1,11 +1,10 @@
 local SRJ = require "Skill Recovery Journal Main"
 
-
 local isSkillExcludedFrom = {}
 ---@param perk PerkFactory.Perk
-function isSkillExcludedFrom.SpeedReduction(perk) return (perk == Perks.Sprinting or perk == Perks.Fitness or perk == Perks.Strength) end
+function isSkillExcludedFrom.SpeedReduction(perk) return (perk == Perks.Sprinting or perk == Perks.Fitness or perk == Perks.Strength) or false end
 ---@param perk PerkFactory.Perk
-function isSkillExcludedFrom.SpeedIncrease(perk) return (perk == Perks.Fitness or perk == Perks.Strength) end
+function isSkillExcludedFrom.SpeedIncrease(perk) return (perk == Perks.Fitness or perk == Perks.Strength) or false end
 
 
 ---@param player IsoGameCharacter|IsoPlayer
