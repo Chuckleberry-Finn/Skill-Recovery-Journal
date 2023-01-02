@@ -19,7 +19,7 @@ local function unBoostXP(player,perk,XP)
     local exerciseMultiplier = 1
     if perk == Perks.Strength and instanceof(player,"IsoPlayer") then
         if player:getNutrition():getProteins() > 50 and player:getNutrition():getProteins() < 300 then exerciseMultiplier = 1.5
-        elseif player:getNutrition():getProteins() < 300 then exerciseMultiplier = 0.7
+        elseif player:getNutrition():getProteins() < -300 then exerciseMultiplier = 0.7
         end
     end
     if getDebug() then debugPrint = debugPrint.."\n   exerciseMultiplier: "..exerciseMultiplier.."*"..XP end
