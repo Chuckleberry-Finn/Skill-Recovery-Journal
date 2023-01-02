@@ -37,14 +37,9 @@ end
 Events.OnCreatePlayer.Add(syncOldXP)
 
 
-SRJ.fileFuncNoReadXP = "update,Skill Recovery Journal Read"
 SRJ.fileFuncNoTVXP = "doSkill,ISRadioInteractions"
-
 function SRJ.recordXPGain(player, perksType, XP, info, maxLevelXP)
-	if info then
-		if info[SRJ.fileFuncNoReadXP] then return end
-		if (not SandboxVars.SkillRecoveryJournal.TranscribeTVXP==true) and info[SRJ.fileFuncNoTVXP] then return end
-	end
+	if info then if (not SandboxVars.SkillRecoveryJournal.TranscribeTVXP==true) and info[SRJ.fileFuncNoTVXP] then return end end
 
 	local perkID = tostring(perksType)
 	local recoverableXP = SRJ.setOrGetRecoverableXP(player)
@@ -68,7 +63,6 @@ function SRJ.calculateGainedSkills(player)
 	local recoverableXP = SRJ.setOrGetRecoverableXP(player)
 	local recoverableXPFactor = (SandboxVars.SkillRecoveryJournal.RecoveryPercentage/100) or 1
 
-	--if getDebug() then print("INFO: SkillRecoveryJournal: calculating gained skills:") end
 	for perkID,XP in pairs(recoverableXP) do
 
 		---@type PerkFactory.Perk
@@ -79,7 +73,6 @@ function SRJ.calculateGainedSkills(player)
 		if perkActual and (not isPassiveFalse) and (not parentSandboxVarFalse) then
 			gainedXP = gainedXP or {}
 			gainedXP[perkID] = XP*recoverableXPFactor
-			--if getDebug() then print(" - "..perkID.." = "..gainedXP[perkID].."xp  ("..XP.."xp * "..recoverableXPFactor..") ") end
 		end
 
 	end

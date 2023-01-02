@@ -6,6 +6,7 @@ local crossRefMods = {
 	["CatsReadMod(slower)"]="ReadFasterWhenSitting",
 	["SnakeUtilsPack"]="tooltip",
 	["nicocokoSpeedReading"]="TimedActions/NSRReadABook",
+	["CDDAReading"]="TimedActions/ISReadABook",
 }
 local loadedModIDs = {}
 local activeModIDs = getActivatedMods()
@@ -137,7 +138,7 @@ function ISReadABook:update()
 
 								---- perksType, XP, passHook, applyXPBoosts, transmitMP)
 								player:getXp():AddXP(Perks[skill], perPerkXpRate, false, false, true)
-								SRJ.recordXPGain(player, skill, perPerkXpRate, {})
+								--SRJ.recordXPGain(player, skill, perPerkXpRate, {})
 
 								changesMade = true
 								self:resetJobDelta()
