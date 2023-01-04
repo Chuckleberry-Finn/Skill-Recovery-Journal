@@ -78,8 +78,47 @@ local function unBoostXP(player,perk,XP)
     return XP
 end
 
-local function debugPrintAddXP(player, perksType, XP) if getDebug() then  print("   -"..tostring(perksType).." actual added XP: "..XP) end end
-Events.AddXP.Add(debugPrintAddXP)
+
+local ignoreNextCatchJavaAddXP = {}
+local function catchJavaAddXP(player, perksType, XP)
+
+    if ignoreNextCatchJavaAddXP[player] then
+        ignoreNextCatchJavaAddXP[player] = nil
+        return
+    end
+
+    ---@type IsoGameCharacter.XP
+    local pXP = player:getXp()
+    local currentXP = pXP:getXP(perksType)
+    local maxLevelXP = perksType:getTotalXpForLevel(10)
+
+    local debugPrint = "passUnBoostOnAddXP: "
+    ---checking if it's 'not false' instead of 'true' because I want older saves before this sandbox option to get what they expect to occur
+    if SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses == false then
+        local xpBoostID = pXP:getPerkBoost(perksType)
+        local xpBoostNumerator = 1
+
+        if xpBoostID == 0 and (not isSkillExcludedFrom.SpeedReduction(perksType)) then xpBoostNumerator = 0.25
+        elseif xpBoostID == 1 and perksType==Perks.Sprinting then xpBoostNumerator = 1.25
+        elseif xpBoostID == 1 then xpBoostNumerator = 1
+        elseif xpBoostID == 2 and (not isSkillExcludedFrom.SpeedIncrease(perksType)) then xpBoostNumerator = 1.33
+        elseif xpBoostID == 3 and (not isSkillExcludedFrom.SpeedIncrease(perksType)) then xpBoostNumerator = 1.66
+        end
+        if getDebug() then debugPrint = debugPrint..XP.."/"..xpBoostNumerator end
+        XP = XP/xpBoostNumerator
+    end
+
+    if currentXP <= maxLevelXP then
+        if getDebug() then print(debugPrint.." "..tostring(perksType).." to be recorded: "..XP) end
+        SRJ.recordXPGain(player, perksType, XP, maxLevelXP)
+    end
+end
+
+
+---Ideally this will be loaded in last
+local function loadOnBoot() Events.AddXP.Add(catchJavaAddXP) end
+Events.OnGameBoot.Add(loadOnBoot)
+
 
 local patchClassMethod = {}
 function patchClassMethod.create(original_function)
@@ -95,9 +134,7 @@ function patchClassMethod.create(original_function)
                 if functionFileLine then
                     local func = functionFileLine:match("function: (.*) %-%- file: ")
                     local file = functionFileLine:match(" %-%- file: (.*).lua line # ")
-                    if func and file then
-                        info[func..","..file] = true
-                    end
+                    if func and file then info[func..","..file] = true end
                 end
             end
         end
@@ -108,15 +145,16 @@ function patchClassMethod.create(original_function)
         local pXP = player:getXp()
         if pXP ~= self then return end
 
+        if passHook==nil then passHook = true end
+
         local currentXP = pXP:getXP(perksType)
         local maxLevelXP = perksType:getTotalXpForLevel(10)
-
         if currentXP <= maxLevelXP then
             local unBoostedXP = (applyXPBoosts==false and XP) or unBoostXP(player, perksType, XP)
             SRJ.recordXPGain(player, perksType, unBoostedXP, info, maxLevelXP)
+            if passHook==true then ignoreNextCatchJavaAddXP[player] = true end
         end
 
-        if passHook==nil then passHook = true end
         if applyXPBoosts==nil then applyXPBoosts = true end
         if transmitMP==nil then transmitMP = false end
 
@@ -125,6 +163,7 @@ function patchClassMethod.create(original_function)
         return original_function(self, perksType, XP, passHook, applyXPBoosts, transmitMP)
     end
 end
+
 
 function patchClassMethod.apply()
     print("SkillRecoveryJournal: accessing class:`zombie.characters.IsoGameCharacter$XP.class` method:`AddXP`")
