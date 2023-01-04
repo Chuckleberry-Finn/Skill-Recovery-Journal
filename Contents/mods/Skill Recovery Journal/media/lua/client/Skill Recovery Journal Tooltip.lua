@@ -41,8 +41,9 @@ local function SRJ_generateTooltip(journal)
 
 	local storedJournalXP = JMD["gainedXP"]
 	if not storedJournalXP then return blankJournalTooltip end
-	
-	local warnAboutBonusXP = SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses ~= true
+
+	---checking if it's '== true' instead of '== true' because I want older saves before this sandbox option to get what they expect to occur
+	local warnAboutBonusXP = SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses == false
 	local warning = warnAboutBonusXP and getBoostedXPFlag(getPlayer()) and (not JMD.usedRenameOption)
 
 	local skillsRecord = ""

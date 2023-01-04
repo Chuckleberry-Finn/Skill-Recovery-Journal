@@ -39,7 +39,10 @@ Events.OnCreatePlayer.Add(syncOldXP)
 
 SRJ.fileFuncNoTVXP = "doSkill,ISRadioInteractions"
 function SRJ.recordXPGain(player, perksType, XP, info, maxLevelXP)
-	if info then if (not SandboxVars.SkillRecoveryJournal.TranscribeTVXP==true) and info[SRJ.fileFuncNoTVXP] then return end end
+	if info then
+		---checking if it's false instead of 'not true' because I want older saves before this sandbox option to get what they expect to occur
+		if SandboxVars.SkillRecoveryJournal.TranscribeTVXP==false and info[SRJ.fileFuncNoTVXP] then return end
+	end
 
 	local perkID = perksType:getId()
 	local recoverableXP = SRJ.setOrGetRecoverableXP(player)
@@ -67,14 +70,17 @@ function SRJ.calculateGainedSkills(player)
 
 		---@type PerkFactory.Perk
 		local perkActual = Perks.FromString(perkID)
-		local isPassiveFalse = perkActual and perkActual:isPassiv() and (SandboxVars.SkillRecoveryJournal.RecoverPassiveSkills == false)
-		local parentSandboxVarFalse = perkActual and SandboxVars.SkillRecoveryJournal["Recover"..perkActual:getParent():getId().."Skills"]==false
+		if perkActual then
 
-		if perkActual and (not isPassiveFalse) and (not parentSandboxVarFalse) then
-			gainedXP = gainedXP or {}
-			gainedXP[perkID] = XP*recoverableXPFactor
+			local notRecoverPassive = perkActual:isPassiv() and (SandboxVars.SkillRecoveryJournal.RecoverPassiveSkills == false)
+			local notRecoverParent = SandboxVars.SkillRecoveryJournal["Recover"..perkActual:getParent():getId().."Skills"]==false
+
+			if perkActual and (not notRecoverPassive) and (not notRecoverParent) then
+				gainedXP = gainedXP or {}
+				gainedXP[perkID] = XP*recoverableXPFactor
+			end
+
 		end
-
 	end
 	return gainedXP
 end

@@ -1,5 +1,6 @@
 local SRJ = require "Skill Recovery Journal Main"
 
+
 local isSkillExcludedFrom = {}
 ---@param perk PerkFactory.Perk
 function isSkillExcludedFrom.SpeedReduction(perk) return (perk == Perks.Sprinting or perk == Perks.Fitness or perk == Perks.Strength) or false end
@@ -52,7 +53,8 @@ local function unBoostXP(player,perk,XP)
     if getDebug() then debugPrint = debugPrint.."= "..XP end
 
     ---perks boostMap based on career and starting traits
-    local applyCareerAndTraits = SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses == true
+    ---checking if it's 'not false' instead of 'true' because I want older saves before this sandbox option to get what they expect to occur
+    local applyCareerAndTraits = SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses ~= false
     local xpBoostID = (applyCareerAndTraits and pXP:getPerkBoost(perk)) or 0
     local xpBoostMultiplier = 1
 
