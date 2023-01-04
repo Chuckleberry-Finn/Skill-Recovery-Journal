@@ -24,7 +24,7 @@ local function syncOldXP(id, player)
 		---@type PerkFactory.Perk
 		local perk = Perks.fromIndex(i)
 		if perk then
-			local perkID = tostring(perk)
+			local perkID = perk:getId()
 			local oldPassiveFixXP = pMD.recoveryJournalPassiveSkillsInit and pMD.recoveryJournalPassiveSkillsInit[perkID]
 			local currentRecoverableXP = oldPassiveFixXP or recoverableXP[perkID] or 0
 			if currentRecoverableXP and currentRecoverableXP>0 then
@@ -41,7 +41,7 @@ SRJ.fileFuncNoTVXP = "doSkill,ISRadioInteractions"
 function SRJ.recordXPGain(player, perksType, XP, info, maxLevelXP)
 	if info then if (not SandboxVars.SkillRecoveryJournal.TranscribeTVXP==true) and info[SRJ.fileFuncNoTVXP] then return end end
 
-	local perkID = tostring(perksType)
+	local perkID = perksType:getId()
 	local recoverableXP = SRJ.setOrGetRecoverableXP(player)
 
 	recoverableXP[perkID] = (recoverableXP[perkID] or 0) + XP
