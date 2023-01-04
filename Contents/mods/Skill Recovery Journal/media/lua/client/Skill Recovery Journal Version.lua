@@ -1,1 +1,1 @@
-Events.OnGameBoot.Add(function() print("Skill Recovery Journal: ver:2.0.0-DEC-27") end)
+Events.OnGameBoot.Add(function() print("Skill Recovery Journal: ver:2.0.3-JAN-3_HOTFIX-3") end)
