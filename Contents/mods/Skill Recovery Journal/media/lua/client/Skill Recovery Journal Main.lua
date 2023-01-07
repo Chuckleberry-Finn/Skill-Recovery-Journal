@@ -11,10 +11,12 @@ end
 ---COMPAT ISSUE WITH OLD SAVES
 --TODO: REMOVE IN A YEAR 12/31/2022
 ---@param player IsoPlayer|IsoGameCharacter
-local function syncOldXP(id, player)
+local function rollOverOldXP(id, player)
 	local pMD = player:getModData()
-	if pMD.bSyncedOldXP then return end
-	pMD.bSyncedOldXP = true
+	if pMD.bRolledOverOldXP then return end
+	---Old Variable
+	pMD.bSyncedOldXP = nil
+	pMD.bRolledOverOldXP = true
 
 	---@type IsoGameCharacter.XP
 	local pXP = player:getXp()
@@ -27,14 +29,12 @@ local function syncOldXP(id, player)
 			local perkID = perk:getId()
 			local oldPassiveFixXP = pMD.recoveryJournalPassiveSkillsInit and pMD.recoveryJournalPassiveSkillsInit[perkID]
 			local currentRecoverableXP = oldPassiveFixXP or recoverableXP[perkID] or 0
-			if currentRecoverableXP and currentRecoverableXP>0 then
-				recoverableXP[perkID] = math.max(pXP:getXP(perk),currentRecoverableXP)
-			end
+			recoverableXP[perkID] = math.max(pXP:getXP(perk),currentRecoverableXP)
 		end
 	end
 	pMD.recoveryJournalPassiveSkillsInit = nil
 end
-Events.OnCreatePlayer.Add(syncOldXP)
+Events.OnCreatePlayer.Add(rollOverOldXP)
 
 
 SRJ.fileFuncNoTVXP = "doSkill,ISRadioInteractions"
