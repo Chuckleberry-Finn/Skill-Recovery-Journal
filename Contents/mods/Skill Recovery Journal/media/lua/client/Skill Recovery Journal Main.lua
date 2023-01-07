@@ -14,22 +14,29 @@ end
 local function rollOverOldXP(id, player)
 	local pMD = player:getModData()
 	if pMD.bRolledOverOldXP then return end
-	---Old Variable
+	---Clear out old variable
 	pMD.bSyncedOldXP = nil
 	pMD.bRolledOverOldXP = true
 
 	---@type IsoGameCharacter.XP
 	local pXP = player:getXp()
 
+	print("")
+
 	local recoverableXP = SRJ.setOrGetRecoverableXP(player)
 	for i=1, Perks.getMaxIndex()-1 do
 		---@type PerkFactory.Perk
 		local perk = Perks.fromIndex(i)
-		if perk then
+		if perk and perk:getParent():getId()~="None" then
 			local perkID = perk:getId()
 			local oldPassiveFixXP = pMD.recoveryJournalPassiveSkillsInit and pMD.recoveryJournalPassiveSkillsInit[perkID]
 			local currentRecoverableXP = oldPassiveFixXP or recoverableXP[perkID] or 0
-			recoverableXP[perkID] = math.max(pXP:getXP(perk),currentRecoverableXP)
+
+			local actualCurrentXP = pXP:getXP(perk)
+			if perk:isPassiv() then actualCurrentXP = math.max(0,actualCurrentXP-perk:getTotalXpForLevel(5)) end
+
+			local appliedXP = math.max(actualCurrentXP,currentRecoverableXP)
+			if appliedXP and appliedXP>0 then recoverableXP[perkID] = appliedXP end
 		end
 	end
 	pMD.recoveryJournalPassiveSkillsInit = nil
