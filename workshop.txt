@@ -11,7 +11,7 @@ description=[b]Where do I find the journals?[/b] You craft them. The recipe can 
 description=
 description=[b]How do I use the journal?[/b] You will see the option to "transcribe journal" when you have a writing tool and bound journal (that is unclaimed or you've written in before.) Trying to transcribe or read another person's journal in MP will not let you.
 description=
-description=[b]How does it work?[/b] The journals save skill's respective XP - ignoring profession/trait starter levels. There is also a sandbox option to lower return percentage (default is 100%). [b]In-progress skill levels are not transcribed.[/b]
+description=[b]How does it work?[/b] The journals save skill's respective XP - ignoring profession/trait starter levels. There is also a sandbox option to lower return percentage (default is 100%).
 description=
 description=[b]Are these journals one time use?[/b] No, you are expected to keep using the same journal and updating it over time.
 description=
@@ -34,6 +34,5 @@ description=Uploaded to [url=https://pastebin.com/]pastebin[/url]) or [url=https
 description=Share the link in a comment below.
 description=
 description=[url=https://ko-fi.com/chuckleberryfinn][img]https://i.imgur.com/GxZ38nz.png[/img] [b]Consider supporting Chuck![/b][/url] [url=https://www.patreon.com/bePatron?u=17239488][img]https://raw.githubusercontent.com/ChuckTheSheep/Vanilla-Weapons-Expanded/main/Contents/mods/VanillaWeaponsExpanded/patreon/Patreon%20Logo.png[/img][/url]
-description=
 tags=Build 41;Balance;Literature;Multiplayer;Traits
 visibility=public
