@@ -21,8 +21,6 @@ local function rollOverOldXP(id, player)
 	---@type IsoGameCharacter.XP
 	local pXP = player:getXp()
 
-	print("")
-
 	local recoverableXP = SRJ.setOrGetRecoverableXP(player)
 	for i=1, Perks.getMaxIndex()-1 do
 		---@type PerkFactory.Perk
