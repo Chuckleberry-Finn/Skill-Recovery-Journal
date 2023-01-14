@@ -8,40 +8,6 @@ function SRJ.setOrGetRecoverableXP(player)
 end
 
 
----COMPAT ISSUE WITH OLD SAVES
---TODO: REMOVE IN A YEAR 12/31/2022
----@param player IsoPlayer|IsoGameCharacter
-local function rollOverOldXP(id, player)
-	local pMD = player:getModData()
-	if pMD.bRolledOverOldXP then return end
-	---Clear out old variable
-	pMD.bSyncedOldXP = nil
-	pMD.bRolledOverOldXP = true
-
-	---@type IsoGameCharacter.XP
-	local pXP = player:getXp()
-
-	local recoverableXP = SRJ.setOrGetRecoverableXP(player)
-	for i=1, Perks.getMaxIndex()-1 do
-		---@type PerkFactory.Perk
-		local perk = Perks.fromIndex(i)
-		if perk and perk:getParent():getId()~="None" then
-			local perkID = perk:getId()
-			local oldPassiveFixXP = pMD.recoveryJournalPassiveSkillsInit and pMD.recoveryJournalPassiveSkillsInit[perkID]
-			local currentRecoverableXP = oldPassiveFixXP or recoverableXP[perkID] or 0
-
-			local actualCurrentXP = pXP:getXP(perk)
-			if perk:isPassiv() then actualCurrentXP = math.max(0,actualCurrentXP-perk:getTotalXpForLevel(5)) end
-
-			local appliedXP = math.max(actualCurrentXP,currentRecoverableXP)
-			if appliedXP and appliedXP>0 then recoverableXP[perkID] = appliedXP end
-		end
-	end
-	pMD.recoveryJournalPassiveSkillsInit = nil
-end
-Events.OnCreatePlayer.Add(rollOverOldXP)
-
-
 SRJ.fileFuncNoTVXP = "doSkill,ISRadioInteractions"
 function SRJ.recordXPGain(player, perksType, XP, info, maxLevelXP)
 	if info then
