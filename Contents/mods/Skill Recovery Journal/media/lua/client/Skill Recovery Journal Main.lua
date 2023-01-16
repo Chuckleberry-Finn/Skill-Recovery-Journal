@@ -1,11 +1,53 @@
 local SRJ = {}
 
-
 function SRJ.setOrGetRecoverableXP(player)
 	local pMD = player:getModData()
 	pMD.recoverableXP = pMD.recoverableXP or {}
 	return pMD.recoverableXP
 end
+
+
+---@param player IsoPlayer|IsoGameCharacter
+local function applyOldXP(id, player)
+	local pMD = player:getModData()
+	if pMD.bRolledOverOldXP then return end
+	---Clear out old variable
+	pMD.bSyncedOldXP = nil
+	pMD.bRolledOverOldXP = true
+
+	---@type IsoGameCharacter.XP
+	local pXP = player:getXp()
+
+	local startingLevels = SRJ.getFreeLevelsFromTraitsAndProfession(player)
+
+	local recoverableXP = SRJ.setOrGetRecoverableXP(player)
+	for i=1, Perks.getMaxIndex()-1 do
+		---@type PerkFactory.Perk
+		local perk = Perks.fromIndex(i)
+		if perk and perk:getParent():getId()~="None" then
+			local perkID = perk:getId()
+			local oldPassiveFixXP = pMD.recoveryJournalPassiveSkillsInit and pMD.recoveryJournalPassiveSkillsInit[perkID]
+			local currentRecoverableXP = oldPassiveFixXP or recoverableXP[perkID] or 0
+
+			local actualCurrentXP = pXP:getXP(perk)
+			if perk:isPassiv() then
+				if player:getHoursSurvived()>0 then
+					actualCurrentXP = math.max(0,actualCurrentXP-perk:getTotalXpForLevel(5))
+				else
+					actualCurrentXP = 0
+				end
+			else
+				local startingPerkLevel = startingLevels[perkID]
+				if startingPerkLevel then actualCurrentXP = actualCurrentXP-perk:getTotalXpForLevel(startingPerkLevel) end
+			end
+
+			local appliedXP = math.max(actualCurrentXP,currentRecoverableXP)
+			if appliedXP and appliedXP>0 then recoverableXP[perkID] = appliedXP end
+		end
+	end
+	pMD.recoveryJournalPassiveSkillsInit = nil
+end
+Events.OnCreatePlayer.Add(applyOldXP)
 
 
 SRJ.fileFuncNoTVXP = "doSkill,ISRadioInteractions"
@@ -105,6 +147,45 @@ function SRJ.getGainedRecipes(player)
 
 	return returnedGainedRecipes
 end
+
+
+function SRJ.getFreeLevelsFromTraitsAndProfession(player)
+	local bonusLevels = {}
+
+	local playerDesc = player:getDescriptor()
+	local playerProfessionID = playerDesc:getProfession()
+	local playerProfession = ProfessionFactory.getProfession(playerProfessionID)
+	if playerProfession then
+		local professionXpMap = transformIntoKahluaTable(playerProfession:getXPBoostMap())
+		if professionXpMap then
+			for perk,level in pairs(professionXpMap) do
+				local perky = tostring(perk)
+				local levely = tonumber(tostring(level))
+				bonusLevels[perky] = (bonusLevels[perky] or 0) + levely
+			end
+		end
+	end
+
+	local playerTraits = player:getTraits()
+	for i=0, playerTraits:size()-1 do
+		local trait = playerTraits:get(i)
+		---@type TraitFactory.Trait
+		local traitTrait = TraitFactory.getTrait(trait)
+		if traitTrait then
+			local traitXpMap = transformIntoKahluaTable(traitTrait:getXPBoostMap())
+			if traitXpMap then
+				for perk,level in pairs(traitXpMap) do
+					local perky = tostring(perk)
+					local levely = tonumber(tostring(level))
+					bonusLevels[perky] = (bonusLevels[perky] or 0) + levely
+				end
+			end
+		end
+	end
+
+	return bonusLevels
+end
+
 
 return SRJ
 
