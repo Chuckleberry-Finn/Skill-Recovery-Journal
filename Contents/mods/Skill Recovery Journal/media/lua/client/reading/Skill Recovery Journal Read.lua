@@ -31,7 +31,7 @@ function ISReadABook:update()
 	if journal:getType() ~= "SkillRecoveryJournal" then
 		SRJOVERWRITE_ISReadABook_update(self)
 	else
-		self.readTimer = self.readTimer + getGameTime():getMultiplier() or getGameTime():getMultiplier() or 0
+		self.readTimer = (self.readTimer or 0) + (getGameTime():getMultiplier() or 0)
 		-- normalize update time via in game time. Adjust updateInterval as needed
 		local updateInterval = 10
 		if self.readTimer >= updateInterval then
