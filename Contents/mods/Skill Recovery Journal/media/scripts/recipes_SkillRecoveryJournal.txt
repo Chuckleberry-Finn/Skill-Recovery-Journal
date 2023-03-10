@@ -19,7 +19,7 @@ module Base
 
            Result:SkillRecoveryJournal,
            RemoveResultItem:true,
-		   AnimNode 	: Disassemble,
+		   AnimNode 	: TranscribeJournal,
 		   Prop1 		: Source=2,
 		   Prop2 		: Source=1,
 
