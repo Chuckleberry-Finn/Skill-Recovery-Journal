@@ -61,6 +61,7 @@ function SRJ.recordXPGain(player, perksType, XP, info, maxLevelXP)
 	local recoverableXP = SRJ.setOrGetRecoverableXP(player)
 
 	recoverableXP[perkID] = (recoverableXP[perkID] or 0) + XP
+	recoverableXP[perkID] = math.max(recoverableXP[perkID],0)
 	if maxLevelXP then recoverableXP[perkID] = math.min(recoverableXP[perkID],maxLevelXP) end
 end
 

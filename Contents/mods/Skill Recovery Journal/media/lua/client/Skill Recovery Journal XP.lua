@@ -79,6 +79,27 @@ local function unBoostXP(player,perk,XP)
 end
 
 
+---@param player IsoGameCharacter
+---@param perk PerkFactory.Perk
+---@param perkLevelAfter number
+---@param addedLevel boolean
+local function onLevelChangeViaDebug(player, perk, perkLevelAfter, addedLevel)
+
+    --local pXp = player:getXp()
+    local totalForLevel = perk:getXpForLevel(perkLevelAfter + ((not addedLevel and 1) or 0) )
+    --print("perk: "..tostring(perk).."    totalForLevel: "..totalForLevel.."    -currentXP: "..currentXP)
+
+    local remainder = totalForLevel
+    if addedLevel==false then remainder = 0-remainder end
+
+    print("addedLevel: "..tostring(addedLevel).."    perkLevelAfter: "..perkLevelAfter.."    remainder XP: "..remainder)
+
+    local maxLevelXP = perk:getTotalXpForLevel(10)
+    SRJ.recordXPGain(player, perk, remainder, {}, maxLevelXP)
+end
+Events.LevelPerk.Add(onLevelChangeViaDebug)
+
+
 local ignoreNextCatchJavaAddXP = {}
 local function catchJavaAddXP(player, perksType, XP)
 
@@ -110,7 +131,7 @@ local function catchJavaAddXP(player, perksType, XP)
 
     if currentXP <= maxLevelXP then
         if getDebug() then print(debugPrint.." "..tostring(perksType).." to be recorded: "..XP) end
-        SRJ.recordXPGain(player, perksType, XP, maxLevelXP)
+        SRJ.recordXPGain(player, perksType, XP, {}, maxLevelXP)
     end
 end
 
