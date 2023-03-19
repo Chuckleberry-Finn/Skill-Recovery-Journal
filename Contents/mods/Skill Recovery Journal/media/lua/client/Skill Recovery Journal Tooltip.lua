@@ -4,6 +4,8 @@ local SRJ = require "Skill Recovery Journal Main"
 
 
 local function flagPlayerWithBoostedXP(id, player)
+	if not player then return end
+
 	local pMD = player:getModData()
 	if pMD.bBoostedXP then return end
 
@@ -24,7 +26,7 @@ local function getBoostedXPFlag(player) return player:getModData().bBoostedXP or
 
 
 ---@param journal InventoryItem | Literature
-local function SRJ_generateTooltip(journal)
+local function SRJ_generateTooltip(journal, player)
 
 	---fix old draft attempt at something------------------------
 	journal:setNumberOfPages(-1)
@@ -42,15 +44,25 @@ local function SRJ_generateTooltip(journal)
 	local storedJournalXP = JMD["gainedXP"]
 	if not storedJournalXP then return blankJournalTooltip end
 
-	---checking if it's '== true' instead of '== true' because I want older saves before this sandbox option to get what they expect to occur
-	local warnAboutBonusXP = SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses == false
-	local warning = warnAboutBonusXP and getBoostedXPFlag(getPlayer()) and (not JMD.usedRenameOption)
+	local warning --= {}
+
+	if (not JMD.usedRenameOption) then
+		---checking if it's '== false' instead of '== true' because I want older saves before this sandbox option to get what they expect to occur
+		if (SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses == false) and getBoostedXPFlag(player) then
+			warning = warning or {}
+			table.insert(warning, "IGUI_Bonus_XP_Warning")
+		end
+
+		if (SandboxVars.SkillRecoveryJournal.TranscribeTVXP == false) then
+			warning = warning or {}
+			table.insert(warning, "IGUI_TV_XP_Warning")
+		end
+	end
 
 	local skillsRecord = ""
 	local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
 
 	for perkID,xp in pairs(storedJournalXP) do
-
 		local perk = Perks[perkID]
 		if perk then
 			local journalXP = xp
@@ -84,9 +96,8 @@ local function SRJ_generateTooltip(journal)
 
 	local tooltipStart = getText("IGUI_Tooltip_Start").." "..JMD["author"]..getText("IGUI_Tooltip_End")
 
-
 	return tooltipStart, skillsRecord, warning
-end
+	end
 
 
 local function drawDetailsTooltip(tooltip, tooltipStart, skillsRecord, warning, x, y, fontType)
@@ -156,19 +167,14 @@ local function ISToolTipInv_render_Override(self,hardSetWidth)
 end
 
 
-local wrappedWarningMessage
----@param itemObj InventoryItem
-local function wrapWarningMessage(itemObj, fontType)
-	local maxWidth = getTextManager():MeasureStringX(fontType,"Mod: "..itemObj:getModName())
-	local warningMessage = getText("IGUI_Bonus_XP_Warning")
+local function wrapWarningMessages(warningMessage, fontType, maxWidth)
 	local warningWidth = getTextManager():MeasureStringX(fontType, warningMessage)
-
 	if warningWidth > maxWidth then
 		local words = warningMessage:gmatch("%S+")
 		local rebuilt, currentLine = "", ""
 		for word in words do
 			local currentLineWidth = getTextManager():MeasureStringX(fontType, currentLine)
-		 	local wordWidth = getTextManager():MeasureStringX(fontType, word)
+			local wordWidth = getTextManager():MeasureStringX(fontType, word)
 			local inBetween = ((wordWidth+currentLineWidth > maxWidth) and "\n") or (currentLineWidth>0 and " ") or ""
 			currentLine = currentLine..inBetween..word
 			rebuilt = rebuilt..inBetween..word
@@ -176,9 +182,26 @@ local function wrapWarningMessage(itemObj, fontType)
 		end
 		warningMessage = rebuilt
 	end
-	wrappedWarningMessage = warningMessage
+	return warningMessage
+end
+
+
+local wrappedWarningMessage
+---@param itemObj InventoryItem
+local function wrapWarningMessage(itemObj, warnings, fontType)
+
+	local maxWidth = getTextManager():MeasureStringX(fontType,"Mod: "..itemObj:getModName())
+
+	wrappedWarningMessage = ""
+	for _,msg in pairs(warnings) do
+		local wrappedMsg = wrapWarningMessages(getText(msg), fontType, maxWidth)
+		wrappedWarningMessage = wrappedWarningMessage .. wrappedMsg .. "\n\n"
+	end
+
+	wrappedWarningMessage = wrappedWarningMessage .. wrapWarningMessages(getText("IGUI_Rename_Warning"), fontType, maxWidth)
 	return wrappedWarningMessage
 end
+
 
 local tooltipRenderOverTime = {item=nil,ticks=0}
 local ISToolTipInv_render = ISToolTipInv.render
@@ -186,15 +209,16 @@ function ISToolTipInv:render()
 	if not ISContextMenu.instance or not ISContextMenu.instance.visibleCheck then
 		---@type InventoryItem
 		local itemObj = self.item
+		local player = self.tooltip:getCharacter()
 
 		if tooltipRenderOverTime.item ~= itemObj then
 			tooltipRenderOverTime.item = itemObj
 			tooltipRenderOverTime.ticks = 1
 		end
 
-		if itemObj and itemObj:getType() == "SkillRecoveryJournal" then
+		if itemObj and player and itemObj:getType() == "SkillRecoveryJournal" then
 
-			local tooltipStart, skillsRecord, warning = SRJ_generateTooltip(itemObj)
+			local tooltipStart, skillsRecord, warning = SRJ_generateTooltip(itemObj, player)
 
 			local font = getCore():getOptionTooltipFont()
 			local fontType = fontDict[font] or UIFont.Medium
@@ -211,8 +235,8 @@ function ISToolTipInv:render()
 				if tooltipRenderOverTime.ticks < 15 then warning = false end
 			end
 
-			if warning==true then
-				warning = wrappedWarningMessage or wrapWarningMessage(itemObj, fontType)
+			if warning then
+				warning = wrappedWarningMessage or wrapWarningMessage(itemObj, warning, fontType)
 				textHeight = textHeight+fontHeight+getTextManager():MeasureStringY(fontType, warning)
 			end
 
