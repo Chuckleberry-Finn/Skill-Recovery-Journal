@@ -4,7 +4,7 @@ module Base
         {
            Notebook/Journal,
            LeatherStrips=3,
-           Woodglue/Glue,
+           [Recipe.GetItemTypes.Glue],
            Thread,
 
            Result:SkillRecoveryJournal,
