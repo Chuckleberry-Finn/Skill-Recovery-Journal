@@ -30,7 +30,7 @@ function contextSRJ.addRenameContext(player, context, items)
 				end
 			end
 
-			if addOption then
+			if addOption==true then
 				context:addOption(getText("IGUI_Rename"), item, contextSRJ.onRenameJournal, player)
 				break
 			end
@@ -52,11 +52,15 @@ function contextSRJ:onRenameJournalClick(button, player, item)
 	if button.internal == "OK" and button.parent.entry:getText() and button.parent.entry:getText() ~= "" then
 		local journalModData = item:getModData()
 		local JMD = journalModData["SRJ"]
-		JMD.usedRenameOption = true
-		item:setName(button.parent.entry:getText())
-		local pdata = getPlayerData(player:getPlayerNum())
-		pdata.playerInventory:refreshBackpacks()
-		pdata.lootInventory:refreshBackpacks()
+		if JMD then
+			JMD.usedRenameOption = true
+			item:setName(button.parent.entry:getText())
+			local pdata = getPlayerData(player:getPlayerNum())
+			if pdata then
+				pdata.playerInventory:refreshBackpacks()
+				pdata.lootInventory:refreshBackpacks()
+			end
+		end
 	end
 end
 
