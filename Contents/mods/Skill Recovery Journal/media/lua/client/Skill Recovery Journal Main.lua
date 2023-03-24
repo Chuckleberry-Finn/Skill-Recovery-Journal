@@ -15,34 +15,34 @@ local function applyOldXP(id, player)
 	pMD.bSyncedOldXP = nil
 	pMD.bRolledOverOldXP = true
 
-	---@type IsoGameCharacter.XP
-	local pXP = player:getXp()
+	if player:getHoursSurvived() > 1 then
+		---@type IsoGameCharacter.XP
+		local pXP = player:getXp()
+		local startingLevels = SRJ.getFreeLevelsFromTraitsAndProfession(player)
+		local recoverableXP = SRJ.setOrGetRecoverableXP(player)
+		for i=1, Perks.getMaxIndex()-1 do
+			---@type PerkFactory.Perk
+			local perk = Perks.fromIndex(i)
+			if perk and perk:getParent():getId()~="None" then
+				local perkID = perk:getId()
+				local oldPassiveFixXP = pMD.recoveryJournalPassiveSkillsInit and pMD.recoveryJournalPassiveSkillsInit[perkID]
+				local currentRecoverableXP = oldPassiveFixXP or recoverableXP[perkID] or 0
 
-	local startingLevels = SRJ.getFreeLevelsFromTraitsAndProfession(player)
-
-	local recoverableXP = SRJ.setOrGetRecoverableXP(player)
-	for i=1, Perks.getMaxIndex()-1 do
-		---@type PerkFactory.Perk
-		local perk = Perks.fromIndex(i)
-		if perk and perk:getParent():getId()~="None" then
-			local perkID = perk:getId()
-			local oldPassiveFixXP = pMD.recoveryJournalPassiveSkillsInit and pMD.recoveryJournalPassiveSkillsInit[perkID]
-			local currentRecoverableXP = oldPassiveFixXP or recoverableXP[perkID] or 0
-
-			local actualCurrentXP = pXP:getXP(perk)
-			if perk:isPassiv() then
-				if player:getHoursSurvived()>0 then
-					actualCurrentXP = math.max(0,actualCurrentXP-perk:getTotalXpForLevel(5))
+				local actualCurrentXP = pXP:getXP(perk)
+				if perk:isPassiv() then
+					if player:getHoursSurvived()>1 then
+						actualCurrentXP = math.max(0,actualCurrentXP-perk:getTotalXpForLevel(5))
+					else
+						actualCurrentXP = 0
+					end
 				else
-					actualCurrentXP = 0
+					local startingPerkLevel = startingLevels[perkID]
+					if startingPerkLevel then actualCurrentXP = actualCurrentXP-perk:getTotalXpForLevel(startingPerkLevel) end
 				end
-			else
-				local startingPerkLevel = startingLevels[perkID]
-				if startingPerkLevel then actualCurrentXP = actualCurrentXP-perk:getTotalXpForLevel(startingPerkLevel) end
-			end
 
-			local appliedXP = math.max(actualCurrentXP,currentRecoverableXP)
-			if appliedXP and appliedXP>0 then recoverableXP[perkID] = appliedXP end
+				local appliedXP = math.max(actualCurrentXP,currentRecoverableXP)
+				if appliedXP and appliedXP>0 then recoverableXP[perkID] = appliedXP end
+			end
 		end
 	end
 	pMD.recoveryJournalPassiveSkillsInit = nil
