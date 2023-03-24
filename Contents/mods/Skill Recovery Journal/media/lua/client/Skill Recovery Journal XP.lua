@@ -78,7 +78,7 @@ local function unBoostXP(player,perk,XP)
     return XP
 end
 
-
+--[[
 ---@param player IsoGameCharacter
 ---@param perk PerkFactory.Perk
 ---@param perkLevelAfter number
@@ -98,7 +98,7 @@ local function onLevelChangeViaDebug(player, perk, perkLevelAfter, addedLevel)
     SRJ.recordXPGain(player, perk, remainder, {}, maxLevelXP)
 end
 Events.LevelPerk.Add(onLevelChangeViaDebug)
-
+--]]
 
 local ignoreNextCatchJavaAddXP = {}
 local function catchJavaAddXP(player, perksType, XP)
