@@ -116,7 +116,7 @@ function ISCraftAction:update()
 					self.playSoundLater = (ZombRand(2,6) + getGameTime():getMultiplier())
 					self.character:playSound(self.writingToolSound)
 				end
-				
+
 				self:resetJobDelta()
 			end
 		end
@@ -192,13 +192,8 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 			o.willWrite = false
 		end
 
-		if sayText then
-			character:Say(sayText)
-		end
-
-		if o.willWrite then
-			JMD["author"] = character:getFullName()
-		end
+		if sayText then character:Say(sayText) end
+		if o.willWrite then JMD["author"] = character:getFullName() end
 
 		o.craftTimer = 0
 		o.recipeIntervals = 0
