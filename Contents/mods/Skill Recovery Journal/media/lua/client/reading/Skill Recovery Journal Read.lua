@@ -175,7 +175,6 @@ function ISReadABook:update()
 
 					HaloTextHelper:update()
 					HaloTextHelper.addText(self.character, changesBeingMadeText, HaloTextHelper.getColorWhite())
-					self:setCurrentTime(1)
 				end
 			end
 
@@ -185,6 +184,7 @@ function ISReadABook:update()
 					player:Say(sayText, 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 				end
 				updateInterval = self.maxTime
+				self:forceStop()
 			end
 		end
 	end
@@ -196,7 +196,7 @@ function ISReadABook:new(player, item, time)
 	local o = SRJOVERWRITE_ISReadABook_new(self, player, item, time)
 
 	if o and player and item:getType() == "SkillRecoveryJournal" then
-		o.loopedAction = false
+		o.loopedAction = true
 		o.useProgressBar = false
 		o.maxTime = 55
 		o.readTimer = 0
