@@ -49,10 +49,11 @@ local function applyOldXP(id, player)
 end
 Events.OnCreatePlayer.Add(applyOldXP)
 
-
+SRJ.exceptions = {"exit,berserkBeaver - main"}
 SRJ.fileFuncNoTVXP = "doSkill,ISRadioInteractions"
 function SRJ.recordXPGain(player, perksType, XP, info, maxLevelXP)
 	if info then
+		for n,exception in pairs(SRJ.exceptions) do if info[exception] then return end end
 		---checking if it's false instead of 'not true' because I want older saves before this sandbox option to get what they expect to occur
 		if SandboxVars.SkillRecoveryJournal.TranscribeTVXP==false and info[SRJ.fileFuncNoTVXP] then return end
 	end
