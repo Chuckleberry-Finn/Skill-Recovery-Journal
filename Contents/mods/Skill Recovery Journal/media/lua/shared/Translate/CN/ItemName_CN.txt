@@ -1,3 +1,3 @@
 ItemName_CN = {
-    ItemName_Base.SkillRecoveryJournal = "技能学习心得笔记",
+    ItemName_Base.SkillRecoveryJournal = "技能日志",
 }
