@@ -21,6 +21,19 @@ end
 
 local SRJ = require "Skill Recovery Journal Main"
 
+local SRJOVERWRITE_ISReadABook_start = ISReadABook.start
+function ISReadABook:start()
+
+    ---@type Literature
+    local journal = self.item
+
+    if journal:getType() == "SkillRecoveryJournal" then
+        local logText = ISLogSystem.getGenericLogText(self.character)
+        sendClientCommand(getPlayer(), 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ]START"})
+    end
+
+    SRJOVERWRITE_ISReadABook_start(self)
+end
 
 local SRJOVERWRITE_ISReadABook_update = ISReadABook.update
 function ISReadABook:update()
