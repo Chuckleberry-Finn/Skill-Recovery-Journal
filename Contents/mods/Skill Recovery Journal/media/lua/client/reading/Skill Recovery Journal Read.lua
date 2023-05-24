@@ -29,7 +29,7 @@ function ISReadABook:start()
 
     if journal:getType() == "SkillRecoveryJournal" then
         local logText = ISLogSystem.getGenericLogText(self.character)
-        sendClientCommand(getPlayer(), 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ]START"})
+        sendClientCommand(getPlayer(), 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ START READING]"})
     end
 
     SRJOVERWRITE_ISReadABook_start(self)
