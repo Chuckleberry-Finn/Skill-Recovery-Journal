@@ -34,5 +34,8 @@ description=Uploaded to [url=https://pastebin.com/]pastebin[/url]) or [url=https
 description=Share the link in a comment below.
 description=
 description=[url=https://ko-fi.com/chuckleberryfinn][img]https://i.imgur.com/GxZ38nz.png[/img] [b]Consider supporting Chuck![/b][/url] [url=https://www.patreon.com/bePatron?u=17239488][img]https://raw.githubusercontent.com/ChuckTheSheep/Vanilla-Weapons-Expanded/main/Contents/mods/VanillaWeaponsExpanded/patreon/Patreon%20Logo.png[/img][/url]
+description=
+description=[h3]Copyright 2023 Chuckleberry Finn. This item is not authorized for posting on Steam, except under the Steam account named Chuckleberry Finn.[/h3]
+description=
 tags=Build 41;Balance;Literature;Multiplayer;Traits
 visibility=public
