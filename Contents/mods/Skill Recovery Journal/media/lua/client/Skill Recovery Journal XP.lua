@@ -145,17 +145,23 @@ local patchClassMethod = {}
 function patchClassMethod.create(original_function)
     return function(self, perksType, XP, passHook, applyXPBoosts, transmitMP)
         local info = {}
-        local coroutine = getCurrentCoroutine()
-        local count = getCallframeTop(coroutine)
 
-        for i= count - 1, 0, -1 do
-            local luaCallFrame = getCoroutineCallframeStack(coroutine,i)
-            if luaCallFrame ~= nil then
-                local functionFileLine = KahluaUtil.rawTostring2(luaCallFrame)
-                if functionFileLine then
-                    local func = functionFileLine:match("function: (.*) %-%- file: ")
-                    local file = functionFileLine:match(" %-%- file: (.*).lua line # ")
-                    if func and file then info[func..","..file] = true end
+        ---@type Coroutine
+        local coroutine = getCurrentCoroutine()
+        if coroutine then
+            local count = getCallframeTop(coroutine)
+            for i= count - 1, 0, -1 do
+                ---@type LuaCallFrame
+                local luaCallFrame = getCoroutineCallframeStack(coroutine,i)
+                if luaCallFrame ~= nil and luaCallFrame then
+                    local fileDir = getFilenameOfCallframe(luaCallFrame)
+                    if fileDir then
+                        local index = fileDir:match('^.*()/')
+                        if index then
+                            local filename = fileDir:sub(index+1):gsub(".lua", "")
+                            if filename then info[filename] = true end
+                        end
+                    end
                 end
             end
         end
