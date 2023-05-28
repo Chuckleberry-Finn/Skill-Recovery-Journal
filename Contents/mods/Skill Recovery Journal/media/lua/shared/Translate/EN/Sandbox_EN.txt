@@ -39,4 +39,7 @@ Sandbox_EN = {
 
     Sandbox_SkillRecoveryJournalUsed = "Journal XP Used When Read"
     Sandbox_SkillRecoveryJournalUsed_tooltip = "Normally you can reread the journal as many times as you like - with this toggled on each individual XP point can only be recovered once. You can still add onto the journal, but each point can only be recovered once on each journal. Note: the tooltip for the journal will now display a fraction for unused points."
+
+    Sandbox_SkillRecoveryJournalCraft = "Journal is Craftable"
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "Disabling this means the journals cannot be crafted."
 	}

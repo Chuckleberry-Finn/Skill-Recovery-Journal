@@ -212,3 +212,9 @@ function SkillRecoveryJournalOnCanPerformWritingJournal(recipe, player, item)
 	end
 	return false
 end
+
+
+function SkillRecoveryJournalOnCanPerformCraftable()
+	if SandboxVars.SkillRecoveryJournal.Craftable == false then return false end
+	return true
+end
