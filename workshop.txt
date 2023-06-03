@@ -3,6 +3,8 @@ id=2503622437
 title=Skill Recovery Journal
 description=[h3][i]Lore-friendly(ish) solution to the loss of a character.[/i][/h3]
 description=
+description=[url=https://ko-fi.com/chuckleberryfinn][img]https://raw.githubusercontent.com/ChuckTheSheep/chuckImages/main/kofi.png[/img][/url] [url=https://www.patreon.com/bePatron?u=17239488][img]https://raw.githubusercontent.com/ChuckTheSheep/chuckImages/main/patreon.png[/img][/url]
+description=
 description=[b]Do I need to start a new game?[/b] No, you just need to craft a journal to get started.
 description=
 description=[b]Is it safe to remove this mod mid-play?[/b] Yes. However, removing it will delete the journals held and any progress stored in them; Players will have to re-craft them.
@@ -20,8 +22,6 @@ description=
 description=[b]Warning:[/b] Journals have to be manually updated using a pen or pencil. You can check the tool-tip for XP and recipes. Careful if you die holding your journal as it may be difficult to retrieve it from your moving corpse or it could be stolen/destroyed by other players.
 description=
 description=
-description=[img]https://i.imgur.com/p7Fv1Z6.gif[/img]
-description=
 description=
 description=[h1][b][url=https://github.com/ChuckTheSheep/Skill-Recovery-Journal]Github[/url]  [url=https://github.com/ChuckTheSheep/Skill-Recovery-Journal/commits/main]Change Log[/url][/b][/h1]
 description=
@@ -33,7 +33,6 @@ description=[quote]`C:\Users\<username>\Zomboid\console.txt`[/quote]
 description=Uploaded to [url=https://pastebin.com/]pastebin[/url]) or [url=https://github.com/ChuckTheSheep/Skill-Recovery-Journal]Github[/url] as an issue.
 description=Share the link in a comment below.
 description=
-description=[url=https://ko-fi.com/chuckleberryfinn][img]https://i.imgur.com/GxZ38nz.png[/img] [b]Consider supporting Chuck![/b][/url] [url=https://www.patreon.com/bePatron?u=17239488][img]https://raw.githubusercontent.com/ChuckTheSheep/Vanilla-Weapons-Expanded/main/Contents/mods/VanillaWeaponsExpanded/patreon/Patreon%20Logo.png[/img][/url]
 description=
 description=[h3]Copyright 2023 Chuckleberry Finn. This item is not authorized for posting on Steam, except under the Steam account named Chuckleberry Finn.[/h3]
 description=
