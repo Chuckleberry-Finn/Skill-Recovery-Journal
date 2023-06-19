@@ -1,0 +1,4 @@
+Recipe_UA = {
+    Recipe_Transcribe_Journal = "Заповнити щоденник",
+    Recipe_Bind_Journal = "Створити особистий щоденник гравця",
+}
