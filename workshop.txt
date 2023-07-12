@@ -3,7 +3,7 @@ id=2503622437
 title=Skill Recovery Journal
 description=[h3][i]Lore-friendly(ish) solution to the loss of a character.[/i][/h3]
 description=
-description=[url=https://ko-fi.com/chuckleberryfinn][img]https://raw.githubusercontent.com/ChuckTheSheep/chuckImages/main/kofi.png[/img][/url] [url=https://www.patreon.com/bePatron?u=17239488][img]https://raw.githubusercontent.com/ChuckTheSheep/chuckImages/main/patreon.png[/img][/url]
+description=[url=https://ko-fi.com/chuckleberryfinn][img]https://raw.githubusercontent.com/ChuckTheSheep/chuckImages/main/kofi.png[/img][/url]
 description=
 description=[b]Do I need to start a new game?[/b] No, you just need to craft a journal to get started.
 description=
