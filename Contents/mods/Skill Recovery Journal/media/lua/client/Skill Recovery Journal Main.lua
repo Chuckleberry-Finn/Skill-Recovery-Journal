@@ -49,8 +49,8 @@ local function applyOldXP(id, player)
 end
 Events.OnCreatePlayer.Add(applyOldXP)
 
-SRJ.exceptions = {"exit,berserkBeaver - main"}
-SRJ.fileFuncNoTVXP = "doSkill,ISRadioInteractions"
+SRJ.exceptions = {"berserkBeaver - main"}
+SRJ.fileFuncNoTVXP = "ISRadioInteractions"
 function SRJ.recordXPGain(player, perksType, XP, info, maxLevelXP)
 	if info then
 		for n,exception in pairs(SRJ.exceptions) do if info[exception] then return end end
@@ -65,7 +65,6 @@ function SRJ.recordXPGain(player, perksType, XP, info, maxLevelXP)
 	recoverableXP[perkID] = math.max(recoverableXP[perkID],0)
 	if maxLevelXP then recoverableXP[perkID] = math.min(recoverableXP[perkID],maxLevelXP) end
 end
-
 
 function SRJ.getReadXP(player)
 	local pMD = player:getModData()

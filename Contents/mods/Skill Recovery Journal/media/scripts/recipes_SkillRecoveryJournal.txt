@@ -10,6 +10,7 @@ module Base
            Result:SkillRecoveryJournal,
 
            Time:150.0,
+           OnCanPerform:SkillRecoveryJournalOnCanPerformCraftable
         }
 
     recipe Transcribe Journal

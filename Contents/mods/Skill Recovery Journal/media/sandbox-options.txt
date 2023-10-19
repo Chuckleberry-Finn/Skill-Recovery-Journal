@@ -38,3 +38,6 @@ option SkillRecoveryJournal.RecoverRecipes
 
 option SkillRecoveryJournal.RecoveryJournalUsed
 {type = boolean, default = false, page = SkillRecoveryJournal, translation = SkillRecoveryJournalUsed,}
+
+option SkillRecoveryJournal.Craftable
+{type = boolean, default = true, page = SkillRecoveryJournal, translation = SkillRecoveryJournalCraft,}
