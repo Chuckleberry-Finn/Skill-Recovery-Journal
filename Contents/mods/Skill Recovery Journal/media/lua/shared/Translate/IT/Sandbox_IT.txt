@@ -1,42 +1,42 @@
 Sandbox_IT = {
 	Sandbox_SkillRecoveryJournal = "Skill Recovery Journal",
 
-	Sandbox_SkillRecoveryJournalPercentage = "Percentuale Recupero dell'Abilit‡",
-	Sandbox_SkillRecoveryJournalPercentage_tooltip = "La quantit‡ di esperienza recuperata dalla lettura di diari rilegati.",
+	Sandbox_SkillRecoveryJournalPercentage = "Percentuale recupero abilit√†",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "La quantit√† di esperienza recuperata dalla lettura di diari rilegati.",
 
-	Sandbox_SkillRecoveryJournalTranscribeSpeed = "Moltiplicatore Velocit‡ di Trascrizione",
-	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "Un moltiplicatore della velocit‡ di trascrizione dei diari."
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "Moltiplicatore velocit√† di trascrizione",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "Un moltiplicatore della velocit√† di trascrizione dei diari."
 
-	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Moltiplicatore Velocit‡ di Lettura",
-	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "Un moltiplicatore della velocit‡ di lettura dei diari rilegati."
+	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Moltiplicatore velocit√† di lettura",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "Un moltiplicatore della velocit√† di lettura dei diari rilegati."
 
-    Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses = "Recupero XP Bonus di Occupazione e Tratti"
-    Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses_tooltip = "Iniziando con pi˘ di un punto in un'abilit‡ si ottengono generalmente dei bonus di XP: con questa opzione disattivata, tali XP non vengono memorizzati. Tutti i punti XP memorizzati sono quelli di un personaggio senza abilit‡ iniziali. Con questa opzione NON si recupera i livelli iniziali, ma solo i punti XP bonus guadagnati."
+    Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses = "Recupero XP bonus di occupazione e tratti"
+    Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses_tooltip = "Iniziando con pi√π di un punto in un'abilit√† si ottengono generalmente dei bonus di XP: con questa opzione disattivata, tali XP non vengono memorizzati. Tutti i punti XP memorizzati sono quelli di un personaggio senza abilit√† iniziali. Con questa opzione NON si recupera i livelli iniziali, ma solo i punti XP bonus guadagnati."
 
-	Sandbox_SkillRecoveryJournalTranscribeTVXP = "Trascrivi XP Guadagnati da TV/VHS",
+	Sandbox_SkillRecoveryJournalTranscribeTVXP = "Trascrivi XP guadagnati da TV/VHS",
 	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Attivando questa opzione, i giocatori potranno trascrivere i punti XP guadagnati guardando la TV/VHS. Nota: questo significa che i giocatori possono trasportare i punti XP guardati da un personaggio all'altro in modo cumulativo."
 
-	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Recupero Abilit‡ Passive"
-	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Attiva per memorizzare le abilit‡ passive."
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Recupero abilit√† passive"
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Attiva per memorizzare le abilit√† passive."
 
-	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "Recupero Abilit‡ di Combattimento"
-    Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "Attiva per memorizzare le abilit‡ di combattimento."
+	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "Recupero abilit√† di combattimento"
+    Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "Attiva per memorizzare le abilit√† di combattimento."
 
-    Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "Recupero Abilit‡ con Armi da Fuoco"
-    Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "Attiva per memorizzare le abilit‡ con le armi da fuoco."
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "Recupero abilit√† con armi da fuoco"
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "Attiva per memorizzare le abilit√† con le armi da fuoco."
 
-    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "Recupero Abilit‡ di Crafting"
-    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Attiva la memorizzazione delle abilit‡ di crafting."
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "Recupero abilit√† di artigianato"
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Attiva la memorizzazione delle abilit√† di artigianato."
 
-    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "Recupero Abilit‡ di Sopravvivenza"
-    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Attiva la memorizzazione delle abilit‡ di sopravvivenza."
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "Recupero abilit√† di sopravvivenza"
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Attiva la memorizzazione delle abilit√† di sopravvivenza."
 
-    Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "Recupero Abilit‡ di Agilit‡"
-    Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "Attiva per memorizzare le abilit‡ di agilit‡."
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "Recupero abilit√† di agilit√†"
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "Attiva per memorizzare le abilit√† di agilit√†."
 
-	Sandbox_SkillRecoveryJournalRecoverRecipes = "Recupero delle Ricette"
+	Sandbox_SkillRecoveryJournalRecoverRecipes = "Recupero delle ricette"
     Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "Disattiva per evitare che i diari recuperino/trascrivano le ricette."
 
-    Sandbox_SkillRecoveryJournalUsed = "XP Diario Usati quando Letto"
-    Sandbox_SkillRecoveryJournalUsed_tooltip = "Normalmente Ë possibile rileggere il diario tutte le volte che si vuole; con questa opzione attivata, ogni singolo punto XP puÚ essere recuperato solo una volta. » ancora possibile aggiungere punti al diario, ma ogni punto puÚ essere recuperato solo una volta per ogni diario. Nota: nella barra degli strumenti del diario viene ora visualizzata una frazione per i punti non utilizzati."
+    Sandbox_SkillRecoveryJournalUsed = "XP diario usati quando letto"
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "Normalmente √® possibile rileggere il diario tutte le volte che si vuole; con questa opzione attivata, ogni singolo punto XP pu√≤ essere recuperato solo una volta. √à ancora possibile aggiungere punti al diario, ma ogni punto pu√≤ essere recuperato solo una volta per ogni diario. Nota: nella barra degli strumenti del diario viene ora visualizzata una frazione per i punti non utilizzati."
 }
