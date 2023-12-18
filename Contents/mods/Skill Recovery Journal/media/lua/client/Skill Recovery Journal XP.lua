@@ -115,15 +115,15 @@ local function catchJavaAddXP(player, perksType, XP)
 
     local debugPrint = "passUnBoostOnAddXP: "
     ---checking if it's 'not false' instead of 'true' because I want older saves before this sandbox option to get what they expect to occur
-    if SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses == false then
+    if SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses ~= false then
         local xpBoostID = pXP:getPerkBoost(perksType)
         local xpBoostDenominator = 1
 
-        if xpBoostID == 0 and (not isSkillExcludedFrom.SpeedReduction(perksType)) then xpBoostDenominator = 1 -- Assumes 0.25 is the 'base' XP rate
-        elseif xpBoostID == 1 and perksType==Perks.Sprinting then xpBoostDenominator = 0.20 -- reciprocal of 1.25 (1 1/4 == 5/4), equivalent to a 125.00% XP rate, 500% relative XP gain; (1.25 is specific to sprinting skill, otherwise evaluate to next statement)
-        elseif xpBoostID == 1 then xpBoostDenominator = 0.25 -- reciprocal of 4 (4/1), equivalent to a 100.00% XP rate, 400% relative XP gain
-        elseif xpBoostID == 2 and (not isSkillExcludedFrom.SpeedIncrease(perksType)) then xpBoostDenominator = 0.1875 -- reciprocal of 5.33 (5 1/3 == 16/3), equivalent to a 133.33% XP rate, 533% relative XP gain
-        elseif xpBoostID == 3 and (not isSkillExcludedFrom.SpeedIncrease(perksType)) then xpBoostDenominator = 0.15 -- reciprocal or 6.67 (6 2/3 == 20/3), equivalent to a 166.67% XP rate, 667% relative XP gain
+        if xpBoostID == 0 and (not isSkillExcludedFrom.SpeedReduction(perksType)) then xpBoostDenominator = 1 -- Assumes 0.25 is the 'base' XP rate (i.e. x / 1 = x)
+        elseif xpBoostID == 1 and perksType==Perks.Sprinting then xpBoostDenominator = 0.80 -- reciprocal of (1.25 == 1 1/4 == 5/4) is (4/5 == 0.80), equivalent to a 125.00% XP rate, 500% relative XP gain; (1.25 is specific to sprinting skill, otherwise evaluate to next statement)
+        elseif xpBoostID == 1 then xpBoostDenominator = 0.25 -- reciprocal of (4 == 4/1) is (1/4 == 0.25), equivalent to a 100.00% XP rate, 400% relative XP gain
+        elseif xpBoostID == 2 and (not isSkillExcludedFrom.SpeedIncrease(perksType)) then xpBoostDenominator = 0.1875 -- reciprocal of (5.33 == 5 1/3 == 16/3) is (3/16 == 0.1875), equivalent to a 133.33% XP rate, 533% relative XP gain
+        elseif xpBoostID == 3 and (not isSkillExcludedFrom.SpeedIncrease(perksType)) then xpBoostDenominator = 0.15 -- reciprocal or (6.67 == 6 2/3 == 20/3) is (3/20 == 0.15), equivalent to a 166.67% XP rate, 667% relative XP gain
         end
         if getDebug() then debugPrint = debugPrint..XP.."/"..xpBoostDenominator end
         XP = XP/xpBoostDenominator
