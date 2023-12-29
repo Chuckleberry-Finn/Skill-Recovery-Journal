@@ -42,8 +42,8 @@ description=[h3]First, [b]resubscribe[/b] to this mod, and any related mod.[/h3]
 description=(This will force a download of the latest version.)
 description=[b]If the problem persists, please supply a error log, which can be found here:[/b]
 description=[quote]`C:\Users\<username>\Zomboid\console.txt`[/quote]
-description=Upload to [url=https://github.com/ChuckTheSheep/Skill-Recovery-Journal]Github[/url] as an issue.
-description=Share the link in a comment below if it is urgent.
+description=Uploaded to [url=https://pastebin.com/]pastebin[/url]) or [url=https://github.com/ChuckTheSheep/Skill-Recovery-Journal]Github[/url] as an issue.
+description=Share the link in a comment below.
 description=
 description=
 description=[h3]Copyright 2023 Chuckleberry Finn. This item is not authorized for posting on Steam, except under the Steam account named Chuckleberry Finn.[/h3]
