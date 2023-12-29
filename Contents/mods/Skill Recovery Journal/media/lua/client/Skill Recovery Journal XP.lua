@@ -51,10 +51,8 @@ function SRJ_XPHandler.unBoostXP(player,perk,XP)
     if getDebug() then debugPrint = debugPrint.."= "..XP end
 
     --- perks boostMap based on career and starting traits - does not transfer starting skills - this is specifically about the bonus-XP earned.
-    --- This checks if the sandboxOption is not false - so that true and nil return true (as they are not false)
-    --- Reason being when sandbox options are added after the fact they will remain 'nil' and this was something occurring by default originally.
-    local applyCareerAndTraits = SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses ~= false
-    local xpBoostID = (applyCareerAndTraits and pXP:getPerkBoost(perk)) or 0
+
+    local xpBoostID = pXP:getPerkBoost(perk)
     local xpBoostMultiplier = 1
 
     if xpBoostID == 0 and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedReduction(perk)) then xpBoostMultiplier = 0.25
@@ -64,15 +62,19 @@ function SRJ_XPHandler.unBoostXP(player,perk,XP)
     elseif xpBoostID == 3 and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedIncrease(perk)) then xpBoostMultiplier = 1.66
     end
     if getDebug() then debugPrint = debugPrint.."\n   xpBoostMultiplier: "..xpBoostMultiplier.."*"..XP end
-    XP = XP*xpBoostMultiplier
+    XP = XP/xpBoostMultiplier
     if getDebug() then debugPrint = debugPrint.."= "..XP end
 
+    ---Something to consider later I guess
+    --[[
     ---from reading skill books
     local skillBookMultiplier = math.max(1,pXP:getMultiplier(perk))
     if getDebug() then debugPrint = debugPrint.."\n   skillBookMultiplier: "..skillBookMultiplier.."*"..XP end
     XP = XP*skillBookMultiplier
+    --]]
+
     if getDebug() then debugPrint = debugPrint.."= "..XP end
-    if getDebug() then print(debugPrint.."\n"..tostring(perk).." to be recorded: "..XP) end
+    ---if getDebug() then print(debugPrint.."\n"..tostring(perk).." to be recorded: "..XP) end
 
     return XP
 end

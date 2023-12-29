@@ -6,3 +6,19 @@ local function _versionCheck() if SRJ_VERSION_CHECK then
     outputFunc(output)
 end end
 Events.OnGameBoot.Add(_versionCheck)
+
+--[[
+
+Rewrote half the mod in order to correct a number of issues. There will likely be growing pains for your current characters, chances are you'll get some free XP (especially in regards to passive skills.) Your old journals should be swapped for the new journal item automatically.
+
+Update: The mod no longer tracks XP as it is earned, instead of takes what you have in the moment and determines your starting levels, bonus XP, TVXP, etc, to determine what is transcribed. This means the mod now allows an easier transition to adding it mid-play, as well as changing sandbox options on the fly with little impact to the journal. However, changing the sandbox options does not retroactively impact transcribed XP, only future transcribed XP.
+
+Update: The sandbox option for PagesReadPerMinute does not impact this mod anymore.  (The mod has it's own sandbox options for reading/writing.)
+
+Fix: Issue with recipes not being caught as unread.
+
+Fix: There should no longer be issues with reading and mods that speed up actions. (The Quick-Worker trait from the mod More Traits.)
+
+Fix: Add XP via admin menu works again.
+
+--]]
