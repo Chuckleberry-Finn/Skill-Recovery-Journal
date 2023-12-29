@@ -1,29 +1,5 @@
 require "ISUI/ISToolTipInv"
 
-local SRJ = require "Skill Recovery Journal Main"
-
-
-local function flagPlayerWithBoostedXP(id, player)
-	if not player then return end
-
-	local pMD = player:getModData()
-	if pMD.bBoostedXP then return end
-
-	local pXP = player:getXp()
-	local boosted
-
-	for i=1, Perks.getMaxIndex()-1 do
-		---@type PerkFactory.Perk
-		local perk = Perks.fromIndex(i)
-		boosted = boosted or pXP:getPerkBoost(perk)>0
-	end
-
-	pMD.bBoostedXP = boosted
-	return pMD.bBoostedXP
-end
-Events.OnCreatePlayer.Add(flagPlayerWithBoostedXP)
-local function getBoostedXPFlag(player) return player:getModData().bBoostedXP or flagPlayerWithBoostedXP(player) end
-
 
 ---@param journal InventoryItem | Literature
 local function SRJ_generateTooltip(journal, player)
@@ -43,7 +19,7 @@ local function SRJ_generateTooltip(journal, player)
 
 	if (not JMD.usedRenameOption) then
 		---checking if it's '== false' instead of '== true' because I want older saves before this sandbox option to get what they expect to occur
-		if (SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses == false) and getBoostedXPFlag(player) then
+		if (SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses == false) then
 			warning = warning or {}
 			table.insert(warning, "IGUI_Bonus_XP_Warning")
 		end
