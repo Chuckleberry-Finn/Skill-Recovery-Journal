@@ -198,10 +198,9 @@ function ISToolTipInv:render()
 
 		if itemObj and player and itemObj:getType() == "SkillRecoveryJournal" then
 			local newJournal = InventoryItemFactory.CreateItem("SkillRecoveryBoundJournal")
-			local oldModData, oldItemName = itemObj:getModData(), itemObj:getName()
+			local oldModData = itemObj:getModData()
 			local newJournalMD = newJournal:getModData()
 			newJournalMD = copyTable(oldModData)
-			newJournal:setName(oldItemName)
 
 			local worldItem = itemObj:getWorldItem()
 			if worldItem then
