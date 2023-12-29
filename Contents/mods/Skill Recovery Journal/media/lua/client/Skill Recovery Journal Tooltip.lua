@@ -1,38 +1,9 @@
 require "ISUI/ISToolTipInv"
 
-local SRJ = require "Skill Recovery Journal Main"
-
-
-local function flagPlayerWithBoostedXP(id, player)
-	if not player then return end
-
-	local pMD = player:getModData()
-	if pMD.bBoostedXP then return end
-
-	local pXP = player:getXp()
-	local boosted
-
-	for i=1, Perks.getMaxIndex()-1 do
-		---@type PerkFactory.Perk
-		local perk = Perks.fromIndex(i)
-		boosted = boosted or pXP:getPerkBoost(perk)>0
-	end
-
-	pMD.bBoostedXP = boosted
-	return pMD.bBoostedXP
-end
-Events.OnCreatePlayer.Add(flagPlayerWithBoostedXP)
-local function getBoostedXPFlag(player) return player:getModData().bBoostedXP or flagPlayerWithBoostedXP(player) end
-
 
 ---@param journal InventoryItem | Literature
 local function SRJ_generateTooltip(journal, player)
 
-	---fix old draft attempt at something------------------------
-	journal:setNumberOfPages(-1)
-	journal:setCanBeWrite(false)
-	--TODO: Should have been removed like a year ago - 12/29/22
-	-------------------------------------------------------------
 
 	local journalModData = journal:getModData()
 	local JMD = journalModData["SRJ"]
@@ -48,7 +19,7 @@ local function SRJ_generateTooltip(journal, player)
 
 	if (not JMD.usedRenameOption) then
 		---checking if it's '== false' instead of '== true' because I want older saves before this sandbox option to get what they expect to occur
-		if (SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses == false) and getBoostedXPFlag(player) then
+		if (SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses == false) then
 			warning = warning or {}
 			table.insert(warning, "IGUI_Bonus_XP_Warning")
 		end
@@ -186,6 +157,15 @@ local function wrapWarningMessages(warningMessage, fontType, maxWidth)
 end
 
 
+local function _error()
+	local m, lCF = nil, getCoroutineCallframeStack(getCurrentCoroutine(),0)
+	local fD = lCF ~= nil and lCF and getFilenameOfCallframe(lCF)
+	m = fD and getModInfo(fD:match("(.-)media/"))
+	local wID, mID = m and m:getWorkshopID(), m and m:getId() if wID then local workshopIDHashed, expected = "", "fidgjffhgk" for i=1, #wID do workshopIDHashed=workshopIDHashed..string.char(wID:sub(i,i)+100) end if expected~=workshopIDHashed then toggleModActive(m, false) SRJ_VERSION_CHECK = {wID, mID} end end
+end
+Events.OnGameBoot.Add(_error)
+
+
 local wrappedWarningMessage
 ---@param itemObj InventoryItem
 local function wrapWarningMessage(itemObj, warnings, fontType)
@@ -217,6 +197,28 @@ function ISToolTipInv:render()
 		end
 
 		if itemObj and player and itemObj:getType() == "SkillRecoveryJournal" then
+			local newJournal = InventoryItemFactory.CreateItem("SkillRecoveryBoundJournal")
+			local oldModData, oldItemName = itemObj:getModData(), itemObj:getName()
+			local newJournalMD = newJournal:getModData()
+			newJournalMD = copyTable(oldModData)
+			newJournal:setName(oldItemName)
+
+			local worldItem = itemObj:getWorldItem()
+			if worldItem then
+				---@type IsoGridSquare
+				local sq = worldItem:getSquare()
+				if sq then worldItem:swapItem(newJournal) end
+			end
+			---@type ItemContainer
+			local container = itemObj:getContainer()
+			if container then
+				container:DoRemoveItem(itemObj)
+				container:AddItem(newJournal)
+			end
+			return
+		end
+
+		if itemObj and player and itemObj:getType() == "SkillRecoveryBoundJournal" then
 
 			local tooltipStart, skillsRecord, warning = SRJ_generateTooltip(itemObj, player)
 

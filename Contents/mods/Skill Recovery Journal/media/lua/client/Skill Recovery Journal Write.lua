@@ -5,7 +5,7 @@ local SRJ = require "Skill Recovery Journal Main"
 local SRJOVERWRITE_ISCraftAction_perform = ISCraftAction.perform
 function ISCraftAction:perform()
 	SRJOVERWRITE_ISCraftAction_perform(self)
-	if self.recipe and self.recipe:getOriginalname() == "Transcribe Journal" and self.item and self.item:getType() == "SkillRecoveryJournal" then
+	if self.recipe and self.recipe:getOriginalname() == "Transcribe Journal" and self.item and self.item:getType() == "SkillRecoveryBoundJournal" then
 		if self.willWrite==true and (not self.character:HasTrait("Illiterate")) then
 			if self.changesMade and self.changesMade==true then
 				self.character:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
@@ -22,7 +22,7 @@ local SRJOVERWRITE_ISCraftAction_update = ISCraftAction.update
 function ISCraftAction:update()
 	SRJOVERWRITE_ISCraftAction_update(self)
 
-	if self.recipe and self.recipe:getOriginalname() == "Transcribe Journal" and self.item:getType() == "SkillRecoveryJournal" then
+	if self.recipe and self.recipe:getOriginalname() == "Transcribe Journal" and self.item:getType() == "SkillRecoveryBoundJournal" then
 		self.craftTimer = self.craftTimer + getGameTime():getMultiplier()
 		self.item:setJobDelta(0.0)
 		local updateInterval = 10
@@ -77,8 +77,10 @@ function ISCraftAction:update()
 							local transcribeTimeMulti = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 1
 							local perkLevelPlusOne = self.character:getPerkLevel(Perks[perkID])+1
 
+							local differential = SRJ.getMaxXPDifferential(perkID)
+
 							local xpRate = math.sqrt(xp)/25
-							xpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * transcribeTimeMulti
+							xpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * transcribeTimeMulti / differential
 
 							if xpRate>0 then
 								self.changesMade = true
@@ -199,6 +201,7 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 		o.recipeIntervals = 0
 		o.useProgressBar = false
 		o.loopedAction = false
+		o.stopOnWalk = false
 	end
 
 	return o
@@ -207,7 +210,7 @@ end
 
 ---@param player IsoGameCharacter | IsoPlayer
 function SkillRecoveryJournalOnCanPerformWritingJournal(recipe, player, item)
-	if item and (item:getType() == "SkillRecoveryJournal") then
+	if item and (item:getType() == "SkillRecoveryBoundJournal") then
 		return true
 	end
 	return false
