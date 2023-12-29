@@ -7,7 +7,8 @@ description=[url=https://ko-fi.com/chuckleberryfinn][img]https://raw.githubuserc
 description=
 description=[url=https://discord.gg/SReMnbV4V7][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/PZmodCommBanner2.png[/img][/url]
 description=
-description=[url=https://steamcommunity.com/workshop/filedetails/discussion/2503622437/3198119216812488644][h1][b]FREQUENTLY ASKED QUESTIONS[/b][/h1][/url]
+description=[url=https://steamcommunity.com/workshop/filedetails/discussion/2503622437/3198119216812488644][h1]Got a question? Check [b][FREQUENTLY ASKED QUESTIONS][/b][/h1][/url]
+description=[img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/noModPacks.png[/img]
 description=
 description=[h1]If you're having an issue or encountering errors:[/h1]
 description=[h3]First, [b]resubscribe[/b] to this mod, and any related mod.[/h3]
@@ -19,6 +20,5 @@ description=Share the link in a comment below if it is urgent.
 description=
 description=
 description=[h3]Copyright 2023 Chuckleberry Finn. This item is not authorized for posting on Steam, except under the Steam account named Chuckleberry Finn.[/h3]
-description=
 tags=Build 41;Balance;Literature;Multiplayer;Traits
 visibility=public
