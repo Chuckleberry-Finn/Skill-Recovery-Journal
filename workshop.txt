@@ -5,18 +5,6 @@ description=[h3][i]Lore-friendly(ish) solution to the loss of a character.[/i][/
 description=
 description=[url=https://ko-fi.com/chuckleberryfinn][img]https://raw.githubusercontent.com/ChuckTheSheep/chuckImages/main/kofi.png[/img][/url]
 description=
-description=[url=https://discord.gg/SReMnbV4V7][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/PZmodCommBanner1.png[/img][/url]
-description=
-description=
-description=[h2][b]CAN'T SEE THE RECIPE?[/b][/h2]
-description=[table equalcells=1]
-description=[tr]
-description=[td][h3]If you're playing on MP and don't see the receipe you need to enable it in workshop to get clients to download the mod - but you also have to add it to the mods list too.[/h3][/td]
-description=[td][h3]If you are turning mods on on-going saves you need to enable the mod in the load menu for that save. This is done in the more menu in the loading save menu.[/h3][/td]
-description=[/tr]
-description=[/table]
-description=
-description=
 description=[b]Do I need to start a new game?[/b] No, you just need to craft a journal to get started.
 description=
 description=[b]Is it safe to remove this mod mid-play?[/b] Yes. However, removing it will delete the journals held and any progress stored in them; Players will have to re-craft them.
