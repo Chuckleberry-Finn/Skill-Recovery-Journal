@@ -1,4 +1,4 @@
-Events.OnGameBoot.Add(function() print("Skill Recovery Journal: ver:2.0.6_MAR-21_HOT_FIX") end)
+Events.OnGameBoot.Add(function() print("Skill Recovery Journal: ver:3.0.0_DEC_29_2023") end)
 
 local function _error() if STOPPAGE then
     local output = ""
