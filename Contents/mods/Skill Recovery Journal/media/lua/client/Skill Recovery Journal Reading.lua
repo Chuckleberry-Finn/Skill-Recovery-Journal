@@ -152,8 +152,6 @@ function ReadSkillRecoveryJournal:update()
 					if currentlyReadXP < journalXP then
 						local readTimeMulti = SandboxVars.SkillRecoveryJournal.ReadTimeSpeed or 1
 
-						readTimeMulti = (self.character:HasTrait("FastReader") and 1.3) or (self.character:HasTrait("SlowReader") and 0.7) or readTimeMulti
-
 						local differential = SRJ.getMaxXPDifferential(skill)
 
 						local perkLevelPlusOne = player:getPerkLevel(Perks[skill])+1
