@@ -9,7 +9,7 @@ function contextSRJ.readItems(items, player)
 	for i,item in ipairs(items) do
 		if item:getContainer() ~= nil then
 			ISInventoryPaneContextMenu.transferIfNeeded(player, item)
-			ISTimedActionQueue.add(ReadSkillRecoveryJournal:new(player, item, 50))
+			ISTimedActionQueue.add(ReadSkillRecoveryJournal:new(player, item))
 			break
 		end
 	end
@@ -62,9 +62,10 @@ function contextSRJ.doContextMenu(playerID, context, items)
 end
 
 
+---@param player IsoGameCharacter|IsoPlayer
 ---@param journal InventoryItem|Literature
 function contextSRJ.onRenameJournal(journal, player)
-	local modal = ISTextBox:new(0, 0, 280, 100, journal:getDisplayName()..":", journal:getName(), nil, contextSRJ.onRenameJournalClick, player, getSpecificPlayer(player), journal)
+	local modal = ISTextBox:new(0, 0, 280, 100, journal:getDisplayName()..":", journal:getName(), nil, contextSRJ.onRenameJournalClick, player:getPlayerNum(), player, journal)
 	modal:initialise()
 	modal:addToUIManager()
 end
