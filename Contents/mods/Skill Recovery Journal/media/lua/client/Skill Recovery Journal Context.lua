@@ -24,7 +24,7 @@ function contextSRJ.doContextMenu(playerID, context, items)
 
 	for i,item in ipairs(actualItems) do
 
-		if item:getType() == "SkillRecoveryBoundJournal" then
+		if item:getType() == "SkillRecoveryBoundJournal" or item:getType() == "SkillRecoveryJournal" then
 
 			local emptyBook, mismatchID = false, false
 			if player and player.getSteamID then
@@ -39,7 +39,11 @@ function contextSRJ.doContextMenu(playerID, context, items)
 				end
 			end
 
-			if emptyBook==false and mismatchID==false then context:addOptionOnTop(getText("IGUI_Rename"), item, contextSRJ.onRenameJournal, player) end
+			if emptyBook==false and mismatchID==false then
+				if item:getType() == "SkillRecoveryBoundJournal" then
+					context:addOptionOnTop(getText("IGUI_Rename"), item, contextSRJ.onRenameJournal, player)
+				end
+			end
 
 			local asleep = player:isAsleep()
 			local illiterate = player:getTraits():isIlliterate()
