@@ -52,9 +52,8 @@ local function unBoostXP(player,perk,XP)
     XP = XP*sandboxMultiplier
     if getDebug() then debugPrint = debugPrint.."= "..XP end
 
-    --- perks boostMap based on career and starting traits - does not transfer starting skills - this is specifically about the bonus-XP earned.
-    --- This checks if the sandboxOption is not false - so that true and nil return true (as they are not false)
-    --- Reason being when sandbox options are added after the fact they will remain 'nil' and this was something occurring by default originally.
+    ---perks boostMap based on career and starting traits
+    ---checking if it's 'not false' instead of 'true' because I want older saves before this sandbox option to get what they expect to occur
     local applyCareerAndTraits = SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses ~= false
     local xpBoostID = (applyCareerAndTraits and pXP:getPerkBoost(perk)) or 0
     local xpBoostMultiplier = 1
