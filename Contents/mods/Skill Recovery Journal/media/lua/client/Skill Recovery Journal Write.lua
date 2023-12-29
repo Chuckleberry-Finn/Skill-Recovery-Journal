@@ -77,10 +77,8 @@ function ISCraftAction:update()
 							local transcribeTimeMulti = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 1
 							local perkLevelPlusOne = self.character:getPerkLevel(Perks[perkID])+1
 
-							local differential = SRJ.getMaxXPDifferential(perkID)
-
 							local xpRate = math.sqrt(xp)/25
-							xpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * transcribeTimeMulti / differential
+							xpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * transcribeTimeMulti
 
 							if xpRate>0 then
 								self.changesMade = true
@@ -201,7 +199,6 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 		o.recipeIntervals = 0
 		o.useProgressBar = false
 		o.loopedAction = false
-		o.stopOnWalk = false
 	end
 
 	return o
