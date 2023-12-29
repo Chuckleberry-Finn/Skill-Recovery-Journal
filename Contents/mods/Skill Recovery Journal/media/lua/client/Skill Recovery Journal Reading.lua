@@ -17,7 +17,7 @@ end
 
 function ReadSkillRecoveryJournal:start()
 	self.item:setJobType(getText("ContextMenu_Read") ..' '.. self.item:getName())
-	self.item:setJobDelta(0.0)
+	--self.item:setJobDelta(0.0)
 	self:setAnimVariable("ReadType", "book")
 	self:setActionAnim(CharacterActionAnims.Read)
 	self:setOverrideHandModels(nil, self.item)
@@ -27,19 +27,18 @@ function ReadSkillRecoveryJournal:start()
 end
 
 
-function ReadSkillRecoveryJournal:stop()
+function ReadSkillRecoveryJournal:forceStop()
 	self.character:setReading(false)
 	self.item:setJobDelta(0.0)
+	if self.action then self.action:setLoopedAction(false) end
 	self.character:playSound("CloseBook")
-	ISBaseTimedAction.stop(self)
+	ISBaseTimedAction.forceStop(self)
 end
 
 
 function ReadSkillRecoveryJournal:perform()
 	self.character:setReading(false)
 	self.item:getContainer():setDrawDirty(true)
-	self.item:setJobDelta(0.0)
-	self.character:playSound("CloseBook")
 	ISBaseTimedAction.perform(self)
 end
 
@@ -52,47 +51,14 @@ function ReadSkillRecoveryJournal:animEvent(event, parameter)
 end
 
 
-function ReadSkillRecoveryJournal:new(character, item, time)
-	local o = {}
-	setmetatable(o, self)
-	self.__index = self
-
-	o.character = character
-	o.item = item
-	o.stopOnWalk = false
-	o.stopOnRun = true
-	o.loopedAction = true
-	o.ignoreHandsWounds = true
-	o.maxTime = time
-	o.caloriesModifier = 0.5
-	o.readTimer = 0
-	o.forceProgressBar = true
-	o.learnedRecipes = {}
-	o.recipeIntervals = 0
-
-	local journalModData = item:getModData()
-	local JMD = journalModData["SRJ"]
-	if JMD then
-		if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
-			local learnedRecipes = JMD["learnedRecipes"]
-			if learnedRecipes then
-				for recipeID,_ in pairs(learnedRecipes) do
-					if not character:isRecipeKnown(recipeID) then
-						table.insert(o.learnedRecipes, recipeID)
-					end
-				end
-			end
-		end
-	end
-
-	return o
-end
-
-
 function ReadSkillRecoveryJournal:update()
+
+	if not self.loopedAction then return end
 
 	---@type Literature
 	local journal = self.item
+
+	local bJournalUsedUp = false
 
 	self.readTimer = (self.readTimer or 0) + (getGameTime():getMultiplier() or 0)
 	-- normalize update time via in game time. Adjust updateInterval as needed
@@ -133,11 +99,12 @@ function ReadSkillRecoveryJournal:update()
 		if not delayedStop then
 
 			if (#self.learnedRecipes > 0) then
+
 				self.recipeIntervals = self.recipeIntervals+1
-				self.changesMade = true
+				changesMade = true
+
 				if self.recipeIntervals > 5 then
 					local recipeChunk = math.min(#self.learnedRecipes, math.floor(1.09^math.sqrt(#self.learnedRecipes)))
-
 					local properPlural = getText("IGUI_Tooltip_Recipe")
 					if recipeChunk>1 then properPlural = getText("IGUI_Tooltip_Recipes") end
 					table.insert(changesBeingMade, recipeChunk.." "..properPlural)
@@ -167,7 +134,6 @@ function ReadSkillRecoveryJournal:update()
 
 			journalModData.recoveryJournalXpLog = journalModData.recoveryJournalXpLog or {}
 			local jmdUsedXP = journalModData.recoveryJournalXpLog
-			local bJournalUsedUp = false
 
 			local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
 
@@ -188,11 +154,13 @@ function ReadSkillRecoveryJournal:update()
 
 						readTimeMulti = (self.character:HasTrait("FastReader") and 1.3) or (self.character:HasTrait("SlowReader") and 0.7) or readTimeMulti
 
+						local differential = SRJ.getMaxXPDifferential(skill)
+
 						local perkLevelPlusOne = player:getPerkLevel(Perks[skill])+1
-						local perPerkXpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * readTimeMulti
+						local perPerkXpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * readTimeMulti / differential
 						if perkLevelPlusOne == 11 then perPerkXpRate=false end
 
-						--print("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..perkLevel.."  xpStored:"..xp.."  currentXP:"..currentXP)
+						--print("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..(perkLevelPlusOne-1).."  xpStored:"..xp.."  currentXP:"..currentlyReadXP)
 
 						if perPerkXpRate~=false then
 
@@ -203,10 +171,7 @@ function ReadSkillRecoveryJournal:update()
 
 							---- perksType, XP, passHook, applyXPBoosts, transmitMP)
 							player:getXp():AddXP(Perks[skill], perPerkXpRate, false, false, true)
-							--SRJ.recordXPGain(player, skill, perPerkXpRate, {})
-
 							changesMade = true
-							--self:resetJobDelta()
 
 							local skill_name = getText("IGUI_perks_"..skill)
 							if skill_name == ("IGUI_perks_"..skill) then skill_name = skill end
@@ -215,32 +180,32 @@ function ReadSkillRecoveryJournal:update()
 					end
 				end
 			end
+		end
 
-			if JMD and (not changesMade) then
-				delayedStop = true
+		if JMD and (not changesMade) then
+			delayedStop = true
 
-				if bJournalUsedUp then
-					sayText = getText("IGUI_JournalXPUsedUp")
-				else
-					sayTextChoices = {"IGUI_PlayerText_KnowSkill","IGUI_PlayerText_BookObsolete"}
-					sayText = getText(sayTextChoices[ZombRand(#sayTextChoices)+1])
-				end
-
-			elseif changesMade then
-				local changesBeingMadeText = ""
-				for k,v in pairs(changesBeingMade) do
-					changesBeingMadeText = changesBeingMadeText.." "..v
-					if k~=#changesBeingMade then
-						changesBeingMadeText = changesBeingMadeText..", "
-					end
-				end
-				if #changesBeingMade>0 then
-					changesBeingMadeText = getText("IGUI_Tooltip_Learning")..": "..changesBeingMadeText
-				end
-
-				HaloTextHelper:update()
-				HaloTextHelper.addText(self.character, changesBeingMadeText, HaloTextHelper.getColorWhite())
+			if bJournalUsedUp then
+				sayText = getText("IGUI_JournalXPUsedUp")
+			else
+				sayTextChoices = {"IGUI_PlayerText_KnowSkill","IGUI_PlayerText_BookObsolete"}
+				sayText = getText(sayTextChoices[ZombRand(#sayTextChoices)+1])
 			end
+
+		elseif changesMade then
+			local changesBeingMadeText = ""
+			for k,v in pairs(changesBeingMade) do
+				changesBeingMadeText = changesBeingMadeText.." "..v
+				if k~=#changesBeingMade then
+					changesBeingMadeText = changesBeingMadeText..", "
+				end
+			end
+			if #changesBeingMade>0 then
+				changesBeingMadeText = getText("IGUI_Tooltip_Learning")..": "..changesBeingMadeText
+			end
+
+			HaloTextHelper:update()
+			HaloTextHelper.addText(self.character, changesBeingMadeText, HaloTextHelper.getColorWhite())
 		end
 
 		if delayedStop then
@@ -248,8 +213,44 @@ function ReadSkillRecoveryJournal:update()
 				self.spoke = true
 				player:Say(sayText, 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 			end
-			updateInterval = self.maxTime
 			self:forceStop()
 		end
 	end
+end
+
+
+function ReadSkillRecoveryJournal:new(character, item)
+	local o = {}
+	setmetatable(o, self)
+	self.__index = self
+
+	o.character = character
+	o.item = item
+	o.stopOnWalk = false
+	o.stopOnRun = true
+	o.loopedAction = true
+	o.ignoreHandsWounds = true
+	o.caloriesModifier = 0.5
+	o.readTimer = -30
+	o.forceProgressBar = true
+	o.learnedRecipes = {}
+	o.recipeIntervals = 0
+	o.maxTime = -1
+
+	local journalModData = item:getModData()
+	local JMD = journalModData["SRJ"]
+	if JMD then
+		if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
+			local learnedRecipes = JMD["learnedRecipes"]
+			if learnedRecipes then
+				for recipeID,_ in pairs(learnedRecipes) do
+					if not character:isRecipeKnown(recipeID) then
+						table.insert(o.learnedRecipes, recipeID)
+					end
+				end
+			end
+		end
+	end
+
+	return o
 end
