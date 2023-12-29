@@ -7,14 +7,42 @@ description=[url=https://ko-fi.com/chuckleberryfinn][img]https://raw.githubuserc
 description=
 description=[url=https://discord.gg/SReMnbV4V7][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/PZmodCommBanner2.png[/img][/url]
 description=
-description=[url=https://steamcommunity.com/workshop/filedetails/discussion/2503622437/3198119216812488644][h1][b]FREQUENTLY ASKED QUESTIONS[/b][/h1][/url]
+description=
+description=[h2][b]CAN'T SEE THE RECIPE?[/b][/h2]
+description=[table equalcells=1]
+description=[tr]
+description=[td][h3]If you're playing on MP and don't see the receipe you need to enable it in workshop to get clients to download the mod - but you also have to add it to the mods list too.[/h3][/td]
+description=[td][h3]If you are turning mods on on-going saves you need to enable the mod in the load menu for that save. This is done in the more menu in the loading save menu.[/h3][/td]
+description=[/tr]
+description=[/table]
+description=
+description=
+description=[b]Do I need to start a new game?[/b] No, you just need to craft a journal to get started.
+description=
+description=[b]Is it safe to remove this mod mid-play?[/b] Yes. However, removing it will delete the journals held and any progress stored in them; Players will have to re-craft them.
+description=
+description=[b]Where do I find the journals?[/b] You craft them. The recipe can be found under "bind journal" or under your native language's translation.
+description=
+description=[b]How do I use the journal?[/b] You will see the option to "transcribe journal" when you have a writing tool and bound journal (that is unclaimed or one you've written in before.) Trying to transcribe or read another person's journal in MP will not work (outside of COOP).
+description=
+description=[b]How does it work?[/b] The journals save skill's respective XP - ignoring profession/trait starter levels. There is also a sandbox option to lower return percentage (default is 100%). As well as options for types of XP saved, based on skill category, TV shows, and bonus multipliers from starting levels. By default, TV and bonus XP are disabled.
+description=
+description=[b]Are these journals one time use?[/b] No, you are expected to keep using the same journal and updating it over time. Unless you toggle the one-time use, which makes it so XP is depleted.
+description=
+description=[b]Are recipes saved?[/b] Yes, except for profession/trait gained (just like skill levels).
+description=
+description=[b]Warning:[/b] Journals have to be manually updated using a pen or pencil. You can check the tool-tip for XP and recipes. Careful if you die holding your journal as it may be difficult to retrieve it from your moving corpse or it could be stolen/destroyed by other players.
+description=
+description=
+description=
+description=[h1][b][url=https://github.com/ChuckTheSheep/Skill-Recovery-Journal]Github[/url]  [url=https://github.com/ChuckTheSheep/Skill-Recovery-Journal/commits/main]Change Log[/url][/b][/h1]
 description=
 description=[h1]If you're having an issue or encountering errors:[/h1]
 description=[h3]First, [b]resubscribe[/b] to this mod, and any related mod.[/h3]
-description=[i](This will force a download of the latest version.)[/i]
-description=[b]If the problem persists, please supply a error log, which can be found:[/b]
-description=[quote]`OS:\Users\<username>\Zomboid\console.txt`[/quote]
-description=Upload this file [b]in entirety[/b] to [url=https://github.com/ChuckTheSheep/Skill-Recovery-Journal]Github[/url] as an issue.
+description=(This will force a download of the latest version.)
+description=[b]If the problem persists, please supply a error log, which can be found here:[/b]
+description=[quote]`C:\Users\<username>\Zomboid\console.txt`[/quote]
+description=Upload to [url=https://github.com/ChuckTheSheep/Skill-Recovery-Journal]Github[/url] as an issue.
 description=Share the link in a comment below if it is urgent.
 description=
 description=
