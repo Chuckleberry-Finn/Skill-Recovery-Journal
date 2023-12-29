@@ -4,19 +4,7 @@ module Base
     {
         Weight	=	0.8,
         Type	=	Literature,
-        DisplayName	=	Bound Journal (Decayed),
-        DisappearOnUse = FALSE,
-        Icon	=	SkillRecoveryJournal,
-        StaticModel = SkillRecoveryJournal,
-        WorldStaticModel = SkillRecoveryJournal_ground,
-    }
-
-    item SkillRecoveryBoundJournal
-    {
-        Weight	=	0.8,
-        Type	=	Normal,
         DisplayName	=	Bound Journal,
-        DisplayCategory = SkillJournal,
         DisappearOnUse = FALSE,
         Icon	=	SkillRecoveryJournal,
         StaticModel = SkillRecoveryJournal,

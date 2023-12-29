@@ -20,8 +20,6 @@ IGUI_EN = {
     IGUI_Rename = "Rename",
     IGUI_JournalXPUsedUp = "The writing is too worn out to read... (XP used up)",
 
-    IGUI_ItemCat_SkillJournal = "Skill Journal",
-
     IGUI_Bonus_XP_Warning = "This character earns bonus XP based on their traits or profession. Bonus XP transcription is disabled.",
     IGUI_TV_XP_Warning = "XP earned from TV shows and VHS tapes is disabled.",
     IGUI_Rename_Warning = "Rename this journal to disable this alert.",

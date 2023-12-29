@@ -7,7 +7,7 @@ module Base
            [Recipe.GetItemTypes.Glue],
            Thread,
 
-           Result:SkillRecoveryBoundJournal,
+           Result:SkillRecoveryJournal,
 
            Time:150.0,
            OnCanPerform:SkillRecoveryJournalOnCanPerformCraftable
@@ -15,10 +15,10 @@ module Base
 
     recipe Transcribe Journal
         {
-           keep SkillRecoveryBoundJournal,
+           keep SkillRecoveryJournal,
            keep [Recipe.GetItemTypes.Write],
 
-           Result:SkillRecoveryBoundJournal,
+           Result:SkillRecoveryJournal,
            RemoveResultItem:true,
 		   AnimNode 	: TranscribeJournal,
 		   Prop1 		: Source=2,
