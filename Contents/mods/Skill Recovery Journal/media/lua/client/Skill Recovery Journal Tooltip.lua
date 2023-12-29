@@ -196,11 +196,14 @@ function ISToolTipInv:render()
 			tooltipRenderOverTime.ticks = 1
 		end
 
+
 		if itemObj and player and itemObj:getType() == "SkillRecoveryJournal" then
+			local currentName = itemObj:getName()
+			if not string.find(currentName, "(Decayed)") then itemObj:setName(currentName.." (Decayed)") end
+
 			local newJournal = InventoryItemFactory.CreateItem("SkillRecoveryBoundJournal")
-			local oldModData = itemObj:getModData()
-			local newJournalMD = newJournal:getModData()
-			newJournalMD = copyTable(oldModData)
+			local oldModData = itemObj:getModData()["SRJ"]
+			newJournal:getModData()["SRJ"] = copyTable(oldModData)
 
 			local worldItem = itemObj:getWorldItem()
 			if worldItem then
@@ -217,7 +220,7 @@ function ISToolTipInv:render()
 			return
 		end
 
-		if itemObj and player and itemObj:getType() == "SkillRecoveryBoundJournal" then
+		if itemObj and player and (itemObj:getType() == "SkillRecoveryBoundJournal" or itemObj:getType() == "SkillRecoveryJournal") then
 
 			local tooltipStart, skillsRecord, warning = SRJ_generateTooltip(itemObj, player)
 
