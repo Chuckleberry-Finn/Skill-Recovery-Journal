@@ -14,8 +14,11 @@ function SRJ_XPHandler.unBoostXP(player,perk,XP)
     local debugPrint = ""
     if getDebug() then debugPrint = debugPrint.."unBoostXP: "..tostring(perk).." xp:"..XP end
 
+    --[[
     if perk == Perks.Fitness and (not player:getNutrition():canAddFitnessXp()) then return 0 end
+-   --]]
 
+    --[[
     local exerciseMultiplier = 1
     if perk == Perks.Strength and instanceof(player,"IsoPlayer") then
         if player:getNutrition():getProteins() > 50 and player:getNutrition():getProteins() < 300 then exerciseMultiplier = 1.5
@@ -25,6 +28,7 @@ function SRJ_XPHandler.unBoostXP(player,perk,XP)
     end
     XP = XP*exerciseMultiplier
     if getDebug() then debugPrint = debugPrint.."= "..XP end
+    --]]
 
     ---@type IsoGameCharacter.XP
     local pXP = player:getXp()
@@ -32,13 +36,17 @@ function SRJ_XPHandler.unBoostXP(player,perk,XP)
     ---trait impacting XP gains
     local traitMultiplier = 1
     --if not SRJ_XPHandler.isSkillExcludedFrom.SpeedReduction(perk) then traitMultiplier = 0.25 end
+
+    --[[
     if player:HasTrait("FastLearner") and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedIncrease(perk)) then traitMultiplier = 1.3 end
     if player:HasTrait("SlowLearner") and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedReduction(perk)) then traitMultiplier = 0.7 end
     if player:HasTrait("Pacifist") and (perk:getParent()==Perks.Combat or perk==Perks.Aiming) then traitMultiplier = 0.75 end
     if getDebug() then debugPrint = debugPrint.."\n   traitMultiplier: "..traitMultiplier.."*"..XP end
-    XP = XP*traitMultiplier
+    XP = XP/traitMultiplier
     if getDebug() then debugPrint = debugPrint.."= "..XP end
+    --]]
 
+    --[[
     ---sandbox multiplier
     local sandboxMultiplier = 1
     if (not perk:isPassiv()) then
@@ -46,10 +54,10 @@ function SRJ_XPHandler.unBoostXP(player,perk,XP)
     elseif perk:isPassiv() and SandboxVars.XpMultiplierAffectsPassive==true then
         sandboxMultiplier = SandboxVars.XpMultiplier or 1
     end
-
     if getDebug() then debugPrint = debugPrint.."\n   sandboxMultiplier: "..sandboxMultiplier.."*"..XP end
     XP = XP/sandboxMultiplier
     if getDebug() then debugPrint = debugPrint.."= "..XP end
+    --]]
 
     --- perks boostMap based on career and starting traits - does not transfer starting skills - this is specifically about the bonus-XP earned.
 
