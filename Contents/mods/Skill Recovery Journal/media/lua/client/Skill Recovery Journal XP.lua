@@ -46,8 +46,9 @@ function SRJ_XPHandler.unBoostXP(player,perk,XP)
     elseif perk:isPassiv() and SandboxVars.XpMultiplierAffectsPassive==true then
         sandboxMultiplier = SandboxVars.XpMultiplier or 1
     end
+
     if getDebug() then debugPrint = debugPrint.."\n   sandboxMultiplier: "..sandboxMultiplier.."*"..XP end
-    XP = XP*sandboxMultiplier
+    XP = XP/sandboxMultiplier
     if getDebug() then debugPrint = debugPrint.."= "..XP end
 
     --- perks boostMap based on career and starting traits - does not transfer starting skills - this is specifically about the bonus-XP earned.
