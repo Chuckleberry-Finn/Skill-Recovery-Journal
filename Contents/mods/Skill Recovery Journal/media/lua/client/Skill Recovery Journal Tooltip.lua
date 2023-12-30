@@ -189,6 +189,7 @@ function ISToolTipInv:render()
 	if not ISContextMenu.instance or not ISContextMenu.instance.visibleCheck then
 		---@type InventoryItem
 		local itemObj = self.item
+		---@type IsoPlayer|IsoGameCharacter|IsoMovingObject
 		local player = self.tooltip:getCharacter()
 
 		if tooltipRenderOverTime.item ~= itemObj then
@@ -197,7 +198,7 @@ function ISToolTipInv:render()
 		end
 
 
-		if itemObj and player and itemObj:getType() == "SkillRecoveryJournal" then
+		if itemObj and player and itemObj:getType() == "SkillRecoveryJournal" and player:getInventory():contains(itemObj) then
 			local currentName = itemObj:getName()
 			if not string.find(currentName, "(Decayed)") then itemObj:setName(currentName.." (Decayed)") end
 
@@ -215,7 +216,7 @@ function ISToolTipInv:render()
 			local container = itemObj:getContainer()
 			if container then
 				container:DoRemoveItem(itemObj)
-				container:AddItem(newJournal)
+				player:getInventory():AddItem(newJournal)
 			end
 			return
 		end
