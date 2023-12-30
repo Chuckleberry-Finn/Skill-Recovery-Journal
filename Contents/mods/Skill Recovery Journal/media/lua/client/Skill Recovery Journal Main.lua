@@ -14,6 +14,9 @@ end
 
 SRJ.maxXPDifferential = {}
 function SRJ.getMaxXPDifferential(perk)
+
+	if not Perks[perk]:isPassiv() then return 1 end
+
 	if SRJ.maxXPDifferential[perk] then return SRJ.maxXPDifferential[perk] end
 	local maxXPDefault = Perks.Passiv:getTotalXpForLevel(10)
 	local maxXPPerk = Perks[perk]:getTotalXpForLevel(10)
@@ -142,37 +145,45 @@ function SRJ.calculateGainedSkills(player)
 			local perkID = perk:getId()
 			local perkXP = pXP:getXP(perk)
 			if perkXP > 0 then
-				--print("perkXP: ",perkID," = ",perkXP)
+
+				--if getDebug() then print("perkXP: ",perkID," = ",perkXP) end
 
 				---figure out how much XP was present at player start
 				local passivePerkFixLevel = passiveSkillsInit and passiveSkillsInit[perkID]
 				local passiveFixXP = passivePerkFixLevel and perk:getTotalXpForLevel(passivePerkFixLevel) or 0
-				--print(" -passiveFixXP:",passiveFixXP,"  (",passivePerkFixLevel,")")
+
+				--if getDebug() then print(" -passiveFixXP:",passiveFixXP,"  (",passivePerkFixLevel,")") end
 
 				local startingPerkLevel = startingLevels[perkID]
 				local startingPerkXP = startingPerkLevel and perk:getTotalXpForLevel(startingPerkLevel) or 0
-				--print(" -startingPerkXP:",startingPerkXP,  "(",startingPerkLevel,")")
+
+				--if getDebug() then print(" -startingPerkXP:",startingPerkXP,  "(",startingPerkLevel,")") end
 
 				local deductedXP = (SandboxVars.SkillRecoveryJournal.TranscribeTVXP==false) and deductibleXP[perkID] or 0
 
-				--print(" -deductedXP:",deductedXP)
+				--if getDebug() then print(" -deductedXP:",deductedXP) end
 
 				local sandboxOptionRecover = (perk:isPassiv() and (SandboxVars.SkillRecoveryJournal.RecoverPassiveSkills == true))
 						or (SandboxVars.SkillRecoveryJournal["Recover"..perk:getParent():getId().."Skills"]==true)
-				--print(" sandboxOptionRecover:",sandboxOptionRecover)
+
+				--if getDebug() then print(" sandboxOptionRecover:",sandboxOptionRecover) end
 
 				local recoverableXP = sandboxOptionRecover and perkXP-passiveFixXP-startingPerkXP-deductedXP or 0
-				--print(" ----: ",recoverableXP)
+
+				--if getDebug() then print(" recoverableXP-deductions: ",recoverableXP) end
 
 				if recoverableXP>0 then
 
 					local deductBonusXP = SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses ~= true
-					if deductBonusXP then recoverableXP = xpHandler.unBoostXP(player,perk,recoverableXP) end
+					if deductBonusXP then
+						recoverableXP = xpHandler.unBoostXP(player,perk,recoverableXP)
+						--if getDebug() then print(" recoverableXP-unboosted: ",recoverableXP) end
+					end
 
 					gainedXP = gainedXP or {}
 					gainedXP[perkID] = recoverableXP*recoverableXPFactor
 
-					--print(" FINAL: ", gainedXP[perkID])
+					--if getDebug() then print(" FINAL: ", gainedXP[perkID]) end
 				end
 			end
 
