@@ -55,7 +55,7 @@ function SRJ_XPHandler.unBoostXP(player,perk,XP)
     local xpBoostID = pXP:getPerkBoost(perk)
     local xpBoostMultiplier = 1
 
-    if xpBoostID == 0 and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedReduction(perk)) then xpBoostMultiplier = 0.25
+    if xpBoostID == 0 and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedReduction(perk)) then --xpBoostMultiplier = 0.25
     elseif xpBoostID == 1 and perk==Perks.Sprinting then xpBoostMultiplier = 1.25
     elseif xpBoostID == 1 then xpBoostMultiplier = 1
     elseif xpBoostID == 2 and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedIncrease(perk)) then xpBoostMultiplier = 1.33
