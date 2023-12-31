@@ -233,7 +233,7 @@ function ISToolTipInv:render()
 					local currentName = itemObj:getName()
 					currentName=currentName:gsub("%s+%(Decayed%)","")
 					itemObj:setName(currentName)
-
+					--[[
 					---fix change to raw XP
 					local JMD = journalModData["SRJ"]
 					local storedJournalXP = JMD and JMD["gainedXP"]
@@ -243,6 +243,7 @@ function ISToolTipInv:render()
 							if perk then storedJournalXP[perkID] = (xp * 4) end
 						end
 					end
+					--]]
 				end
 			end
 
