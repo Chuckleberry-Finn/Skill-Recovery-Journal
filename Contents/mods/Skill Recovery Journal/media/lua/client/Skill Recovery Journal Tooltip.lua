@@ -39,14 +39,14 @@ local function SRJ_generateTooltip(journalModData, player)
 
 			local perkName = perk:getName()
 			local multi = multipliers[perkID] or 1
-			local availableXP = string.format("%.2f",(journalXP*multi)):gsub(".00","")
+			local availableXP = round(journalXP*multi, 2)
 
 			skillsRecord = skillsRecord..perkName.." ("..availableXP
 			if oneTimeUse then
-				local totalXP = string.format("%.2f",(xp*multi)):gsub(".00","")
+				local totalXP = round(xp*multi, 2)
 				skillsRecord = skillsRecord.."/"..totalXP
 			end
-			skillsRecord = skillsRecord.." xp)".."\n"
+			skillsRecord = skillsRecord.." xp)".."  ("..journalXP.."*"..multi..")".."\n"
 		end
 	end
 
