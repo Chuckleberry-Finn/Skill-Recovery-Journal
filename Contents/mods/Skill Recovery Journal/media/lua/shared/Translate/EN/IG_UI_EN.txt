@@ -21,7 +21,7 @@ IGUI_EN = {
     IGUI_JournalXPUsedUp = "The writing is too worn out to read... (XP used up)",
 
     IGUI_ItemCat_SkillJournal = "Skill Journal",
-    IGUI_gainedXPText = "Gained"
+    IGUI_GainedXPText = "Gained XP"
     IGUI_TV_XP_Warning = "Sandbox Option for XP earned from TV shows and VHS tapes is disabled.",
     IGUI_Rename_Warning = "Rename this journal to disable this alert.",
 }
