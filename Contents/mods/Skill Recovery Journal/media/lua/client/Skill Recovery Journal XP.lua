@@ -7,85 +7,100 @@ function SRJ_XPHandler.isSkillExcludedFrom.SpeedReduction(perk) return (perk == 
 function SRJ_XPHandler.isSkillExcludedFrom.SpeedIncrease(perk) return (perk == Perks.Fitness or perk == Perks.Strength) or false end
 
 
----@param player IsoGameCharacter|IsoPlayer
----@param perk PerkFactory.Perk
-function SRJ_XPHandler.unBoostXP(player,perk,XP)
+---This process "boosts" flat XP to that of the `provided` player as well as the `current` sandbox-XP-Multi
+function SRJ_XPHandler.reBoostXP(player,perk,XP)
+    local traitMultiplier, xpBoostMultiplier = SRJ_XPHandler.fetchMultipliers(player,perk,XP)
 
     local debugPrint = ""
     if getDebug() then debugPrint = debugPrint.."unBoostXP: "..tostring(perk).." xp:"..XP end
 
-    --[[
-    if perk == Perks.Fitness and (not player:getNutrition():canAddFitnessXp()) then return 0 end
--   --]]
+    XP = XP*traitMultiplier
+    if getDebug() then debugPrint = debugPrint.."\n   traitMultiplier: "..traitMultiplier.." -> "..XP end
+
+    if SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses ~= true then
+        XP = XP*xpBoostMultiplier
+        if getDebug() then debugPrint = debugPrint.."\n   xpBoostMultiplier: "..xpBoostMultiplier.." -> "..XP end
+    end
+
+    --if getDebug() then print(debugPrint.."\n"..tostring(perk).." to be recorded: "..XP) end
+
+    return XP
+end
+
+---This process "flattens" the XP to that of unemployed/traitless as well as sandbox-XP-Multi=1
+---@param player IsoGameCharacter|IsoPlayer
+---@param perk PerkFactory.Perk
+function SRJ_XPHandler.unBoostXP(player,perk,XP)
+
+    local traitMultiplier, xpBoostMultiplier = SRJ_XPHandler.fetchMultipliers(player,perk,XP)
+
+    local debugPrint = ""
+    if getDebug() then debugPrint = debugPrint.."unBoostXP: "..tostring(perk).." xp:"..XP end
+
+    XP = XP/traitMultiplier
+    if getDebug() then debugPrint = debugPrint.."\n   traitMultiplier: "..traitMultiplier.." -> "..XP end
+
+    if SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses ~= true then
+        XP = XP/xpBoostMultiplier
+        if getDebug() then debugPrint = debugPrint.."\n   xpBoostMultiplier: "..xpBoostMultiplier.." -> "..XP end
+    end
+
+    --if getDebug() then print(debugPrint.."\n"..tostring(perk).." to be recorded: "..XP) end
+
+    return XP
+end
+
+
+function SRJ_XPHandler.fetchMultipliers(player,perk,XP)
 
     --[[
     local exerciseMultiplier = 1
+    --if perk == Perks.Fitness and (not player:getNutrition():canAddFitnessXp()) then exerciseMultiplier 0 end
     if perk == Perks.Strength and instanceof(player,"IsoPlayer") then
         if player:getNutrition():getProteins() > 50 and player:getNutrition():getProteins() < 300 then exerciseMultiplier = 1.5
         elseif player:getNutrition():getProteins() < -300 then exerciseMultiplier = 0.7
         end
-        if getDebug() then debugPrint = debugPrint.."\n   exerciseMultiplier: "..exerciseMultiplier.."*"..XP end
     end
-    XP = XP*exerciseMultiplier
-    if getDebug() then debugPrint = debugPrint.."= "..XP end
     --]]
-
-    ---@type IsoGameCharacter.XP
-    local pXP = player:getXp()
 
     ---trait impacting XP gains
     local traitMultiplier = 1
     --if not SRJ_XPHandler.isSkillExcludedFrom.SpeedReduction(perk) then traitMultiplier = 0.25 end
-
-    --[[
     if player:HasTrait("FastLearner") and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedIncrease(perk)) then traitMultiplier = 1.3 end
     if player:HasTrait("SlowLearner") and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedReduction(perk)) then traitMultiplier = 0.7 end
     if player:HasTrait("Pacifist") and (perk:getParent()==Perks.Combat or perk==Perks.Aiming) then traitMultiplier = 0.75 end
-    if getDebug() then debugPrint = debugPrint.."\n   traitMultiplier: "..traitMultiplier.."*"..XP end
-    XP = XP/traitMultiplier
-    if getDebug() then debugPrint = debugPrint.."= "..XP end
-    --]]
 
     --[[
-    ---sandbox multiplier
     local sandboxMultiplier = 1
     if (not perk:isPassiv()) then
         sandboxMultiplier = SandboxVars.XpMultiplier or 1
     elseif perk:isPassiv() and SandboxVars.XpMultiplierAffectsPassive==true then
         sandboxMultiplier = SandboxVars.XpMultiplier or 1
     end
-    if getDebug() then debugPrint = debugPrint.."\n   sandboxMultiplier: "..sandboxMultiplier.."*"..XP end
-    XP = XP/sandboxMultiplier
-    if getDebug() then debugPrint = debugPrint.."= "..XP end
     --]]
 
     --- perks boostMap based on career and starting traits - does not transfer starting skills - this is specifically about the bonus-XP earned.
-
+    ---@type IsoGameCharacter.XP
+    local pXP = player:getXp()
     local xpBoostID = pXP:getPerkBoost(perk)
     local xpBoostMultiplier = 1
-
-    if xpBoostID == 0 and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedReduction(perk)) then --xpBoostMultiplier = 0.25
+    if xpBoostID == 0 and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedReduction(perk)) then xpBoostMultiplier = 0.25
     elseif xpBoostID == 1 and perk==Perks.Sprinting then xpBoostMultiplier = 1.25
     elseif xpBoostID == 1 then xpBoostMultiplier = 1
     elseif xpBoostID == 2 and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedIncrease(perk)) then xpBoostMultiplier = 1.33
     elseif xpBoostID == 3 and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedIncrease(perk)) then xpBoostMultiplier = 1.66
     end
-    if getDebug() then debugPrint = debugPrint.."\n   xpBoostMultiplier: "..xpBoostMultiplier.."*"..XP end
-    XP = XP/xpBoostMultiplier
-    if getDebug() then debugPrint = debugPrint.."= "..XP end
 
-    ---Something to consider later I guess
+    ---Something to consider later I guess?
     --[[
     ---from reading skill books
     local skillBookMultiplier = math.max(1,pXP:getMultiplier(perk))
     if getDebug() then debugPrint = debugPrint.."\n   skillBookMultiplier: "..skillBookMultiplier.."*"..XP end
     XP = XP*skillBookMultiplier
+    if getDebug() then debugPrint = debugPrint.."= "..XP end
     --]]
 
-    if getDebug() then debugPrint = debugPrint.."= "..XP end
-    ---if getDebug() then print(debugPrint.."\n"..tostring(perk).." to be recorded: "..XP) end
-
-    return XP
+    return traitMultiplier, xpBoostMultiplier
 end
 
 

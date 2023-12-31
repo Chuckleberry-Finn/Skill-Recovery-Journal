@@ -1,6 +1,5 @@
-require "TimedActions/ISBaseTimedAction"
-
 local SRJ = require "Skill Recovery Journal Main"
+local xpHandler = require "Skill Recovery Journal XP"
 
 require "TimedActions/ISBaseTimedAction"
 
@@ -16,8 +15,8 @@ end
 
 
 function ReadSkillRecoveryJournal:start()
+	--self.action:setTime(-1)
 	self.item:setJobType(getText("ContextMenu_Read") ..' '.. self.item:getName())
-	--self.item:setJobDelta(0.0)
 	self:setAnimVariable("ReadType", "book")
 	self:setActionAnim(CharacterActionAnims.Read)
 	self:setOverrideHandModels(nil, self.item)
@@ -168,7 +167,8 @@ function ReadSkillRecoveryJournal:update()
 							jmdUsedXP[skill] = (jmdUsedXP[skill] or 0)+perPerkXpRate
 
 							---- perksType, XP, passHook, applyXPBoosts, transmitMP)
-							player:getXp():AddXP(Perks[skill], perPerkXpRate, false, false, true)
+							local addedXP = xpHandler.reBoostXP(player,Perks[skill],perPerkXpRate)
+							player:getXp():AddXP(Perks[skill], addedXP, false, false, true)
 							changesMade = true
 
 							local skill_name = getText("IGUI_perks_"..skill)
