@@ -13,9 +13,9 @@ description=
 description=[h1]If you're having an issue or encountering errors:[/h1]
 description=[h3]First, [b]resubscribe[/b] to this mod, and any related mod.[/h3]
 description=[i](This will force a download of the latest version.)[/i]
-description=[b]If the problem persists, please supply a error log, which can be found:[/b]
-description=[quote][b]Windows:[/b] `OS:\Users\<username>\Zomboid\console.txt`[/quote]
-description=[quote][b]Mac/Linux:[/b] `~/Zomboid`[/quote]
+description=[b]If the problem persists, please supply an error log, which can be found:[/b]
+description=[quote][b]Windows:[/b] `%userprofile%\Zomboid\console.txt`[/quote]
+description=[quote][b]Mac/Linux:[/b] `$User\Zomboid`[/quote]
 description=Upload this file [b]in entirety[/b] to [url=https://github.com/ChuckTheSheep/Skill-Recovery-Journal]Github[/url] as an issue.
 description=Share the link in a comment below if it is urgent.
 description=
