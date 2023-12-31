@@ -39,13 +39,12 @@ function ISSkillProgressBar:updateTooltip(lvlSelected)
         local multipliers = SRJ.xpHandler.getOrStoreXPMultipliers(self.char)
         local gainedXP = SRJ.calculateGainedSkills(self.char)
 
-
         local currentXP = tostring(self.char:getXp():getXP(self.perk))
-        self.message = self.message .. "<LINE><LINE>"..totalXPText..": "..clipNumberToString(currentXP)
+        self.message = self.message .. "\n\n"..totalXPText..": "..clipNumberToString(currentXP)
 
         if gainedXP[perkID] then
             local currentSkillGainedXP = tostring(gainedXP[perkID] * (multipliers[perkID] or 1))
-            self.message = self.message.."<LINE>"..gainedXPText..": "..clipNumberToString(currentSkillGainedXP)
+            self.message = self.message.."\n"..gainedXPText..": "..clipNumberToString(currentSkillGainedXP)
         end
     end
 end
