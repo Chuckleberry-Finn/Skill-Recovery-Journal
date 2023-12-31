@@ -2,11 +2,8 @@ require "ISUI/ISToolTipInv"
 
 local xpHandler = require "Skill Recovery Journal XP"
 
----@param journal InventoryItem | Literature
-local function SRJ_generateTooltip(journal, player)
+local function SRJ_generateTooltip(journalModData, player)
 
-
-	local journalModData = journal:getModData()
 	local JMD = journalModData["SRJ"]
 
 	local blankJournalTooltip = getText("IGUI_Tooltip_Empty").."\n"
@@ -224,14 +221,31 @@ function ISToolTipInv:render()
 				return
 			end
 
-			---patch out eventually
-			if itemObj:getType() == "SkillRecoveryBoundJournal" then
+			local journalModData = itemObj:getModData()
+			local JMD = journalModData["SRJ"]
+			---background fixes / changes / updates to how journals work
+			local backgroundFix = JMD.backgroundFix
+			local currentBackgroundFix = 1
+
+			if itemObj:getType() == "SkillRecoveryBoundJournal" and (backgroundFix ~= currentBackgroundFix) then
+				JMD.backgroundFix = currentBackgroundFix
+
+				---fix name issues where decayed was added incorrectly -DEC23
 				local currentName = itemObj:getName()
 				currentName=currentName:gsub("%s+%(Decayed%)","")
 				itemObj:setName(currentName)
+
+				---fix change to raw XP
+				local storedJournalXP = JMD["gainedXP"]
+				if storedJournalXP then
+					for perkID,xp in pairs(storedJournalXP) do
+						local perk = Perks[perkID]
+						if perk then storedJournalXP[perkID] = (xp * 4) end
+					end
+				end
 			end
 
-			local tooltipStart, skillsRecord, warning = SRJ_generateTooltip(itemObj, player)
+			local tooltipStart, skillsRecord, warning = SRJ_generateTooltip(journalModData, player)
 
 			local font = getCore():getOptionTooltipFont()
 			local fontType = fontDict[font] or UIFont.Medium
