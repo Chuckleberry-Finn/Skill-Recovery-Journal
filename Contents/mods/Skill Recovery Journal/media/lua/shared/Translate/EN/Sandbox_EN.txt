@@ -10,9 +10,6 @@ Sandbox_EN = {
 	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Skill Recovery Read Speed Multiplier",
 	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "A multiplier on the speed of reading bound journals."
 
-    Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses = "Recover Profession And Traits Bonus XP"
-    Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses_tooltip = "Starting with more than 1 point in a skill generally nets you bonus XP - with this toggled off that XP is not recorded. All XP recorded is that of a character with no starting skills. This does NOT recover starting levels - only the bonus XP earned."
-
 	Sandbox_SkillRecoveryJournalTranscribeTVXP = "Transcribe XP earned from TV/VHS",
 	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Toggling this on will allow people to transcribe XP earned from watching TV/VHS. Note: This means players can carry over watched XP between characters cumulatively."
 

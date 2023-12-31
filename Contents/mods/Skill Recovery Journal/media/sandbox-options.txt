@@ -10,7 +10,7 @@ option SkillRecoveryJournal.ReadTimeSpeed
 {type = double, min = 0.001, max = 1000, default = 1, page = SkillRecoveryJournal, translation = SkillRecoveryJournalReadTimeSpeed,}
 
 option SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses
-{type = boolean, default = false, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverProfessionAndTraitsBonuses,}
+{type = boolean, default = false, page =, translation =,}
 
 option SkillRecoveryJournal.TranscribeTVXP
 {type = boolean, default = false, page = SkillRecoveryJournal, translation = SkillRecoveryJournalTranscribeTVXP,}

@@ -17,10 +17,8 @@ function SRJ_XPHandler.reBoostXP(player,perk,XP)
     XP = XP*traitMultiplier
     if getDebug() then debugPrint = debugPrint.."\n   traitMultiplier: "..traitMultiplier.." -> "..XP end
 
-    if SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses ~= true then
-        XP = XP*xpBoostMultiplier
-        if getDebug() then debugPrint = debugPrint.."\n   xpBoostMultiplier: "..xpBoostMultiplier.." -> "..XP end
-    end
+    XP = XP*xpBoostMultiplier
+    if getDebug() then debugPrint = debugPrint.."\n   xpBoostMultiplier: "..xpBoostMultiplier.." -> "..XP end
 
     --if getDebug() then print(debugPrint.."\n"..tostring(perk).." to be recorded: "..XP) end
 
@@ -40,10 +38,8 @@ function SRJ_XPHandler.unBoostXP(player,perk,XP)
     XP = XP/traitMultiplier
     if getDebug() then debugPrint = debugPrint.."\n   traitMultiplier: "..traitMultiplier.." -> "..XP end
 
-    if SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses ~= true then
-        XP = XP/xpBoostMultiplier
-        if getDebug() then debugPrint = debugPrint.."\n   xpBoostMultiplier: "..xpBoostMultiplier.." -> "..XP end
-    end
+    XP = XP/xpBoostMultiplier
+    if getDebug() then debugPrint = debugPrint.."\n   xpBoostMultiplier: "..xpBoostMultiplier.." -> "..XP end
 
     --if getDebug() then print(debugPrint.."\n"..tostring(perk).." to be recorded: "..XP) end
 
@@ -51,7 +47,7 @@ function SRJ_XPHandler.unBoostXP(player,perk,XP)
 end
 
 
-function SRJ_XPHandler.fetchMultipliers(player,perk,XP)
+function SRJ_XPHandler.fetchMultipliers(player,perk)
 
     --[[
     local exerciseMultiplier = 1

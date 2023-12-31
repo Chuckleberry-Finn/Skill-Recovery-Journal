@@ -1,5 +1,6 @@
 require "ISUI/ISToolTipInv"
 
+local xpHandler = require "Skill Recovery Journal XP"
 
 ---@param journal InventoryItem | Literature
 local function SRJ_generateTooltip(journal, player)
@@ -18,12 +19,6 @@ local function SRJ_generateTooltip(journal, player)
 	local warning --= {}
 
 	if (not JMD.usedRenameOption) then
-		---checking if it's '== false' instead of '== true' because I want older saves before this sandbox option to get what they expect to occur
-		if (SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses == false) then
-			warning = warning or {}
-			table.insert(warning, "IGUI_Bonus_XP_Warning")
-		end
-
 		if (SandboxVars.SkillRecoveryJournal.TranscribeTVXP == false) then
 			warning = warning or {}
 			table.insert(warning, "IGUI_TV_XP_Warning")
@@ -33,21 +28,27 @@ local function SRJ_generateTooltip(journal, player)
 	local skillsRecord = ""
 	local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
 
+	local multipliers = xpHandler.getOrStoreXPMultipliers(player)
+
 	for perkID,xp in pairs(storedJournalXP) do
 		local perk = Perks[perkID]
 		if perk then
-			local journalXP = xp
 
+			local journalXP = xp
 			local jmdUsedXP = journalModData.recoveryJournalXpLog
 			if oneTimeUse and jmdUsedXP and jmdUsedXP[perkID] and jmdUsedXP[perkID] then
 				journalXP = journalXP-jmdUsedXP[perkID]
 			end
 
 			local perkName = perk:getName()
-			local xpBasedOnPlayer = math.floor(journalXP*100)/100
+			local multi = multipliers[perkID] or 1
+			local availableXP = string.format("%.2f",(journalXP*multi)):gsub(".00","")
 
-			skillsRecord = skillsRecord..perkName.." ("..xpBasedOnPlayer
-			if oneTimeUse then skillsRecord = skillsRecord.."/"..xp end
+			skillsRecord = skillsRecord..perkName.." ("..availableXP
+			if oneTimeUse then
+				local totalXP = string.format("%.2f",(xp*multi)):gsub(".00","")
+				skillsRecord = skillsRecord.."/"..totalXP
+			end
 			skillsRecord = skillsRecord.." xp)".."\n"
 		end
 	end
