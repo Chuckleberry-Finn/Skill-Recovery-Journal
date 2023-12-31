@@ -236,7 +236,7 @@ function ISToolTipInv:render()
 
 					---fix change to raw XP
 					local JMD = journalModData["SRJ"]
-					local storedJournalXP = JMD["gainedXP"]
+					local storedJournalXP = JMD and JMD["gainedXP"]
 					if storedJournalXP then
 						for perkID,xp in pairs(storedJournalXP) do
 							local perk = Perks[perkID]
