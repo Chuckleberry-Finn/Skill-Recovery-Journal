@@ -15,7 +15,7 @@ end
 
 
 function ReadSkillRecoveryJournal:start()
-	--self.action:setTime(-1)
+	self.action:setTime(-1)
 	self.item:setJobType(getText("ContextMenu_Read") ..' '.. self.item:getName())
 	self:setAnimVariable("ReadType", "book")
 	self:setActionAnim(CharacterActionAnims.Read)
