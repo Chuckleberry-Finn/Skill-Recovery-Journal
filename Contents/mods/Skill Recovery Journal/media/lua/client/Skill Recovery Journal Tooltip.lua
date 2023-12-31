@@ -222,25 +222,26 @@ function ISToolTipInv:render()
 			end
 
 			local journalModData = itemObj:getModData()
-			local JMD = journalModData["SRJ"]
 			---background fixes / changes / updates to how journals work
-			local backgroundFix = JMD.backgroundFix
+			local backgroundFix = journalModData.backgroundFix or 0
 			local currentBackgroundFix = 1
 
 			if itemObj:getType() == "SkillRecoveryBoundJournal" and (backgroundFix ~= currentBackgroundFix) then
-				JMD.backgroundFix = currentBackgroundFix
+				journalModData.backgroundFix = currentBackgroundFix
+				if currentBackgroundFix == 1 then
+					---fix name issues where decayed was added incorrectly -DEC23
+					local currentName = itemObj:getName()
+					currentName=currentName:gsub("%s+%(Decayed%)","")
+					itemObj:setName(currentName)
 
-				---fix name issues where decayed was added incorrectly -DEC23
-				local currentName = itemObj:getName()
-				currentName=currentName:gsub("%s+%(Decayed%)","")
-				itemObj:setName(currentName)
-
-				---fix change to raw XP
-				local storedJournalXP = JMD["gainedXP"]
-				if storedJournalXP then
-					for perkID,xp in pairs(storedJournalXP) do
-						local perk = Perks[perkID]
-						if perk then storedJournalXP[perkID] = (xp * 4) end
+					---fix change to raw XP
+					local JMD = journalModData["SRJ"]
+					local storedJournalXP = JMD["gainedXP"]
+					if storedJournalXP then
+						for perkID,xp in pairs(storedJournalXP) do
+							local perk = Perks[perkID]
+							if perk then storedJournalXP[perkID] = (xp * 4) end
+						end
 					end
 				end
 			end
