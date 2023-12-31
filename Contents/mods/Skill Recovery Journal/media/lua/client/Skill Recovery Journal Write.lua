@@ -79,7 +79,7 @@ function ISCraftAction:update()
 							local differential = SRJ.getMaxXPDifferential(perkID)
 
 							local xpRate = math.sqrt(xp)/25
-							xpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * transcribeTimeMulti / differential
+							xpRate = round(((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * transcribeTimeMulti / differential, 2)
 
 							if xpRate>0 then
 								self.changesMade = true

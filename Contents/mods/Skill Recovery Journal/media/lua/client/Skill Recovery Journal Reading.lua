@@ -153,7 +153,7 @@ function ReadSkillRecoveryJournal:update()
 						local differential = SRJ.getMaxXPDifferential(skill)
 
 						local perkLevelPlusOne = player:getPerkLevel(Perks[skill])+1
-						local perPerkXpRate = ((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * readTimeMulti / differential
+						local perPerkXpRate = round(((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * readTimeMulti / differential, 2)
 						if perkLevelPlusOne == 11 then perPerkXpRate=false end
 
 						--print("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..(perkLevelPlusOne-1).."  xpStored:"..xp.."  currentXP:"..currentlyReadXP)
