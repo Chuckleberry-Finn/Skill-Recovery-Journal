@@ -2,6 +2,12 @@ require "XpSystem/ISUI/ISSkillProgressBar"
 
 local totalXPText = getText("IGUI_Total").." "..getText("IGUI_XP_xp")
 
+local xpHandler = require "Skill Recovery Journal XP"
+
+local function clipNumberToString(n)
+    return string.format("%.2f", n):gsub(".00","")
+end
+
 local ISSkillProgressBar_updateTooltip = ISSkillProgressBar.updateTooltip
 function ISSkillProgressBar:updateTooltip(lvlSelected)
     ISSkillProgressBar_updateTooltip(self, lvlSelected)
@@ -21,11 +27,14 @@ function ISSkillProgressBar:updateTooltip(lvlSelected)
             xp = 0
         end
 
-        local xpText = getText("IGUI_XP_tooltipxp", round(xp, 2), xpForLvl)
+        local xpText = getText("IGUI_XP_tooltipxp", clipNumberToString(xp), xpForLvl)
         self.message = self.message:gsub(" <LINE> "..state, " <LINE> "..state.." ("..xpText..")")
     end
 
     if lvlSelected <= self.level then
-        self.message = self.message .. " <LINE><LINE> "..totalXPText..": "..round(self.char:getXp():getXP(self.perk:getType()),2)
+        self.message = self.message .. " <LINE><LINE> "..totalXPText..": "..clipNumberToString(self.char:getXp():getXP(self.perk:getType()))
+
+        local multipliers = xpHandler.getOrStoreXPMultipliers(self.char)
+        local currentPerkMulti = self.perk:getType()
     end
 end
