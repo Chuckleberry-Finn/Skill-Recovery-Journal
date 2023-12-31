@@ -1,9 +1,8 @@
-local xpHandler = require "Skill Recovery Journal XP"
-
 local SRJ = {}
 
 SRJ.xpPatched = false
 
+SRJ.xpHandler = require "Skill Recovery Journal XP"
 
 function SRJ.setOrGetDeductedXP(player)
 	local pMD = player:getModData()
@@ -134,7 +133,7 @@ function SRJ.calculateGainedSkills(player)
 
 	local pXP = player:getXp()
 	local startingLevels = SRJ.getFreeLevelsFromTraitsAndProfession(player)
-	
+
 	for i=1, Perks.getMaxIndex()-1 do
 		---@type PerkFactory.Perk
 		local perk = Perks.fromIndex(i)
@@ -168,7 +167,7 @@ function SRJ.calculateGainedSkills(player)
 
 					--local deductBonusXP = SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses ~= true
 					--if deductBonusXP then
-					recoverableXP = xpHandler.unBoostXP(player,perk,recoverableXP)
+					recoverableXP = SRJ.xpHandler.unBoostXP(player,perk,recoverableXP)
 					--if getDebug() then print(" recoverableXP-unboosted: ",recoverableXP) end
 					--end
 

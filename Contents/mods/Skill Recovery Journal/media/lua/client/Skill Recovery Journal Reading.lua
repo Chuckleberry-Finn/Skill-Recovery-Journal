@@ -1,5 +1,4 @@
 local SRJ = require "Skill Recovery Journal Main"
-local xpHandler = require "Skill Recovery Journal XP"
 
 require "TimedActions/ISBaseTimedAction"
 
@@ -167,7 +166,7 @@ function ReadSkillRecoveryJournal:update()
 							jmdUsedXP[skill] = (jmdUsedXP[skill] or 0)+perPerkXpRate
 
 							---- perksType, XP, passHook, applyXPBoosts, transmitMP)
-							local addedXP = xpHandler.reBoostXP(player,Perks[skill],perPerkXpRate)
+							local addedXP = SRJ.xpHandler.reBoostXP(player,Perks[skill],perPerkXpRate)
 							player:getXp():AddXP(Perks[skill], addedXP, false, false, true)
 							changesMade = true
 
