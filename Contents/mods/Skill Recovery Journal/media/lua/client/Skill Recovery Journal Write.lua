@@ -65,10 +65,9 @@ function ISCraftAction:update()
 
 			local storedJournalXP = JMD["gainedXP"]
 			local readXp = SRJ.getReadXP(self.character)
-			local recoverableXP = SRJ.calculateGainedSkills(self.character)
 
-			if bOwner and storedJournalXP and recoverableXP then
-				for perkID,xp in pairs(recoverableXP) do
+			if bOwner and storedJournalXP and self.gainedSkills then
+				for perkID,xp in pairs(self.gainedSkills) do
 					if xp > 0 then
 
 						storedJournalXP[perkID] = storedJournalXP[perkID] or 0
@@ -158,13 +157,13 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 		end
 
 
-		local gainedSkills = SRJ.calculateGainedSkills(character) or false
+		o.gainedSkills = SRJ.calculateGainedSkills(character) or false
 		o.willWrite = true
 		local sayText
 
 		--print("gainedSkills: "..tostring(gainedSkills))
 
-		if not gainedSkills and (#o.gainedRecipes <= 0) then
+		if not o.gainedSkills and (#o.gainedRecipes <= 0) then
 			sayText=getText("IGUI_PlayerText_DontHaveAnyXP"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default"
 			o.willWrite = false
 		else
