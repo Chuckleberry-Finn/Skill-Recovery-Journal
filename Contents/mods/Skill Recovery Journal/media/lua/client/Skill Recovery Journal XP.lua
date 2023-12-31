@@ -7,7 +7,37 @@ function SRJ_XPHandler.isSkillExcludedFrom.SpeedReduction(perk) return (perk == 
 function SRJ_XPHandler.isSkillExcludedFrom.SpeedIncrease(perk) return (perk == Perks.Fitness or perk == Perks.Strength) or false end
 
 
+SRJ_XPHandler.tmpStoredValues = {}
+
+---@param player IsoGameCharacter|IsoPlayer
+function SRJ_XPHandler.getOrStoreXPMultipliers(player)
+    ---Need to check for stuff like dynamic traits edge cases
+    ---@type TraitCollection
+    local traitsSize = player:getCharacterTraits():size()
+    local previouslyStored = SRJ_XPHandler.tmpStoredValues[player]
+
+    if not previouslyStored or previouslyStored.size ~= traitsSize then
+        SRJ_XPHandler.tmpStoredValues[player] = {}
+        previouslyStored = SRJ_XPHandler.tmpStoredValues[player]
+        previouslyStored.size = traitsSize
+        previouslyStored.multipliers = {}
+        for i=1, Perks.getMaxIndex()-1 do
+            ---@type PerkFactory.Perk
+            local perk = Perks.fromIndex(i)
+            if perk and perk:getParent():getId()~="None" then
+                local traitMultiplier, xpBoostMultiplier = SRJ_XPHandler.fetchMultipliers(player,perk)
+                local perkID = perk:getId()
+                previouslyStored.multipliers[perkID] = (traitMultiplier*xpBoostMultiplier)
+            end
+        end
+    end
+    return previouslyStored.multipliers
+end
+
+
 ---This process "boosts" flat XP to that of the `provided` player as well as the `current` sandbox-XP-Multi
+---@param player IsoGameCharacter|IsoPlayer
+---@param perk PerkFactory.Perk
 function SRJ_XPHandler.reBoostXP(player,perk,XP)
     local traitMultiplier, xpBoostMultiplier = SRJ_XPHandler.fetchMultipliers(player,perk,XP)
 
