@@ -46,7 +46,7 @@ local function SRJ_generateTooltip(journalModData, player)
 				local totalXP = round(xp*multi, 2)
 				skillsRecord = skillsRecord.."/"..totalXP
 			end
-			skillsRecord = skillsRecord.." xp)".."  ("..journalXP.."*"..multi..")".."\n"
+			skillsRecord = skillsRecord.." xp)\n"
 		end
 	end
 
