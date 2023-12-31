@@ -1,12 +1,12 @@
 require "XpSystem/ISUI/ISSkillProgressBar"
 
 local totalXPText = getText("IGUI_Total").." "..getText("IGUI_XP_xp")
+local gainedXPText = getText("IGUI_GainedXPText")
+local SRJ = require "Skill Recovery Journal Main"
 
-local xpHandler = require "Skill Recovery Journal XP"
+local function clipNumberToString(n) return string.format("%.2f", n):gsub(".00","") end
 
-local function clipNumberToString(n)
-    return string.format("%.2f", n):gsub(".00","")
-end
+--SRJ.calculateGainedSkills(player)
 
 local ISSkillProgressBar_updateTooltip = ISSkillProgressBar.updateTooltip
 function ISSkillProgressBar:updateTooltip(lvlSelected)
@@ -32,9 +32,18 @@ function ISSkillProgressBar:updateTooltip(lvlSelected)
     end
 
     if lvlSelected <= self.level then
-        self.message = self.message .. " <LINE><LINE> "..totalXPText..": "..clipNumberToString(self.char:getXp():getXP(self.perk:getType()))
+        local perkID = self.perk:getType()
+        local multipliers = SRJ.xpHandler.getOrStoreXPMultipliers(self.char)
+        local gainedXP = SRJ.calculateGainedSkills(self.char)
 
-        local multipliers = xpHandler.getOrStoreXPMultipliers(self.char)
-        local currentPerkMulti = self.perk:getType()
+        local gainedText = ""
+        if gainedXP[perkID] then
+            print("?")
+            local currentSkillGainedXP = gainedXP[perkID] * (multipliers[perkID] or 1)
+            gainedText = "<LINE> "..gainedXPText.." "..clipNumberToString(currentSkillGainedXP)
+        end
+
+        self.message = self.message .. " <LINE><LINE> "..totalXPText..": "..clipNumberToString(self.char:getXp():getXP(perkID))..gainedText
+
     end
 end
