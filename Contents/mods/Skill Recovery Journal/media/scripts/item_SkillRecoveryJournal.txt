@@ -4,9 +4,10 @@ module Base
     {
         Weight	=	0.8,
         Type	=	Literature,
+        NumberOfPages = 0,
         DisplayName	=	Bound Journal (Decayed),
         DisappearOnUse = FALSE,
-        Icon	=	SkillRecoveryJournal,
+        Icon	=	SkillRecoveryJournalDECAYED,
         StaticModel = SkillRecoveryJournal,
         WorldStaticModel = SkillRecoveryJournal_ground,
     }
