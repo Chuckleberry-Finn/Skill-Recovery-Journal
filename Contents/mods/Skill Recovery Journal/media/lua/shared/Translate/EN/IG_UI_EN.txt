@@ -22,6 +22,7 @@ IGUI_EN = {
 
     IGUI_ItemCat_SkillJournal = "Skill Journal",
     IGUI_GainedXPText = "Gained XP"
+    IGUI_OneTimeUse_Warning = "Sandbox Option for XP Used When Read is enabled.",
     IGUI_TV_XP_Warning = "Sandbox Option for XP earned from TV shows and VHS tapes is disabled.",
     IGUI_Rename_Warning = "Rename this journal to disable this alert.",
 }
