@@ -4,6 +4,61 @@ SRJ.xpPatched = false
 
 SRJ.xpHandler = require "Skill Recovery Journal XP"
 
+
+function SRJ.backgroundFix(journalModData, journal)
+	---background fixes / changes / updates to how journals work
+	local backgroundFix = journalModData.backgroundFix or 0
+	local currentBackgroundFix = 1
+
+	if journal:getType() == "SkillRecoveryBoundJournal" and (backgroundFix ~= currentBackgroundFix) then
+		journalModData.backgroundFix = currentBackgroundFix
+		if currentBackgroundFix == 1 then
+			---fix name issues where decayed was added incorrectly -DEC23
+			local currentName = journal:getName()
+			currentName=currentName:gsub("%s+%(Decayed%)","")
+			journal:setName(currentName)
+			--[[
+            ---fix change to raw XP
+            local storedJournalXP = journalModData and journalModData["gainedXP"]
+            if storedJournalXP then
+                for perkID,xp in pairs(storedJournalXP) do
+                    local perk = Perks[perkID]
+                    if perk then storedJournalXP[perkID] = (xp * 4) end
+                end
+            end
+            --]]
+		end
+	end
+end
+
+
+function SRJ.convertJournal(itemObj, player)
+	if itemObj:getType() == "SkillRecoveryJournal" then
+
+		local needTransfer = luautils.haveToBeTransfered(player, itemObj)
+
+		---@type ItemContainer
+		local container = itemObj:getContainer()
+
+		if needTransfer and container then
+			ISTimedActionQueue.add(ISInventoryTransferAction:new(player, itemObj, container, player:getInventory(), 0))
+		end
+
+		local newJournal = InventoryItemFactory.CreateItem("SkillRecoveryBoundJournal")
+		local oldModData = itemObj:getModData()["SRJ"]
+		newJournal:getModData()["SRJ"] = copyTable(oldModData)
+
+		player:getInventory():DoRemoveItem(itemObj)
+		player:getInventory():AddItem(newJournal)
+
+		if needTransfer and container then
+			ISTimedActionQueue.add(ISInventoryTransferAction:new(player, itemObj, player:getInventory(), container, 0))
+		end
+		return
+	end
+end
+
+
 function SRJ.setOrGetDeductedXP(player)
 	local pMD = player:getModData()
 	pMD.deductedXP = pMD.deductedXP or {}
