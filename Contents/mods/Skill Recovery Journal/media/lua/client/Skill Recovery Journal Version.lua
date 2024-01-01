@@ -22,3 +22,6 @@ Tweak: Old journals will be covered in blood to better identify them - they have
 Added: A Gained XP counter in the skills menu - this shows the value of XP earned after character creation.
 
 --]]
+
+--TODO: [ ] Conversion use if transfer
+--TODO: [ ] Read XP flat check
