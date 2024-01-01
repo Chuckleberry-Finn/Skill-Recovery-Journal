@@ -204,28 +204,27 @@ function ISToolTipInv:render()
 
 		if itemObj and player and (itemObj:getType() == "SkillRecoveryBoundJournal" or itemObj:getType() == "SkillRecoveryJournal") then
 
-			if itemObj:getType() == "SkillRecoveryJournal" and player:getInventory():contains(itemObj) then
-				local currentName = itemObj:getName()
-				if not string.find(currentName, "(Decayed)") then itemObj:setName(currentName.." (Decayed)") end
+			if itemObj:getType() == "SkillRecoveryJournal" then
+
+				local needTransfer = luautils.haveToBeTransfered(player, itemObj)
+
+				---@type ItemContainer
+				local container = itemObj:getContainer()
+
+				if needTransfer and container then
+					ISTimedActionQueue.add(ISInventoryTransferAction:new(player, itemObj, container, player:getInventory(), 0))
+				end
 
 				local newJournal = InventoryItemFactory.CreateItem("SkillRecoveryBoundJournal")
 				local oldModData = itemObj:getModData()["SRJ"]
 				newJournal:getModData()["SRJ"] = copyTable(oldModData)
 
-				local worldItem = itemObj:getWorldItem()
-				if worldItem then
-					---@type IsoGridSquare
-					local sq = worldItem:getSquare()
-					if sq then worldItem:swapItem(newJournal) end
-				end
-				---@type ItemContainer
-				local container = itemObj:getContainer()
-				if container then
-					container:DoRemoveItem(itemObj)
-					player:getInventory():AddItem(newJournal)
-				end
+				player:getInventory():DoRemoveItem(itemObj)
+				player:getInventory():AddItem(newJournal)
+
 				return
 			end
+
 
 			local journalModData = itemObj:getModData()
 			---background fixes / changes / updates to how journals work
