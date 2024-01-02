@@ -9,19 +9,20 @@ Events.OnGameBoot.Add(_versionCheck)
 
 --[[
 
-Sandbox Options Change: The sandbox option for "Recover Profession And Traits Bonus XP" has been removed.
-- To clarify: "BonusXP refers to the additional XP earned when starting with more than 1 point in a skill. The default for this setting was false, and with that the XP was not recorded.  All XP recorded is that of an unemployed/traitless character. This does NOT involve starting levels - only the bonus XP earned."
+[h3]Sandbox Options Change: The sandbox option for "Recover Profession And Traits Bonus XP" has been removed.[/h3]
+- To clarify: BonusXP in this case refers to the additional XP earned from starting with more than 1 point in a skill. NOT the starting levels, the bonus XP earned.
+- The default for this setting for this option was false, and as such that XP was not recorded. All XP that was recorded was that of an unemployed/traitless character.
+Going forward this XP will not be recorded, period. This resolves a lot of issues with the math involved, and keeps the XP even across the board.
 
-XP Change: The XP in the journal going forward will be "raw" values. If the above 'BonusXP' is considered, it should be noted that a starting level of 0 nets 25% of the raw value. (0=25%, 1=100%, 2=1.33%, 3=1.66%). Going forward reading will actually multiply the XP against the player's XPBoostMap.
+[h3]XP Change: The XP in the journal going forward will be "raw" values.[/h3]
+- With the term 'BonusXP' from above considered, starting level of 0 nets 25% of the raw value. (0=25%, 1=100%, 2=1.33%, 3=1.66%).
+- Going forward reading will actually multiply the XP against the player's XPBoostMap.
+- This means the XP shown in your journal's tooltips will be different depending on the starting skills of who is reading it.
 
-Fix: Modded skills now can be recorded.
+Fix: Modded skills now can be recorded again. :)
 Fix: Issues with mods that change timed action speed should be fixed for good.
-
 Tweak: Old journals will be covered in blood to better identify them - they have been/should be converted automatically once picked up and hovered over.
-
-Added: A Gained XP counter in the skills menu - this shows the value of XP earned after character creation.
+Added: A Gained XP counter in the skills menu - this shows the value of XP earned after character creation and what should be transcribed.
+Added: Tooltip warning for 'Use up Xp' sandbox option.
 
 --]]
-
---TODO: [ ] Conversion use if transfer
---TODO: [ ] Read XP flat check
