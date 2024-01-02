@@ -12,24 +12,23 @@ function SRJ.backgroundFix(journalModData, journal)
 
 	if journal:getType() == "SkillRecoveryBoundJournal" and (backgroundFix ~= currentBackgroundFix) then
 		journalModData.backgroundFix = currentBackgroundFix
-		if currentBackgroundFix == 1 then
-			---fix name issues where decayed was added incorrectly -DEC23
-			local currentName = journal:getName()
-			currentName=currentName:gsub("%s+%(Decayed%)","")
-			journal:setName(currentName)
-			--[[
-            ---fix change to raw XP
-            local storedJournalXP = journalModData and journalModData["gainedXP"]
-            if storedJournalXP then
-                for perkID,xp in pairs(storedJournalXP) do
-                    local perk = Perks[perkID]
-                    if perk then storedJournalXP[perkID] = (xp * 4) end
-                end
-            end
-            --]]
+
+		---fix name issues where decayed was added incorrectly -DEC23
+		local currentName = journal:getName()
+		currentName=currentName:gsub("%s+%(Decayed%)","")
+		journal:setName(currentName)
+
+		local JMD = journalModData["SRJ"]
+		if JMD and (not journalModData.oldXP) then
+			journalModData.oldXP = {}
+			local XpStoredInJournal = JMD["gainedXP"]
+			for skill,xp in pairs(XpStoredInJournal) do
+				journalModData.oldXP[skill] = xp
+			end
 		end
 	end
 end
+
 
 
 ---@param itemObj InventoryItem

@@ -135,6 +135,9 @@ function ReadSkillRecoveryJournal:update()
 
 			local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
 
+			---background fix for old XP
+			local oldXp = journalModData.oldXP
+
 			for skill,xp in pairs(XpStoredInJournal) do
 				if Perks[skill] then
 
@@ -165,9 +168,27 @@ function ReadSkillRecoveryJournal:update()
 							readXP[skill] = readXP[skill]+perPerkXpRate
 							jmdUsedXP[skill] = (jmdUsedXP[skill] or 0)+perPerkXpRate
 
+							---background fix for old XP
+							if oldXp and oldXp[skill] then
+								local addedFlatXP = 0
+								if oldXp[skill] > 0 then
+									if perPerkXpRate > oldXp[skill] then
+										addedFlatXP = oldXp[skill]
+										perPerkXpRate = perPerkXpRate-oldXp[skill]
+										oldXp[skill] = nil
+									else
+										oldXp[skill] = oldXp[skill]-perPerkXpRate
+										perPerkXpRate = 0
+										addedFlatXP = perPerkXpRate
+									end
+									player:getXp():AddXP(Perks[skill], addedFlatXP, false, false, true)
+								end
+							end
+
 							---- perksType, XP, passHook, applyXPBoosts, transmitMP)
 							local addedXP = SRJ.xpHandler.reBoostXP(player,Perks[skill],perPerkXpRate)
 							player:getXp():AddXP(Perks[skill], addedXP, false, false, true)
+
 							changesMade = true
 
 							local skill_name = getText("IGUI_perks_"..skill)
