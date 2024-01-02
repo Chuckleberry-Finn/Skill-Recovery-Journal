@@ -33,6 +33,9 @@ local function SRJ_generateTooltip(journalModData, player)
 
 	local multipliers = SRJ.xpHandler.getOrStoreXPMultipliers(player)
 
+	---background fix for old XP
+	local oldXp = journalModData.oldXP
+
 	for perkID,xp in pairs(storedJournalXP) do
 		local perk = Perks[perkID]
 		if perk then
@@ -43,13 +46,15 @@ local function SRJ_generateTooltip(journalModData, player)
 				journalXP = math.max(0, journalXP-jmdUsedXP[perkID])
 			end
 
+			local oldPerkXP = oldXp and oldXp[perkID] or 0
+
 			local perkName = perk:getName()
 			local multi = multipliers[perkID] or 1
-			local availableXP = round(journalXP*multi, 2)
+			local availableXP = round(((journalXP-oldPerkXP)*multi)+oldPerkXP, 2)
 
 			skillsRecord = skillsRecord..perkName.." ("..availableXP
 			if oneTimeUse then
-				local totalXP = round(xp*multi, 2)
+				local totalXP = round(((xp-oldPerkXP)*multi)+oldPerkXP, 2)
 				skillsRecord = skillsRecord.."/"..totalXP
 			end
 			skillsRecord = skillsRecord.." xp)\n"

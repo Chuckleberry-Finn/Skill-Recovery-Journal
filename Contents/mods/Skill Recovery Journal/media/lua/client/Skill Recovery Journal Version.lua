@@ -8,21 +8,25 @@ end end
 Events.OnGameBoot.Add(_versionCheck)
 
 --[[
+[h3]Old Journal Conversion:[/h3]
+[b]They automatically convert when hovered over in your inventory.[/b]
+Tweak: Old journals will be covered in blood to better identify them.
+[i]Warning: Transcribe once after the journal is converted, just to be safe. More explanation on this later.[/i]
+Patch: I've implemented a protection for 'oldXP' which will avoid boosting the old XP.
+[i][b]Suggestion:[/b][/i] Read/transcribe into your journal, craft a new one, rinse/repeat.
 
 [h3]Sandbox Options Change: The sandbox option for "Recover Profession And Traits Bonus XP" has been removed.[/h3]
 - To clarify: BonusXP in this case refers to the additional XP earned from starting with more than 1 point in a skill. NOT the starting levels, the bonus XP earned.
-- The default for this setting for this option was false, and as such that XP was not recorded. All XP that was recorded was that of an unemployed/traitless character.
+- The default for this setting for this option was false anyway, and as such that XP was not recorded. All XP that was recorded was that of an unemployed/traitless character.
 Going forward this XP will not be recorded, period. This resolves a lot of issues with the math involved, and keeps the XP even across the board.
 
 [h3]XP Change: The XP in the journal going forward will be "raw" values.[/h3]
 - With the term 'BonusXP' from above considered, starting level of 0 nets 25% of the raw value. (0=25%, 1=100%, 2=1.33%, 3=1.66%).
-- Going forward reading will actually multiply the XP against the player's XPBoostMap.
-- This means the XP shown in your journal's tooltips will be different depending on the starting skills of who is reading it.
+- Going forward reading will actually multiply the XP against the player's current XPBoostMap.
+- This means the XP shown in your journal's tooltips will be different depending on the starting skills of who is reading it - but the raw-total will never fluctuate.
 
 Fix: Modded skills now can be recorded again. :)
 Fix: Issues with mods that change timed action speed should be fixed for good.
-Tweak: Old journals will be covered in blood to better identify them - they have been/should be converted automatically once picked up and hovered over.
 Added: A Gained XP counter in the skills menu - this shows the value of XP earned after character creation and what should be transcribed.
-Added: Tooltip warning for 'Use up Xp' sandbox option.
-
+Added: Tooltip warning on journals for 'Use up XP' sandbox option.
 --]]

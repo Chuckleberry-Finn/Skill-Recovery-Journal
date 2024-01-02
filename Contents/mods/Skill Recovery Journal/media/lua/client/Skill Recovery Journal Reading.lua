@@ -169,20 +169,13 @@ function ReadSkillRecoveryJournal:update()
 							jmdUsedXP[skill] = (jmdUsedXP[skill] or 0)+perPerkXpRate
 
 							---background fix for old XP
-							if oldXp and oldXp[skill] then
-								local addedFlatXP = 0
-								if oldXp[skill] > 0 then
-									if perPerkXpRate > oldXp[skill] then
-										addedFlatXP = oldXp[skill]
-										perPerkXpRate = perPerkXpRate-oldXp[skill]
-										oldXp[skill] = nil
-									else
-										oldXp[skill] = oldXp[skill]-perPerkXpRate
-										perPerkXpRate = 0
-										addedFlatXP = perPerkXpRate
-									end
-									player:getXp():AddXP(Perks[skill], addedFlatXP, false, false, true)
+							if oldXp and oldXp[skill] and oldXp[skill] > 0 and readXP[skill] < oldXp[skill] then
+								local addedFlatXP = perPerkXpRate
+								if perPerkXpRate > oldXp[skill] then
+									addedFlatXP = oldXp[skill]
+									perPerkXpRate = math.max(0,perPerkXpRate-oldXp[skill])
 								end
+								player:getXp():AddXP(Perks[skill], addedFlatXP, false, false, true)
 							end
 
 							---- perksType, XP, passHook, applyXPBoosts, transmitMP)
