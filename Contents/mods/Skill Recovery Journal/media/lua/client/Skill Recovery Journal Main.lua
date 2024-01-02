@@ -32,29 +32,22 @@ function SRJ.backgroundFix(journalModData, journal)
 end
 
 
+---@param itemObj InventoryItem
+---@param player IsoPlayer|IsoGameCharacter|IsoMovingObject|IsoObject
 function SRJ.convertJournal(itemObj, player)
-	if itemObj:getType() == "SkillRecoveryJournal" then
-
-		local needTransfer = luautils.haveToBeTransfered(player, itemObj)
+	if itemObj:getType() == "SkillRecoveryJournal" and (not itemObj:getModData().SRJ_kludge) then
 
 		---@type ItemContainer
 		local container = itemObj:getContainer()
 
-		if needTransfer and container then
-			ISTimedActionQueue.add(ISInventoryTransferAction:new(player, itemObj, container, player:getInventory(), 0))
+		if container:isInCharacterInventory(player) then
+			itemObj:getModData().SRJ_kludge = true
+			local newJournal = InventoryItemFactory.CreateItem("SkillRecoveryBoundJournal")
+			local oldModData = itemObj:getModData()["SRJ"]
+			newJournal:getModData()["SRJ"] = copyTable(oldModData)
+			container:AddItem(newJournal)
+			container:Remove(itemObj)
 		end
-
-		local newJournal = InventoryItemFactory.CreateItem("SkillRecoveryBoundJournal")
-		local oldModData = itemObj:getModData()["SRJ"]
-		newJournal:getModData()["SRJ"] = copyTable(oldModData)
-
-		player:getInventory():DoRemoveItem(itemObj)
-		player:getInventory():AddItem(newJournal)
-
-		if needTransfer and container then
-			ISTimedActionQueue.add(ISInventoryTransferAction:new(player, itemObj, player:getInventory(), container, 0))
-		end
-		return
 	end
 end
 

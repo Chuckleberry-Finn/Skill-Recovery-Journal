@@ -10,6 +10,7 @@ module Base
         Icon	=	SkillRecoveryJournalDECAYED,
         StaticModel = SkillRecoveryJournal,
         WorldStaticModel = SkillRecoveryJournal_ground,
+        Tooltip = Tooltip_DecayedJournal,
     }
 
     item SkillRecoveryBoundJournal
