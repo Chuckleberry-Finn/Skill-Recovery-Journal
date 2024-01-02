@@ -22,6 +22,7 @@ IGUI_EN = {
 
     IGUI_ItemCat_SkillJournal = "Skill Journal",
     IGUI_GainedXPText = "Gained XP"
+    IGUI_OLDXP_WARNING = "WARNING: THIS JOURNAL CONTAINS 'OLD XP' FROM BEFORE THE BIG UPDATE. IT MAY BE BETTER FOR YOU TO MAKE A NEW JOURNAL TO AVOID ISSUES.",
     IGUI_OneTimeUse_Warning = "Sandbox Option for XP Used When Read is enabled.",
     IGUI_TV_XP_Warning = "Sandbox Option for XP earned from TV shows and VHS tapes is disabled.",
     IGUI_Rename_Warning = "Rename this journal to disable this alert.",

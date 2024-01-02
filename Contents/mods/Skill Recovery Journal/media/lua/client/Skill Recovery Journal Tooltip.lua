@@ -17,6 +17,14 @@ local function SRJ_generateTooltip(journalModData, player)
 
 	local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
 
+	---background fix for old XP
+	local oldXp = journalModData.oldXP
+
+	if oldXp then
+		warning = warning or {}
+		table.insert(warning, "IGUI_OLDXP_WARNING")
+	end
+	
 	if (not JMD.usedRenameOption) then
 		if (SandboxVars.SkillRecoveryJournal.TranscribeTVXP == false) then
 			warning = warning or {}
@@ -33,8 +41,6 @@ local function SRJ_generateTooltip(journalModData, player)
 
 	local multipliers = SRJ.xpHandler.getOrStoreXPMultipliers(player)
 
-	---background fix for old XP
-	local oldXp = journalModData.oldXP
 
 	for perkID,xp in pairs(storedJournalXP) do
 		local perk = Perks[perkID]
