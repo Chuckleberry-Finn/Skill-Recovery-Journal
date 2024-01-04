@@ -181,20 +181,22 @@ end
 Events.OnGameBoot.Add(_error)
 
 
-local wrappedWarningMessage
+local wrappedWarningMessage = {}
 ---@param itemObj InventoryItem
-local function wrapWarningMessage(itemObj, warnings, fontType)
+local function wrapWarningMessage(itemObj, warnings, fontType, renamed)
 
 	local maxWidth = getTextManager():MeasureStringX(fontType,"Mod: "..itemObj:getModName())
 
-	wrappedWarningMessage = ""
+	wrappedWarningMessage[itemObj] = ""
 	for _,msg in pairs(warnings) do
 		local wrappedMsg = wrapWarningMessages(getText(msg), fontType, maxWidth)
-		wrappedWarningMessage = wrappedWarningMessage .. wrappedMsg .. "\n\n"
+		wrappedWarningMessage[itemObj] = wrappedWarningMessage[itemObj] .. wrappedMsg .. "\n\n"
 	end
 
-	wrappedWarningMessage = wrappedWarningMessage .. wrapWarningMessages(getText("IGUI_Rename_Warning"), fontType, maxWidth)
-	return wrappedWarningMessage
+	if wrappedWarningMessage[itemObj] ~= "" and (not renamed) then
+		wrappedWarningMessage[itemObj] = wrappedWarningMessage[itemObj] .. wrapWarningMessages(getText("IGUI_Rename_Warning"), fontType, maxWidth)
+	end
+	return wrappedWarningMessage[itemObj]
 end
 
 
@@ -238,7 +240,8 @@ function ISToolTipInv:render()
 			end
 
 			if warning then
-				warning = wrappedWarningMessage or wrapWarningMessage(itemObj, warning, fontType)
+				local renamed = journalModData["SRJ"].usedRenameOption
+				warning = wrappedWarningMessage[itemObj] or wrapWarningMessage(itemObj, warning, fontType, renamed)
 				textHeight = textHeight+fontHeight+getTextManager():MeasureStringY(fontType, warning)
 			end
 
