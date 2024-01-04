@@ -30,3 +30,5 @@ Fix: Issues with mods that change timed action speed should be fixed for good.
 Added: A Gained XP counter in the skills menu - this shows the value of XP earned after character creation and what should be transcribed.
 Added: Tooltip warning on journals for 'Use up XP' sandbox option.
 --]]
+
+--TODO: look into skills GAINED 451 -> 1800??
