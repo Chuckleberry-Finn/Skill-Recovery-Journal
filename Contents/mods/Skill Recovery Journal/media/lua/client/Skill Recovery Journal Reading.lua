@@ -137,8 +137,9 @@ function ReadSkillRecoveryJournal:update()
 
 				local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
 
-				---background fix for old XP
+				---background fix for old XP-------
 				local oldXp = journalModData.oldXP
+				-----------------------------------
 
 				for skill,xp in pairs(XpStoredInJournal) do
 					if Perks[skill] then
@@ -170,19 +171,26 @@ function ReadSkillRecoveryJournal:update()
 								readXP[skill] = readXP[skill]+perPerkXpRate
 								jmdUsedXP[skill] = (jmdUsedXP[skill] or 0)+perPerkXpRate
 
-								---background fix for old XP
+								---background fix for old XP------------------------------------------------------------
+								local addedFlatXP
 								if oldXp and oldXp[skill] and oldXp[skill] > 0 and readXP[skill] < oldXp[skill] then
-									local addedFlatXP = perPerkXpRate
+									addedFlatXP = perPerkXpRate
 									if perPerkXpRate > oldXp[skill] then
 										addedFlatXP = oldXp[skill]
 										perPerkXpRate = math.max(0,perPerkXpRate-oldXp[skill])
 									end
-									player:getXp():AddXP(Perks[skill], addedFlatXP, false, false, true)
+									--player:getXp():AddXP(Perks[skill], addedFlatXP, false, false, true)
 								end
+								if perPerkXpRate > 0 then
+								----------------------------------------------------------------------------------------
 
-								---- perksType, XP, passHook, applyXPBoosts, transmitMP)
-								local addedXP = SRJ.xpHandler.reBoostXP(player,Perks[skill],perPerkXpRate)
-								player:getXp():AddXP(Perks[skill], addedXP, false, false, true)
+									---- perksType, XP, passHook, applyXPBoosts, transmitMP)
+									local addedXP = SRJ.xpHandler.reBoostXP(player,Perks[skill],perPerkXpRate)
+									player:getXp():AddXP(Perks[skill], addedXP, false, false, true)
+
+								----------------------------------------------------------------------------------------
+								end
+								----------------------------------------------------------------------------------------
 
 								changesMade = true
 
