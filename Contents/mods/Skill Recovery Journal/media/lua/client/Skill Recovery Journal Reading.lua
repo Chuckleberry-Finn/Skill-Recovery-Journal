@@ -179,7 +179,7 @@ function ReadSkillRecoveryJournal:update()
 										addedFlatXP = oldXp[skill]
 										perPerkXpRate = math.max(0,perPerkXpRate-oldXp[skill])
 									end
-									--player:getXp():AddXP(Perks[skill], addedFlatXP, false, false, true)
+									player:getXp():AddXP(Perks[skill], addedFlatXP, false, false, true)
 								end
 								if perPerkXpRate > 0 then
 								----------------------------------------------------------------------------------------
