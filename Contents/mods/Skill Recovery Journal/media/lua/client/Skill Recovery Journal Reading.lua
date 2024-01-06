@@ -119,74 +119,77 @@ function ReadSkillRecoveryJournal:update()
 			local XpStoredInJournal = JMD["gainedXP"]
 			local greatestXp = 0
 
-			for skill,xp in pairs(XpStoredInJournal) do
-				if skill=="NONE" or skill=="MAX" then
-					XpStoredInJournal[skill] = nil
-				else
-					if xp > greatestXp then greatestXp = xp end
-				end
-			end
-
-			local xpRate = math.sqrt(greatestXp)/25
-			local readXP = SRJ.getReadXP(player)
-
-			journalModData.recoveryJournalXpLog = journalModData.recoveryJournalXpLog or {}
-			local jmdUsedXP = journalModData.recoveryJournalXpLog
-
-			local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
-
-			---background fix for old XP
-			local oldXp = journalModData.oldXP
-
-			for skill,xp in pairs(XpStoredInJournal) do
-				if Perks[skill] then
-
-					readXP[skill] = readXP[skill] or 0
-					local currentlyReadXP = readXP[skill]
-					local journalXP = xp
-
-					if oneTimeUse and jmdUsedXP[skill] and jmdUsedXP[skill] then
-						if jmdUsedXP[skill] >= currentlyReadXP then bJournalUsedUp = true end
-						currentlyReadXP = math.max(currentlyReadXP, jmdUsedXP[skill])
+			if XpStoredInJournal then
+				for skill,xp in pairs(XpStoredInJournal) do
+					if skill=="NONE" or skill=="MAX" then
+						XpStoredInJournal[skill] = nil
+					else
+						if xp > greatestXp then greatestXp = xp end
 					end
+				end
 
-					if currentlyReadXP < journalXP then
-						local readTimeMulti = SandboxVars.SkillRecoveryJournal.ReadTimeSpeed or 1
 
-						local differential = SRJ.getMaxXPDifferential(skill)
+				local xpRate = math.sqrt(greatestXp)/25
+				local readXP = SRJ.getReadXP(player)
 
-						local perkLevelPlusOne = player:getPerkLevel(Perks[skill])+1
-						local perPerkXpRate = round(((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * readTimeMulti / differential, 2)
-						if perkLevelPlusOne == 11 then perPerkXpRate=false end
+				journalModData.recoveryJournalXpLog = journalModData.recoveryJournalXpLog or {}
+				local jmdUsedXP = journalModData.recoveryJournalXpLog
 
-						--print("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..(perkLevelPlusOne-1).."  xpStored:"..xp.."  currentXP:"..currentlyReadXP)
+				local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
 
-						if perPerkXpRate~=false then
+				---background fix for old XP
+				local oldXp = journalModData.oldXP
 
-							if currentlyReadXP+perPerkXpRate > journalXP then perPerkXpRate = math.max(journalXP-currentlyReadXP, 0.001) end
+				for skill,xp in pairs(XpStoredInJournal) do
+					if Perks[skill] then
 
-							readXP[skill] = readXP[skill]+perPerkXpRate
-							jmdUsedXP[skill] = (jmdUsedXP[skill] or 0)+perPerkXpRate
+						readXP[skill] = readXP[skill] or 0
+						local currentlyReadXP = readXP[skill]
+						local journalXP = xp
 
-							---background fix for old XP
-							if oldXp and oldXp[skill] and oldXp[skill] > 0 and readXP[skill] < oldXp[skill] then
-								local addedFlatXP = perPerkXpRate
-								if perPerkXpRate > oldXp[skill] then
-									addedFlatXP = oldXp[skill]
-									perPerkXpRate = math.max(0,perPerkXpRate-oldXp[skill])
+						if oneTimeUse and jmdUsedXP[skill] and jmdUsedXP[skill] then
+							if jmdUsedXP[skill] >= currentlyReadXP then bJournalUsedUp = true end
+							currentlyReadXP = math.max(currentlyReadXP, jmdUsedXP[skill])
+						end
+
+						if currentlyReadXP < journalXP then
+							local readTimeMulti = SandboxVars.SkillRecoveryJournal.ReadTimeSpeed or 1
+
+							local differential = SRJ.getMaxXPDifferential(skill)
+
+							local perkLevelPlusOne = player:getPerkLevel(Perks[skill])+1
+							local perPerkXpRate = round(((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * readTimeMulti / differential, 2)
+							if perkLevelPlusOne == 11 then perPerkXpRate=false end
+
+							--print("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..(perkLevelPlusOne-1).."  xpStored:"..xp.."  currentXP:"..currentlyReadXP)
+
+							if perPerkXpRate~=false then
+
+								if currentlyReadXP+perPerkXpRate > journalXP then perPerkXpRate = math.max(journalXP-currentlyReadXP, 0.001) end
+
+								readXP[skill] = readXP[skill]+perPerkXpRate
+								jmdUsedXP[skill] = (jmdUsedXP[skill] or 0)+perPerkXpRate
+
+								---background fix for old XP
+								if oldXp and oldXp[skill] and oldXp[skill] > 0 and readXP[skill] < oldXp[skill] then
+									local addedFlatXP = perPerkXpRate
+									if perPerkXpRate > oldXp[skill] then
+										addedFlatXP = oldXp[skill]
+										perPerkXpRate = math.max(0,perPerkXpRate-oldXp[skill])
+									end
+									player:getXp():AddXP(Perks[skill], addedFlatXP, false, false, true)
 								end
-								player:getXp():AddXP(Perks[skill], addedFlatXP, false, false, true)
+
+								---- perksType, XP, passHook, applyXPBoosts, transmitMP)
+								local addedXP = SRJ.xpHandler.reBoostXP(player,Perks[skill],perPerkXpRate)
+								player:getXp():AddXP(Perks[skill], addedXP, false, false, true)
+
+								changesMade = true
+
+								local skill_name = getText("IGUI_perks_"..skill)
+								if skill_name == ("IGUI_perks_"..skill) then skill_name = skill end
+								table.insert(changesBeingMade, skill_name)
 							end
-
-							---- perksType, XP, passHook, applyXPBoosts, transmitMP)
-							local addedXP = SRJ.xpHandler.reBoostXP(player,Perks[skill],perPerkXpRate)
-							player:getXp():AddXP(Perks[skill], addedXP, false, false, true)
-
-							changesMade = true
-
-							local skill_name = getText("IGUI_perks_"..skill)
-							if skill_name == ("IGUI_perks_"..skill) then skill_name = skill end
-							table.insert(changesBeingMade, skill_name)
 						end
 					end
 				end

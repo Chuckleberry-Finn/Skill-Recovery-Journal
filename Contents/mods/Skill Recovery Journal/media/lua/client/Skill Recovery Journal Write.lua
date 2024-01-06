@@ -66,6 +66,9 @@ function ISCraftAction:update()
 			local storedJournalXP = JMD["gainedXP"]
 			local readXp = SRJ.getReadXP(self.character)
 
+			---background fix for old XP
+			local oldXp = journalModData.oldXP
+
 			if bOwner and storedJournalXP and self.gainedSkills then
 				for perkID,xp in pairs(self.gainedSkills) do
 					if xp > 0 then

@@ -1,5 +1,5 @@
 local contextSRJ = require "Skill Recovery Journal Context"
-Events.OnPreFillInventoryObjectContextMenu.Add(contextSRJ.doContextMenu)
+if contextSRJ then Events.OnPreFillInventoryObjectContextMenu.Add(contextSRJ.doContextMenu) end
 
 local SRJ = require "Skill Recovery Journal Main"
 Events.OnCreatePlayer.Add(SRJ.setPassiveLevels)
