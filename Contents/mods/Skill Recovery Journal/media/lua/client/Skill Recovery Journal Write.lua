@@ -75,7 +75,7 @@ function ISCraftAction:update()
 					if xp > 0 then
 
 						storedJournalXP[perkID] = storedJournalXP[perkID] or 0
-						if xp > storedJournalXP[perkID]-(oldXp and oldXp[perkID] or 0) then
+						if xp-(oldXp and oldXp[perkID] or 0) > storedJournalXP[perkID] then
 
 							local transcribeTimeMulti = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 1
 							local perkLevelPlusOne = self.character:getPerkLevel(Perks[perkID])+1
