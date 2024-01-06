@@ -27,7 +27,7 @@ function ISSkillProgressBar:updateTooltip(lvlSelected)
         self.message = self.message:gsub(" <LINE> "..state, " <LINE> "..state.." ("..xpText..")")
     end
 
-    if lvlSelected <= self.level then
+    if lvlSelected <= self.level and instanceof(self.char,"IsoPlayer") then
         local perkID = self.perk:getId()
         local multipliers = SRJ.xpHandler.getOrStoreXPMultipliers(self.char)
         local gainedXP = SRJ.calculateGainedSkills(self.char)
