@@ -1,4 +1,4 @@
-[ 1/5/24 ]
+[ 1/6/24 ]
 
 [h3]Old Journal Conversion:[/h3]
 [b]They automatically convert when hovered over in your inventory.[/b]
