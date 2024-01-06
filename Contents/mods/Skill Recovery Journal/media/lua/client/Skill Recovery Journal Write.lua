@@ -66,8 +66,9 @@ function ISCraftAction:update()
 			local storedJournalXP = JMD["gainedXP"]
 			local readXp = SRJ.getReadXP(self.character)
 
-			---background fix for old XP
+			---background fix for old XP----------------------------
 			local oldXp = journalModData.oldXP
+			--------------------------------------------------------
 
 			if bOwner and storedJournalXP and self.gainedSkills then
 				for perkID,xp in pairs(self.gainedSkills) do
@@ -93,6 +94,17 @@ function ISCraftAction:update()
 									changesBeingMadeIndex[skill_name] = true
 									table.insert(changesBeingMade, skill_name)
 								end
+
+								---background fix for old XP------------------------------------------------------------
+								if oldXp and oldXp[perkID] then
+									oldXp[perkID] = oldXp[perkID]-xpRate
+									if oldXp[perkID] <= 0 then oldXp[perkID] = nil end
+									local perksFound = false
+									for k,v in pairs(oldXp) do if k then perksFound = true end end
+									if not perksFound then oldXp = nil end
+									---The work is done...
+								end
+								----------------------------------------------------------------------------------------
 
 								local resultingXp = math.min(xp, storedJournalXP[perkID]+xpRate)
 								--print("TESTING: "..skill.." recoverable:"..xp.." gained:"..storedJournalXP[skill].." +"..xpRate)
