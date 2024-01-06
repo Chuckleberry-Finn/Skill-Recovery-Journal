@@ -25,7 +25,11 @@ local function SRJ_generateTooltip(journalModData, player)
 		table.insert(warning, "IGUI_OLDXP_WARNING")
 	end
 	
-	if (not JMD.usedRenameOption) then
+	if (not JMD.renamedJournal) then
+
+		warning = warning or {}
+		table.insert(warning, "Tooltip_SkillJournal")
+
 		if (SandboxVars.SkillRecoveryJournal.TranscribeTVXP == false) then
 			warning = warning or {}
 			table.insert(warning, "IGUI_TV_XP_Warning")
@@ -96,7 +100,7 @@ local function drawDetailsTooltip(tooltip, tooltipStart, skillsRecord, warning, 
 	end
 	if warning then
 		y=y+getTextManager():MeasureStringY(fontType, skillsRecord)
-		tooltip:drawText(warning, x+1, y, fnt.r, 0.3, 0.3, 0.5, fontType)
+		tooltip:drawText(warning, x+1, y, fnt.r, 0.3, 0.3, 0.7, fontType)
 	end
 end
 
@@ -240,7 +244,7 @@ function ISToolTipInv:render()
 			end
 
 			if warning then
-				local renamed = journalModData["SRJ"].usedRenameOption
+				local renamed = journalModData["SRJ"].renamedJournal
 				warning = wrappedWarningMessage[itemObj] or wrapWarningMessage(itemObj, warning, fontType, renamed)
 				textHeight = textHeight+fontHeight+getTextManager():MeasureStringY(fontType, warning)
 			end

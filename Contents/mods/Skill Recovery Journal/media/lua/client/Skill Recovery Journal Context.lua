@@ -78,7 +78,10 @@ function contextSRJ:onRenameJournalClick(button, player, item)
 	if button.internal == "OK" and button.parent.entry:getText() and button.parent.entry:getText() ~= "" then
 		local journalModData = item:getModData()
 		local JMD = journalModData["SRJ"]
-		if JMD then JMD.usedRenameOption = true end
+		if JMD then
+			JMD.usedRenameOption = nil
+			JMD.renamedJournal = true
+		end
 		
 		item:setName(button.parent.entry:getText())
 		local pdata = getPlayerData(player:getPlayerNum())
