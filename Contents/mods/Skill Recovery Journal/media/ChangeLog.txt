@@ -21,3 +21,8 @@ Fix: Issues with mods that change timed action speed should be fixed for good.
 Added: A Gained XP counter in the skills menu - this shows the value of XP earned after character creation and what should be transcribed.
 Added: Tooltip warning on journals for 'Use up XP' sandbox option.
 [ ------ ]
+
+[ 1/6/24 hotfix1 ]
+Hotfix: Reading sandbox options properly.
+Added: additional warning in tooltip to explain that XP is dependent on the person reading.
+[ ------ ]
