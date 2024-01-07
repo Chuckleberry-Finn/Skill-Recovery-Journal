@@ -26,3 +26,7 @@ Added: Tooltip warning on journals for 'Use up XP' sandbox option.
 Hotfix: Reading sandbox options properly.
 Added: additional warning in tooltip to explain that XP is dependent on the person reading.
 [ ------ ]
+
+[ 1/6/24 hotfix2 ]
+Hotfix: UltimateXPTweaker compatibility patch.
+[ ------ ]
