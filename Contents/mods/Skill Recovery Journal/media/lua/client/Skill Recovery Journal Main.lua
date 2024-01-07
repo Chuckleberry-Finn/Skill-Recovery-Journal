@@ -171,6 +171,16 @@ function SRJ.getReadXP(player)
 end
 
 
+
+function SRJ.bSkillValid(perk)
+	local valid = true
+	if (perk:isPassiv() and (SandboxVars.SkillRecoveryJournal.RecoverPassiveSkills ~= true)) then valid = false end
+	local sandboxOption = SandboxVars.SkillRecoveryJournal["Recover"..perk:getParent():getId().."Skills"]
+	if (sandboxOption==false) then valid = false end
+	return valid
+end
+
+
 function SRJ.calculateGainedSkills(player)
 
 	local gainedXP-- = {}
@@ -202,11 +212,7 @@ function SRJ.calculateGainedSkills(player)
 				local deductedXP = (SandboxVars.SkillRecoveryJournal.TranscribeTVXP==false) and deductibleXP[perkID] or 0
 				--if getDebug() then print(" -deductedXP:",deductedXP) end
 
-				local sandboxOptionRecover = true
-				if (perk:isPassiv() and (SandboxVars.SkillRecoveryJournal.RecoverPassiveSkills ~= true)) then sandboxOptionRecover = false end
-				local sandboxOption = SandboxVars.SkillRecoveryJournal["Recover"..perk:getParent():getId().."Skills"]
-				if (sandboxOption and (sandboxOption~=true)) then sandboxOptionRecover = false end
-				--if getDebug() then print(" sandboxOptionRecover:",sandboxOptionRecover) end
+				local sandboxOptionRecover = SRJ.bSkillValid(perk)
 
 				local recoverableXP = sandboxOptionRecover and perkXP-passiveFixXP-startingPerkXP-deductedXP or 0
 				--if getDebug() then print(" recoverableXP-deductions: ",recoverableXP) end

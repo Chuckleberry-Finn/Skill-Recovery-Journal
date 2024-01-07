@@ -50,37 +50,42 @@ local function SRJ_generateTooltip(journalModData, player)
 		local perk = Perks[perkID]
 		if perk then
 
-			local journalXP = xp
-			local jmdUsedXP = journalModData.recoveryJournalXpLog
-			if oneTimeUse and jmdUsedXP and jmdUsedXP[perkID] and jmdUsedXP[perkID] then
-				journalXP = math.max(0, journalXP-jmdUsedXP[perkID])
+			local show = SRJ.bSkillValid(perk)
+			if show then
+				local journalXP = xp
+				local jmdUsedXP = journalModData.recoveryJournalXpLog
+				if oneTimeUse and jmdUsedXP and jmdUsedXP[perkID] and jmdUsedXP[perkID] then
+					journalXP = math.max(0, journalXP-jmdUsedXP[perkID])
+				end
+
+				local oldPerkXP = oldXp and oldXp[perkID] or 0
+
+				local perkName = perk:getName()
+				local multi = multipliers[perkID] or 1
+				local availableXP = round(((journalXP-oldPerkXP)*multi)+oldPerkXP, 2)
+
+				skillsRecord = skillsRecord..perkName.." ("..availableXP
+				if oneTimeUse then
+					local totalXP = round(((xp-oldPerkXP)*multi)+oldPerkXP, 2)
+					skillsRecord = skillsRecord.."/"..totalXP
+				end
+				skillsRecord = skillsRecord.." xp)\n"
 			end
-
-			local oldPerkXP = oldXp and oldXp[perkID] or 0
-
-			local perkName = perk:getName()
-			local multi = multipliers[perkID] or 1
-			local availableXP = round(((journalXP-oldPerkXP)*multi)+oldPerkXP, 2)
-
-			skillsRecord = skillsRecord..perkName.." ("..availableXP
-			if oneTimeUse then
-				local totalXP = round(((xp-oldPerkXP)*multi)+oldPerkXP, 2)
-				skillsRecord = skillsRecord.."/"..totalXP
-			end
-			skillsRecord = skillsRecord.." xp)\n"
 		end
 	end
 
-	local learnedRecipes = JMD["learnedRecipes"] or {}
-	if learnedRecipes then
-		local recipeNum = 0
+	if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
+		local learnedRecipes = JMD["learnedRecipes"] or {}
+		if learnedRecipes then
+			local recipeNum = 0
 
-		if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then for k,v in pairs(learnedRecipes) do recipeNum = recipeNum+1 end end
+			if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then for k,v in pairs(learnedRecipes) do recipeNum = recipeNum+1 end end
 
-		if recipeNum>0 then
-			local properPlural = getText("IGUI_Tooltip_Recipe")
-			if recipeNum>1 then properPlural = getText("IGUI_Tooltip_Recipes") end
-			skillsRecord = skillsRecord..recipeNum.." "..properPlural..".".."\n"
+			if recipeNum>0 then
+				local properPlural = getText("IGUI_Tooltip_Recipe")
+				if recipeNum>1 then properPlural = getText("IGUI_Tooltip_Recipes") end
+				skillsRecord = skillsRecord..recipeNum.." "..properPlural..".".."\n"
+			end
 		end
 	end
 
