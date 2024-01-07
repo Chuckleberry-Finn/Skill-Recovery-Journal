@@ -22,6 +22,9 @@ function ReadSkillRecoveryJournal:start()
 
 	self.character:setReading(true)
 	self.character:reportEvent("EventRead")
+
+	local logText = ISLogSystem.getGenericLogText(self.character)
+	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ START READING]"})
 end
 
 
