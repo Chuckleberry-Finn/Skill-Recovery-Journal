@@ -35,7 +35,7 @@ function ISSkillProgressBar:updateTooltip(lvlSelected)
         local currentXP = tostring(self.char:getXp():getXP(self.perk))
         self.message = self.message .. "\n\n"..totalXPText..": "..round(currentXP, 2)
 
-        if gainedXP[perkID] then
+        if gainedXP and gainedXP[perkID] then
             
             local currentSkillGainedXP = tostring(gainedXP[perkID] * (multipliers[perkID] or 1))
             self.message = self.message.."\n"..gainedXPText..": "..round(currentSkillGainedXP, 2)
