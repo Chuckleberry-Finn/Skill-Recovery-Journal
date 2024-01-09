@@ -122,15 +122,19 @@ function ReadSkillRecoveryJournal:update()
 			local XpStoredInJournal = JMD["gainedXP"]
 			local greatestXp = 0
 
+			local validSkills = {}
+
 			if XpStoredInJournal then
 				for skill,xp in pairs(XpStoredInJournal) do
-					if skill=="NONE" or skill=="MAX" then
-						XpStoredInJournal[skill] = nil
-					else
-						if xp > greatestXp then greatestXp = xp end
+					if SRJ.bSkillValid(skill) then
+						validSkills[skill] = true
+						if skill=="NONE" or skill=="MAX" then
+							XpStoredInJournal[skill] = nil
+						else
+							if xp > greatestXp then greatestXp = xp end
+						end
 					end
 				end
-
 
 				local xpRate = math.sqrt(greatestXp)/25
 				local readXP = SRJ.getReadXP(player)
@@ -145,7 +149,7 @@ function ReadSkillRecoveryJournal:update()
 				-----------------------------------
 
 				for skill,xp in pairs(XpStoredInJournal) do
-					if Perks[skill] then
+					if Perks[skill] and validSkills[skill] then
 
 						readXP[skill] = readXP[skill] or 0
 						local currentlyReadXP = readXP[skill]
