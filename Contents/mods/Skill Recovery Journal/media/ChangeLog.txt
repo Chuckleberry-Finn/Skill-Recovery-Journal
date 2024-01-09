@@ -34,3 +34,8 @@ Hotfix: UltimateXPTweaker compatibility patch.
 [ 1/6/24 hotfix3 ]
 Hotfix: Fix issues with sandbox options not working, hide skills/recipes if sandbox doesn't allow them.
 [ ------ ]
+
+[ 1/9/24 hotfix4 ]
+Fix: Edge case on the skills page.
+Fix: Cannot read skills if the sandbox option is toggled off.
+[ ------ ]
