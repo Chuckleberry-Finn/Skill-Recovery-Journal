@@ -126,7 +126,7 @@ function ReadSkillRecoveryJournal:update()
 
 			if XpStoredInJournal then
 				for skill,xp in pairs(XpStoredInJournal) do
-					if SRJ.bSkillValid(skill) then
+					if SRJ.bSkillValid(Perks[skill]) then
 						validSkills[skill] = true
 						if skill=="NONE" or skill=="MAX" then
 							XpStoredInJournal[skill] = nil
