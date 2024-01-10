@@ -8,7 +8,6 @@ description=
 description=[url=https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/bingo.png][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/readThrough.png[/img][/url]
 description=[url=https://steamcommunity.com/workshop/filedetails/discussion/2503622437/3198119216812488644][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/FAQ.png[/img][/url]
 description=[img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/noModPacks.png[/img]
-description=
 description=[img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/bugHunt.png[/img]
 description=[quote][b]Windows:[/b] %userprofile%\Zomboid\console.txt[/quote]
 description=[quote][b]Mac/Linux:[/b] $User\Zomboid\console.txt[/quote]
