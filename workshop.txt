@@ -11,7 +11,7 @@ description=[img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages
 description=[img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/bugHunt.png[/img]
 description=[quote][b]Windows:[/b] %userprofile%\Zomboid\console.txt[/quote]
 description=[quote][b]Mac/Linux:[/b] $User\Zomboid\console.txt[/quote]
-description=Upload this file [b]in entirety[/b] to [url=https://github.com/ChuckTheSheep/Skill-Recovery-Journal]Github[/url] as an issue.
+description=Upload this file [b]in entirety[/b] to [url=https://github.com/Chuckleberry-Finn/Skill-Recovery-Journal]Github[/url] as an issue.
 description=Share the link in a comment below if it is urgent.
 description=
 description=
