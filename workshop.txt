@@ -1,7 +1,8 @@
 version=1
 id=2503622437
 title=Skill Recovery Journal
-description=[h2][i]Lore-friendly(ish) solution to the loss of a character.[/i][/h2]
+description=[h1][i]Lore-friendly(ish) solution to the loss of a character.[/i][/h1]
+description=[h2][i]Craftable journals which allow the recovery of skills and recipes.[/i][/h2]
 description=
 description=[url=https://ko-fi.com/chuckleberryfinn][img]https://raw.githubusercontent.com/ChuckTheSheep/chuckImages/main/kofi.png[/img][/url][url=https://discord.gg/SReMnbV4V7][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/PZmodCommBanner3.png[/img][/url]
 description=
