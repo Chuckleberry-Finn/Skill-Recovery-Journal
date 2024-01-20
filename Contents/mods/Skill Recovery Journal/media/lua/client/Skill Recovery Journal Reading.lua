@@ -99,13 +99,15 @@ function ReadSkillRecoveryJournal:update()
 
 		if not delayedStop then
 
+			local readTimeMulti = SandboxVars.SkillRecoveryJournal.ReadTimeSpeed or 1
+
 			if (#self.learnedRecipes > 0) then
 
 				self.recipeIntervals = self.recipeIntervals+1
 				changesMade = true
 
 				if self.recipeIntervals > 5 then
-					local recipeChunk = math.min(#self.learnedRecipes, math.floor(1.09^math.sqrt(#self.learnedRecipes)))
+					local recipeChunk = math.min(#self.learnedRecipes, math.floor(1.09^math.sqrt(#self.learnedRecipes))) * readTimeMulti
 					local properPlural = getText("IGUI_Tooltip_Recipe")
 					if recipeChunk>1 then properPlural = getText("IGUI_Tooltip_Recipes") end
 					table.insert(changesBeingMade, recipeChunk.." "..properPlural)
@@ -161,7 +163,6 @@ function ReadSkillRecoveryJournal:update()
 						end
 
 						if currentlyReadXP < journalXP then
-							local readTimeMulti = SandboxVars.SkillRecoveryJournal.ReadTimeSpeed or 1
 
 							local differential = SRJ.getMaxXPDifferential(skill)
 

@@ -41,12 +41,14 @@ function ISCraftAction:update()
 			local bOwner = true
 			if pSteamID ~= 0 and journalID and journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then bOwner = false end
 
+			local transcribeTimeMulti = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 1
+
 			if bOwner and (#self.gainedRecipes > 0) then
 				self.recipeIntervals = self.recipeIntervals+1
 				self.changesMade = true
 
 				if self.recipeIntervals > 5 then
-					local recipeChunk = math.min(#self.gainedRecipes, math.floor(1.09^math.sqrt(#self.gainedRecipes)))
+					local recipeChunk = math.min(#self.gainedRecipes, math.floor(1.09^math.sqrt(#self.gainedRecipes))) * transcribeTimeMulti
 
 					local properPlural = getText("IGUI_Tooltip_Recipe")
 					if recipeChunk>1 then
@@ -77,7 +79,6 @@ function ISCraftAction:update()
 						storedJournalXP[perkID] = storedJournalXP[perkID] or 0
 						if xp > storedJournalXP[perkID] then
 
-							local transcribeTimeMulti = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 1
 							local perkLevelPlusOne = self.character:getPerkLevel(Perks[perkID])+1
 
 							local differential = SRJ.getMaxXPDifferential(perkID)

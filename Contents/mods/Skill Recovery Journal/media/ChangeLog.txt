@@ -39,3 +39,7 @@ Hotfix: Fix issues with sandbox options not working, hide skills/recipes if sand
 Fix: Edge case on the skills page.
 Fix: Cannot read skills if the sandbox option is toggled off.
 [ ------ ]
+
+[ 1/19/24 ]
+Fix: Recipes are now impacted by transcribe/read sandbox multipliers.
+[ ------ ]
