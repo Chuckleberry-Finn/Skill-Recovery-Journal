@@ -35,11 +35,9 @@ end
 ---@param player IsoPlayer|IsoGameCharacter|IsoMovingObject|IsoObject
 function SRJ.convertJournal(itemObj, player)
 	if itemObj:getType() == "SkillRecoveryJournal" and (not itemObj:getModData().SRJ_kludge) then
-
 		---@type ItemContainer
 		local container = itemObj:getContainer()
-
-		if container:isInCharacterInventory(player) then
+		if container and container:isInCharacterInventory(player) then
 			itemObj:getModData().SRJ_kludge = true
 			local newJournal = InventoryItemFactory.CreateItem("SkillRecoveryBoundJournal")
 			local oldModData = itemObj:getModData()["SRJ"]
