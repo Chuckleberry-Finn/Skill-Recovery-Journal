@@ -212,6 +212,39 @@ function ReadSkillRecoveryJournal:update()
 			end
 		end
 
+		if JMD and SandboxVars.SkillRecoveryJournal.KillsTrack == true then
+
+			--JMD.kills = {}
+			local readXP = SRJ.getReadXP(player)
+
+			local readZKills = readXP and readXP.kills and readXP.kills.Zombie or 0
+			local readSKills = readXP and readXP.kills and readXP.kills.Survivor or 0
+
+			local zKills = player:getZombieKills()
+			local sKills = player:getSurvivorKills()
+
+			local jmdZKills = JMD.kills and JMD.kills.Zombie
+			local jmdSKills = JMD.kills and JMD.kills.Survivor
+
+			local unaccountedZKills = jmdZKills and (jmdZKills > readZKills) and jmdZKills-readZKills
+			local unaccountedSKills = jmdSKills and (jmdSKills > readSKills) and jmdSKills-readSKills
+
+			if unaccountedZKills or unaccountedSKills then
+				readXP.kills = readXP.kills or {}
+				if unaccountedZKills then
+					table.insert(changesBeingMade, getText("IGUI_char_Zombies_Killed"))
+					player:setZombieKills(zKills + unaccountedZKills)
+					readXP.kills.Zombie = (readXP.kills.Zombie or 0) + unaccountedZKills
+				end
+				if unaccountedSKills then
+					table.insert(changesBeingMade, getText("IGUI_char_Survivor_Killed"))
+					player:setSurvivorKills(sKills + unaccountedSKills)
+					readXP.kills.Survivor = (readXP.kills.Survivor or 0) + unaccountedSKills
+				end
+				changesMade = true
+			end
+		end
+
 		if JMD and (not changesMade) then
 			delayedStop = true
 

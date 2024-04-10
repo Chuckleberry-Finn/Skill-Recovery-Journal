@@ -41,3 +41,6 @@ option SkillRecoveryJournal.RecoveryJournalUsed
 
 option SkillRecoveryJournal.Craftable
 {type = boolean, default = true, page = SkillRecoveryJournal, translation = SkillRecoveryJournalCraft,}
+
+option SkillRecoveryJournal.KillsTrack
+{type = boolean, default = true, page = SkillRecoveryJournal, translation = SkillRecoveryJournalKillsTrack,}

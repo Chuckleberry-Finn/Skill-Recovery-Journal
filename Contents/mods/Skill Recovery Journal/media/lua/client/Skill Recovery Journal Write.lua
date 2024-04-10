@@ -122,6 +122,34 @@ function ISCraftAction:update()
 			end
 			----------------------------------------------------------------
 
+			if JMD and SandboxVars.SkillRecoveryJournal.KillsTrack == true then
+
+				local readZKills = readXp and readXp.kills and readXp.kills.Zombie or 0
+				local readSKills = readXp and readXp.kills and readXp.kills.Survivor or 0
+
+				local zKills = self.character:getZombieKills()
+				local sKills = self.character:getSurvivorKills()
+
+				local unaccountedZKills = (zKills > readZKills) and zKills-readZKills
+				local unaccountedSKills = (zKills > readZKills) and sKills-readSKills
+
+				if unaccountedZKills or unaccountedSKills then
+					JMD.kills = JMD.kills or {}
+					readXp.kills = readXp.kills or {}
+					if unaccountedZKills then
+						changesBeingMade[getText("IGUI_char_Zombies_Killed")] = true
+						JMD.kills.Zombie = (JMD.kills.Zombie or 0) + unaccountedZKills
+						readXp.kills.Zombie = (readXp.kills.Zombie or 0) + unaccountedZKills
+					end
+					if unaccountedSKills then
+						changesBeingMade[getText("IGUI_char_Survivor_Killed")] = true
+						JMD.kills.Survivor = (JMD.kills.Survivor or 0) + unaccountedSKills
+						readXp.kills.Survivor = (readXp.kills.Survivor or 0) + unaccountedSKills
+					end
+					self.changesMade = true
+				end
+			end
+
 			if self.changesMade==true then
 
 				if #changesBeingMade>0 then

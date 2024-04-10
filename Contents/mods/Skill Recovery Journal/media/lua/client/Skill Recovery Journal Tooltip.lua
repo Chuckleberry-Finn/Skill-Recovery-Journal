@@ -84,8 +84,19 @@ local function SRJ_generateTooltip(journalModData, player)
 			if recipeNum>0 then
 				local properPlural = getText("IGUI_Tooltip_Recipe")
 				if recipeNum>1 then properPlural = getText("IGUI_Tooltip_Recipes") end
-				skillsRecord = skillsRecord..recipeNum.." "..properPlural..".".."\n"
+				skillsRecord = skillsRecord.."\n"..recipeNum.." "..properPlural..".".."\n"
 			end
+		end
+	end
+
+	if SandboxVars.SkillRecoveryJournal.KillsTrack == true then
+		local jmdZKills = JMD and JMD.kills and JMD.kills.Zombie
+		local jmdSKills = JMD and JMD.kills and JMD.kills.Survivor
+
+		if jmdZKills or jmdSKills then
+			skillsRecord = skillsRecord.."\n"
+			if jmdZKills and jmdZKills>0 then skillsRecord = skillsRecord .. getText("IGUI_char_Zombies_Killed")..":"..jmdZKills.."\n" end
+			if jmdSKills and jmdSKills>0 then skillsRecord = skillsRecord .. getText("IGUI_char_Survivor_Killed")..":"..jmdSKills.."\n" end
 		end
 	end
 

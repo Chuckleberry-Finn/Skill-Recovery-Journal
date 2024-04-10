@@ -39,4 +39,7 @@ Sandbox_EN = {
 
     Sandbox_SkillRecoveryJournalCraft = "Journal is Craftable"
     Sandbox_SkillRecoveryJournalUsed_tooltip = "Disabling this means the journals cannot be crafted."
+
+    Sandbox_SkillRecoveryJournalKillsTrack = "Recover Kills"
+
 	}
