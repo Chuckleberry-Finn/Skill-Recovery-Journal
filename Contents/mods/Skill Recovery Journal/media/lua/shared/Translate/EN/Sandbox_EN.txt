@@ -1,8 +1,8 @@
 Sandbox_EN = {
 	Sandbox_SkillRecoveryJournal = "Skill Recovery Journal",
 
-	Sandbox_SkillRecoveryJournalPercentage = "Skill Recovery Percentage",
-	Sandbox_SkillRecoveryJournalPercentage_tooltip = "The amount of experienced recovered from reading bound journals.",
+	Sandbox_SkillRecoveryJournalPercentage = "General Skill Recovery Percentage",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "The amount of experienced recovered from reading bound journals.<br>This value is multiplied along any other Recovery Percentages.",
 
 	Sandbox_SkillRecoveryJournalTranscribeSpeed = "Skill Recovery Transcribe Speed Multiplier",
 	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "A multiplier on the speed of transcribing journals."
@@ -13,23 +13,23 @@ Sandbox_EN = {
 	Sandbox_SkillRecoveryJournalTranscribeTVXP = "Transcribe XP earned from TV/VHS",
 	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Toggling this on will allow people to transcribe XP earned from watching TV/VHS. Note: This means players can carry over watched XP between characters cumulatively."
 
-	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Recover Passive Skills"
-	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Toggle on to record passive skills."
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Passive Skill Recovery Percentage"
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Recovery percentage for passive skills.<br>This value is multiplied along any other Recovery Percentages."
 
-	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "Recover Combat Skills"
-    Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "Toggle on to record combat skills."
+	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "Combat Skill Recovery Percentage"
+    Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "Recovery percentage for combat skills.<br>This value is multiplied along any other Recovery Percentages."
 
-    Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "Recover Firearm Skills"
-    Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "Toggle on to record firearm skills."
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "Firearm Skill Recovery Percentage"
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "Recovery percentage for firearm skills.<br>This value is multiplied along any other Recovery Percentages."
 
-    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "Recover Crafting Skills"
-    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Toggle on to record crafting skills."
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "Crafting Skill Recovery Percentage"
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Recovery percentage for crafting skills.<br>This value is multiplied along any other Recovery Percentages."
 
-    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "Recover Survivalist Skills"
-    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Toggle on to record survivalist skills."
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "Survivalist Skill Recovery Percentage"
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Recovery percentage for survivalist skills.<br>This value is multiplied along any other Recovery Percentages."
 
-    Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "Recover Agility Skills"
-    Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "Toggle on to record agility skills."
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "Agility Skill Recovery Percentage"
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "Recovery percentage for agility skills.<br>This value is multiplied along any other Recovery Percentages."
 
 	Sandbox_SkillRecoveryJournalRecoverRecipes = "Recover Recipes"
     Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "Toggle off to prevent journals from recovering/transcribing recipes."

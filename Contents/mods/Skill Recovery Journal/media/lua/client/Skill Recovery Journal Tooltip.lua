@@ -50,7 +50,7 @@ local function SRJ_generateTooltip(journalModData, player)
 		local perk = Perks[perkID]
 		if perk then
 
-			local show = SRJ.bSkillValid(perk)
+			local show, percent = SRJ.bSkillValid(perk)
 			if show then
 				local journalXP = xp
 				local jmdUsedXP = journalModData.recoveryJournalXpLog

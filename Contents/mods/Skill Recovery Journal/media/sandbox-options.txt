@@ -15,23 +15,25 @@ option SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses
 option SkillRecoveryJournal.TranscribeTVXP
 {type = boolean, default = false, page = SkillRecoveryJournal, translation = SkillRecoveryJournalTranscribeTVXP,}
 
-option SkillRecoveryJournal.RecoverPassiveSkills
-{type = boolean, default = false, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverPassiveSkills,}
 
-option SkillRecoveryJournal.RecoverCombatSkills
-{type = boolean, default = true, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverCombatSkills,}
+option SkillRecoveryJournal.PercentagePassiveSkills
+{type = integer, min = 1, max = 100, default = 0, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverPassiveSkills,}
 
-option SkillRecoveryJournal.RecoverFirearmSkills
-{type = boolean, default = true, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverFirearmSkills,}
+option SkillRecoveryJournal.PercentageCombatSkills
+{type = integer, min = 1, max = 100, default = 100, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverCombatSkills,}
 
-option SkillRecoveryJournal.RecoverCraftingSkills
-{type = boolean, default = true, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverCraftingSkills,}
+option SkillRecoveryJournal.PercentageFirearmSkills
+{type = integer, min = 1, max = 100, default = 100, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverFirearmSkills,}
 
-option SkillRecoveryJournal.RecoverSurvivalistSkills
-{type = boolean, default = true, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverSurvivalistSkills,}
+option SkillRecoveryJournal.PercentageCraftingSkills
+{type = integer, min = 1, max = 100, default = 100, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverCraftingSkills,}
 
-option SkillRecoveryJournal.RecoverAgilitySkills
-{type = boolean, default = true, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverAgilitySkills,}
+option SkillRecoveryJournal.PercentageSurvivalistSkills
+{type = integer, min = 1, max = 100, default = 100, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverSurvivalistSkills,}
+
+option SkillRecoveryJournal.PercentageAgilitySkills
+{type = integer, min = 1, max = 100, default = 100, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverAgilitySkills,}
+
 
 option SkillRecoveryJournal.RecoverRecipes
 {type = boolean, default = true, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverRecipes,}
