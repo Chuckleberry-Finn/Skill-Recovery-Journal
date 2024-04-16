@@ -15,29 +15,22 @@ option SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses
 option SkillRecoveryJournal.TranscribeTVXP
 {type = boolean, default = false, page = SkillRecoveryJournal, translation = SkillRecoveryJournalTranscribeTVXP,}
 
-option SkillRecoveryJournal.RecoverPassiveSkills{type = boolean, default = false,}
-option SkillRecoveryJournal.RecoverCombatSkills{type = boolean, default = true,}
-option SkillRecoveryJournal.RecoverFirearmSkills{type = boolean, default = true,}
-option SkillRecoveryJournal.RecoverCraftingSkills{type = boolean, default = true,}
-option SkillRecoveryJournal.RecoverSurvivalistSkills{type = boolean, default = true,}
-option SkillRecoveryJournal.RecoverAgilitySkills{type = boolean, default = true,}
-
-option SkillRecoveryJournal.PercentagePassiveSkills
+option SkillRecoveryJournal.RecoverPassiveSkills
 {type = integer, min = 0, max = 100, default = 0, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverPassiveSkills,}
 
-option SkillRecoveryJournal.PercentageCombatSkills
+option SkillRecoveryJournal.RecoverCombatSkills
 {type = integer, min = 0, max = 100, default = 100, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverCombatSkills,}
 
-option SkillRecoveryJournal.PercentageFirearmSkills
+option SkillRecoveryJournal.RecoverFirearmSkills
 {type = integer, min = 0, max = 100, default = 100, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverFirearmSkills,}
 
-option SkillRecoveryJournal.PercentageCraftingSkills
+option SkillRecoveryJournal.RecoverCraftingSkills
 {type = integer, min = 0, max = 100, default = 100, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverCraftingSkills,}
 
-option SkillRecoveryJournal.PercentageSurvivalistSkills
+option SkillRecoveryJournal.RecoverSurvivalistSkills
 {type = integer, min = 0, max = 100, default = 100, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverSurvivalistSkills,}
 
-option SkillRecoveryJournal.PercentageAgilitySkills
+option SkillRecoveryJournal.RecoverAgilitySkills
 {type = integer, min = 0, max = 100, default = 100, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverAgilitySkills,}
 
 
