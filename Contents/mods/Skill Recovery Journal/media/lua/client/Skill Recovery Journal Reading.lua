@@ -33,13 +33,24 @@ function ReadSkillRecoveryJournal:forceStop()
 	self.item:setJobDelta(0.0)
 	if self.action then self.action:setLoopedAction(false) end
 	self.character:playSound("CloseBook")
+	local logText = ISLogSystem.getGenericLogText(self.character)
+	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP READING] (forceStop)"})
 	ISBaseTimedAction.forceStop(self)
+end
+
+
+function ReadSkillRecoveryJournal:stop()
+	local logText = ISLogSystem.getGenericLogText(self.character)
+	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP READING] (stop)"})
+	ISBaseTimedAction.stop(self)
 end
 
 
 function ReadSkillRecoveryJournal:perform()
 	self.character:setReading(false)
 	self.item:getContainer():setDrawDirty(true)
+	local logText = ISLogSystem.getGenericLogText(self.character)
+	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP READING] (perform)"})
 	ISBaseTimedAction.perform(self)
 end
 
