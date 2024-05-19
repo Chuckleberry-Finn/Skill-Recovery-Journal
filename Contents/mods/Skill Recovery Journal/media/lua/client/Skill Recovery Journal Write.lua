@@ -137,12 +137,12 @@ function ISCraftAction:update()
 					JMD.kills = JMD.kills or {}
 					readXp.kills = readXp.kills or {}
 					if unaccountedZKills then
-						changesBeingMade[getText("IGUI_char_Zombies_Killed")] = true
+						table.insert(changesBeingMade, getText("IGUI_char_Zombies_Killed"))
 						JMD.kills.Zombie = (JMD.kills.Zombie or 0) + unaccountedZKills
 						readXp.kills.Zombie = (readXp.kills.Zombie or 0) + unaccountedZKills
 					end
 					if unaccountedSKills then
-						changesBeingMade[getText("IGUI_char_Survivor_Killed")] = true
+						table.insert(changesBeingMade, getText("IGUI_char_Survivor_Killed"))
 						JMD.kills.Survivor = (JMD.kills.Survivor or 0) + unaccountedSKills
 						readXp.kills.Survivor = (readXp.kills.Survivor or 0) + unaccountedSKills
 					end
