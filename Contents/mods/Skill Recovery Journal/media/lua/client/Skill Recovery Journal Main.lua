@@ -183,6 +183,7 @@ function SRJ.bSkillValid(perk)
 	local ID = perk:isPassiv() and "Passive" or perk:getParent():getId()
 	SRJ.correctSandBoxOptions(ID)
 	local sandboxOption = SandboxVars.SkillRecoveryJournal["Recover"..ID.."Skills"]
+	if not sandboxOption then return true, 1 end
 	return (not (sandboxOption <= 0)), (sandboxOption/100)
 end
 
