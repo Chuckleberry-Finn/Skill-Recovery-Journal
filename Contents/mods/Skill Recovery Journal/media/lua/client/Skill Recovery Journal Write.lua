@@ -250,7 +250,7 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 		o.useProgressBar = false
 		o.loopedAction = false
 		o.stopOnWalk = false
-		o.maxTime = 2
+		o.maxTime = 50
 	end
 
 	return o
