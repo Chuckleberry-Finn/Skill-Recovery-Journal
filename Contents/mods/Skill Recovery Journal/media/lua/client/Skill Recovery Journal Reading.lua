@@ -224,7 +224,8 @@ function ReadSkillRecoveryJournal:update()
 			end
 		end
 
-		if JMD and SandboxVars.SkillRecoveryJournal.KillsTrack == true then
+		SRJ.correctSandBoxOptions("KillsTrack")
+		if JMD and SandboxVars.SkillRecoveryJournal.KillsTrack > 0 then
 
 			--JMD.kills = {}
 			local readXP = SRJ.getReadXP(player)

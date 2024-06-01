@@ -122,7 +122,9 @@ function ISCraftAction:update()
 			end
 			----------------------------------------------------------------
 
-			if JMD and SandboxVars.SkillRecoveryJournal.KillsTrack == true then
+			SRJ.correctSandBoxOptions("KillsTrack")
+			local killsRecoveryPercentage = SandboxVars.SkillRecoveryJournal.KillsTrack
+			if JMD and killsRecoveryPercentage > 0 then
 
 				local readZKills = readXp and readXp.kills and readXp.kills.Zombie or 0
 				local readSKills = readXp and readXp.kills and readXp.kills.Survivor or 0
@@ -138,12 +140,12 @@ function ISCraftAction:update()
 					readXp.kills = readXp.kills or {}
 					if unaccountedZKills then
 						table.insert(changesBeingMade, getText("IGUI_char_Zombies_Killed"))
-						JMD.kills.Zombie = (JMD.kills.Zombie or 0) + unaccountedZKills
+						JMD.kills.Zombie = (JMD.kills.Zombie or 0) + math.floor(unaccountedZKills * (killsRecoveryPercentage/100))
 						readXp.kills.Zombie = (readXp.kills.Zombie or 0) + unaccountedZKills
 					end
 					if unaccountedSKills then
 						table.insert(changesBeingMade, getText("IGUI_char_Survivor_Killed"))
-						JMD.kills.Survivor = (JMD.kills.Survivor or 0) + unaccountedSKills
+						JMD.kills.Survivor = (JMD.kills.Survivor or 0) + math.floor(unaccountedSKills * (killsRecoveryPercentage/100))
 						readXp.kills.Survivor = (readXp.kills.Survivor or 0) + unaccountedSKills
 					end
 					self.changesMade = true

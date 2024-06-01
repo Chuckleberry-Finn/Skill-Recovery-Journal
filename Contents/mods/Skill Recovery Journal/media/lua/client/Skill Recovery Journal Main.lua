@@ -170,21 +170,20 @@ end
 
 
 function SRJ.correctSandBoxOptions(ID)
-	if SandboxVars.SkillRecoveryJournal["Recover"..ID.."Skills"] == false then
-		SandboxVars.SkillRecoveryJournal["Recover"..ID.."Skills"] = 0
+	if SandboxVars.SkillRecoveryJournal[ID] == false then
+		SandboxVars.SkillRecoveryJournal[ID] = 0
 		return 0
-	elseif SandboxVars.SkillRecoveryJournal["Recover"..ID.."Skills"] == true then
-		SandboxVars.SkillRecoveryJournal["Recover"..ID.."Skills"] = 100
+	elseif SandboxVars.SkillRecoveryJournal[ID] == true then
+		SandboxVars.SkillRecoveryJournal[ID] = 100
 		return 100
 	end
-
 end
 
 
 function SRJ.bSkillValid(perk)
 	local ID = perk:isPassiv() and "Passive" or perk:getParent():getId()
 
-	local correction = SRJ.correctSandBoxOptions(ID)
+	local correction = SRJ.correctSandBoxOptions("Recover"..ID.."Skills")
 	local sandboxOption = SandboxVars.SkillRecoveryJournal["Recover"..ID.."Skills"]
 	if (sandboxOption==nil) then return true, 1 end
 	if sandboxOption and type(sandboxOption)~="number" then sandboxOption = correction end

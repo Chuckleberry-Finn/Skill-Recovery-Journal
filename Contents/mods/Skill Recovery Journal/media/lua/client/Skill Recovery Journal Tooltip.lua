@@ -89,7 +89,8 @@ local function SRJ_generateTooltip(journalModData, player)
 		end
 	end
 
-	if SandboxVars.SkillRecoveryJournal.KillsTrack == true then
+	SRJ.correctSandBoxOptions("KillsTrack")
+	if SandboxVars.SkillRecoveryJournal.KillsTrack > 0 then
 		local jmdZKills = JMD and JMD.kills and JMD.kills.Zombie
 		local jmdSKills = JMD and JMD.kills and JMD.kills.Survivor
 
