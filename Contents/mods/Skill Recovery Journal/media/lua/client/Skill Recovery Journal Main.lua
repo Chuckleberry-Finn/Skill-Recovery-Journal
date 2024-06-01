@@ -184,11 +184,15 @@ function SRJ.bSkillValid(perk)
 	local ID = perk:isPassiv() and "Passive" or perk:getParent():getId()
 
 	local correction = SRJ.correctSandBoxOptions("Recover"..ID.."Skills")
-	local sandboxOption = SandboxVars.SkillRecoveryJournal["Recover"..ID.."Skills"]
-	if (sandboxOption==nil) then return true, 1 end
-	if sandboxOption and type(sandboxOption)~="number" then sandboxOption = correction end
 
-	return (not (sandboxOption <= 0)), (sandboxOption/100)
+	local specific = SandboxVars.SkillRecoveryJournal["Recover"..ID.."Skills"]
+	if specific and type(specific)~="number" then specific = correction end
+
+	local default = SandboxVars.SkillRecoveryJournal.RecoveryPercentage and (SandboxVars.SkillRecoveryJournal.RecoveryPercentage/100) or 1
+
+	local recoverPercentage = ((specific==nil) or (specific==-1)) and default or specific
+
+	return (not (recoverPercentage <= 0)), (recoverPercentage/100)
 end
 
 
@@ -196,7 +200,6 @@ function SRJ.calculateGainedSkills(player)
 
 	local gainedXP-- = {}
 	local deductibleXP = SRJ.setOrGetDeductedXP(player)
-	local recoverableXPFactor = (SandboxVars.SkillRecoveryJournal.RecoveryPercentage/100) or 1
 	local passiveSkillsInit = SRJ.getPassiveLevels(player)
 
 	local pXP = player:getXp()
@@ -237,7 +240,7 @@ function SRJ.calculateGainedSkills(player)
 					--end
 
 					gainedXP = gainedXP or {}
-					gainedXP[perkID] = recoverableXP*recoverableXPFactor*recoveryPercentage
+					gainedXP[perkID] = recoverableXP*recoveryPercentage
 
 					--if getDebug() then print(" FINAL: ", gainedXP[perkID]) end
 				end
