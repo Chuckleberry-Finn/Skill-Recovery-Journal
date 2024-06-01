@@ -188,7 +188,7 @@ function SRJ.bSkillValid(perk)
 	local specific = SandboxVars.SkillRecoveryJournal["Recover"..ID.."Skills"]
 	if specific and type(specific)~="number" then specific = correction end
 
-	local default = SandboxVars.SkillRecoveryJournal.RecoveryPercentage and (SandboxVars.SkillRecoveryJournal.RecoveryPercentage/100) or 1
+	local default = SandboxVars.SkillRecoveryJournal.RecoveryPercentage or 100
 
 	local recoverPercentage = ((specific==nil) or (specific==-1)) and default or specific
 
