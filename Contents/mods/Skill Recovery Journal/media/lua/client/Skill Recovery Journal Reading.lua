@@ -139,13 +139,16 @@ function ReadSkillRecoveryJournal:update()
 
 			if XpStoredInJournal then
 				for skill,xp in pairs(XpStoredInJournal) do
-					local valid, percent = SRJ.bSkillValid(Perks[skill])
-					if valid then
-						validSkills[skill] = true
-						if skill=="NONE" or skill=="MAX" then
-							XpStoredInJournal[skill] = nil
-						else
-							if xp > greatestXp then greatestXp = xp end
+					local perk = Perks[skill]
+					if perk then
+						local valid, percent = SRJ.bSkillValid(perk)
+						if valid then
+							validSkills[skill] = true
+							if skill=="NONE" or skill=="MAX" then
+								XpStoredInJournal[skill] = nil
+							else
+								if xp > greatestXp then greatestXp = xp end
+							end
 						end
 					end
 				end

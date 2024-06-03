@@ -181,7 +181,7 @@ end
 
 
 function SRJ.bSkillValid(perk)
-	local ID = perk:isPassiv() and "Passive" or perk:getParent():getId()
+	local ID = perk and perk:isPassiv() and "Passive" or perk:getParent():getId()
 
 	local correction = SRJ.correctSandBoxOptions("Recover"..ID.."Skills")
 
