@@ -174,8 +174,9 @@ function SRJ.correctSandBoxOptions(ID)
 		SandboxVars.SkillRecoveryJournal[ID] = 0
 		return 0
 	elseif SandboxVars.SkillRecoveryJournal[ID] == true then
-		SandboxVars.SkillRecoveryJournal[ID] = 100
-		return 100
+		local recoverRate = SandboxVars.SkillRecoveryJournal.RecoveryPercentage or 100
+		SandboxVars.SkillRecoveryJournal[ID] = recoverRate
+		return recoverRate
 	end
 end
 
