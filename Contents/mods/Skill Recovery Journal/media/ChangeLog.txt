@@ -48,4 +48,5 @@ Fix: Recipes are now impacted by transcribe/read sandbox multipliers.
 New: Tracks zombie and survivor kills, toggle via sandbox options. (0 to 100 %, default 0%)
 Tweak: The sandbox options per skill category have been converted from true/false to (-1) to 100 %. -1 defaults the % to the general option.
 Add: Logging for 'stop' reading events.
+Fix: Allowing for modded skills to be disabled if the mod is removed.
 [ ------ ]
