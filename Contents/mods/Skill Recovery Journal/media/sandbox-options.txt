@@ -16,7 +16,7 @@ option SkillRecoveryJournal.TranscribeTVXP
 {type = boolean, default = false, page = SkillRecoveryJournal, translation = SkillRecoveryJournalTranscribeTVXP,}
 
 option SkillRecoveryJournal.RecoverPassiveSkills
-{type = integer, min = -1, max = 100, default = -1, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverPassiveSkills,}
+{type = integer, min = -1, max = 100, default = 0, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverPassiveSkills,}
 
 option SkillRecoveryJournal.RecoverCombatSkills
 {type = integer, min = -1, max = 100, default = -1, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverCombatSkills,}
