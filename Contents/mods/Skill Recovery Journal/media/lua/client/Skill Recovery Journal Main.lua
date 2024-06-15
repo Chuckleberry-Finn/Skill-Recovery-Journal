@@ -217,7 +217,7 @@ function SRJ.calculateGainedSkills(player)
 
 				---figure out how much XP was present at player start
 				local passivePerkFixLevel = passiveSkillsInit and passiveSkillsInit[perkID]
-				local passiveFixXP = passivePerkFixLevel and perk:getTotalXpForLevel(passivePerkFixLevel) or 0
+				local passiveFixXP = passivePerkFixLevel and perk:getTotalXpForLevel(passivePerkFixLevel)
 				--if getDebug() then print(" -passiveFixXP:",passiveFixXP,"  (",passivePerkFixLevel,")") end
 
 				local startingPerkLevel = startingLevels[perkID]
@@ -229,8 +229,8 @@ function SRJ.calculateGainedSkills(player)
 
 				local sandboxOptionRecover, recoveryPercentage = SRJ.bSkillValid(perk)
 
-				local recoverableXP = sandboxOptionRecover and perkXP-passiveFixXP-startingPerkXP-deductedXP or 0
-				--if getDebug() then print(" recoverableXP-deductions: ",recoverableXP) end
+				local recoverableXP = sandboxOptionRecover and perkXP-(passiveFixXP or startingPerkXP)-deductedXP or 0
+				--if getDebug() then print(" -recoverableXP-deductions: ",recoverableXP) end
 
 				if recoverableXP>0 then
 
