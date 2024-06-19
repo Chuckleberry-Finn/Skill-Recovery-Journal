@@ -123,7 +123,7 @@ function ISCraftAction:update()
 			----------------------------------------------------------------
 
 			SRJ.correctSandBoxOptions("KillsTrack")
-			local killsRecoveryPercentage = SandboxVars.SkillRecoveryJournal.KillsTrack
+			local killsRecoveryPercentage = SandboxVars.SkillRecoveryJournal.KillsTrack or 0
 			if JMD and killsRecoveryPercentage > 0 then
 
 				local readZKills = readXp and readXp.kills and readXp.kills.Zombie or 0
