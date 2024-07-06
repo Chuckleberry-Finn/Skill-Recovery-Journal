@@ -1,4 +1,4 @@
 Tooltip_FR = {
-    Tooltip_DecayedJournal = "DÃ©placez-le dans votre inventaire pour le renouveler.",
-    Tooltip_SkillJournal = "Les valeurs d'expÃ©rience dÃ©pendent de qui les lit."
+    Tooltip_DecayedJournal = "Déplacez-le dans votre inventaire pour le renouveler.",
+    Tooltip_SkillJournal = "Les valeurs d'expérience dépendent de qui les lit."
 }

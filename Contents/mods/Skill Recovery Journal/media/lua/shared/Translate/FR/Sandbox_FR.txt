@@ -1,45 +1,45 @@
 Sandbox_FR = {
-	Sandbox_SkillRecoveryJournal = "Journal de rÃ©cupÃ©ration des compÃ©tences",
+	Sandbox_SkillRecoveryJournal = "Journal de récupération des compétences",
 
-	Sandbox_SkillRecoveryJournalPercentage = "Pourcentage de rÃ©cupÃ©ration des compÃ©tences",
-	Sandbox_SkillRecoveryJournalPercentage_tooltip = "La quantitÃ© d'expÃ©rience rÃ©cupÃ©rÃ©e en lisant des journaux reliÃ©s.",
+	Sandbox_SkillRecoveryJournalPercentage = "Pourcentage de récupération des compétences",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "La quantité d'expérience récupérée en lisant des journaux reliés.",
 
-	Sandbox_SkillRecoveryJournalTranscribeSpeed = "Multiplicateur de vitesse de retranscription des compÃ©tences",
-	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "Un multiplicateur de la vitesse de retranscription sur les journaux reliÃ©s.",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "Multiplicateur de vitesse de retranscription des compétences",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "Un multiplicateur de la vitesse de retranscription sur les journaux reliés.",
 
-	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Multiplicateur de vitesse de lecture des compÃ©tences",
-	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "Un multiplicateur de la vitesse de lecture des journaux reliÃ©s.",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Multiplicateur de vitesse de lecture des compétences",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "Un multiplicateur de la vitesse de lecture des journaux reliés.",
 
-	Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses = "Bonus d'XP: RÃ©cupÃ©ration - Profession et Traits",
-	Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses_tooltip = "Commencer avec plus d'un point dans une compÃ©tence vous rapporte gÃ©nÃ©ralement un bonus d'XP - avec cette option dÃ©sactivÃ©e, cet XP n'est pas enregistrÃ©. Tout l'XP enregistrÃ© est celui d'un personnage sans compÃ©tences de dÃ©part. Cela ne rÃ©cupÃ¨re PAS les niveaux de dÃ©part - seulement le bonus d'XP qui a Ã©tÃ© gagnÃ©.",
+	Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses = "Bonus d'XP: Récupération - Profession et Traits",
+	Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses_tooltip = "Commencer avec plus d'un point dans une compétence vous rapporte généralement un bonus d'XP - avec cette option désactivée, cet XP n'est pas enregistré. Tout l'XP enregistré est celui d'un personnage sans compétences de départ. Cela ne récupère PAS les niveaux de départ - seulement le bonus d'XP qui a été gagné.",
 
-	Sandbox_SkillRecoveryJournalTranscribeTVXP = "Retranscrire l'XP gagnÃ© Ã  partir de la TV/VHS",
-	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Activer cette option permettra aux joueurs de retranscrire l'XP gagnÃ© en regardant la TV/VHS. Note: Cela signifie que les joueurs peuvent transfÃ©rer l'XP, gagnÃ© via TV/VHS, entre leur personnages de maniÃ¨re cumulative.",
+	Sandbox_SkillRecoveryJournalTranscribeTVXP = "Retranscrire l'XP gagné à partir de la TV/VHS",
+	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Activer cette option permettra aux joueurs de retranscrire l'XP gagné en regardant la TV/VHS. Note: Cela signifie que les joueurs peuvent transférer l'XP, gagné via TV/VHS, entre leur personnages de manière cumulative.",
 
-	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "RÃ©cupÃ©rer les compÃ©tences passives",
-	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Activer pour enregistrer les compÃ©tences passives.",
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Récupérer les compétences passives",
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Activer pour enregistrer les compétences passives.",
 
-	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "RÃ©cupÃ©rer les compÃ©tences de combat",
-	Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "Activer pour enregistrer les compÃ©tences de combat.",
+	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "Récupérer les compétences de combat",
+	Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "Activer pour enregistrer les compétences de combat.",
 
-	Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "RÃ©cupÃ©rer les compÃ©tences d'armes Ã  feu",
-	Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "Activer pour enregistrer les compÃ©tences d'armes Ã  feu.",
+	Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "Récupérer les compétences d'armes à feu",
+	Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "Activer pour enregistrer les compétences d'armes à feu.",
 
-	Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "RÃ©cupÃ©rer les compÃ©tences d'artisanat",
-	Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Activer pour enregistrer les compÃ©tences d'artisanat.",
+	Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "Récupérer les compétences d'artisanat",
+	Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Activer pour enregistrer les compétences d'artisanat.",
 
-	Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "RÃ©cupÃ©rer les compÃ©tences de survie",
-	Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Activer pour enregistrer les compÃ©tences de survie.",
+	Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "Récupérer les compétences de survie",
+	Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Activer pour enregistrer les compétences de survie.",
 
-	Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "RÃ©cupÃ©rer les compÃ©tences d'agilitÃ©",
-	Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "Activer pour enregistrer les compÃ©tences d'agilitÃ©.",
+	Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "Récupérer les compétences d'agilité",
+	Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "Activer pour enregistrer les compétences d'agilité.",
 
-	Sandbox_SkillRecoveryJournalRecoverRecipes = "RÃ©cupÃ©rer les recettes",
-	Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "DÃ©sactiver pour empÃªcher les journaux de rÃ©cupÃ©rer/retranscrire les recettes.",
+	Sandbox_SkillRecoveryJournalRecoverRecipes = "Récupérer les recettes",
+	Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "Désactiver pour empêcher les journaux de récupérer/retranscrire les recettes.",
 
-	Sandbox_SkillRecoveryJournalUsed = "XP du journal utilisÃ© lors de la lecture",
-	Sandbox_SkillRecoveryJournalUsed_tooltip = "Normalement, vous pouvez relire le journal autant de fois que vous le souhaitez - avec cette option activÃ©e, chaque point d'XP individuel ne peut Ãªtre rÃ©cupÃ©rÃ© qu'une seule fois. Vous pouvez toujours Ã©crire dans le journal, mais chaque point ne peut Ãªtre rÃ©cupÃ©rÃ© qu'une seule fois pour chaque journal. Remarque : l'info-bulle du journal affichera dÃ©sormais une fraction pour les points inutilisÃ©s.",
+	Sandbox_SkillRecoveryJournalUsed = "XP du journal utilisé lors de la lecture",
+	Sandbox_SkillRecoveryJournalUsed_tooltip = "Normalement, vous pouvez relire le journal autant de fois que vous le souhaitez - avec cette option activée, chaque point d'XP individuel ne peut être récupéré qu'une seule fois. Vous pouvez toujours écrire dans le journal, mais chaque point ne peut être récupéré qu'une seule fois pour chaque journal. Remarque : l'info-bulle du journal affichera désormais une fraction pour les points inutilisés.",
 
 	Sandbox_SkillRecoveryJournalCraft = "Le journal est fabricable",
-	Sandbox_SkillRecoveryJournalUsed_tooltip = "DÃ©sactivater cette option signifie que les journaux ne peuvent pas Ãªtre fabriquÃ©s."
+	Sandbox_SkillRecoveryJournalUsed_tooltip = "Désactivater cette option signifie que les journaux ne peuvent pas être fabriqués."
 }
