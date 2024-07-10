@@ -54,3 +54,8 @@ Fix: Allowing for modded skills to be disabled if the mod is removed.
 [ 6/8/24 ]
 Fix: Passive Skills setting default set back to 0 (Shouldn't have been -1).
 [ ------ ]
+
+[ 7/10/24 ]
+Fix: Issue with transcribing Zombie/Survivor Kills across different journals.
+Fix: Check for transcribing Survivor Kills in general.
+[ ------ ]

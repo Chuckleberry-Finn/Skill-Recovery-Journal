@@ -126,18 +126,19 @@ function ISCraftAction:update()
 			local killsRecoveryPercentage = SandboxVars.SkillRecoveryJournal.KillsTrack or 0
 			if JMD and killsRecoveryPercentage > 0 then
 
-				local readZKills = readXp and readXp.kills and readXp.kills.Zombie or 0
-				local readSKills = readXp and readXp.kills and readXp.kills.Survivor or 0
-
 				local zKills = self.character:getZombieKills()
 				local sKills = self.character:getSurvivorKills()
 
-				local unaccountedZKills = (zKills > readZKills) and zKills-readZKills
-				local unaccountedSKills = (zKills > readZKills) and sKills-readSKills
+				JMD.kills = JMD.kills or {}
+				readXp.kills = readXp.kills or {}
+
+				local zombieKills = (JMD.kills.Zombie or 0)
+				local survivorKills = (JMD.kills.Survivor or 0)
+
+				local unaccountedZKills = (zKills > zombieKills) and zKills-zombieKills
+				local unaccountedSKills = (sKills > survivorKills) and sKills-survivorKills
 
 				if unaccountedZKills or unaccountedSKills then
-					JMD.kills = JMD.kills or {}
-					readXp.kills = readXp.kills or {}
 					if unaccountedZKills then
 						table.insert(changesBeingMade, getText("IGUI_char_Zombies_Killed"))
 						JMD.kills.Zombie = (JMD.kills.Zombie or 0) + math.floor(unaccountedZKills * (killsRecoveryPercentage/100))
