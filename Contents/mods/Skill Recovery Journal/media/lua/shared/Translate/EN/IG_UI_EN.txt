@@ -7,6 +7,10 @@ IGUI_EN = {
     IGUI_PlayerText_AllDoneWithJournal = "All done.",
     IGUI_PlayerText_Illiterate1 = "I can't read.",
     IGUI_PlayerText_Illiterate2 = "I am illiterate.",
+
+    IGUI_PlayerText_NeedGainWeight = "I should put on a few pounds first...",
+    IGUI_PlayerText_NeedLoseWeight = "I should drop a few pounds first...",
+
     IGUI_Tooltip_Empty = "An empty journal ready to be recorded into.",
     IGUI_Tooltip_Start = "A record of",
     IGUI_Tooltip_End = "'s life.",

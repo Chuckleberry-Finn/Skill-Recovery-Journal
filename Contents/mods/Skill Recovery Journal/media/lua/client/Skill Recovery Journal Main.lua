@@ -123,6 +123,46 @@ function SRJ.setPassiveLevels(id, player)
 end
 
 
+---@param player IsoGameCharacter|IsoPlayer
+function SRJ.checkFitnessCanAddXp(player)
+	if player:getNutrition():canAddFitnessXp() then return end
+
+	local fitness = player:getPerkLevel(Perks.Fitness)
+
+	local under, extremeUnder = player:HasTrait("Underweight"), (player:HasTrait("Emaciated") or player:HasTrait("Very Underweight"))
+	local over, extremeOver = player:HasTrait("Overweight"), player:HasTrait("Obese")
+
+	local mildIssue = under or over
+	local extremeIssue = extremeUnder or extremeOver
+
+	local blockAddXp = false
+
+	if ( fitness >= 9 and (extremeIssue or mildIssue) ) then
+		blockAddXp = true
+
+	elseif ( fitness < 6 ) then
+		--blockAddXp = false
+
+	elseif extremeIssue then
+		blockAddXp = true
+	end
+
+	local message = ((under or extremeUnder) and "IGUI_PlayerText_NeedGainWeight") or ((over or extremeOver) and "IGUI_PlayerText_NeedLoseWeight")
+
+	return blockAddXp, message
+end
+
+
+--TODO: Implement this
+function SRJ.checkProteinLevelMulti(player)
+	local multi = 1
+	if player:getNutrition():getProteins() > 50 and player:getNutrition():getProteins() < 300 then multi = 1.5
+	elseif player:getNutrition():getProteins() < -300 then multi = 0.7
+	end
+	return multi
+end
+
+
 function SRJ.getFreeLevelsFromTraitsAndProfession(player)
 	local bonusLevels = {}
 

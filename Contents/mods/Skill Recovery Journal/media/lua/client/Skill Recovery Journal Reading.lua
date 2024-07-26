@@ -185,6 +185,14 @@ function ReadSkillRecoveryJournal:update()
 							local perPerkXpRate = round(((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * readTimeMulti / differential, 2)
 							if perkLevelPlusOne == 11 then perPerkXpRate=false end
 
+							if skill=="Fitness" then
+								local cannotGain, message = SRJ.checkFitnessCanAddXp(player)
+								if cannotGain then
+									if message then sayText = getText(message) end
+									perPerkXpRate = false
+								end
+							end
+
 							--print("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..(perkLevelPlusOne-1).."  xpStored:"..xp.."  currentXP:"..currentlyReadXP)
 
 							if perPerkXpRate~=false then
@@ -266,7 +274,7 @@ function ReadSkillRecoveryJournal:update()
 
 			if bJournalUsedUp then
 				sayText = getText("IGUI_JournalXPUsedUp")
-			else
+			elseif (not sayText) then
 				sayTextChoices = {"IGUI_PlayerText_KnowSkill","IGUI_PlayerText_BookObsolete"}
 				sayText = getText(sayTextChoices[ZombRand(#sayTextChoices)+1])
 			end
@@ -287,13 +295,11 @@ function ReadSkillRecoveryJournal:update()
 			HaloTextHelper.addText(self.character, changesBeingMadeText, HaloTextHelper.getColorWhite())
 		end
 
-		if delayedStop then
-			if sayText and not self.spoke then
-				self.spoke = true
-				player:Say(sayText, 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
-			end
-			self:forceStop()
+		if sayText and not self.spoke then
+			self.spoke = true
+			player:Say(sayText, 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 		end
+		if delayedStop then self:forceStop() end
 	end
 end
 

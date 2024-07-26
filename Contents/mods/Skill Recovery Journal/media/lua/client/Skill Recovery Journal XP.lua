@@ -82,6 +82,9 @@ function SRJ_XPHandler.fetchMultipliers(player,perk)
     --[[
     local exerciseMultiplier = 1
     --if perk == Perks.Fitness and (not player:getNutrition():canAddFitnessXp()) then exerciseMultiplier 0 end
+    --]]
+
+    --[[
     if perk == Perks.Strength and instanceof(player,"IsoPlayer") then
         if player:getNutrition():getProteins() > 50 and player:getNutrition():getProteins() < 300 then exerciseMultiplier = 1.5
         elseif player:getNutrition():getProteins() < -300 then exerciseMultiplier = 0.7
