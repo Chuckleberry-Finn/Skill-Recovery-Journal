@@ -59,3 +59,8 @@ Fix: Passive Skills setting default set back to 0 (Shouldn't have been -1).
 Fix: Issue with transcribing Zombie/Survivor Kills across different journals.
 Fix: Check for transcribing Survivor Kills in general.
 [ ------ ]
+
+[ 8/14/24 ]
+Fix: Fitness/Weight conflict. The game will prevent gaining fitness XP if you're severely underweight - this caused issues where you could not recover your fitness back. Now you will need to regain some weight before continuing to read your journal.
+
+[ ------ ]
