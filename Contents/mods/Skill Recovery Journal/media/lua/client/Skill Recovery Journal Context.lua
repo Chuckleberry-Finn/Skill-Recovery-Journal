@@ -4,6 +4,16 @@ require "Skill Recovery Journal Reading"
 local contextSRJ = {}
 
 
+---@param context ISContextMenu
+function contextSRJ.postContextMenu(playerID, context, items)
+	local recipeName = getRecipeDisplayName("Transcribe Journal")
+	local option = context:getOptionFromName(recipeName)
+	---@type ISContextMenu
+	local subOption = option and option.subOption and context:getSubMenu(option.subOption)
+	subOption:removeOptionByName(getText("ContextMenu_All"))
+end
+
+
 function contextSRJ.readItems(items, player)
 	items = ISInventoryPane.getActualItems(items)
 	for i,item in ipairs(items) do
