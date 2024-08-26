@@ -126,8 +126,8 @@ function ISCraftAction:update()
 			local killsRecoveryPercentage = SandboxVars.SkillRecoveryJournal.KillsTrack or 0
 			if JMD and killsRecoveryPercentage > 0 then
 
-				local zKills = self.character:getZombieKills()
-				local sKills = self.character:getSurvivorKills()
+				local zKills = math.floor(self.character:getZombieKills() * (killsRecoveryPercentage/100) )
+				local sKills = math.floor(self.character:getSurvivorKills() * (killsRecoveryPercentage/100) )
 
 				JMD.kills = JMD.kills or {}
 				readXp.kills = readXp.kills or {}
@@ -141,12 +141,12 @@ function ISCraftAction:update()
 				if unaccountedZKills or unaccountedSKills then
 					if unaccountedZKills then
 						table.insert(changesBeingMade, getText("IGUI_char_Zombies_Killed"))
-						JMD.kills.Zombie = (JMD.kills.Zombie or 0) + math.floor(unaccountedZKills * (killsRecoveryPercentage/100))
+						JMD.kills.Zombie = (JMD.kills.Zombie or 0) + unaccountedZKills
 						readXp.kills.Zombie = (readXp.kills.Zombie or 0) + unaccountedZKills
 					end
 					if unaccountedSKills then
 						table.insert(changesBeingMade, getText("IGUI_char_Survivor_Killed"))
-						JMD.kills.Survivor = (JMD.kills.Survivor or 0) + math.floor(unaccountedSKills * (killsRecoveryPercentage/100))
+						JMD.kills.Survivor = (JMD.kills.Survivor or 0) + unaccountedSKills
 						readXp.kills.Survivor = (readXp.kills.Survivor or 0) + unaccountedSKills
 					end
 					self.changesMade = true
