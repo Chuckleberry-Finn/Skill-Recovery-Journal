@@ -7,15 +7,12 @@ local contextSRJ = {}
 ---@param context ISContextMenu
 function contextSRJ.postContextMenu(playerID, context, items)
 	local recipeName = getRecipeDisplayName("Transcribe Journal")
-
 	local option = context:getOptionFromName(recipeName)
-	---@type ISContextMenu
-	--local subOption = option and option.subOption and context:getSubMenu(option.subOption)
-	--subOption:removeOptionByName(getText("ContextMenu_All"))
-
-	local subOption = option and option.subOption and context:getSubMenu(option.subOption)
+	if not option then return end
+	local subOption = option.subOption and context:getSubMenu(option.subOption)
+	if not subOption then return end
 	local actualOption = subOption:getOptionFromName(getText("ContextMenu_One"))
-
+	if not actualOption then return end
 	option.onSelect = actualOption.onSelect
 	option.target = actualOption.target
 	option.param1 = actualOption.param1

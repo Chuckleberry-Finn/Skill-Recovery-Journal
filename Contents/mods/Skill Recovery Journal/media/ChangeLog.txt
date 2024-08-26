@@ -65,3 +65,7 @@ Fix: Fitness/Weight conflict. The game will prevent gaining fitness XP if you're
 Fix: Removed the 'All' option in transcribe.
 Tweak/Fix: Changed how the recovery on kills is processed.
 [ ------ ]
+
+[ 8/26/24 HOTFIX 1 ]
+Hotfix: Edge case with context overrides.
+[ ------ ]
