@@ -6,6 +6,8 @@ description=[h2][i]Craftable journals which allow the recovery of skills and rec
 description=
 description=[url=https://ko-fi.com/chuckleberryfinn][img]https://raw.githubusercontent.com/ChuckTheSheep/chuckImages/main/kofi.png[/img][/url][url=https://discord.gg/SReMnbV4V7][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/PZmodCommBanner3.png[/img][/url]
 description=
+description=[img]https://raw.githubusercontent.com/Chuckleberry-Finn/Skill-Recovery-Journal/main/images/steamDesc.png[/img]
+description=
 description=[url=https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/bingo.png][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/readThrough.png[/img][/url]
 description=[url=https://steamcommunity.com/workshop/filedetails/discussion/2503622437/3198119216812488644][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/FAQ.png[/img][/url]
 description=[img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/noModPacks.png[/img]
