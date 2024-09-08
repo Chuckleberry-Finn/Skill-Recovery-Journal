@@ -34,9 +34,9 @@ function contextSRJ.readItems(items, player)
 	for i,item in ipairs(items) do
 		if item:getContainer() ~= nil then
 			ISInventoryPaneContextMenu.transferIfNeeded(player, item)
-			ISTimedActionQueue.add(ReadSkillRecoveryJournal:new(player, item))
-			break
 		end
+		ISTimedActionQueue.add(ReadSkillRecoveryJournal:new(player, item))
+		break
 	end
 end
 
