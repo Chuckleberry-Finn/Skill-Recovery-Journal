@@ -6,7 +6,7 @@ module Base
            LeatherStrips=3,
            [Recipe.GetItemTypes.Glue],
            Thread,
-
+           Category:SkillJournal,
            Result:SkillRecoveryBoundJournal,
 
            Time:150.0,
@@ -17,7 +17,7 @@ module Base
         {
            keep SkillRecoveryBoundJournal,
            keep [Recipe.GetItemTypes.Write],
-
+           Category:SkillJournal,
            Result:SkillRecoveryBoundJournal,
            RemoveResultItem:true,
 		   AnimNode 	: TranscribeJournal,
