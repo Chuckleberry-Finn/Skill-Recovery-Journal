@@ -24,6 +24,7 @@ function ISCraftAction:update()
 
 	if self.recipe and self.recipe:getOriginalname() == "Transcribe Journal" and self.item:getType() == "SkillRecoveryBoundJournal" then
 		self.craftTimer = self.craftTimer + getGameTime():getMultiplier()
+		self.haloTextDelay = self.haloTextDelay - getGameTime():getMultiplier();
 		self.item:setJobDelta(0.0)
 		local updateInterval = 10
 		if self.craftTimer >= updateInterval then
@@ -67,6 +68,8 @@ function ISCraftAction:update()
 
 			local storedJournalXP = JMD["gainedXP"]
 			local readXp = SRJ.getReadXP(self.character)
+			local totalRecoverableXP = 1
+			local totalStoredXP = 1
 
 			---background fix for old XP------------( 1/3 )---------
 			local oldXp = journalModData.oldXP
@@ -75,6 +78,7 @@ function ISCraftAction:update()
 			if bOwner and storedJournalXP and self.gainedSkills then
 				for perkID,xp in pairs(self.gainedSkills) do
 					if xp > 0 then
+						totalRecoverableXP = totalRecoverableXP + xp
 
 						storedJournalXP[perkID] = storedJournalXP[perkID] or 0
 						if xp > storedJournalXP[perkID] then
@@ -111,6 +115,7 @@ function ISCraftAction:update()
 							end
 						end
 					end
+					totalStoredXP = totalStoredXP + (storedJournalXP[perkID] or 0)
 				end
 			end
 
@@ -153,14 +158,18 @@ function ISCraftAction:update()
 				end
 			end
 
-			if self.changesMade==true then
+			-- show transcript progress as halo text, prevent overlapping addTexts
+			if self.haloTextDelay <= 0 and #changesBeingMade > 0 then
+				self.haloTextDelay = 100
+				print("In Book: " .. totalStoredXP - self.oldJournalTotalXP .. " - in char: " .. totalRecoverableXP - self.oldJournalTotalXP)
+				local progressText = math.floor(((totalStoredXP - self.oldJournalTotalXP) / (totalRecoverableXP - self.oldJournalTotalXP)) * 100 + 0.5) .. "%" 
+				local changesBeingMadeText = getText("IGUI_Tooltip_Transcribing") .. " (" .. progressText ..") :"
+				for k,v in pairs(changesBeingMade) do changesBeingMadeText = changesBeingMadeText.." "..v..((k~=#changesBeingMade and ", ") or "") end
+				HaloTextHelper.addText(self.character, changesBeingMadeText, HaloTextHelper.getColorWhite())
+			end
 
-				if #changesBeingMade>0 then
-					local changesBeingMadeText = getText("IGUI_Tooltip_Transcribing")..":"
-					for k,v in pairs(changesBeingMade) do changesBeingMadeText = changesBeingMadeText.." "..v..((k~=#changesBeingMade and ", ") or "") end
-					HaloTextHelper:update()
-					HaloTextHelper.addText(self.character, changesBeingMadeText, HaloTextHelper.getColorWhite())
-				end
+			-- handle sound
+			if self.changesMade==true then
 
 				self.playSoundLater = self.playSoundLater or 0
 				if self.playSoundLater > 0 then
@@ -210,6 +219,10 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 
 
 		o.gainedSkills = SRJ.calculateGainedSkills(character) or false
+		o.oldJournalTotalXP = 0
+		for perkID, xp in pairs(JMD["gainedXP"]) do
+			o.oldJournalTotalXP = o.oldJournalTotalXP + xp
+		end
 		o.willWrite = true
 		local sayText
 
@@ -254,6 +267,7 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 		o.loopedAction = false
 		o.stopOnWalk = false
 		o.maxTime = 50
+		o.haloTextDelay = 0
 	end
 
 	return o

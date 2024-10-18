@@ -73,6 +73,8 @@ function ReadSkillRecoveryJournal:update()
 	local bJournalUsedUp = false
 
 	self.readTimer = (self.readTimer or 0) + (getGameTime():getMultiplier() or 0)
+	self.haloTextDelay = self.haloTextDelay - (getGameTime():getMultiplier() or 0);
+
 	-- normalize update time via in game time. Adjust updateInterval as needed
 	local updateInterval = 10
 	if self.readTimer >= updateInterval then
@@ -88,6 +90,8 @@ function ReadSkillRecoveryJournal:update()
 		local delayedStop = false
 		local sayText
 		local sayTextChoices = {"IGUI_PlayerText_DontUnderstand", "IGUI_PlayerText_TooComplicated", "IGUI_PlayerText_DontGet"}
+		local totalRecoverableXP = 0
+		local totalRedXP = 0
 
 		local pSteamID = player:getSteamID()
 
@@ -166,10 +170,12 @@ function ReadSkillRecoveryJournal:update()
 				-----------------------------------
 
 				for skill,xp in pairs(XpStoredInJournal) do
+					totalRecoverableXP = totalRecoverableXP + xp
 					if Perks[skill] and validSkills[skill] then
 
 						readXP[skill] = readXP[skill] or 0
 						local currentlyReadXP = readXP[skill]
+						totalRedXP = totalRedXP + currentlyReadXP
 						local journalXP = xp
 
 						if oneTimeUse and jmdUsedXP[skill] and jmdUsedXP[skill] then
@@ -279,16 +285,17 @@ function ReadSkillRecoveryJournal:update()
 				sayText = getText(sayTextChoices[ZombRand(#sayTextChoices)+1])
 			end
 
-		elseif changesMade then
-			local changesBeingMadeText = ""
+		end 
+
+		if self.haloTextDelay <= 0 and #changesBeingMade > 0 then
+			print("totalRed: " .. totalRedXP .. " | totalRecovery: ".. totalRecoverableXP .. " | oldXP: " .. self.oldCharacterXP)
+			local progressText = math.floor(((totalRedXP - self.oldCharacterXP) / (totalRecoverableXP - self.oldCharacterXP)) * 100 + 0.5) .. "%" 
+			local changesBeingMadeText = getText("IGUI_Tooltip_Learning") .." (" .. progressText .. "): "
 			for k,v in pairs(changesBeingMade) do
 				changesBeingMadeText = changesBeingMadeText.." "..v
 				if k~=#changesBeingMade then
 					changesBeingMadeText = changesBeingMadeText..", "
 				end
-			end
-			if #changesBeingMade>0 then
-				changesBeingMadeText = getText("IGUI_Tooltip_Learning")..": "..changesBeingMadeText
 			end
 
 			HaloTextHelper:update()
@@ -310,6 +317,11 @@ function ReadSkillRecoveryJournal:new(character, item)
 	self.__index = self
 
 	o.character = character
+	o.oldCharacterXP = 0
+	local charSkills = SRJ.calculateGainedSkills(character) or {}
+	for perkID, xp in pairs(charSkills) do
+		o.oldCharacterXP = o.oldCharacterXP + xp
+	end
 	o.item = item
 	o.stopOnWalk = false
 	o.stopOnRun = true
@@ -321,6 +333,7 @@ function ReadSkillRecoveryJournal:new(character, item)
 	o.learnedRecipes = {}
 	o.recipeIntervals = 0
 	o.maxTime = -1
+	o.haloTextDelay = 0
 
 	local journalModData = item:getModData()
 	local JMD = journalModData["SRJ"]
