@@ -70,6 +70,10 @@ Tweak/Fix: Changed how the recovery on kills is processed.
 Hotfix: Edge case with context overrides.
 [ ------ ]
 
+[ 10/-/24 ]
+Fix halo messages overlapping (MassCraxx)
+[ ------ ]
+
 [ TODO ]
 - ModData Support
 - Craft recipe support
