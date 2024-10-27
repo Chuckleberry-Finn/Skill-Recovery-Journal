@@ -69,3 +69,12 @@ Tweak/Fix: Changed how the recovery on kills is processed.
 [ 8/26/24 HOTFIX 1 ]
 Hotfix: Edge case with context overrides.
 [ ------ ]
+
+[ TODO ]
+- ModData Support
+- Craft recipe support
+
+    - option SkillRecoveryJournal.CraftRecipe
+      {type = string, default = , page = SkillRecoveryJournal, translation = SkillRecoveryJournal_CraftRecipe,}
+
+[ ------ ]
