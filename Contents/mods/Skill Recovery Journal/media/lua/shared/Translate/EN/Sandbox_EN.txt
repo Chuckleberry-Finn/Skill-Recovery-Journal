@@ -37,8 +37,8 @@ Sandbox_EN = {
     Sandbox_SkillRecoveryJournalUsed = "Journal XP Used When Read"
     Sandbox_SkillRecoveryJournalUsed_tooltip = "Normally you can reread the journal as many times as you like - with this toggled on each individual XP point can only be recovered once. You can still add onto the journal, but each point can only be recovered once on each journal. Note: the tooltip for the journal will now display a fraction for unused points."
 
-    Sandbox_SkillRecoveryJournalCraft = "Journal is Craftable"
-    Sandbox_SkillRecoveryJournalUsed_tooltip = "Disabling this means the journals cannot be crafted."
+    Sandbox_SkillRecoveryJournalCraftRecipe = "Journal Recipe"
+    Sandbox_SkillRecoveryJournalCraftRecipe_tooltip = "Setting this as blank means the journals cannot be crafted.\n\nSyntax follows recipe ingredients, as follows:\nEach item is separated by '|'.\nSupports 'keep n' and 'destroy n' where n is an item type which will be kept or consumed.\nUsing 'n = 5' will require 5 of that item.\nUsing 'n;5' will require 5 'units' from that item in the case of drainable ingredients.\nUsing [function] will utilize the recipe functions for special cases.\n\nAll of these are a part of the vanilla recipe syntax.\nAnything not listed here will also work as it would with a recipe script.",
 
     Sandbox_SkillRecoveryJournalKillsTrack = "Zombie/Survivor Kills Recovery Percentage"
 

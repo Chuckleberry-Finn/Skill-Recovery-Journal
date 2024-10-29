@@ -1,17 +1,5 @@
 module Base
 {
-    recipe Bind Journal
-        {
-           Notebook/Journal,
-           LeatherStrips=3,
-           [Recipe.GetItemTypes.Glue],
-           Thread,
-           Category:SkillJournal,
-           Result:SkillRecoveryBoundJournal,
-
-           Time:150.0,
-           OnCanPerform:SkillRecoveryJournalOnCanPerformCraftable
-        }
 
     recipe Transcribe Journal
         {
@@ -27,5 +15,5 @@ module Base
            Time:50.0,
            OnCanPerform:SkillRecoveryJournalOnCanPerformWritingJournal,
            StopOnWalk:false,
-        }
+        },
 }

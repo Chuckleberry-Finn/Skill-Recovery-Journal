@@ -39,8 +39,8 @@ option SkillRecoveryJournal.RecoverRecipes
 option SkillRecoveryJournal.RecoveryJournalUsed
 {type = boolean, default = false, page = SkillRecoveryJournal, translation = SkillRecoveryJournalUsed,}
 
-option SkillRecoveryJournal.Craftable
-{type = boolean, default = true, page = SkillRecoveryJournal, translation = SkillRecoveryJournalCraft,}
+option SkillRecoveryJournal.CraftRecipe
+{type = string, default = Notebook/Journal|LeatherStrips=3|[Recipe.GetItemTypes.Glue]|Thread, page = SkillRecoveryJournal, translation = SkillRecoveryJournalCraftRecipe,}
 
 option SkillRecoveryJournal.KillsTrack
 {type = integer, min = 0, max = 100, default = 0, page = SkillRecoveryJournal, translation = SkillRecoveryJournalKillsTrack,}

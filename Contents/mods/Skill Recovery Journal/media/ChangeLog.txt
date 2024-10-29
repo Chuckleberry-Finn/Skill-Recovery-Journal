@@ -72,12 +72,11 @@ Hotfix: Edge case with context overrides.
 
 [ 10/-/24 ]
 Fix halo messages overlapping (MassCraxx)
+Changed `JournalCraft` sandbox option to `JournalCraftRecipe` - which takes a string and creates a recipe for crafting.
 [ ------ ]
 
 [ TODO ]
 - ModData Support
-- Craft recipe support
-
     - option SkillRecoveryJournal.CraftRecipe
       {type = string, default = , page = SkillRecoveryJournal, translation = SkillRecoveryJournal_CraftRecipe,}
 
