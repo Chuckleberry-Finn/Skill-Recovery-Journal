@@ -1,4 +1,5 @@
 local SRJ = require "Skill Recovery Journal Main"
+local modDataCapture = require "Skill Recovery Journal ModData"
 
 require "TimedActions/ISBaseTimedAction"
 
@@ -238,6 +239,15 @@ function ReadSkillRecoveryJournal:update()
 						end
 					end
 				end
+			end
+		end
+
+		if not self.modDataReadComplete then
+			self.modDataReadComplete = true
+			local modDataStored = modDataCapture.copyDataToPlayer(player, journal)
+			if modDataStored then
+				for _,dataID in pairs(modDataStored) do table.insert(changesBeingMade, dataID) end
+				changesMade = true
 			end
 		end
 

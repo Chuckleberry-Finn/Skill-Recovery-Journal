@@ -1,6 +1,7 @@
 require "TimedActions/ISCraftAction"
 
 local SRJ = require "Skill Recovery Journal Main"
+local modDataCapture = require "Skill Recovery Journal ModData"
 
 local SRJOVERWRITE_ISCraftAction_perform = ISCraftAction.perform
 function ISCraftAction:perform()
@@ -158,10 +159,21 @@ function ISCraftAction:update()
 				end
 			end
 
+			if not self.modDataStoredComplete then
+				self.modDataStoredComplete = true
+				local modDataStored = modDataCapture.copyDataToJournal(self.character, self.item)
+				if modDataStored then
+					for _,dataID in pairs(modDataStored) do
+						table.insert(changesBeingMade, dataID)
+					end
+					self.changesMade = true
+				end
+			end
+
 			-- show transcript progress as halo text, prevent overlapping addTexts
 			if self.haloTextDelay <= 0 and #changesBeingMade > 0 then
 				self.haloTextDelay = 100
-				print("In Book: " .. totalStoredXP - self.oldJournalTotalXP .. " - in char: " .. totalRecoverableXP - self.oldJournalTotalXP)
+				--print("In Book: " .. totalStoredXP - self.oldJournalTotalXP .. " - in char: " .. totalRecoverableXP - self.oldJournalTotalXP)
 				local progressText = math.floor(((totalStoredXP - self.oldJournalTotalXP) / (totalRecoverableXP - self.oldJournalTotalXP)) * 100 + 0.5) .. "%" 
 				local changesBeingMadeText = getText("IGUI_Tooltip_Transcribing") .. " (" .. progressText ..") :"
 				for k,v in pairs(changesBeingMade) do changesBeingMadeText = changesBeingMadeText.." "..v..((k~=#changesBeingMade and ", ") or "") end
