@@ -14,16 +14,23 @@ function modDataCapture.copyDataToPlayer(player, journal)
 
     if #modDataCapture.keys <= 0 then modDataCapture.parseSandBoxOption() end
 
+    local data = {}
+
     local playerData = player:getModData()
     local journalData = journal:getModData()
 
     for _,key in pairs(modDataCapture.keys) do
-        local valueFromKey = journalData and journalData.pModDat and journalData.pModData[key]
+        print("key: ", key)
+        local valueFromKey = journalData and journalData.pModData and journalData.pModData[key]
         local value = valueFromKey and copyTable(valueFromKey)
         if value then
+            print(" -- key: ", key)
             playerData[key] = value
+            table.insert(data, key)
         end
     end
+
+    return data
 end
 
 
