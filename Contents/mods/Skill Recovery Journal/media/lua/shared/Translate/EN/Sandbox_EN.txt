@@ -41,7 +41,7 @@ Sandbox_EN = {
     Sandbox_SkillRecoveryJournalCraftRecipe_tooltip = "Setting this as blank means the journals cannot be crafted.\n\nSyntax follows recipe ingredients, as follows:\nEach item is separated by '|'.\nSupports 'keep n' and 'destroy n' where n is an item type which will be kept or consumed.\nUsing 'n = 5' will require 5 of that item.\nUsing 'n;5' will require 5 'units' from that item in the case of drainable ingredients.\nUsing [function] will utilize the recipe functions for special cases.\n\nAll of these are a part of the vanilla recipe syntax.\nAnything not listed here will also work as it would with a recipe script.",
 
     Sandbox_SkillRecoveryJournalModDataTrack = "Track ModData Values"
-    Sandbox_SkillRecoveryJournalModDataTrack_tooltip = "USE WITH CAUTION./n/nExample syntax: ModDataKey1|ModDataKey2\nTranscription will store a copy of the corresponding table from the player's mod data. This can create significant issues if the data is large. If you're not sure what any of this means, ignore it, and leave blank."
+    Sandbox_SkillRecoveryJournalModDataTrack_tooltip = "USE WITH CAUTION.\n\nExample syntax: ModDataKey1|ModDataKey2\nTranscription will store a copy of the corresponding table from the player's mod data. \nThis can create significant issues if the data is large.\n If you're not sure what any of this means, ignore it, and leave blank."
 
     Sandbox_SkillRecoveryJournalKillsTrack = "Zombie/Survivor Kills Recovery Percentage"
 
