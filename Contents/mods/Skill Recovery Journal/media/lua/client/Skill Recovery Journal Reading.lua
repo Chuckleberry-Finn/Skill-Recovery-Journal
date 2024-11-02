@@ -245,8 +245,13 @@ function ReadSkillRecoveryJournal:update()
 		if not self.modDataReadComplete then
 			self.modDataReadComplete = true
 			local modDataStored = modDataCapture.copyDataToPlayer(player, journal)
+			print("TEST")
 			if modDataStored then
-				for _,dataID in pairs(modDataStored) do table.insert(changesBeingMade, dataID) end
+				print("CHECK MOD DATA:")
+				for _,dataID in pairs(modDataStored) do
+					print(" - dataID: ", dataID)
+					table.insert(changesBeingMade, dataID)
+				end
 				changesMade = true
 			end
 		end
@@ -298,7 +303,7 @@ function ReadSkillRecoveryJournal:update()
 		end 
 
 		if self.haloTextDelay <= 0 and #changesBeingMade > 0 then
-			print("totalRed: " .. totalRedXP .. " | totalRecovery: ".. totalRecoverableXP .. " | oldXP: " .. self.oldCharacterXP)
+			--print("totalRead: " .. totalRedXP .. " | totalRecovery: ".. totalRecoverableXP .. " | oldXP: " .. self.oldCharacterXP)
 			local progressText = math.floor(((totalRedXP - self.oldCharacterXP) / (totalRecoverableXP - self.oldCharacterXP)) * 100 + 0.5) .. "%" 
 			local changesBeingMadeText = getText("IGUI_Tooltip_Learning") .." (" .. progressText .. "): "
 			for k,v in pairs(changesBeingMade) do
