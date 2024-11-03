@@ -300,6 +300,7 @@ function ReadSkillRecoveryJournal:update()
 		end 
 
 		if self.haloTextDelay <= 0 and #changesBeingMade > 0 then
+			self.haloTextDelay = 100
 			--print("totalRead: " .. totalRedXP .. " | totalRecovery: ".. totalRecoverableXP .. " | oldXP: " .. self.oldCharacterXP)
 			local progressText = math.floor(((totalRedXP - self.oldCharacterXP) / (totalRecoverableXP - self.oldCharacterXP)) * 100 + 0.5) .. "%" 
 			local changesBeingMadeText = getText("IGUI_Tooltip_Learning") .." (" .. progressText .. "): "
