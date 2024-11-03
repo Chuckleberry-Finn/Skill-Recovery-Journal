@@ -1,6 +1,6 @@
 local function SkillRecoveryJournalRecipe()
 
-    local sandboxOption = SandboxVars.SkillRecoveryJournal.CraftRecipe
+    local sandboxOption = SandboxVars.SkillRecoveryJournal.CraftRecipe or "Notebook/Journal|LeatherStrips=3|[Recipe.GetItemTypes.Glue]|Thread"
     if not sandboxOption or sandboxOption == "" then return end
 
     local script = {
