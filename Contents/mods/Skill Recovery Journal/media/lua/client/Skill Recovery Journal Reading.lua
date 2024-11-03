@@ -245,11 +245,8 @@ function ReadSkillRecoveryJournal:update()
 		if not self.modDataReadComplete then
 			self.modDataReadComplete = true
 			local modDataStored = modDataCapture.copyDataToPlayer(player, journal)
-			print("TEST")
 			if modDataStored then
-				print("CHECK MOD DATA:")
 				for _,dataID in pairs(modDataStored) do
-					print(" - dataID: ", dataID)
 					table.insert(changesBeingMade, dataID)
 				end
 				changesMade = true
