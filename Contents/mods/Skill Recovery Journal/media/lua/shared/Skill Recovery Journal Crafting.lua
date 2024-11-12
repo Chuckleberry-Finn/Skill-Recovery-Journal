@@ -5,7 +5,7 @@ local function SkillRecoveryJournalRecipe()
 
     local script = {
         header = "module Base { recipe Bind Journal { ",
-        footer = "Category:SkillJournal, Result:SkillRecoveryBoundJournal, Time:150.0, } }",
+        footer = "Category:SkillJournal, Result:Base.SkillRecoveryBoundJournal, Time:150.0, } }",
     }
 
     local ingredients = ""
