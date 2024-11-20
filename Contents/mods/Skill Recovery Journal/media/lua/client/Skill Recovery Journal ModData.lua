@@ -8,6 +8,24 @@ function modDataCapture.parseSandBoxOption()
 end
 
 
+function modDataCapture.returnCapturedKeys(journalData)
+    local sandbox = SandboxVars.SkillRecoveryJournal.ModDataTrack
+    if (not sandbox) or (sandbox == "") then return end
+
+    if #modDataCapture.keys <= 0 then modDataCapture.parseSandBoxOption() end
+
+    local data = {}
+    for _,key in pairs(modDataCapture.keys) do
+        local valueFromKey = journalData and journalData.pModData and journalData.pModData[key]
+        if valueFromKey then
+            table.insert(data, key)
+        end
+    end
+
+    return data
+end
+
+
 function modDataCapture.copyDataToPlayer(player, journal)
     local sandbox = SandboxVars.SkillRecoveryJournal.ModDataTrack
     if (not sandbox) or (sandbox == "") then return end
@@ -20,11 +38,9 @@ function modDataCapture.copyDataToPlayer(player, journal)
     local journalData = journal:getModData()
 
     for _,key in pairs(modDataCapture.keys) do
-        print("key: ", key)
         local valueFromKey = journalData and journalData.pModData and journalData.pModData[key]
         local value = valueFromKey and copyTable(valueFromKey)
         if value then
-            print(" -- key: ", key)
             playerData[key] = value
             table.insert(data, key)
         end
