@@ -1,6 +1,7 @@
 require "ISUI/ISToolTipInv"
 
 local SRJ = require "Skill Recovery Journal Main"
+local modDataCapture = require "Skill Recovery Journal ModData"
 
 local function SRJ_generateTooltip(journalModData, player)
 
@@ -98,6 +99,14 @@ local function SRJ_generateTooltip(journalModData, player)
 			skillsRecord = skillsRecord.."\n"
 			if jmdZKills and jmdZKills>0 then skillsRecord = skillsRecord .. getText("IGUI_char_Zombies_Killed")..":"..jmdZKills.."\n" end
 			if jmdSKills and jmdSKills>0 then skillsRecord = skillsRecord .. getText("IGUI_char_Survivor_Killed")..":"..jmdSKills.."\n" end
+		end
+	end
+
+	local stored_keys = modDataCapture.returnCapturedKeys(JMD)
+	if stored_keys then
+		skillsRecord = skillsRecord.."\nModData:"
+		for i,keyID in pairs(stored_keys) do
+			skillsRecord = skillsRecord .. keyID ..(((i ~= #stored_keys) and ", ") or "")
 		end
 	end
 
