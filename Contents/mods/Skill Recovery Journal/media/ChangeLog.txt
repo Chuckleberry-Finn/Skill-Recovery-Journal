@@ -72,6 +72,7 @@ Hotfix: Edge case with context overrides.
 
 [ 11/3/24 ]
 Added % progress to reading/writing (MassCraxx)
-Changed `JournalCraft` sandbox option to `JournalCraftRecipe` - which takes a string and creates a recipe for crafting.
+Changed `JournalCraft` sandbox option to `JournalCraftRecipe`
+- Which takes a string and creates a recipe for crafting.
 Added new option for mod-data support. Warning, this feature operates with a full overwrite.
 [ ------ ]
