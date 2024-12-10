@@ -1,0 +1,4 @@
+ItemName_DE = {
+    ItemName_Base.SkillRecoveryJournal = "Gebundenes Journal (Verfallen)",
+    ItemName_Base.SkillRecoveryBoundJournal = "Gebundenes Journal",
+}
