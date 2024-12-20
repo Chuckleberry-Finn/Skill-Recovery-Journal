@@ -7,3 +7,4 @@ description=
 poster=poster.png
 icon=icon.png
 versionMin=42.0
+require=\ChuckleberryFinnAlertSystem,\errorMagnifier,
