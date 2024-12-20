@@ -1,0 +1,20 @@
+IGUI_CN = {
+    IGUI_PlayerText_NothingWritten = "这是本空日志。",
+    IGUI_PlayerText_DontHaveAnyXP = "没有什么需要写入的东西了。",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "在别人的日志里乱写不太合适。",
+    IGUI_PlayerText_DoesntFeelRightToRead = "读别人的日志不太合适。",
+    IGUI_PlayerText_NothingToAddToJournal = "没什么需要补充的了。",
+    IGUI_PlayerText_AllDoneWithJournal = "完成。",
+    IGUI_Tooltip_Empty = "一本崭新的技能日志，可以用于记录毕生所学。",
+    IGUI_Tooltip_Start = "",
+    IGUI_Tooltip_End = "的技能日志",
+    IGUI_Tooltip_Recipe = "合成",
+    IGUI_Tooltip_Recipes = "合成",
+    IGUI_Tooltip_Transcribing = "记录",
+    IGUI_Tooltip_Learning = "阅读",
+    IGUI_perks_Lightfoot = "轻巧",
+    IGUI_perks_Sneak = "潜行",
+    IGUI_perks_PlantScavenging = "搜寻",
+    IGUI_Rename = "重命名",
+    IGUI_JournalXPUsedUp = "这本书的字迹模糊，难以阅读（开启了阅读时消耗经验选项）"
+}

@@ -1,0 +1,4 @@
+Tooltip_EN = {
+    Tooltip_DecayedJournal = "Move this into your inventory to renew.",
+    Tooltip_SkillJournal = "XP values are dependent on who is reading them."
+}

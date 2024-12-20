@@ -1,0 +1,45 @@
+Sandbox_DE = {
+	Sandbox_SkillRecoveryJournal = "Skill Recovery Journal",
+
+	Sandbox_SkillRecoveryJournalPercentage = "Allgemeiner Skill Recovery Prozentsatz",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "Die Menge an Erfahrung, die durch das Lesen gebundener Journale wiederhergestellt wird.<br>Dieser Wert wird als Standard verwendet, wenn andere Optionen auf -1 gesetzt sind.",
+
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "Skill Recovery Transkriptionsgeschwindigkeit Multiplikator",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "Ein Multiplikator fuer die Geschwindigkeit der Journal-Transkription."
+
+	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Lesegeschwindigkeits-Multiplikator fuer Skill Recovery",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "Ein Multiplikator fuer die Lesegeschwindigkeit gebundener Journale."
+
+	Sandbox_SkillRecoveryJournalTranscribeTVXP = "XP aus TV/VHS transkribieren",
+	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Das Aktivieren dieser Option ermoeglicht es, XP, die durch das Ansehen von TV/VHS verdient wurden, zu transkribieren. Hinweis: Dies bedeutet, dass Spieler angeschaute XP kumulativ zwischen Charakteren uebertragen koennen."
+
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Prozentsatz der passiven Skill Recovery"
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Erholungsprozentsatz fuer passive Faehigkeiten.<br>Setze diesen Wert auf -1, um den allgemeinen Skill Recovery Prozentsatz zu verwenden."
+
+	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "Prozentsatz der Skill Recovery fuer Kampf-Faehigkeiten"
+    Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "Erholungsprozentsatz fuer Kampf-Faehigkeiten.<br>Setze diesen Wert auf -1, um den allgemeinen Skill Recovery Prozentsatz zu verwenden."
+
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "Prozentsatz der Skill Recovery fuer Schusswaffen-Faehigkeiten"
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "Erholungsprozentsatz fuer Schusswaffen-Faehigkeiten.<br>Setze diesen Wert auf -1, um den allgemeinen Skill Recovery Prozentsatz zu verwenden."
+
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "Prozentsatz der Skill Recovery fuer Handwerks-Faehigkeiten"
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Erholungsprozentsatz fuer Handwerks-Faehigkeiten.<br>Setze diesen Wert auf -1, um den allgemeinen Skill Recovery Prozentsatz zu verwenden."
+
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "Prozentsatz der Skill Recovery fuer Ueberlebensfaehigkeiten"
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Erholungsprozentsatz fuer Ueberlebensfaehigkeiten.<br>Setze diesen Wert auf -1, um den allgemeinen Skill Recovery Prozentsatz zu verwenden."
+
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "Prozentsatz der Skill Recovery fuer Agilitaets-Faehigkeiten"
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "Erholungsprozentsatz fuer Agilitaets-Faehigkeiten.<br>Setze diesen Wert auf -1, um den allgemeinen Skill Recovery Prozentsatz zu verwenden."
+
+	Sandbox_SkillRecoveryJournalRecoverRecipes = "Rezepte wiederherstellen"
+    Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "Deaktiviere diese Option, um zu verhindern, dass Journale Rezepte wiederherstellen/transkribieren."
+
+    Sandbox_SkillRecoveryJournalUsed = "Journal XP, die beim Lesen verwendet werden"
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "Normalerweise kannst du das Journal so oft du willst erneut lesen – wenn diese Option aktiviert ist, kann jeder einzelne XP-Punkt nur einmal wiederhergestellt werden. Du kannst das Journal weiterhin ergaenzen, aber jeder Punkt kann nur einmal pro Journal wiederhergestellt werden. Hinweis: Der Tooltip fuer das Journal zeigt jetzt einen Bruchteil fuer nicht genutzte Punkte an."
+
+    Sandbox_SkillRecoveryJournalCraft = "Journal ist herstellbar"
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "Das Deaktivieren dieser Option bedeutet, dass die Journale nicht mehr hergestellt werden koennen."
+
+    Sandbox_SkillRecoveryJournalKillsTrack = "Prozentsatz der Skill Recovery fuer Zombie/Ueberlebenden-Kills"
+
+	}

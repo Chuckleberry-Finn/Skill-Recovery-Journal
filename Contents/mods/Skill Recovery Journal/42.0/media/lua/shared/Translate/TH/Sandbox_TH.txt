@@ -1,0 +1,42 @@
+Sandbox_TH = {
+	Sandbox_SkillRecoveryJournal = "บันทึกประสบการณ์ชีวิต",
+
+	Sandbox_SkillRecoveryJournalPercentage = "อัตราการกู้คืนค่าประสบการณ์",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "ปริมาณค่าประสบการณ์ที่กู้คืนได้จากการอ่านบันทึกประสบการณ์ชีวิต",
+
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "ความเร็วในการเขียนบันทึก",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "ตัวคูณความเร็วในการเขียนบันทึกถ่ายทอดประสบการณ์ชีวิต"
+
+	Sandbox_SkillRecoveryJournalReadTimeSpeed = "ความเร็วในการอ่านบันทึก",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "ตัวคูณความเร็วในการเรียนรู้ประสบการณ์จากการอ่านบันทึก"
+
+    Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses = "กู้คืนค่าประสบการณ์พิเศษเพิ่มเติมจากคุณลักษณะหรืออาชีพ"
+    Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses_tooltip = "การเริ่มต้นด้วยระดับทักษะมากกว่า 1 จะทำให้คุณได้รับค่าประสบการณ์พิเศษเพิ่มเติม - หากปิดตัวเลือกนี้ค่าประสบการณ์พิเศษเพิ่มเติมจะไม่ได้รับการบันทึก โดยจะบันทึกเฉพาะค่าประสบการณ์ทั้งหมดที่เป็นของตัวละครโดยไม่รวมทักษะเริ่มต้น ระดับทักษะเริ่มต้นจะไม่ถูกกู้คืน - แต่จะมอบค่าประสบการณ์พิเศษเพิ่มเติมให้เท่านั้น"
+
+	Sandbox_SkillRecoveryJournalTranscribeTVXP = "บันทึกค่าประสบการณ์ที่ได้รับจากทีวี/วิดีโอเทป",
+	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "หากเปิดใช้งานตัวเลือกนี้จะทำให้ผู้เล่นสามารถบันทึกค่าประสบการณ์ที่ได้รับจากการดูทีวี/วิดีโอเทปได้ หมายเหตุ: ผู้เล่นจะสามารถถ่ายโอนค่าประสบการณ์สะสมที่ได้รับจากการดูทีวีไปให้ตัวละครอื่นได้"
+
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "กู้คืนสมรรถภาพของร่างกาย"
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "เลือกช่องนี้เพื่อบันทึกสมรรถภาพของร่างกาย"
+
+	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "กู้คืนทักษะการต่อสู้"
+    Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "เลือกช่องนี้เพื่อบันทึกทักษะการต่อสู้"
+
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "กู้คืนทักษะการใช้อาวุธปืน"
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "เลือกช่องนี้เพื่อบันทึกทักษะการใช้อาวุธปืน"
+
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "กู้คืนทักษะการประดิษฐ์"
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "เลือกช่องนี้เพื่อบันทึกทักษะการประดิษฐ์"
+
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "กู้คืนทักษะการเอาชีวิตรอด"
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "เลือกช่องนี้เพื่อบันทึกทักษะการเอาชีวิตรอด"
+
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "กู้คืนทักษะความคล่องแคล่วว่องไว"
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "เลือกช่องนี้เพื่อบันทึกทักษะความคล่องแคล่วว่องไว"
+
+	Sandbox_SkillRecoveryJournalRecoverRecipes = "กู้คืนความรู้สูตรผสม"
+    Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "ปิดการใช้งานเพื่อป้องกันการใช้บันทึกประสบการณ์ชีวิตกู้คืน/บันทึกสูตรผสม"
+    
+    Sandbox_SkillRecoveryJournalUsed = "ใช้ค่าประสบการณ์เมื่ออ่านบันทึกประสบการณ์ชีวิต"
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "หากเลือกช่องนี้เมื่ออ่านบันทึกประสบการณ์ชีวิตจะสูญเสียค่าประสบการณ์บางส่วน"
+	}

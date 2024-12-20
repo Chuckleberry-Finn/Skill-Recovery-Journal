@@ -1,0 +1,4 @@
+Recipe_DE = {
+    Recipe_Transcribe_Journal = "In Journal übertragen",
+    Recipe_Bind_Journal = "Journal zusammenfügen.",
+}

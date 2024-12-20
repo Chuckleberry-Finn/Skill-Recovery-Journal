@@ -1,0 +1,32 @@
+Sandbox_CN = {
+	Sandbox_SkillRecoveryJournal = "技能日志",
+	Sandbox_SkillRecoveryJournalPercentage = "技能恢复百分比",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "调整从阅读日志中获得技能经验的百分比（能获得多少日志中的经验）。",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "记录日志速率",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "调整记录日志的速度。"
+	Sandbox_SkillRecoveryJournalReadTimeSpeed = "阅读日志速率",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "调整阅读日志的速度。"
+
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "记录被动技能"
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "启用以允许日志记录被动技能（体格、力量）"
+
+	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "记录战斗技能"
+    Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "启用以允许日志记录战斗技能（长短棍、长短刀）"
+
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "记录枪械技能"
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "启用以允许日志记录战斗技能（瞄准、装填）"
+
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "记录制造技能"
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "启用以允许日志记录制造技能（烹饪、木工、金工等）"
+
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "记录生存技能"
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "启用以允许日志记录生存技能（采集、搜寻、钓鱼）"
+
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "记录身法技能"
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "启用以允许日志记录身法技能（灵活、轻巧等）"
+
+	Sandbox_SkillRecoveryJournalRecoverRecipes = "记录配方"
+    Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "启用以允许日志记录各类制造配方。"
+    Sandbox_SkillRecoveryJournalUsed = "消耗经验"
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "启用该选项后阅读日志会消耗日志中记录的经验。"
+	}

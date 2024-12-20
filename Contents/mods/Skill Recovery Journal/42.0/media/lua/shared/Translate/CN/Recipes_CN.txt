@@ -1,0 +1,4 @@
+Recipe_CN = {
+    Recipe_Bind_Journal = "制作技能学习心得笔记",
+    Recipe_Transcribe_Journal = "记录技能学习心得",
+}

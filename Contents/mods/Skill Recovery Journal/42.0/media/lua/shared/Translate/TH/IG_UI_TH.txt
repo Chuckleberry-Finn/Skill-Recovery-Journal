@@ -1,0 +1,26 @@
+IGUI_TH = {
+    IGUI_PlayerText_NothingWritten = "ไม่มีอะไรเขียนไว้เลย",
+    IGUI_PlayerText_DontHaveAnyXP = "ไม่มีประสบการณ์อะไรให้บันทึกเลย",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "การหยิบเอาไดอารีของคนอื่นมาเขียนต่อเป็นเรื่องที่ไม่สมควร",
+    IGUI_PlayerText_DoesntFeelRightToRead = "การหยิบเอาไดอารีของคนอื่นมาอ่านเป็นเรื่องที่ไม่สมควร",
+    IGUI_PlayerText_NothingToAddToJournal = "ไม่มีประสบการณ์ให้บันทึก",
+    IGUI_PlayerText_AllDoneWithJournal = "เรียบร้อยแล้ว",
+    IGUI_PlayerText_Illiterate1 = "อ่านไม่ออก",
+    IGUI_PlayerText_Illiterate2 = "ฉันไม่รู้หนังสือ",
+    IGUI_Tooltip_Empty = "พร้อมถ่ายทอดประสบการณ์ให้คนรุ่นหลัง",
+    IGUI_Tooltip_Start = "บันทึกประสบการณ์ชีวิตของ",
+    IGUI_Tooltip_End = "",
+    IGUI_Tooltip_Recipe = "สูตรผสม",
+    IGUI_Tooltip_Recipes = "สูตรผสม",
+    IGUI_Tooltip_Transcribing = "กำลังเขียนบันทึก",
+    IGUI_Tooltip_Learning = "กำลังเรียนรู้ประสบการณ์",
+    IGUI_perks_Lightfoot = "การเดินเสียงเบา",
+    IGUI_perks_Sneak = "การลอบเร้น",
+    IGUI_perks_PlantScavenging = "การหาของ",
+    IGUI_Rename = "เปลี่ยนชื่อ",
+    IGUI_JournalXPUsedUp = "ไดอารีเล่มนี้มีสภาพแย่เกินกว่าจะอ่านได้... (คืนค่าประสบการณ์ไปหมดแล้ว)"
+    
+    IGUI_Bonus_XP_Warning = "ตัวละครนี้ได้รับค่าประสบการณ์พิเศษเพิ่มเติมจากคุณลักษณะหรืออาชีพ การบันทึกค่าประสบการณ์พิเศษถูกปิดใช้งานอยู่ในขณะนี้ เปลี่ยนชื่อไดอารีเล่มนี้เพื่อปิดข้อความแจ้งเตือนนี้"
+    IGUI_TV_XP_Warning = "ปิดการได้รับค่าประสบการณ์จากรายการทีวีและเทป",
+    IGUI_Rename_Warning = "เปลี่ยนชื่อไดอารีเล่มนี้เพื่อปิดการแจ้งเตือน",
+}

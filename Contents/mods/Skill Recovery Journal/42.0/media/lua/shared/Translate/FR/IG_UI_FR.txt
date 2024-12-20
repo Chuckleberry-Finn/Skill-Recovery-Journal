@@ -1,0 +1,30 @@
+IGUI_FR = {
+    IGUI_PlayerText_NothingWritten = "Il n'y a rien d'écrit ici.",
+    IGUI_PlayerText_DontHaveAnyXP = "Je n'ai aucune expériences à noter.",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "Ne se sent pas bien d'écrire dans le journal de quelqu'un d'autre.",
+    IGUI_PlayerText_DoesntFeelRightToRead = "Ne se sent pas bien de lire le journal de quelqu'un d'autre.",
+    IGUI_PlayerText_NothingToAddToJournal = "Il n'y a rien d'autre à ajouter.",
+    IGUI_PlayerText_AllDoneWithJournal = "C'est fait.",
+    IGUI_PlayerText_Illiterate1 = "Je ne sais pas lire.",
+    IGUI_PlayerText_Illiterate2 = "Je suis illetré.",
+    IGUI_Tooltip_Empty = "Un journal vierge, prêt à recevoir des notes.",
+    IGUI_Tooltip_Start = "Le journal intime de",
+    IGUI_Tooltip_End = ".",
+    IGUI_Tooltip_Recipe = "recette",
+    IGUI_Tooltip_Recipes = "recettes",
+    IGUI_Tooltip_Transcribing = "Retranscription",
+    IGUI_Tooltip_Learning = "Apprentissage",
+    IGUI_perks_Lightfoot = "Discrétion",
+    IGUI_perks_Sneak = "Furtivité",
+    IGUI_perks_PlantScavenging = "Recherche",
+    IGUI_Rename = "Renommer",
+    IGUI_JournalXPUsedUp = "L'écriture est trop tordue pour être lue... (XP épuisée)",
+
+    IGUI_ItemCat_SkillJournal = "Journal de compétence",
+    IGUI_GainedXPText = "Expérience gagnée"
+    IGUI_OLDXP_WARNING = "Attention : ce journal contient des "ANCIENS" points d'expérience, antérieurs à la ou aux mises à jour. Le journal a eu quelques problèmes au départ. Ce message d'avertissement disparaîtra au fur et à mesure que ce journal sera utilisé.",
+    IGUI_OneTimeUse_Warning = "Option du mode Bac à Sable pour l'expérience utilisée lorsque la lecture est activée.",
+/*  IGUI_Bonus_XP_Warning = "Ce personnage gagne un bonus d'XP en fonction de ses traits ou de sa profession. La retranscription du bonus d'XP est désactivée.", */
+    IGUI_TV_XP_Warning = "L'expérience gagnée à partir d'émissions de télévision et de cassettes VHS est désactivée.",
+    IGUI_Rename_Warning = "Renommez ce journal pour désactiver cette alerte.",
+}

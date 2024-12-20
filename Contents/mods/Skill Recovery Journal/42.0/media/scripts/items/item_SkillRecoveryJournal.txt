@@ -1,0 +1,27 @@
+module Base
+{
+    item SkillRecoveryJournal
+    {
+        Weight	=	0.8,
+        Type	=	Literature,
+        NumberOfPages = 0,
+        DisplayName	=	Bound Journal (Decayed),
+        DisappearOnUse = FALSE,
+        Icon	=	SkillRecoveryJournalDECAYED,
+        StaticModel = SkillRecoveryJournal,
+        WorldStaticModel = SkillRecoveryJournal_ground,
+        Tooltip = Tooltip_DecayedJournal,
+    }
+
+    item SkillRecoveryBoundJournal
+    {
+        Weight	=	0.8,
+        Type	=	Normal,
+        DisplayName	=	Bound Journal,
+        DisplayCategory = SkillJournal,
+        DisappearOnUse = FALSE,
+        Icon	=	SkillRecoveryJournal,
+        StaticModel = SkillRecoveryJournal,
+        WorldStaticModel = SkillRecoveryJournal_ground,
+    }
+}

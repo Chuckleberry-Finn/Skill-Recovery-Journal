@@ -1,0 +1,45 @@
+Sandbox_JP = {
+	Sandbox_SkillRecoveryJournal = "スキルリカバリー ジャーナル[!]",
+
+	Sandbox_SkillRecoveryJournalPercentage = "スキル回復率",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "製本されたジャーナルを読んで回復する経験値数.",
+
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "書き記す速度乗数",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "ジャーナルに書き記す速度の乗数."
+
+	Sandbox_SkillRecoveryJournalReadTimeSpeed = "ジャーナルの読み取り速度乗数",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "ジャーナルを読む速度の乗数."
+
+    Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses = "職業と特性ボーナスXPを回復する"
+    Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses_tooltip = "スキルで1ポイント以上から始めると通常はボーナスXPを獲得できます. - これをオフに切り替えるとボーナスXPが記録されません. 記録されるXPはキャラクターが新たに獲得したXPのみになります."
+
+	Sandbox_SkillRecoveryJournalTranscribeTVXP = "テレビ/ VHSから獲得したXPを記録する",
+	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "これをオンにすると、テレビ/ VHSを見て獲得したXPを書き写すことができます. ノート: これは、プレイヤーがキャラクター間で視聴したXPを累積的に引き継ぐことができることを意味します."
+
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "パッシブスキルを回復する"
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "オンに切り替えてパッシブスキルを記録する."
+
+	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "戦闘スキルの回復"
+    Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "戦闘スキルを記録するためにオンに切り替えます."
+
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "銃器スキルの回復"
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "銃器スキルを記録するためにオンに切り替えます."
+
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "製作スキルの回復"
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "製作スキルを記録するためにオンに切り替えます."
+
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "サバイバリストスキルの回復"
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "サバイバリストスキルを記録するためにオンに切り替えます."
+
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "敏捷スキルの回復"
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "敏捷スキルを記録するためにオンに切り替えます."
+
+	Sandbox_SkillRecoveryJournalRecoverRecipes = "レシピの回復"
+    Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "レシピを記録するためにオンに切り替えます."
+
+    Sandbox_SkillRecoveryJournalUsed = "読み取り時に消費されるジャーナルXP"
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "通常、ジャーナルは何度でも読み直すことができます - オンに設定すると一度だけ回復できます. あなたはまだジャーナルに追加することができますが、各ポイントは各ジャーナルで一度だけ回復することができます. ノート: 操作ログのツールヒントに、未使用のポイントの分数が表示されます."
+
+    Sandbox_SkillRecoveryJournalCraft = "ジャーナルはクラフト可能"
+    Sandbox_SkillRecoveryJournalCraft_tooltip = "これを無効にすると、ジャーナルを作成できなくなります."
+	}

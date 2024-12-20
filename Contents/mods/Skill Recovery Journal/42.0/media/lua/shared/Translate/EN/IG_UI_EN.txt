@@ -1,0 +1,35 @@
+IGUI_EN = {
+    IGUI_PlayerText_NothingWritten = "There's nothing written here.",
+    IGUI_PlayerText_DontHaveAnyXP = "I don't have any experiences to record.",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "Doesn't feel right to write in someone else's journal.",
+    IGUI_PlayerText_DoesntFeelRightToRead = "Doesn't feel right to read someone else's journal.",
+    IGUI_PlayerText_NothingToAddToJournal = "There's nothing else to add.",
+    IGUI_PlayerText_AllDoneWithJournal = "All done.",
+    IGUI_PlayerText_Illiterate1 = "I can't read.",
+    IGUI_PlayerText_Illiterate2 = "I am illiterate.",
+
+    IGUI_PlayerText_NeedGainWeight = "I should put on a few pounds first...",
+    IGUI_PlayerText_NeedLoseWeight = "I should drop a few pounds first...",
+
+    IGUI_Tooltip_Empty = "An empty journal ready to be recorded into.",
+    IGUI_Tooltip_Start = "A record of",
+    IGUI_Tooltip_End = "'s life.",
+    IGUI_Tooltip_Recipe = "recipe",
+    IGUI_Tooltip_Recipes = "recipes",
+    IGUI_Tooltip_Transcribing = "Transcribing",
+    IGUI_Tooltip_Learning = "Learning",
+    IGUI_perks_Lightfoot = "Lightfooted",
+    IGUI_perks_Sneak = "Sneaking",
+    IGUI_perks_PlantScavenging = "Foraging",
+    IGUI_Rename = "Rename",
+    IGUI_JournalXPUsedUp = "The writing is too worn out to read... (XP used up)",
+
+    IGUI_CraftCategory_SkillJournal = "Skill Recovery Journal",
+
+    IGUI_ItemCat_SkillJournal = "Skill Journal",
+    IGUI_GainedXPText = "Recoverable XP"
+    IGUI_OLDXP_WARNING = "Warning: This journal contains 'OLD' XP from before the but update(s). The journal make have some issues initially. This warning message will go away the more this journal is used.",
+    IGUI_OneTimeUse_Warning = "Sandbox Option for XP Used When Read is enabled.",
+    IGUI_TV_XP_Warning = "Sandbox Option for XP earned from TV shows and VHS tapes is disabled.",
+    IGUI_Rename_Warning = "Rename this journal to disable this alert.",
+}

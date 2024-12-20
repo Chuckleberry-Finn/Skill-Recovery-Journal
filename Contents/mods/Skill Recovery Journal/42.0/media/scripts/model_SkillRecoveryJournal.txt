@@ -1,0 +1,14 @@
+ module Base
+ {
+    model SkillRecoveryJournal
+    {
+    	mesh = Book,
+    	texture = SkillRecoveryJournal,
+    }
+
+    model SkillRecoveryJournal_ground
+    {
+        mesh = WorldItems/SkillRecoveryJournal,
+        texture = WorldItems/SkillRecoveryJournal,
+    }
+}

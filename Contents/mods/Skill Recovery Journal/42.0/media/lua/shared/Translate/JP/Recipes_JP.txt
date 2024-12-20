@@ -1,0 +1,4 @@
+Recipe_JP = {
+    Recipe_Transcribe_Journal = "ジャーナルに書き記す",
+    Recipe_Bind_Journal = "ジャーナルを連結する",
+}

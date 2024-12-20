@@ -1,0 +1,4 @@
+Recipe_TH = {
+    Recipe_Transcribe_Journal = "เขียนบันทึกถ่ายทอดประสบการณ์ชีวิต",
+    Recipe_Bind_Journal = "บันทึกประสบการณ์ชีวิต",
+}

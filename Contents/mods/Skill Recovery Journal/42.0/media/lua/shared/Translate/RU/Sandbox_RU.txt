@@ -1,0 +1,5 @@
+Sandbox_RU = {
+	Sandbox_SkillRecoveryJournal = "Личный дневник игрока",
+	Sandbox_SkillRecoveryJournalPercentage = "Процент опыта при восстановлении",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "Какой процент опыта будет возвращен, при прочтении своего журнала, после возрождения",
+	}

@@ -1,0 +1,48 @@
+Sandbox_EN = {
+	Sandbox_SkillRecoveryJournal = "Skill Recovery Journal",
+
+	Sandbox_SkillRecoveryJournalPercentage = "General Skill Recovery Percentage",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "The amount of experience recovered from reading bound journals.<br>This value is defaulted to if other options are set to -1.",
+
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "Skill Recovery Transcribe Speed Multiplier",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "A multiplier on the speed of transcribing journals."
+
+	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Skill Recovery Read Speed Multiplier",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "A multiplier on the speed of reading bound journals."
+
+	Sandbox_SkillRecoveryJournalTranscribeTVXP = "Transcribe XP earned from TV/VHS",
+	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Toggling this on will allow people to transcribe XP earned from watching TV/VHS. Note: This means players can carry over watched XP between characters cumulatively."
+
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Passive Skill Recovery Percentage"
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Recovery percentage for passive skills.<br>Set this to -1 to use the General Skill Recovery Percentage."
+
+	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "Combat Skill Recovery Percentage"
+    Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "Recovery percentage for combat skills.<br>Set this to -1 to use the General Skill Recovery Percentage."
+
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "Firearm Skill Recovery Percentage"
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "Recovery percentage for firearm skills.<br>Set this to -1 to use the General Skill Recovery Percentage."
+
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "Crafting Skill Recovery Percentage"
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Recovery percentage for crafting skills.<br>Set this to -1 to use the General Skill Recovery Percentage."
+
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "Survivalist Skill Recovery Percentage"
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Recovery percentage for survivalist skills.<br>Set this to -1 to use the General Skill Recovery Percentage."
+
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "Agility Skill Recovery Percentage"
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "Recovery percentage for agility skills.<br>Set this to -1 to use the General Skill Recovery Percentage."
+
+	Sandbox_SkillRecoveryJournalRecoverRecipes = "Recover Recipes"
+    Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "Toggle off to prevent journals from recovering/transcribing recipes."
+
+    Sandbox_SkillRecoveryJournalUsed = "Journal XP Used When Read"
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "Normally you can reread the journal as many times as you like - with this toggled on each individual XP point can only be recovered once. You can still add onto the journal, but each point can only be recovered once on each journal. Note: the tooltip for the journal will now display a fraction for unused points."
+
+    Sandbox_SkillRecoveryJournalCraftRecipe = "Journal Recipe"
+    Sandbox_SkillRecoveryJournalCraftRecipe_tooltip = "Setting this as blank means the journals cannot be crafted.\n\nSyntax follows recipe ingredients, as follows:\nEach item is separated by '|'.\nSupports 'keep n' and 'destroy n' where n is an item type which will be kept or consumed.\nUsing 'n = 5' will require 5 of that item.\nUsing 'n;5' will require 5 'units' from that item in the case of drainable ingredients.\nUsing [function] will utilize the recipe functions for special cases.\n\nAll of these are a part of the vanilla recipe syntax.\nAnything not listed here will also work as it would with a recipe script.",
+
+    Sandbox_SkillRecoveryJournalModDataTrack = "Track ModData Values"
+    Sandbox_SkillRecoveryJournalModDataTrack_tooltip = "USE WITH CAUTION.\n\nExample syntax: ModDataKey1|ModDataKey2\nTranscription will store a copy of the corresponding table from the player's mod data. \nThis can create significant issues if the data is large.\n If you're not sure what any of this means, ignore it, and leave blank."
+
+    Sandbox_SkillRecoveryJournalKillsTrack = "Zombie/Survivor Kills Recovery Percentage"
+
+	}

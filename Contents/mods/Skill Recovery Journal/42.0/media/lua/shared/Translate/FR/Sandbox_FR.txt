@@ -1,0 +1,45 @@
+Sandbox_FR = {
+	Sandbox_SkillRecoveryJournal = "Journal de récupération des compétences",
+
+	Sandbox_SkillRecoveryJournalPercentage = "Pourcentage de récupération des compétences",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "La quantité d'expérience récupérée en lisant des journaux reliés.",
+
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "Multiplicateur de vitesse de retranscription des compétences",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "Un multiplicateur de la vitesse de retranscription sur les journaux reliés.",
+
+	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Multiplicateur de vitesse de lecture des compétences",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "Un multiplicateur de la vitesse de lecture des journaux reliés.",
+
+	Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses = "Bonus d'XP: Récupération - Profession et Traits",
+	Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses_tooltip = "Commencer avec plus d'un point dans une compétence vous rapporte généralement un bonus d'XP - avec cette option désactivée, cet XP n'est pas enregistré. Tout l'XP enregistré est celui d'un personnage sans compétences de départ. Cela ne récupère PAS les niveaux de départ - seulement le bonus d'XP qui a été gagné.",
+
+	Sandbox_SkillRecoveryJournalTranscribeTVXP = "Retranscrire l'XP gagné à partir de la TV/VHS",
+	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Activer cette option permettra aux joueurs de retranscrire l'XP gagné en regardant la TV/VHS. Note: Cela signifie que les joueurs peuvent transférer l'XP, gagné via TV/VHS, entre leur personnages de manière cumulative.",
+
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Récupérer les compétences passives",
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Activer pour enregistrer les compétences passives.",
+
+	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "Récupérer les compétences de combat",
+	Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "Activer pour enregistrer les compétences de combat.",
+
+	Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "Récupérer les compétences d'armes à feu",
+	Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "Activer pour enregistrer les compétences d'armes à feu.",
+
+	Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "Récupérer les compétences d'artisanat",
+	Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Activer pour enregistrer les compétences d'artisanat.",
+
+	Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "Récupérer les compétences de survie",
+	Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Activer pour enregistrer les compétences de survie.",
+
+	Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "Récupérer les compétences d'agilité",
+	Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "Activer pour enregistrer les compétences d'agilité.",
+
+	Sandbox_SkillRecoveryJournalRecoverRecipes = "Récupérer les recettes",
+	Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "Désactiver pour empêcher les journaux de récupérer/retranscrire les recettes.",
+
+	Sandbox_SkillRecoveryJournalUsed = "XP du journal utilisé lors de la lecture",
+	Sandbox_SkillRecoveryJournalUsed_tooltip = "Normalement, vous pouvez relire le journal autant de fois que vous le souhaitez - avec cette option activée, chaque point d'XP individuel ne peut être récupéré qu'une seule fois. Vous pouvez toujours écrire dans le journal, mais chaque point ne peut être récupéré qu'une seule fois pour chaque journal. Remarque : l'info-bulle du journal affichera désormais une fraction pour les points inutilisés.",
+
+	Sandbox_SkillRecoveryJournalCraft = "Le journal est fabricable",
+	Sandbox_SkillRecoveryJournalUsed_tooltip = "Désactivater cette option signifie que les journaux ne peuvent pas être fabriqués."
+}

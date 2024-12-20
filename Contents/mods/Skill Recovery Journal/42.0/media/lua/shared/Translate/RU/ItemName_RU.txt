@@ -1,0 +1,3 @@
+ItemName_RU = {
+    ItemName_Base.SkillRecoveryJournal = "Bound Journal",
+}

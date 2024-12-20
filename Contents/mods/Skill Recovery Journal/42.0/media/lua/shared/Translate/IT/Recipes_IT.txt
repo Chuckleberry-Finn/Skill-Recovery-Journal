@@ -1,0 +1,4 @@
+Recipe_IT = {
+    Recipe_Transcribe_Journal = "Trascrivi nel diario",
+    Recipe_Bind_Journal = "Rilega insieme un diario",
+}

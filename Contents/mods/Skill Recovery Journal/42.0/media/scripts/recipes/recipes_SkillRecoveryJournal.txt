@@ -1,0 +1,19 @@
+module Base
+{
+    craftRecipe TranscribeJournal
+    	{
+    		Time = 50,
+            OnCanPerform:SkillRecoveryJournalOnCanPerformWritingJournal,
+    		Tags = InHandCraft,
+            category = SkillJournal,
+            /*timedAction =,*/
+    		inputs
+    		{
+    			item 1 [Base.SkillRecoveryBoundJournal] mode:keep flags[Prop1],
+    			item 1 tags[Write] mode:keep flags[Prop2],
+    		}
+    		outputs
+    		{
+    		}
+    	}
+}

@@ -1,0 +1,22 @@
+module
+{
+
+    sound PencilWriteSounds
+    {
+        clip { file = media/sound/Pencil1.ogg, }
+        clip { file = media/sound/Pencil2.ogg, }
+        clip { file = media/sound/Pencil3.ogg, }
+        clip { file = media/sound/Pencil4.ogg, }
+        clip { file = media/sound/Pencil5.ogg, }
+        clip { file = media/sound/Pencil6.ogg, }
+    }
+
+	sound PenWriteSounds
+    {
+        clip { file = media/sound/Pen1.ogg, }
+        clip { file = media/sound/Pen2.ogg, }
+        clip { file = media/sound/Pen3.ogg, }
+    }
+
+}
+

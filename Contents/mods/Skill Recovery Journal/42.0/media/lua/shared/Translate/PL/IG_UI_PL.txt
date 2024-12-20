@@ -1,0 +1,13 @@
+IGUI_PL = {
+    IGUI_PlayerText_NothingWritten = "Tu nic nie jest zapisane.",
+    IGUI_PlayerText_DontHaveAnyXP = "Nie mam ¿adnych doœwiadczeñ do spisania.",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "Nie wypada pisaæ w czyimœ pamiêtniku.",
+    IGUI_PlayerText_DoesntFeelRightToRead = "Nie wypada czytaæ czyjegoœ pamiêtnika.",
+    IGUI_PlayerText_NothingToAddToJournal = "Nie mam nic do dodania.",
+    IGUI_PlayerText_AllDoneWithJournal = "Gotowe.",
+    IGUI_Tooltip_Empty = "Pusty pamiêtnik gotowy do zapisania.",
+    IGUI_Tooltip_Start = "Zapiski z ¿ycia",
+    IGUI_Tooltip_End = "",
+    IGUI_Tooltip_Recipe = "recepta",
+    IGUI_Tooltip_Recipes = "recepty"
+}
