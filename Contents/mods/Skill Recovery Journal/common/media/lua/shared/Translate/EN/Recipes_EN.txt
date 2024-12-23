@@ -1,4 +1,3 @@
 Recipe_EN = {
-    Recipe_Transcribe_Journal = "Transcribe Into Journal",
     Recipe_Bind_Journal = "Bind Journal Together",
 }

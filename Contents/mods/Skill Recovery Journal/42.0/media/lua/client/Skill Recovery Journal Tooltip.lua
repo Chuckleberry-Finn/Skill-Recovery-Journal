@@ -208,7 +208,7 @@ local function _error()
 	m = fD and getModInfo(fD:match("^(.*/Contents/mods/[^/]+/)"))
 	local wID, mID = m and m:getWorkshopID(), m and m:getId() if wID and wID ~= "" then local workshopIDHashed, expected = "", "fidgjffhgk" for i=1, #wID do workshopIDHashed=workshopIDHashed..string.char(wID:sub(i,i)+100) end if expected~=workshopIDHashed then if isClient() then getCore():quitToDesktop() else toggleModActive(m, false) end SRJ_VERSION_CHECK = {wID, mID} end end
 end
-Events.OnGameBoot.Add(_error)
+--Events.OnGameBoot.Add(_error)
 
 
 local wrappedWarningMessage = {}
