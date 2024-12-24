@@ -1,4 +1,3 @@
-/*
 module Base
 {
    	craftRecipe BindSkillRecoveryJournal
@@ -10,10 +9,7 @@ module Base
 
 		inputs
 		{
-			item 1 [Base.Notebook;Base.Journal] flags[Prop2] mode:destroy,
-			item 1 tags[Glue] flags[Prop1],
-			item 3 [Base.LeatherStrips;Base.LeatherStripsDirty] mode:destroy,
-			item 1 [Base.Thread;Base.Yarn],
+
 		}
 
 		outputs
@@ -22,4 +18,3 @@ module Base
 		}
 	}
 }
-*/
