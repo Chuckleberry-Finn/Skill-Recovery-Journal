@@ -79,6 +79,7 @@ Hotfix: Edge case with context overrides.
 - German Translation (credit to EagleFire).
 
 B42:
+ - Error Magnifier and Mod Update and Alert System are now hard required.
  - Sandbox options have been adjusted to match new categories of skills.
  - Writing is no longer a recipe.
 [ ------ ]
