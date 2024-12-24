@@ -70,10 +70,15 @@ Tweak/Fix: Changed how the recovery on kills is processed.
 Hotfix: Edge case with context overrides.
 [ ------ ]
 
-[ 11/3/24 ]
+[ 12/23/24 ]
 - Added % progress to reading/writing (MassCraxx)
-Changed `JournalCraft` sandbox option to `JournalCraftRecipe`
-- Which takes a string and creates a recipe for crafting.
-Added new option for mod-data support. Warning, this feature operates with a full overwrite.
+- Changed `JournalCraft` sandbox option to `JournalCraftRecipe`
+    - Takes a string and creates a recipe for crafting.
+    - Leaving blank means journals can not be crafted.
+- Added new option for mod-data support. Warning, this feature operates with a full overwrite.
 - German Translation (credit to EagleFire).
+
+B42:
+ - Sandbox options have been adjusted to match new categories of skills.
+ - Writing is no longer a recipe.
 [ ------ ]
