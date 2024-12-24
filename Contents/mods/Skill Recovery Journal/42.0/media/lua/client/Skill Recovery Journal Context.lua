@@ -41,13 +41,16 @@ function contextSRJ.readItems(items, player)
 end
 
 
-function contextSRJ.writeItems(items, player)
+function contextSRJ.writeItems(items, player, writingTool)
 	items = ISInventoryPane.getActualItems(items)
+
+	if writingTool:getContainer() ~= nil then ISInventoryPaneContextMenu.transferIfNeeded(player, writingTool) end
+
 	for i,item in ipairs(items) do
 		if item:getContainer() ~= nil then
 			ISInventoryPaneContextMenu.transferIfNeeded(player, item)
 		end
-		ISTimedActionQueue.add(WriteSkillRecoveryJournal:new(player, item))
+		ISTimedActionQueue.add(WriteSkillRecoveryJournal:new(player, item, writingTool))
 		break
 	end
 end
@@ -95,10 +98,10 @@ function contextSRJ.doContextMenu(playerID, context, items)
 				readOption.toolTip = tooltip
 			end
 
-			local writeOption = context:addOptionOnTop(getText("IGUI_TranscribeIntoJournal"), actualItems, contextSRJ.writeItems, player)
-
 			local inv = player:getInventory()
-			local hasWritingTool = inv:containsTagRecurse("Write")
+			local hasWritingTool = inv:getFirstTagRecurse("Write")
+
+			local writeOption = context:addOptionOnTop(getText("IGUI_TranscribeIntoJournal"), actualItems, contextSRJ.writeItems, player, hasWritingTool)
 
 			if asleep or illiterate or mismatchID or (not hasWritingTool) then
 				writeOption.notAvailable = true

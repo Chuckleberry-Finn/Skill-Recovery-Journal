@@ -74,7 +74,7 @@ function ReadSkillRecoveryJournal:update()
 	local bJournalUsedUp = false
 
 	self.readTimer = (self.readTimer or 0) + (getGameTime():getMultiplier() or 0)
-	self.haloTextDelay = self.haloTextDelay - (getGameTime():getMultiplier() or 0);
+	self.haloTextDelay = self.haloTextDelay - (getGameTime():getMultiplier() or 0)
 
 	-- normalize update time via in game time. Adjust updateInterval as needed
 	local updateInterval = 10
@@ -293,7 +293,7 @@ function ReadSkillRecoveryJournal:update()
 			if bJournalUsedUp then
 				sayText = getText("IGUI_JournalXPUsedUp")
 			elseif (not sayText) then
-				sayTextChoices = {"IGUI_PlayerText_KnowSkill","IGUI_PlayerText_BookObsolete"}
+				sayTextChoices = {"IGUI_PlayerText_KnowSkill"}
 				sayText = getText(sayTextChoices[ZombRand(#sayTextChoices)+1])
 			end
 

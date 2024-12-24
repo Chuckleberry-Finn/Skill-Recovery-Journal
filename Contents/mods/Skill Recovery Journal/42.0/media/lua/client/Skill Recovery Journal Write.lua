@@ -12,7 +12,7 @@ WriteSkillRecoveryJournal = ISBaseTimedAction:derive("WriteSkillRecoveryJournal"
 function WriteSkillRecoveryJournal:isValid()
 	local vehicle = self.character:getVehicle()
 	if vehicle and vehicle:isDriver(self.character) then return not vehicle:isEngineRunning() or vehicle:getSpeed2D() == 0 end
-	return self.character:getInventory():contains(self.item)
+	return self.character:getInventory():contains(self.item) and self.character:getInventory():contains(self.writingTool)
 end
 
 
@@ -21,7 +21,7 @@ function WriteSkillRecoveryJournal:start()
 	self.item:setJobType(getText("ContextMenu_Write") ..' '.. self.item:getName())
 	self:setAnimVariable("PerformingAction", "TranscribeJournal")
 	--self:setActionAnim(CharacterActionAnims.Read)
-	self:setOverrideHandModels(nil, self.item)
+	self:setOverrideHandModels(self.writingTool, self.item)
 	--self.character:setReading(true)
 	--self.character:reportEvent("EventRead")
 	local logText = ISLogSystem.getGenericLogText(self.character)
@@ -50,37 +50,25 @@ end
 function WriteSkillRecoveryJournal:perform()
 	--self.character:setReading(false)
 	self.item:getContainer():setDrawDirty(true)
-
-	if self.willWrite==true and (not self.character:HasTrait("Illiterate")) then
-		if self.changesMade and self.changesMade==true then
-			self.character:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
-		else
-			self.character:Say(getText("IGUI_PlayerText_NothingToAddToJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
-		end
-	end
 	self.character:playSound("CloseBook")
-
 	local logText = ISLogSystem.getGenericLogText(self.character)
 	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP READING] (perform)"})
 	ISBaseTimedAction.perform(self)
 end
 
 
-function WriteSkillRecoveryJournal:animEvent(event, parameter)
-	if event == "PageFlip" then
-		if getGameSpeed() ~= 1 then return end
-		self.character:playSound("PageFlipBook")
-	end
-end
-
-
 function WriteSkillRecoveryJournal:update()
-	self.craftTimer = self.craftTimer + getGameTime():getMultiplier()
-	self.haloTextDelay = self.haloTextDelay - getGameTime():getMultiplier()
-	self.item:setJobDelta(0.0)
+
+	if not self.loopedAction then return end
+
+	self.writeTimer = (self.writeTimer or 0) + (getGameTime():getMultiplier() or 0)
+	self.haloTextDelay = self.haloTextDelay - (getGameTime():getMultiplier() or 0)
+
+	--self.item:setJobDelta(0.0)
 	local updateInterval = 10
-	if self.craftTimer >= updateInterval then
-		self.craftTimer = 0
+	if self.writeTimer >= updateInterval then
+
+		self.writeTimer = 0
 		self.changesMade = false
 
 		local changesBeingMade, changesBeingMadeIndex = {}, {}
@@ -140,6 +128,9 @@ function WriteSkillRecoveryJournal:update()
 						local differential = SRJ.getMaxXPDifferential(perkID)
 
 						local xpRate = math.sqrt(xp)/25
+
+						--print("xpRate: ", xpRate, "  perkLevelPlusOne: ", perkLevelPlusOne, "  differential:", differential)
+
 						xpRate = round(((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * transcribeTimeMulti / differential, 2)
 
 						if xpRate>0 then
@@ -161,7 +152,7 @@ function WriteSkillRecoveryJournal:update()
 							----------------------------------------------------------------------------------------
 
 							local resultingXp = math.min(xp, storedJournalXP[perkID]+xpRate)
-							--print("TESTING: "..skill.." recoverable:"..xp.." gained:"..storedJournalXP[skill].." +"..xpRate)
+							--print("TESTING: "..perkID.." recoverable:"..xp.." gained:"..storedJournalXP[perkID].." +"..xpRate)
 							storedJournalXP[perkID] = resultingXp
 							readXp[perkID] = math.max(resultingXp,(readXp[perkID] or 0))
 						end
@@ -224,7 +215,7 @@ function WriteSkillRecoveryJournal:update()
 		-- show transcript progress as halo text, prevent overlapping addTexts
 		if self.haloTextDelay <= 0 and #changesBeingMade > 0 then
 			self.haloTextDelay = 100
-			--print("In Book: " .. totalStoredXP - self.oldJournalTotalXP .. " - in char: " .. totalRecoverableXP - self.oldJournalTotalXP)
+			--print("In Book: " .. totalStoredXP - self.oldJournalTotalXP, " - in char: " .. totalRecoverableXP - self.oldJournalTotalXP)
 			local progressText = math.floor(((totalStoredXP - self.oldJournalTotalXP) / (totalRecoverableXP - self.oldJournalTotalXP)) * 100 + 0.5) .. "%"
 			local changesBeingMadeText = getText("IGUI_Tooltip_Transcribing") .. " (" .. progressText ..") :"
 			for k,v in pairs(changesBeingMade) do changesBeingMadeText = changesBeingMadeText.." "..v..((k~=#changesBeingMade and ", ") or "") end
@@ -234,6 +225,8 @@ function WriteSkillRecoveryJournal:update()
 		-- handle sound
 		if self.changesMade==true then
 
+			self.changesWereMade = true
+
 			self.playSoundLater = self.playSoundLater or 0
 			if self.playSoundLater > 0 then
 				self.playSoundLater = self.playSoundLater-1
@@ -242,21 +235,33 @@ function WriteSkillRecoveryJournal:update()
 				self.character:playSound(self.writingToolSound)
 			end
 
-			self:resetJobDelta()
+			--self:resetJobDelta()
+		else
+
+			if self.changesWereMade then
+				self.character:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+			else
+				self.character:Say(getText("IGUI_PlayerText_NothingToAddToJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+			end
+
+			self:forceStop()
 		end
 	end
 end
 
 
 ---@param character IsoGameCharacter
-function WriteSkillRecoveryJournal:new(character, item) --time, recipe, container, containers)
+function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, recipe, container, containers)
 
 	local o = {}
 	setmetatable(o, self)
 	self.__index = self
 
-	local journal = item
-	local journalModData = journal:getModData()
+	o.character = character
+	o.item = item
+	o.writingTool = writingTool
+
+	local journalModData = o.item:getModData()
 	journalModData["SRJ"] = journalModData["SRJ"] or {}
 	local JMD = journalModData["SRJ"]
 
@@ -322,8 +327,7 @@ function WriteSkillRecoveryJournal:new(character, item) --time, recipe, containe
 	if sayText then character:Say(sayText) end
 	if o.willWrite then JMD["author"] = character:getFullName() end
 
-	o.craftTimer = 0
-	o.item = item
+	o.writeTimer = 0
 	o.stopOnWalk = false
 	o.stopOnRun = true
 	o.loopedAction = true
