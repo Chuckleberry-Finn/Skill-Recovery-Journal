@@ -83,3 +83,7 @@ B42:
  - Sandbox options have been adjusted to match new categories of skills.
  - Writing is no longer a recipe.
 [ ------ ]
+
+[ 12/23/24 hotfix #1]
+ - Fix issues with B41
+[ ------ ]
