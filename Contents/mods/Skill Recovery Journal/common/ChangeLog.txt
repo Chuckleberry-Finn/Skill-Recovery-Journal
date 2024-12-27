@@ -87,3 +87,7 @@ B42:
 [ 12/23/24 hotfix #1]
  - Fix issues with B41
 [ ------ ]
+
+[ 12/27/24 ]
+B41: Fixed viewing the crafting recipe with mods that "fix" the crafting menu.
+[ ------ ]

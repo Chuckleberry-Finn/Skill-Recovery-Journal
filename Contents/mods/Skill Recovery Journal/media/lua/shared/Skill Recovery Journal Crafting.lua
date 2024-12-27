@@ -56,6 +56,8 @@ local function SkillRecoveryJournalRecipe()
     --print("SCRIPT:", newScript)
     local scriptManager = getScriptManager()
     scriptManager:ParseScript(newScript)
+
+    if ISCraftingCategoryUI and ISCraftingCategoryUI.instance and ISCraftingCategoryUI.instance.craftingUI then ISCraftingCategoryUI.instance.craftingUI:refresh() end
 end
 
 
