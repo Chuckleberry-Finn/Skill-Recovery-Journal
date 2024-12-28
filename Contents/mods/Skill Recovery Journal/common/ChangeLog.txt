@@ -91,3 +91,8 @@ B42:
 [ 12/27/24 ]
 B41: Fixed viewing the crafting recipe with mods that "fix" the crafting menu.
 [ ------ ]
+
+[ 12/27/24 #2 ]
+B41: Fixed viewing the crafting recipe with mods that "fix" the crafting menu.
+B42: Fixed Tags on Workshop page.
+[ ------ ]
