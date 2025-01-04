@@ -1,0 +1,4 @@
+ItemName_TR = {
+    ItemName_Base.SkillRecoveryJournal = "Günlük (Aþýnmýþ)",
+    ItemName_Base.SkillRecoveryBoundJournal = "Günlük",
+}

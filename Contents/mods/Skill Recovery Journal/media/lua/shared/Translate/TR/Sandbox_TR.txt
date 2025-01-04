@@ -1,0 +1,45 @@
+Sandbox_TR = {
+	Sandbox_SkillRecoveryJournal = "Skill Recovery Journal",
+
+	Sandbox_SkillRecoveryJournalPercentage = "Genel Beceri Ýyileþtirme Yüzdesi",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "Ciltli dergilerin okunmasýyla elde edilen deneyim miktarý.<br>Diðer seçenekler -1 olarak ayarlanýrsa bu deðer varsayýlan olarak atanýr.",
+
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "Kitap yazma hýzý",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "Günlüklerin yazýya dökülme hýzýnda bir çarpan."
+
+	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Kitap okuma hýzý",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "Kitap okuma hýzý çarpaný."
+
+	Sandbox_SkillRecoveryJournalTranscribeTVXP = "TV/VHS'den kazanýlan XP'yi Kaydetme",
+	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Bunu açmak, insanlarýn TV/VHS izleyerek kazandýklarý XP'yi yazýya dökmelerine olanak tanýr. "
+
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Pasif Yetenklerinin Geri kazanma yüzdesi"
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Pasif beceriler için geri kazaným yüzdesi.<br>Genel Beceri Kurtarma Yüzdesini kullanmak için bunu -1 olarak ayarlayýn."
+
+	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "Yakýn Dövüþ Yetenklerinin Geri kazanma yüzdesi"
+    Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "Savaþ becerileri için iyileþme yüzdesi.<br>Genel Beceri Kurtarma Yüzdesini kullanmak için bunu -1 olarak ayarlayýn."
+
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "Ateþli Silahlarýn Yetenklerinin Geri kazanma yüzdesi"
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "Ateþli Silahlarýn Yetenklerinin Geri kazanma yüzdesi.<br>Genel Beceri Kurtarma Yüzdesini kullanmak için bunu -1 olarak ayarlayýn."
+
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "Üretim Yetenklerinin Yetenklerinin Geri kazanma yüzdesi"
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Üretim Yetenklerinin Yetenklerinin Geri kazanma yüzdesi.<br>Genel Beceri Kurtarma Yüzdesini kullanmak için bunu -1 olarak ayarlayýn."
+
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "Hayatta Kalma Yetenklerinin Geri kazanma yüzdesi"
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Hayatta Kalma Yetenklerinin Geri kazanma yüzdesi.<br>Genel Beceri Kurtarma Yüzdesini kullanmak için bunu -1 olarak ayarlayýn."
+
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "Çeviklik Yetenklerinin Geri kazanma yüzdesi"
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "Çeviklik Yetenklerinin Geri kazanma yüzdesi.<br>Genel Beceri Kurtarma Yüzdesini kullanmak için bunu -1 olarak ayarlayýn."
+
+	Sandbox_SkillRecoveryJournalRecoverRecipes = "Kurtarma Tarifleri"
+    Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "Tariflerin defterlerde geri kazanýlmasýný/aktarýlmasýný önlemek için devre dýþý býrak."
+
+    Sandbox_SkillRecoveryJournalUsed = "Okunduðunda Kullanýlan Günlük XP"
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "Normalde günlüðü istediðiniz kadar tekrar okuyabilirsiniz - ancak bu ayar etkinleþtirildiðinde her bir XP puaný yalnýzca bir kez geri kazanýlabilir. Günlüðe ekleme yapmaya devam edebilirsiniz, ancak her puan yalnýzca bir kez geri kazanýlabilir. Not: Günlük için açýlan bilgi balonunda kullanýlmamýþ puanlar bir kesir olarak gösterilecektir."
+
+    Sandbox_SkillRecoveryJournalCraft = "Günlük Üretilebilir"
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "Bunu devre dýþý býrakmak, günlüklerin üretilemeyeceði anlamýna gelir."
+
+    Sandbox_SkillRecoveryJournalKillsTrack = "Zombi/Hayatta Kalan Öldürme Geri Kazaným Yüzdesi"
+
+	}

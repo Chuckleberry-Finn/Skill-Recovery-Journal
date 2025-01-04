@@ -1,0 +1,4 @@
+Tooltip_TR = {
+    Tooltip_DecayedJournal = "Yenilemek için bunu envanterinize taþýyýn.",
+    Tooltip_SkillJournal = "XP deðerleri bunlarý kimin okuduðuna baðlýdýr."
+}

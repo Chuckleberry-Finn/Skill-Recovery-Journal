@@ -1,0 +1,4 @@
+Recipe_TR = {
+    Recipe_Transcribe_Journal = "Günlüðe Aktar",
+    Recipe_Bind_Journal = "Günlük Üretimi",
+}
