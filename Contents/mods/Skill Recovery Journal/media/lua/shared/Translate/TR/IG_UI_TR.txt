@@ -1,0 +1,33 @@
+IGUI_TR = {
+    IGUI_PlayerText_NothingWritten = "Burada yazýlý bir þey yok..",
+    IGUI_PlayerText_DontHaveAnyXP = "Kaydedecek herhangi bir deneyimim yok.",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "Baþkasýnýn günlüðüne yazamam.",
+    IGUI_PlayerText_DoesntFeelRightToRead = "Baþkasýnýn günlüðünü okuyamam.",
+    IGUI_PlayerText_NothingToAddToJournal = "Eklenecek baska bir sey yok.",
+    IGUI_PlayerText_AllDoneWithJournal = "Hepsi tamam.",
+    IGUI_PlayerText_Illiterate1 = "Okuyamýyorum.",
+    IGUI_PlayerText_Illiterate2 = "Okuma yazmam yok.",
+
+    IGUI_PlayerText_NeedGainWeight = "Öncelikle biraz kilo almam gerekiyor…",
+    IGUI_PlayerText_NeedLoseWeight = "Öncelikle biraz kilo vermem gerekiyor…",
+
+    IGUI_Tooltip_Empty = "Kaydedilmeye hazýr boþ bir günlük.",
+    IGUI_Tooltip_Start = "Sevgili günlük...",
+    IGUI_Tooltip_End = "'ýn hayatý.",
+    IGUI_Tooltip_Recipe = "Tarif",
+    IGUI_Tooltip_Recipes = "Tarifler",
+    IGUI_Tooltip_Transcribing = "Yazýya Dökme",
+    IGUI_Tooltip_Learning = "Öðrenme",
+    IGUI_perks_Lightfoot = "Hafif Ayaklý",
+    IGUI_perks_Sneak = "Sinsilik",
+    IGUI_perks_PlantScavenging = "Yiyecek Arama",
+    IGUI_Rename = "Yeniden Adlandýr",
+    IGUI_JournalXPUsedUp = "Yazý okunamayacak kadar yýpranmýþ...",
+
+    IGUI_ItemCat_SkillJournal = "Skill Journal",
+    IGUI_GainedXPText = "Kurtarýlabilir XP"
+    IGUI_OLDXP_WARNING = "Uyarý: Bu günlük, (yama/önceki güncellemeler) öncesine ait 'ESKÝ' XP içeriyor. Günlük baþlangýçta bazý sorunlar yaþayabilir. Bu uyarý mesajý, günlük daha fazla kullanýldýkça kaybolacaktýr.",
+    IGUI_OneTimeUse_Warning = "Okunduðunda Kullanýlan XP için Sandbox Seçeneði etkinleþtirildi.",
+    IGUI_TV_XP_Warning = "TV þovlarý ve VHS kasetlerinden kazanýlan XP için Sandbox seçeneði devre dýþý býrakýldý.",
+    IGUI_Rename_Warning = "Bu uyarýyý devre dýþý býrakmak için günlüðü yeniden adlandýrýn.",
+}
