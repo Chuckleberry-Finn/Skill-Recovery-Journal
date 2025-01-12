@@ -30,25 +30,6 @@ function SRJ.backgroundFix(journalModData, journal)
 end
 
 
-
----@param itemObj InventoryItem
----@param player IsoPlayer|IsoGameCharacter|IsoMovingObject|IsoObject
-function SRJ.convertJournal(itemObj, player)
-	if itemObj:getType() == "SkillRecoveryJournal" and (not itemObj:getModData().SRJ_kludge) then
-		---@type ItemContainer
-		local container = itemObj:getContainer()
-		if container and container:isInCharacterInventory(player) then
-			itemObj:getModData().SRJ_kludge = true
-			local newJournal = InventoryItemFactory.CreateItem("SkillRecoveryBoundJournal")
-			local oldModData = itemObj:getModData()["SRJ"]
-			newJournal:getModData()["SRJ"] = copyTable(oldModData)
-			container:AddItem(newJournal)
-			container:Remove(itemObj)
-		end
-	end
-end
-
-
 function SRJ.setOrGetDeductedXP(player)
 	local pMD = player:getModData()
 	pMD.deductedXP = pMD.deductedXP or {}

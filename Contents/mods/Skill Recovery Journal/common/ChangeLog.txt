@@ -96,3 +96,7 @@ B41: Fixed viewing the crafting recipe with mods that "fix" the crafting menu.
 B41: Fixed viewing the crafting recipe with mods that "fix" the crafting menu.
 B42: Fixed Tags on Workshop page.
 [ ------ ]
+
+[ 1/12/25 ]
+B42: Removed old conversion code from old journal type.
+[ ------ ]
