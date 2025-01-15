@@ -1,4 +1,4 @@
 Recipe_RU = {
-    Recipe_Transcribe_Journal = "Заполнить дневник",
-    Recipe_Bind_Journal = "Создать личный дневник игрока",
+    Recipe_Transcribe_Journal = "Заполнить Дневник Навыков",
+    Recipe_Bind_Journal = "Создать Личный Дневник Навыков",
 }
