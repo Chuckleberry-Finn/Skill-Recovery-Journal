@@ -1,3 +1,4 @@
 ItemName_RU = {
-    ItemName_Base.SkillRecoveryJournal = "Bound Journal",
+    ItemName_Base.SkillRecoveryJournal = "Дневник Навыков (Изношенный)",
+    ItemName_Base.SkillRecoveryBoundJournal = "Дневник Навыков",
 }

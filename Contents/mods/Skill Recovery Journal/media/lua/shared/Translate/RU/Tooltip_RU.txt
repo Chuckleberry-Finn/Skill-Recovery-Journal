@@ -1,0 +1,4 @@
+Tooltip_RU = {
+    Tooltip_DecayedJournal = "Поместите в инвентарь что бы обновить.",
+    Tooltip_SkillJournal = "Количество полученного ХР зависит от прочитавшего."
+}

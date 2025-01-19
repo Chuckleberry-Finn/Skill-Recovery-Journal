@@ -1,12 +1,35 @@
 IGUI_RU = {
-    IGUI_PlayerText_NothingWritten = "Мне пока нечего сюда записывать",
-    IGUI_PlayerText_DontHaveAnyXP = "Я не научился чему то новому, что бы это записать в дневник",
-    IGUI_PlayerText_DoesntFeelRightToWrite = "Я не имею права писать в чужом дневнике!",
-    IGUI_PlayerText_NothingToAddToJournal = "Больше нечего добавить",
-    IGUI_PlayerText_AllDoneWithJournal = "Все сделано !",
-    IGUI_Tooltip_Empty = "Пустой дневник, готовый к записям",
-    IGUI_Tooltip_Start = "Запись ",
-    IGUI_Tooltip_End = " жизни",
-    IGUI_Tooltip_Recipe = "рецепт",
-    IGUI_Tooltip_Recipes = "рецептов"
+    IGUI_PlayerText_NothingWritten = "Здесь ничего нет.",
+    IGUI_PlayerText_DontHaveAnyXP = "Нету опыта, который можно было бы запечатлеть.",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "Как-то неправильно писать в чужом дневнике...",
+    IGUI_PlayerText_DoesntFeelRightToRead = "Как-то неправильно читать чужой дневник...",
+    IGUI_PlayerText_NothingToAddToJournal = "Нечего добавить.",
+    IGUI_PlayerText_AllDoneWithJournal = "Всё готово.",
+    IGUI_PlayerText_Illiterate1 = "Не могу читать.",
+    IGUI_PlayerText_Illiterate2 = "Я слишком неграмотный.",
+
+    IGUI_PlayerText_NeedGainWeight = "Нужно набрать пару кило...",
+    IGUI_PlayerText_NeedLoseWeight = "Нужно сбросить пару кило...",
+
+    IGUI_Tooltip_Empty = "Новый журнал готовый к записям.",
+    IGUI_Tooltip_Start = "Записи",
+    IGUI_Tooltip_End = "проведенных дней.",
+    IGUI_Tooltip_Recipe = "Рецепт",
+    IGUI_Tooltip_Recipes = "Рецепты",
+    IGUI_Tooltip_Transcribing = "Перепись",
+    IGUI_Tooltip_Learning = "Изучение",
+    IGUI_perks_Lightfoot = "Лёгкий шаг",
+    IGUI_perks_Sneak = "Скрытность",
+    IGUI_perks_PlantScavenging = "Собирательство",
+    IGUI_Rename = "Переименовать",
+    IGUI_JournalXPUsedUp = "Слишком неразборчиво, что бы можно было прочесть... (ХР использовано)",
+
+    IGUI_CraftCategory_SkillJournal = "Журнал навыков",
+
+    IGUI_ItemCat_SkillJournal = "Журнал навыков",
+    IGUI_GainedXPText = "Восстанавливаемый ХР"
+    IGUI_OLDXP_WARNING = "Предупреждение: Этот журнал содержит "СТАРУЮ" версию XP, выпущенную до обновления (обновлений). Изначально в журнале были некоторые проблемы. Это предупреждающее сообщение будет исчезать по мере использования этого журнала.",
+    IGUI_OneTimeUse_Warning = "Опция песочницы (ХР использовано когда прочитан) - включена",
+    IGUI_TV_XP_Warning = "Опция песочницы восстановления опыта VHS и ТВ-шоу выключена",
+    IGUI_Rename_Warning = "Переименуйте журнал, что бы это сообщение исчезло.",
 }
