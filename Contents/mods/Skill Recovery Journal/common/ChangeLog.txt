@@ -100,3 +100,9 @@ B42: Fixed Tags on Workshop page.
 [ 1/12/25 ]
 B42: Removed old conversion code from old journal type.
 [ ------ ]
+
+[ ALERT_CONFIG ]
+link1 = Chuck's Kofi = https://steamcommunity.com/linkfilter/?u=https://ko-fi.com/chuckleberryfinn,
+link2 = Workshop = https://steamcommunity.com/id/Chuckleberry_Finn/myworkshopfiles/?appid=108600,
+link3 = Github = https://steamcommunity.com/linkfilter/?u=https://github.com/Chuckleberry-Finn,
+[ ------ ]
