@@ -109,4 +109,5 @@ link3 = Github = https://steamcommunity.com/linkfilter/?u=https://github.com/Chu
 
 [ 1/24/25 ]
 Fix tooltip render issue with fluid transferring.
+Updated/fixed encodings for several languages.
 [ ------ ]

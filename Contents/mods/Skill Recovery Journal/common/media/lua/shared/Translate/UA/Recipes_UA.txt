@@ -1,0 +1,3 @@
+Recipe_UA = {
+    Recipe_BindSkillRecoveryJournal = "Переплести Щоденник Відновлення Навичок",
+}

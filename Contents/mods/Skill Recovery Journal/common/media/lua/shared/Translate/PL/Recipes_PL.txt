@@ -1,0 +1,3 @@
+Recipe_PL = {
+    Recipe_BindSkillRecoveryJournal = "Opraw Dziennik Odzyskiwania Umiejętności",
+}

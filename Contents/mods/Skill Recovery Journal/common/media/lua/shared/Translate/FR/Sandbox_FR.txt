@@ -1,45 +1,47 @@
 Sandbox_FR = {
-	Sandbox_SkillRecoveryJournal = "Journal de rÈcupÈration des compÈtences",
+	Sandbox_SkillRecoveryJournal = "Journal de R√©cup√©ration de Comp√©tences",
 
-	Sandbox_SkillRecoveryJournalPercentage = "Pourcentage de rÈcupÈration des compÈtences",
-	Sandbox_SkillRecoveryJournalPercentage_tooltip = "La quantitÈ d'expÈrience rÈcupÈrÈe en lisant des journaux reliÈs.",
+	Sandbox_SkillRecoveryJournalPercentage = "Pourcentage G√©n√©ral de R√©cup√©ration des Comp√©tences",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "Le pourcentage d'exp√©rience r√©cup√©r√©e lors de la lecture des journaux reli√©s.<br>Cette valeur est utilis√©e par d√©faut si d'autres options sont r√©gl√©es sur -1.",
 
-	Sandbox_SkillRecoveryJournalTranscribeSpeed = "Multiplicateur de vitesse de retranscription des compÈtences",
-	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "Un multiplicateur de la vitesse de retranscription sur les journaux reliÈs.",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "Multiplicateur de Vitesse de Transcription du Journal de Comp√©tences",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "Un multiplicateur sur la vitesse de transcription des journaux.",
 
-	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Multiplicateur de vitesse de lecture des compÈtences",
-	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "Un multiplicateur de la vitesse de lecture des journaux reliÈs.",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Multiplicateur de Vitesse de Lecture du Journal de Comp√©tences",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "Un multiplicateur sur la vitesse de lecture des journaux reli√©s.",
 
-	Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses = "Bonus d'XP: RÈcupÈration - Profession et Traits",
-	Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses_tooltip = "Commencer avec plus d'un point dans une compÈtence vous rapporte gÈnÈralement un bonus d'XP - avec cette option dÈsactivÈe, cet XP n'est pas enregistrÈ. Tout l'XP enregistrÈ est celui d'un personnage sans compÈtences de dÈpart. Cela ne rÈcupËre PAS les niveaux de dÈpart - seulement le bonus d'XP qui a ÈtÈ gagnÈ.",
+	Sandbox_SkillRecoveryJournalTranscribeTVXP = "Transcrire l'XP obtenue via TV/VHS",
+	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Activer cela permettra de transcrire l'XP obtenue en regardant la TV/VHS. Remarque : Cela signifie que les joueurs peuvent cumuler l'XP regard√©e entre les personnages.",
 
-	Sandbox_SkillRecoveryJournalTranscribeTVXP = "Retranscrire l'XP gagnÈ ‡ partir de la TV/VHS",
-	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Activer cette option permettra aux joueurs de retranscrire l'XP gagnÈ en regardant la TV/VHS. Note: Cela signifie que les joueurs peuvent transfÈrer l'XP, gagnÈ via TV/VHS, entre leur personnages de maniËre cumulative.",
+	Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills = "Pourcentage de R√©cup√©ration des Comp√©tences Physiques",
+	Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills_tooltip = "Pourcentage de r√©cup√©ration pour les comp√©tences physiques.<br>R√©glez sur -1 pour utiliser le Pourcentage G√©n√©ral de R√©cup√©ration des Comp√©tences.",
 
-	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "RÈcupÈrer les compÈtences passives",
-	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Activer pour enregistrer les compÈtences passives.",
+	Sandbox_SkillRecoveryJournalRecoverCombatMeleeSkills = "Pourcentage de R√©cup√©ration des Comp√©tences de Combat au Corps √† Corps",
+    Sandbox_SkillRecoveryJournalRecoverCombatMeleeSkills_tooltip = "Pourcentage de r√©cup√©ration pour les comp√©tences de combat au corps √† corps.<br>R√©glez sur -1 pour utiliser le Pourcentage G√©n√©ral de R√©cup√©ration des Comp√©tences.",
 
-	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "RÈcupÈrer les compÈtences de combat",
-	Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "Activer pour enregistrer les compÈtences de combat.",
+    Sandbox_SkillRecoveryJournalRecoverCombatFirearmsSkills = "Pourcentage de R√©cup√©ration des Comp√©tences de Combat avec Armes √† Feu",
+    Sandbox_SkillRecoveryJournalRecoverCombatFirearmsSkills_tooltip = "Pourcentage de r√©cup√©ration pour les comp√©tences de combat avec armes √† feu.<br>R√©glez sur -1 pour utiliser le Pourcentage G√©n√©ral de R√©cup√©ration des Comp√©tences.",
 
-	Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "RÈcupÈrer les compÈtences d'armes ‡ feu",
-	Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "Activer pour enregistrer les compÈtences d'armes ‡ feu.",
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "Pourcentage de R√©cup√©ration des Comp√©tences d'Artisanat",
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Pourcentage de r√©cup√©ration pour les comp√©tences d'artisanat.<br>R√©glez sur -1 pour utiliser le Pourcentage G√©n√©ral de R√©cup√©ration des Comp√©tences.",
 
-	Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "RÈcupÈrer les compÈtences d'artisanat",
-	Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Activer pour enregistrer les compÈtences d'artisanat.",
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "Pourcentage de R√©cup√©ration des Comp√©tences de Survie",
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Pourcentage de r√©cup√©ration pour les comp√©tences de survie.<br>R√©glez sur -1 pour utiliser le Pourcentage G√©n√©ral de R√©cup√©ration des Comp√©tences.",
 
-	Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "RÈcupÈrer les compÈtences de survie",
-	Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Activer pour enregistrer les compÈtences de survie.",
+    Sandbox_SkillRecoveryJournalRecoverFarmingCategorySkills = "Pourcentage de R√©cup√©ration des Comp√©tences d'Agriculture",
+    Sandbox_SkillRecoveryJournalRecoverFarmingCategorySkills_tooltip = "Pourcentage de r√©cup√©ration pour les comp√©tences d'agriculture.<br>R√©glez sur -1 pour utiliser le Pourcentage G√©n√©ral de R√©cup√©ration des Comp√©tences.",
 
-	Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "RÈcupÈrer les compÈtences d'agilitÈ",
-	Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "Activer pour enregistrer les compÈtences d'agilitÈ.",
+	Sandbox_SkillRecoveryJournalRecoverRecipes = "R√©cup√©rer les Recettes",
+    Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "D√©sactivez pour emp√™cher les journaux de r√©cup√©rer/transcrire les recettes.",
 
-	Sandbox_SkillRecoveryJournalRecoverRecipes = "RÈcupÈrer les recettes",
-	Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "DÈsactiver pour empÍcher les journaux de rÈcupÈrer/retranscrire les recettes.",
+    Sandbox_SkillRecoveryJournalUsed = "XP du Journal Utilis√©e lors de la Lecture",
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "Normalement, vous pouvez relire le journal autant de fois que vous le souhaitez ; avec cette option activ√©e, chaque point d'XP ne peut √™tre r√©cup√©r√© qu'une fois. Vous pouvez toujours ajouter au journal, mais chaque point ne peut √™tre r√©cup√©r√© qu'une fois par journal. Remarque : l'infobulle du journal affichera d√©sormais une fraction pour les points inutilis√©s.",
 
-	Sandbox_SkillRecoveryJournalUsed = "XP du journal utilisÈ lors de la lecture",
-	Sandbox_SkillRecoveryJournalUsed_tooltip = "Normalement, vous pouvez relire le journal autant de fois que vous le souhaitez - avec cette option activÈe, chaque point d'XP individuel ne peut Ítre rÈcupÈrÈ qu'une seule fois. Vous pouvez toujours Ècrire dans le journal, mais chaque point ne peut Ítre rÈcupÈrÈ qu'une seule fois pour chaque journal. Remarque : l'info-bulle du journal affichera dÈsormais une fraction pour les points inutilisÈs.",
+    Sandbox_SkillRecoveryJournalCraftRecipe = "Recette du Journal",
+    Sandbox_SkillRecoveryJournalCraftRecipe_tooltip = "Laisser vide signifie que les journaux ne peuvent pas √™tre fabriqu√©s.\n\nLa syntaxe suit les ingr√©dients de recette, comme suit :\nChaque √©l√©ment est s√©par√© par '|'.\nCeux-ci sont directement introduits dans le input{} du script de recette.",
 
-	Sandbox_SkillRecoveryJournalCraft = "Le journal est fabricable",
-	Sandbox_SkillRecoveryJournalUsed_tooltip = "DÈsactivater cette option signifie que les journaux ne peuvent pas Ítre fabriquÈs."
+    Sandbox_SkillRecoveryJournalModDataTrack = "Suivre les Valeurs de ModData",
+    Sandbox_SkillRecoveryJournalModDataTrack_tooltip = "UTILISER AVEC PRUDENCE.\n\nExemple de syntaxe : ModDataKey1|ModDataKey2\nLa transcription stockera une copie de la table correspondante des donn√©es de mod du joueur.\nCela peut cr√©er des probl√®mes significatifs si les donn√©es sont importantes.\nSi vous ne savez pas ce que cela signifie, ignorez-le et laissez vide.",
+
+    Sandbox_SkillRecoveryJournalKillsTrack = "Pourcentage de R√©cup√©ration des Tu√©s (Zombies/Survivants)",
 }

@@ -1,13 +1,37 @@
 IGUI_PL = {
-    IGUI_PlayerText_NothingWritten = "Tu nic nie jest zapisane.",
-    IGUI_PlayerText_DontHaveAnyXP = "Nie mam �adnych do�wiadcze� do spisania.",
-    IGUI_PlayerText_DoesntFeelRightToWrite = "Nie wypada pisa� w czyim� pami�tniku.",
-    IGUI_PlayerText_DoesntFeelRightToRead = "Nie wypada czyta� czyjego� pami�tnika.",
-    IGUI_PlayerText_NothingToAddToJournal = "Nie mam nic do dodania.",
-    IGUI_PlayerText_AllDoneWithJournal = "Gotowe.",
-    IGUI_Tooltip_Empty = "Pusty pami�tnik gotowy do zapisania.",
-    IGUI_Tooltip_Start = "Zapiski z �ycia",
-    IGUI_Tooltip_End = "",
-    IGUI_Tooltip_Recipe = "recepta",
-    IGUI_Tooltip_Recipes = "recepty"
+    IGUI_PlayerText_NothingWritten = "Nic tutaj nie jest napisane.",
+    IGUI_PlayerText_DontHaveAnyXP = "Nie mam żadnych doświadczeń do zapisania.",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "To nie wydaje się właściwe pisać w czyimś dzienniku.",
+    IGUI_PlayerText_DoesntFeelRightToRead = "To nie wydaje się właściwe czytać czyjegoś dziennika.",
+    IGUI_PlayerText_NothingToAddToJournal = "Nie ma nic więcej do dodania.",
+    IGUI_PlayerText_AllDoneWithJournal = "Wszystko gotowe.",
+    IGUI_PlayerText_Illiterate1 = "Nie potrafię czytać.",
+    IGUI_PlayerText_Illiterate2 = "Jestem analfabetą.",
+
+    IGUI_TranscribeIntoJournal = "Przepisz do Dziennika",
+
+    IGUI_PlayerText_NeedGainWeight = "Najpierw powinienem przybrać kilka kilogramów...",
+    IGUI_PlayerText_NeedLoseWeight = "Najpierw powinienem schudnąć kilka kilogramów...",
+
+    IGUI_Tooltip_Empty = "Pusty dziennik gotowy do zapisania.",
+    IGUI_Tooltip_Start = "Zapis z życia",
+    IGUI_Tooltip_End = ".",
+    IGUI_Tooltip_Recipe = "przepis",
+    IGUI_Tooltip_Recipes = "przepisy",
+    IGUI_Tooltip_Transcribing = "Przepisywanie",
+    IGUI_Tooltip_Learning = "Uczenie się",
+    IGUI_perks_Lightfoot = "Lekkość",
+    IGUI_perks_Sneak = "Skradanie się",
+    IGUI_perks_PlantScavenging = "Zbieractwo",
+    IGUI_Rename = "Zmień nazwę",
+    IGUI_JournalXPUsedUp = "Pismo jest zbyt zużyte, aby je przeczytać... (XP wykorzystane)",
+
+    IGUI_CraftCategory_SkillJournal = "Dziennik Odzyskiwania Umiejętności",
+
+    IGUI_ItemCat_SkillJournal = "Dziennik Umiejętności",
+    IGUI_GainedXPText = "Odzyskiwane XP",
+    IGUI_OLDXP_WARNING = "Ostrzeżenie: Ten dziennik zawiera 'STARE' XP sprzed aktualizacji. Dziennik może początkowo powodować problemy. To ostrzeżenie zniknie wraz z jego użytkowaniem.",
+    IGUI_OneTimeUse_Warning = "Opcja Sandbox dla XP używanego przy czytaniu jest włączona.",
+    IGUI_TV_XP_Warning = "Opcja Sandbox dla XP zdobytego z programów telewizyjnych i kaset VHS jest wyłączona.",
+    IGUI_Rename_Warning = "Zmień nazwę tego dziennika, aby wyłączyć to ostrzeżenie.",
 }

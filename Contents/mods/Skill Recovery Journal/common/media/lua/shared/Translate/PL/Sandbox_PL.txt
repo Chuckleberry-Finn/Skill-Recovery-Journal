@@ -1,5 +1,47 @@
-Sandbox_EN = {
-	Sandbox_SkillRecoveryJournal = "Skill Recovery Journal",
-	Sandbox_SkillRecoveryJournalPercentage = "Procent odzyskanych umiej�tno�ci",
-	Sandbox_SkillRecoveryJournalPercentage_tooltip = "Ilo�� punkt�w do�wiadczenia odzyskana po przeczytaniu pami�tnika.",
-	}
+Sandbox_PL = {
+	Sandbox_SkillRecoveryJournal = "Dziennik Odzyskiwania Umiejętności",
+
+	Sandbox_SkillRecoveryJournalPercentage = "Ogólny Procent Odzyskiwania Umiejętności",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "Ilość doświadczenia odzyskiwanego z czytania oprawionych dzienników.<br>Ta wartość jest używana domyślnie, jeśli inne opcje są ustawione na -1.",
+
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "Mnożnik Prędkości Przepisywania Dziennika Umiejętności",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "Mnożnik prędkości przepisywania dzienników.",
+
+	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Mnożnik Prędkości Czytania Dziennika Umiejętności",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "Mnożnik prędkości czytania oprawionych dzienników.",
+
+	Sandbox_SkillRecoveryJournalTranscribeTVXP = "Przepisuj XP zdobyte z TV/VHS",
+	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Włączenie tej opcji pozwala na przepisywanie XP zdobytego poprzez oglądanie TV/VHS. Uwaga: Oznacza to, że gracze mogą przenosić XP zdobyte poprzez oglądanie pomiędzy postaciami w sposób kumulatywny.",
+
+	Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills = "Procent Odzyskiwania Umiejętności Fizycznych",
+	Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills_tooltip = "Procent odzyskiwania umiejętności fizycznych.<br>Ustaw na -1, aby używać Ogólnego Procentu Odzyskiwania Umiejętności.",
+
+	Sandbox_SkillRecoveryJournalRecoverCombatMeleeSkills = "Procent Odzyskiwania Umiejętności Walki Wręcz",
+    Sandbox_SkillRecoveryJournalRecoverCombatMeleeSkills_tooltip = "Procent odzyskiwania umiejętności walki wręcz.<br>Ustaw na -1, aby używać Ogólnego Procentu Odzyskiwania Umiejętności.",
+
+    Sandbox_SkillRecoveryJournalRecoverCombatFirearmsSkills = "Procent Odzyskiwania Umiejętności Walki z Bronią Palną",
+    Sandbox_SkillRecoveryJournalRecoverCombatFirearmsSkills_tooltip = "Procent odzyskiwania umiejętności walki z bronią palną.<br>Ustaw na -1, aby używać Ogólnego Procentu Odzyskiwania Umiejętności.",
+
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "Procent Odzyskiwania Umiejętności Rzemieślniczych",
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Procent odzyskiwania umiejętności rzemieślniczych.<br>Ustaw na -1, aby używać Ogólnego Procentu Odzyskiwania Umiejętności.",
+
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "Procent Odzyskiwania Umiejętności Przetrwania",
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Procent odzyskiwania umiejętności przetrwania.<br>Ustaw na -1, aby używać Ogólnego Procentu Odzyskiwania Umiejętności.",
+
+    Sandbox_SkillRecoveryJournalRecoverFarmingCategorySkills = "Procent Odzyskiwania Umiejętności Rolniczych",
+    Sandbox_SkillRecoveryJournalRecoverFarmingCategorySkills_tooltip = "Procent odzyskiwania umiejętności rolniczych.<br>Ustaw na -1, aby używać Ogólnego Procentu Odzyskiwania Umiejętności.",
+
+	Sandbox_SkillRecoveryJournalRecoverRecipes = "Odzyskuj Przepisy",
+    Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "Wyłącz, aby uniemożliwić dziennikom odzyskiwanie/przepisywanie przepisów.",
+
+    Sandbox_SkillRecoveryJournalUsed = "XP Dziennika Używane przy Czytaniu",
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "Normalnie możesz czytać dziennik tyle razy, ile chcesz; włączając tę opcję, każdy punkt XP może być odzyskany tylko raz. Nadal możesz dodawać do dziennika, ale każdy punkt może być odzyskany tylko raz w każdym dzienniku. Uwaga: Wskazówka dziennika będzie teraz wyświetlać ułamek dla niewykorzystanych punktów.",
+
+    Sandbox_SkillRecoveryJournalCraftRecipe = "Przepis na Dziennik",
+    Sandbox_SkillRecoveryJournalCraftRecipe_tooltip = "Pozostawienie pustego oznacza, że dzienniki nie mogą być tworzone.\n\nSkładnia opiera się na składnikach przepisu, jak następuje:\nKażdy element jest oddzielony przez '|'.\nSą one wprowadzane bezpośrednio do input{} skryptu przepisu.",
+
+    Sandbox_SkillRecoveryJournalModDataTrack = "Śledź Wartości ModData",
+    Sandbox_SkillRecoveryJournalModDataTrack_tooltip = "UŻYWAJ OSTROŻNIE.\n\nPrzykład składni: ModDataKey1|ModDataKey2\nTranskrypcja zapisze kopię odpowiadającej tabeli z danych moda gracza.\nMoże to powodować znaczące problemy, jeśli dane są duże.\nJeśli nie wiesz, co to znaczy, zignoruj to i pozostaw puste.",
+
+    Sandbox_SkillRecoveryJournalKillsTrack = "Procent Odzyskiwania Zabójstw Zombi/Przetrwania",
+}

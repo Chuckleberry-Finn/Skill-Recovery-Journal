@@ -1,4 +1,4 @@
 ItemName_FR = {
-    ItemName_Base.SkillRecoveryBoundJournal = "Journal reli�",
-    ItemName_Base.SkillRecoveryJournal = "Journal reli� (moisi)",
+    ItemName_Base.SkillRecoveryJournal = "Journal Relié (Détérioré)",
+    ItemName_Base.SkillRecoveryBoundJournal = "Journal Relié",
 }

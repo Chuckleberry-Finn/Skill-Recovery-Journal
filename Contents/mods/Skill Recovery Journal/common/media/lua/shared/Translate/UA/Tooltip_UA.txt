@@ -1,0 +1,4 @@
+Tooltip_UA = {
+    Tooltip_DecayedJournal = "Перемістіть це у ваш інвентар, щоб оновити.",
+    Tooltip_SkillJournal = "Значення досвіду залежать від того, хто читає."
+}

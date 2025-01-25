@@ -1,0 +1,3 @@
+Recipe_DE = {
+    Recipe_BindSkillRecoveryJournal = "Gebundenes Fähigkeiten-Wiederherstellungsjournal erstellen",
+}

@@ -1,4 +1,3 @@
 Recipe_RU = {
-    Recipe_Transcribe_Journal = "Заполнить Дневник Навыков",
-    Recipe_Bind_Journal = "Создать Личный Дневник Навыков",
+    Recipe_BindSkillRecoveryJournal = "РџРµСЂРµРїР»РµСЃС‚Рё Р”РЅРµРІРЅРёРє Р’РѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ РќР°РІС‹РєРѕРІ",
 }

@@ -1,18 +1,37 @@
 IGUI_ES = {
-    IGUI_PlayerText_NothingWritten = "No hay nada escrito aqu�.",
-    IGUI_PlayerText_DontHaveAnyXP = "No tengo ninguna experiencia que registrar.",
-    IGUI_PlayerText_DoesntFeelRightToWrite = "No me parece bien escribir en el diario de otra persona.",
-    IGUI_PlayerText_DoesntFeelRightToRead = "No me parece bien leer el diario de otra persona.",
-    IGUI_PlayerText_NothingToAddToJournal = "No hay nada m�s que a�adir.",
-    IGUI_PlayerText_AllDoneWithJournal = "Listo.",
-    IGUI_Tooltip_Empty = "Un diario vac�o listo para ser escrito.",
+    IGUI_PlayerText_NothingWritten = "No hay nada escrito aquí.",
+    IGUI_PlayerText_DontHaveAnyXP = "No tengo ninguna experiencia para registrar.",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "No se siente correcto escribir en el diario de alguien más.",
+    IGUI_PlayerText_DoesntFeelRightToRead = "No se siente correcto leer el diario de alguien más.",
+    IGUI_PlayerText_NothingToAddToJournal = "No hay nada más que agregar.",
+    IGUI_PlayerText_AllDoneWithJournal = "Todo listo.",
+    IGUI_PlayerText_Illiterate1 = "No sé leer.",
+    IGUI_PlayerText_Illiterate2 = "Soy analfabeto.",
+
+    IGUI_TranscribeIntoJournal = "Transcribir al Diario",
+
+    IGUI_PlayerText_NeedGainWeight = "Debería ganar algunos kilos primero...",
+    IGUI_PlayerText_NeedLoseWeight = "Debería perder algunos kilos primero...",
+
+    IGUI_Tooltip_Empty = "Un diario vacío listo para ser escrito.",
     IGUI_Tooltip_Start = "Un registro de la vida de",
     IGUI_Tooltip_End = ".",
     IGUI_Tooltip_Recipe = "receta",
-    IGUI_Tooltip_Recipes = "recetas"
+    IGUI_Tooltip_Recipes = "recetas",
     IGUI_Tooltip_Transcribing = "Transcribiendo",
     IGUI_Tooltip_Learning = "Aprendiendo",
-    IGUI_perks_Lightfoot = "Pies Ligeros",
-    IGUI_perks_Sneak = "Sigilo",
-    IGUI_perks_PlantScavenging = "Rebuscar",
+    IGUI_perks_Lightfoot = "Sigiloso",
+    IGUI_perks_Sneak = "Escabullirse",
+    IGUI_perks_PlantScavenging = "Recolección",
+    IGUI_Rename = "Renombrar",
+    IGUI_JournalXPUsedUp = "La escritura está demasiado desgastada para leer... (XP agotada)",
+
+    IGUI_CraftCategory_SkillJournal = "Diario de Recuperación de Habilidades",
+
+    IGUI_ItemCat_SkillJournal = "Diario de Habilidades",
+    IGUI_GainedXPText = "XP Recuperable",
+    IGUI_OLDXP_WARNING = "Advertencia: Este diario contiene XP 'ANTIGUO' de antes de la(s) actualización(es). El diario puede tener algunos problemas inicialmente. Este mensaje de advertencia desaparecerá con el uso.",
+    IGUI_OneTimeUse_Warning = "La opción de sandbox para XP utilizado al leer está habilitada.",
+    IGUI_TV_XP_Warning = "La opción de sandbox para XP obtenido de programas de TV y cintas VHS está deshabilitada.",
+    IGUI_Rename_Warning = "Renombra este diario para desactivar esta alerta.",
 }

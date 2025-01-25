@@ -1,45 +1,47 @@
 Sandbox_UA = {
-	Sandbox_SkillRecoveryJournal = "Журнал відновлення навичок",
+	Sandbox_SkillRecoveryJournal = "Р©РѕРґРµРЅРЅРёРє Р’С–РґРЅРѕРІР»РµРЅРЅСЏ РќР°РІРёС‡РѕРє",
 
-	Sandbox_SkillRecoveryJournalPercentage = "Відсоток відновлення навичок",
-	Sandbox_SkillRecoveryJournalPercentage_tooltip = "Кількість досвіду, отриманого від читання підшитих журналів.",
+	Sandbox_SkillRecoveryJournalPercentage = "Р—Р°РіР°Р»СЊРЅРёР№ Р’С–РґСЃРѕС‚РѕРє Р’С–РґРЅРѕРІР»РµРЅРЅСЏ РќР°РІРёС‡РѕРє",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "РљС–Р»СЊРєС–СЃС‚СЊ РґРѕСЃРІС–РґСѓ, С‰Рѕ РІС–РґРЅРѕРІР»СЋС”С‚СЊСЃСЏ РїС–Рґ С‡Р°СЃ С‡РёС‚Р°РЅРЅСЏ РїРµСЂРµРїР»РµС‚РµРЅРёС… С‰РѕРґРµРЅРЅРёРєС–РІ.<br>Р¦Рµ Р·РЅР°С‡РµРЅРЅСЏ РІРёРєРѕСЂРёСЃС‚РѕРІСѓС”С‚СЊСЃСЏ Р·Р° Р·Р°РјРѕРІС‡СѓРІР°РЅРЅСЏРј, СЏРєС‰Рѕ С–РЅС€С– РїР°СЂР°РјРµС‚СЂРё РІСЃС‚Р°РЅРѕРІР»РµРЅС– РЅР° -1.",
 
-	Sandbox_SkillRecoveryJournalTranscribeSpeed = "Множник швидкості транскрибування відновлення навичок",
-	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "Множник на швидкість транскрибування журналів."
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "РњРЅРѕР¶РЅРёРє РЁРІРёРґРєРѕСЃС‚С– РџРµСЂРµРїРёСЃСѓРІР°РЅРЅСЏ Р©РѕРґРµРЅРЅРёРєР°",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "РњРЅРѕР¶РЅРёРє С€РІРёРґРєРѕСЃС‚С– РїРµСЂРµРїРёСЃСѓРІР°РЅРЅСЏ С‰РѕРґРµРЅРЅРёРєС–РІ.",
 
-	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Мультиплікатор швидкості читання після відновлення навички",
-	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "Мультиплікатор швидкості читання після відновлення навички."
+	Sandbox_SkillRecoveryJournalReadTimeSpeed = "РњРЅРѕР¶РЅРёРє РЁРІРёРґРєРѕСЃС‚С– Р§РёС‚Р°РЅРЅСЏ Р©РѕРґРµРЅРЅРёРєР°",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "РњРЅРѕР¶РЅРёРє С€РІРёРґРєРѕСЃС‚С– С‡РёС‚Р°РЅРЅСЏ РїРµСЂРµРїР»РµС‚РµРЅРёС… С‰РѕРґРµРЅРЅРёРєС–РІ.",
 
-    Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses = "Відновити бонус за професію та риси XP"
-    Sandbox_SkillRecoveryJournalRecoverProfessionAndTraitsBonuses_tooltip = "Починаючи з більш ніж 1 рівнем в умінні, ви зазвичай отримуєте бонусний досвід - якщо цю опцію вимкнено, то XP не записується. Весь XP записується для персонажа без стартових навичок. Це НЕ відновлює початкові рівні - лише зароблений бонусний досвід."
+	Sandbox_SkillRecoveryJournalTranscribeTVXP = "РџРµСЂРµРїРёСЃСѓРІР°С‚Рё Р”РѕСЃРІС–Рґ Р· РўР’/VHS",
+	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "РЈРІС–РјРєРЅРµРЅРЅСЏ С†СЊРѕРіРѕ РґРѕР·РІРѕР»РёС‚СЊ РїРµСЂРµРїРёСЃСѓРІР°С‚Рё РґРѕСЃРІС–Рґ, РѕС‚СЂРёРјР°РЅРёР№ РїС–Рґ С‡Р°СЃ РїРµСЂРµРіР»СЏРґСѓ РўР’/VHS. РџСЂРёРјС–С‚РєР°: Р¦Рµ РѕР·РЅР°С‡Р°С”, С‰Рѕ РіСЂР°РІС†С– РјРѕР¶СѓС‚СЊ РїРµСЂРµРЅРѕСЃРёС‚Рё РґРѕСЃРІС–Рґ РјС–Р¶ РїРµСЂСЃРѕРЅР°Р¶Р°РјРё.",
 
-	Sandbox_SkillRecoveryJournalTranscribeTVXP = "Записуйте досвід, отриманий з TV/VHS",
-	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Увімкнувши цю опцію, ви зможете записувати XP, зароблений під час перегляду TV/VHS. Примітка: Це означає, що гравці зможуть переносити переглянутий XP між персонажами кумулятивно."
+	Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills = "Р’С–РґСЃРѕС‚РѕРє Р’С–РґРЅРѕРІР»РµРЅРЅСЏ Р¤С–Р·РёС‡РЅРёС… РќР°РІРёС‡РѕРє",
+	Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills_tooltip = "Р’С–РґСЃРѕС‚РѕРє РІС–РґРЅРѕРІР»РµРЅРЅСЏ С„С–Р·РёС‡РЅРёС… РЅР°РІРёС‡РѕРє.<br>Р’СЃС‚Р°РЅРѕРІС–С‚СЊ -1, С‰РѕР± РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё Р—Р°РіР°Р»СЊРЅРёР№ Р’С–РґСЃРѕС‚РѕРє Р’С–РґРЅРѕРІР»РµРЅРЅСЏ РќР°РІРёС‡РѕРє.",
 
-	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Відновлення пасивних навичок"
-	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Увімкніть для запису пасивних навичок."
+	Sandbox_SkillRecoveryJournalRecoverCombatMeleeSkills = "Р’С–РґСЃРѕС‚РѕРє Р’С–РґРЅРѕРІР»РµРЅРЅСЏ РќР°РІРёС‡РѕРє Р‘Р»РёР¶РЅСЊРѕРіРѕ Р‘РѕСЋ",
+    Sandbox_SkillRecoveryJournalRecoverCombatMeleeSkills_tooltip = "Р’С–РґСЃРѕС‚РѕРє РІС–РґРЅРѕРІР»РµРЅРЅСЏ РЅР°РІРёС‡РѕРє Р±Р»РёР¶РЅСЊРѕРіРѕ Р±РѕСЋ.<br>Р’СЃС‚Р°РЅРѕРІС–С‚СЊ -1, С‰РѕР± РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё Р—Р°РіР°Р»СЊРЅРёР№ Р’С–РґСЃРѕС‚РѕРє Р’С–РґРЅРѕРІР»РµРЅРЅСЏ РќР°РІРёС‡РѕРє.",
 
-	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "Відновити бойові навички"
-    Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "Увімкніть для запису бойових навичок."
+    Sandbox_SkillRecoveryJournalRecoverCombatFirearmsSkills = "Р’С–РґСЃРѕС‚РѕРє Р’С–РґРЅРѕРІР»РµРЅРЅСЏ РќР°РІРёС‡РѕРє РЎС‚СЂС–Р»РµС†СЊРєРѕС— Р‘РѕР№РѕРІРѕС— РџС–РґРіРѕС‚РѕРІРєРё",
+    Sandbox_SkillRecoveryJournalRecoverCombatFirearmsSkills_tooltip = "Р’С–РґСЃРѕС‚РѕРє РІС–РґРЅРѕРІР»РµРЅРЅСЏ РЅР°РІРёС‡РѕРє СЃС‚СЂС–Р»РµС†СЊРєРѕС— Р±РѕР№РѕРІРѕС— РїС–РґРіРѕС‚РѕРІРєРё.<br>Р’СЃС‚Р°РЅРѕРІС–С‚СЊ -1, С‰РѕР± РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё Р—Р°РіР°Р»СЊРЅРёР№ Р’С–РґСЃРѕС‚РѕРє Р’С–РґРЅРѕРІР»РµРЅРЅСЏ РќР°РІРёС‡РѕРє.",
 
-    Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "Відновити навички володіння зброєю"
-    Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "Увімкніть для запису вогнепальних навичок."
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "Р’С–РґСЃРѕС‚РѕРє Р’С–РґРЅРѕРІР»РµРЅРЅСЏ РќР°РІРёС‡РѕРє Р РµРјРµСЃР»Р°",
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Р’С–РґСЃРѕС‚РѕРє РІС–РґРЅРѕРІР»РµРЅРЅСЏ РЅР°РІРёС‡РѕРє СЂРµРјРµСЃР»Р°.<br>Р’СЃС‚Р°РЅРѕРІС–С‚СЊ -1, С‰РѕР± РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё Р—Р°РіР°Р»СЊРЅРёР№ Р’С–РґСЃРѕС‚РѕРє Р’С–РґРЅРѕРІР»РµРЅРЅСЏ РќР°РІРёС‡РѕРє.",
 
-    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "Відновити навички ремесл"
-    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Увімкніть для запису ремеслених навичок."
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "Р’С–РґСЃРѕС‚РѕРє Р’С–РґРЅРѕРІР»РµРЅРЅСЏ РќР°РІРёС‡РѕРє Р’РёР¶РёРІР°РЅРЅСЏ",
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Р’С–РґСЃРѕС‚РѕРє РІС–РґРЅРѕРІР»РµРЅРЅСЏ РЅР°РІРёС‡РѕРє РІРёР¶РёРІР°РЅРЅСЏ.<br>Р’СЃС‚Р°РЅРѕРІС–С‚СЊ -1, С‰РѕР± РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё Р—Р°РіР°Р»СЊРЅРёР№ Р’С–РґСЃРѕС‚РѕРє Р’С–РґРЅРѕРІР»РµРЅРЅСЏ РќР°РІРёС‡РѕРє.",
 
-    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "Відновити навички виживання"
-    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Увімкніть для запису навичок виживання."
+    Sandbox_SkillRecoveryJournalRecoverFarmingCategorySkills = "Р’С–РґСЃРѕС‚РѕРє Р’С–РґРЅРѕРІР»РµРЅРЅСЏ РќР°РІРёС‡РѕРє Р¤РµСЂРјРµСЂСЃС‚РІР°",
+    Sandbox_SkillRecoveryJournalRecoverFarmingCategorySkills_tooltip = "Р’С–РґСЃРѕС‚РѕРє РІС–РґРЅРѕРІР»РµРЅРЅСЏ РЅР°РІРёС‡РѕРє С„РµСЂРјРµСЂСЃС‚РІР°.<br>Р’СЃС‚Р°РЅРѕРІС–С‚СЊ -1, С‰РѕР± РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё Р—Р°РіР°Р»СЊРЅРёР№ Р’С–РґСЃРѕС‚РѕРє Р’С–РґРЅРѕРІР»РµРЅРЅСЏ РќР°РІРёС‡РѕРє.",
 
-    Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "Відновити навички спритності"
-    Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "Увімкніть для запису навичок спритності."
+	Sandbox_SkillRecoveryJournalRecoverRecipes = "Р’С–РґРЅРѕРІР»РµРЅРЅСЏ Р РµС†РµРїС‚С–РІ",
+    Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "Р’РёРјРєРЅС–С‚СЊ, С‰РѕР± Р·Р°Р±РѕСЂРѕРЅРёС‚Рё С‰РѕРґРµРЅРЅРёРєР°Рј РІС–РґРЅРѕРІР»СЋРІР°С‚Рё/РїРµСЂРµРїРёСЃСѓРІР°С‚Рё СЂРµС†РµРїС‚Рё.",
 
-	Sandbox_SkillRecoveryJournalRecoverRecipes = "Відновити рецепти"
-    Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "Виммкніть, щоб заборонити журналам відновлювати/транскрибувати рецепти."
+    Sandbox_SkillRecoveryJournalUsed = "Р”РѕСЃРІС–Рґ Р©РѕРґРµРЅРЅРёРєР° Р’РёРєРѕСЂРёСЃС‚РѕРІСѓС”С‚СЊСЃСЏ РїС–Рґ Р§Р°СЃ Р§РёС‚Р°РЅРЅСЏ",
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "Р—Р°Р·РІРёС‡Р°Р№ РјРѕР¶РЅР° РїРµСЂРµС‡РёС‚СѓРІР°С‚Рё С‰РѕРґРµРЅРЅРёРє СЃРєС–Р»СЊРєРё Р·Р°РІРіРѕРґРЅРѕ СЂР°Р·С–РІ; С–Р· С†С–С”СЋ РѕРїС†С–С”СЋ РєРѕР¶РЅР° РѕРґРёРЅРёС†СЏ РґРѕСЃРІС–РґСѓ РјРѕР¶Рµ Р±СѓС‚Рё РІС–РґРЅРѕРІР»РµРЅР° Р»РёС€Рµ РѕРґРёРЅ СЂР°Р·. Р’Рё РІСЃРµ С‰Рµ РјРѕР¶РµС‚Рµ РґРѕРґР°РІР°С‚Рё РґРѕ С‰РѕРґРµРЅРЅРёРєР°, Р°Р»Рµ РєРѕР¶РЅР° РѕРґРёРЅРёС†СЏ РґРѕСЃРІС–РґСѓ РІС–РґРЅРѕРІР»СЋС”С‚СЊСЃСЏ С‚С–Р»СЊРєРё СЂР°Р· РґР»СЏ РєРѕР¶РЅРѕРіРѕ С‰РѕРґРµРЅРЅРёРєР°. РџСЂРёРјС–С‚РєР°: С‚РµРїРµСЂ РїС–РґРєР°Р·РєР° РґР»СЏ С‰РѕРґРµРЅРЅРёРєР° РїРѕРєР°Р·СѓРІР°С‚РёРјРµ С‡Р°СЃС‚РєСѓ РґР»СЏ РЅРµРІРёРєРѕСЂРёСЃС‚Р°РЅРёС… С‚РѕС‡РѕРє.",
 
-    Sandbox_SkillRecoveryJournalUsed = "Журнал досвіду, який використовується при читанні"
-    Sandbox_SkillRecoveryJournalUsed_tooltip = "Зазвичай ви можете перечитувати журнал необмежену кількість разів, але якщо увімкнути цю опцію, кожну окрему точку досвіду можна буде відновити лише один раз. Ви можете додавати дані до журналу, але кожну точку можна буде відновити лише один раз у кожному журналі. Примітка: у підказці для журналу тепер відображатиметься дріб для невикористаних пунктів."
+    Sandbox_SkillRecoveryJournalCraftRecipe = "Р РµС†РµРїС‚ Р©РѕРґРµРЅРЅРёРєР°",
+    Sandbox_SkillRecoveryJournalCraftRecipe_tooltip = "РЇРєС‰Рѕ Р·Р°Р»РёС€РёС‚Рё РїРѕСЂРѕР¶РЅС–Рј, С‰РѕРґРµРЅРЅРёРєРё РЅРµРјРѕР¶Р»РёРІРѕ Р±СѓРґРµ СЃС‚РІРѕСЂРёС‚Рё.\n\nРЎРёРЅС‚Р°РєСЃРёСЃ РІС–РґРїРѕРІС–РґР°С” С–РЅРіСЂРµРґС–С”РЅС‚Р°Рј СЂРµС†РµРїС‚Сѓ:\nРљРѕР¶РµРЅ РµР»РµРјРµРЅС‚ СЂРѕР·РґС–Р»СЏС”С‚СЊСЃСЏ '|'.\nР¦Рµ РІРІРѕРґРёС‚СЊСЃСЏ Р±РµР·РїРѕСЃРµСЂРµРґРЅСЊРѕ Сѓ input{} СЃРєСЂРёРїС‚Сѓ СЂРµС†РµРїС‚Сѓ.",
 
-    Sandbox_SkillRecoveryJournalCraft = "Журнал можна створити"
-    Sandbox_SkillRecoveryJournalUsed_tooltip = "Вимкнення цієї опції означає, що журнали не можуть бути створені."
+    Sandbox_SkillRecoveryJournalModDataTrack = "Р’С–РґСЃС‚РµР¶РµРЅРЅСЏ Р—РЅР°С‡РµРЅСЊ ModData",
+    Sandbox_SkillRecoveryJournalModDataTrack_tooltip = "Р’РРљРћР РРЎРўРћР’РЈР™РўР• Р— РћР‘Р•Р Р•Р–РќР†РЎРўР®.\n\nРџСЂРёРєР»Р°Рґ СЃРёРЅС‚Р°РєСЃРёСЃСѓ: ModDataKey1|ModDataKey2\nРџРµСЂРµРїРёСЃСѓРІР°РЅРЅСЏ Р·Р±РµСЂРµР¶Рµ РєРѕРїС–СЋ РІС–РґРїРѕРІС–РґРЅРѕС— С‚Р°Р±Р»РёС†С– Р· РґР°РЅРёС… РјРѕРґР° РіСЂР°РІС†СЏ.\nР¦Рµ РјРѕР¶Рµ РІРёРєР»РёРєР°С‚Рё СЃРµСЂР№РѕР·РЅС– РїСЂРѕР±Р»РµРјРё, СЏРєС‰Рѕ РґР°РЅС– РІРµР»РёРєС–.\nРЇРєС‰Рѕ РІРё РЅРµ РІРїРµРІРЅРµРЅС–, С‰Рѕ С†Рµ РѕР·РЅР°С‡Р°С”, С–РіРЅРѕСЂСѓР№С‚Рµ С‚Р° Р·Р°Р»РёС€С‚Рµ РїРѕСЂРѕР¶РЅС–Рј.",
+
+    Sandbox_SkillRecoveryJournalKillsTrack = "Р’С–РґСЃРѕС‚РѕРє Р’С–РґРЅРѕРІР»РµРЅРЅСЏ Р’Р±РёРІСЃС‚РІ (Р—РѕРјР±С–/Р’РёР¶РёРІР°Р»СЊРЅРёРєС–РІ)",
 }
