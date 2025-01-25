@@ -244,7 +244,7 @@ function ISToolTipInv:render()
 			tooltipRenderOverTime.ticks = 1
 		end
 
-		if itemObj and player and itemObj:getType() == "SkillRecoveryBoundJournal" then
+		if itemObj and player and instanceof(itemObj, "InventoryItem") and itemObj:getType() == "SkillRecoveryBoundJournal" then
 
 			local journalModData = itemObj:getModData()
 			SRJ.backgroundFix(journalModData, itemObj)
