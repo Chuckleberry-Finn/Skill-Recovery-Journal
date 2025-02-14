@@ -113,5 +113,5 @@ Updated/fixed encodings for several languages.
 [ ------ ]
 
 [ 2/13/25 ]
-Fixed Halotext bug caused by B42.3.3.
+Fixed Halotext bug caused by changes in B42.3.3
 [ ------ ]
