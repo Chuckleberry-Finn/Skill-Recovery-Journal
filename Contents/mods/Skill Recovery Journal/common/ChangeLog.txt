@@ -111,3 +111,7 @@ link3 = Github = https://steamcommunity.com/linkfilter/?u=https://github.com/Chu
 Fix tooltip render issue with fluid transferring.
 Updated/fixed encodings for several languages.
 [ ------ ]
+
+[ 2/13/25 ]
+Fixed Halotext bug caused by B42.3.3.
+[ ------ ]

@@ -312,7 +312,7 @@ function ReadSkillRecoveryJournal:update()
 			end
 
 			HaloTextHelper:update()
-			HaloTextHelper.addText(self.character, changesBeingMadeText, HaloTextHelper.getColorWhite())
+			HaloTextHelper.addText(self.character, changesBeingMadeText, "", HaloTextHelper.getColorWhite())
 		end
 
 		if sayText and not self.spoke then

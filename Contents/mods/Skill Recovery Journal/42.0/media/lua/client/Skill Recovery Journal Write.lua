@@ -219,7 +219,7 @@ function WriteSkillRecoveryJournal:update()
 			local progressText = math.floor(((totalStoredXP - self.oldJournalTotalXP) / (totalRecoverableXP - self.oldJournalTotalXP)) * 100 + 0.5) .. "%"
 			local changesBeingMadeText = getText("IGUI_Tooltip_Transcribing") .. " (" .. progressText ..") :"
 			for k,v in pairs(changesBeingMade) do changesBeingMadeText = changesBeingMadeText.." "..v..((k~=#changesBeingMade and ", ") or "") end
-			HaloTextHelper.addText(self.character, changesBeingMadeText, HaloTextHelper.getColorWhite())
+			HaloTextHelper.addText(self.character, changesBeingMadeText, "", HaloTextHelper.getColorWhite())
 		end
 
 		-- handle sound
