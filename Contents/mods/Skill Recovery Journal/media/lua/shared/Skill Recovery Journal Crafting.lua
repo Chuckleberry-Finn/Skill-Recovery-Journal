@@ -1,7 +1,10 @@
 local function SkillRecoveryJournalRecipe()
 
     local sandboxOption = SandboxVars.SkillRecoveryJournal.CraftRecipe or "Notebook/Journal|LeatherStrips=3|[Recipe.GetItemTypes.Glue]|Thread"
-    if not sandboxOption or sandboxOption == "" then return end
+    if not sandboxOption or sandboxOption == "" then
+        print("SKILL RECOVERY JOURNAL: LOW-WARNING: No sandbox option for `CraftRecipe` set; Journal will be uncraftable.")
+        return
+    end
 
     local script = {
         header = "module Base { recipe Bind Journal { ",
@@ -53,9 +56,15 @@ local function SkillRecoveryJournalRecipe()
     end
 
     local newScript = script.header .. ingredients .. script.footer
-    --print("SCRIPT:", newScript)
+    print("SKILL RECOVERY JOURNAL: Loading script: ", newScript)
+
     local scriptManager = getScriptManager()
     scriptManager:ParseScript(newScript)
+
+    local recipe = scriptManager:getRecipe("Bind Journal")
+    if recipe then
+        print("SKILL RECOVERY JOURNAL: Verifying Script Generated: ", recipe and recipe:getOriginalname())
+    end
 
     if ISCraftingCategoryUI and ISCraftingCategoryUI.instance and ISCraftingCategoryUI.instance.craftingUI then ISCraftingCategoryUI.instance.craftingUI:refresh() end
 end
