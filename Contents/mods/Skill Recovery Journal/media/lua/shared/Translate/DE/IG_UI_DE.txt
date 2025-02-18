@@ -13,7 +13,7 @@ IGUI_DE = {
 
     IGUI_Tooltip_Empty = "Ein leeres Journal, bereit zum Beschreiben.",
     IGUI_Tooltip_Start = "Ein Eintrag ueber",
-    IGUI_Tooltip_End = "'das Leben von.",
+    IGUI_Tooltip_End = "'s Leben.",
     IGUI_Tooltip_Recipe = "Rezept",
     IGUI_Tooltip_Recipes = "Rezepte",
     IGUI_Tooltip_Transcribing = "Abschrift erstellen",
