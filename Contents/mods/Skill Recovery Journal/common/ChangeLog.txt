@@ -119,3 +119,7 @@ Fixed Halotext bug caused by changes in B42.3.3
 [ 2/16/25 ]
 Added additional debug messages for recipe generation.
 [ ------ ]
+
+[ 3/29/25 ]
+B41/42: Added checks for username.
+[ ------ ]

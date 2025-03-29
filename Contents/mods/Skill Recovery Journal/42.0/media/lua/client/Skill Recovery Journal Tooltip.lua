@@ -111,7 +111,7 @@ local function SRJ_generateTooltip(journalModData, player)
 	end
 
 	local usernameInsert = JMD["username"] and " ("..JMD["username"]..")" or ""
-	
+
 	local tooltipStart = getText("IGUI_Tooltip_Start").." "..JMD["author"]..usernameInsert..getText("IGUI_Tooltip_End")
 
 	return tooltipStart, skillsRecord, warning
