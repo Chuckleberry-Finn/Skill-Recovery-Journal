@@ -78,9 +78,11 @@ function WriteSkillRecoveryJournal:update()
 		local JMD = journalModData["SRJ"]
 		local journalID = JMD["ID"]
 		local pSteamID = self.character:getSteamID()
+		local pUsername = self.character:getUsername()
 
 		local bOwner = true
 		if pSteamID ~= 0 and journalID and journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then bOwner = false end
+		if pUsername and journalID and journalID["username"] and (journalID["username"] ~= pUsername) then bOwner = false end
 
 		local transcribeTimeMulti = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 1
 
@@ -301,21 +303,26 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 		JMD["ID"] = JMD["ID"] or {}
 		local journalID = JMD["ID"]
 		local pSteamID = character:getSteamID()
-		local pOnlineID = character:getOnlineID()
-		--print("-- SRJ INFO:".." pSteamID: "..pSteamID.." pOnlineID: "..pOnlineID.." --")
+		local pUsername = character:getUserName()
 
 		if pSteamID ~= 0 then
 			if journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
 				sayText=getText("IGUI_PlayerText_DoesntFeelRightToWrite"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default"
 				o.willWrite = false
 			end
-			if o.willWrite and pSteamID then
+			if o.willWrite and pSteamID and (not journalID["steamID"]) then
 				journalID["steamID"] = pSteamID
 			end
 		end
-		if o.willWrite and pOnlineID then
-			journalID["onlineID"] = pOnlineID
+
+		if pUsername and journalID["username"] and (journalID["username"] ~= pUsername) then
+			sayText=getText("IGUI_PlayerText_DoesntFeelRightToWrite"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default"
+			o.willWrite = false
 		end
+		if o.willWrite and pUsername and (not journalID["username"]) then
+			journalID["username"] = pUsername
+		end
+
 	end
 
 	if character:HasTrait("Illiterate") then

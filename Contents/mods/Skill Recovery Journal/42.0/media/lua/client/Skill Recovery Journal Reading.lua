@@ -95,6 +95,7 @@ function ReadSkillRecoveryJournal:update()
 		local totalRedXP = 0
 
 		local pSteamID = player:getSteamID()
+		local pUsername = player:getUsername()
 
 		if (not JMD) then
 			delayedStop = true
@@ -108,6 +109,10 @@ function ReadSkillRecoveryJournal:update()
 			JMD["ID"] = JMD["ID"] or {}
 			local journalID = JMD["ID"]
 			if journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
+				delayedStop = true
+				sayText = getText("IGUI_PlayerText_DoesntFeelRightToRead")
+			end
+			if journalID["username"] and (journalID["username"] ~= pUsername) then
 				delayedStop = true
 				sayText = getText("IGUI_PlayerText_DoesntFeelRightToRead")
 			end
