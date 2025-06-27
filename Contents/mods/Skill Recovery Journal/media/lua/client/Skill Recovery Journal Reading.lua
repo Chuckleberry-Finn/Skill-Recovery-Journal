@@ -106,12 +106,18 @@ function ReadSkillRecoveryJournal:update()
 			sayText = getText("IGUI_PlayerText_IGUI_PlayerText_Illiterate"..ZombRand(2)+1)-- 0,1 + 1
 
 		else
+
 			local journalID = JMD["ID"]
-			if journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
+			local protections = SandboxVars.SkillRecoveryJournal.SecurityFeatures or 1
+			---1 = "Prevent Username/SteamID Mismatch"
+			---2 = "Only Prevent SteamID Mismatch",
+			---3 = "Don't Prevent Mismatches",
+			if (protections<=2) and journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
 				delayedStop = true
 				sayText = getText("IGUI_PlayerText_DoesntFeelRightToRead")
 			end
-			if journalID["username"] and (journalID["username"] ~= pUsername) then
+
+			if (protections==1) and journalID["username"] and (journalID["username"] ~= pUsername) then
 				delayedStop = true
 				sayText = getText("IGUI_PlayerText_DoesntFeelRightToRead")
 			end

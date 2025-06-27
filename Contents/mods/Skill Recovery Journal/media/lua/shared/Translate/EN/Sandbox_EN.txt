@@ -45,4 +45,11 @@ Sandbox_EN = {
 
     Sandbox_SkillRecoveryJournalKillsTrack = "Zombie/Survivor Kills Recovery Percentage"
 
+    Sandbox_SkillRecoveryJournal_SecurityFeatures = "Account Security Protections",
+    Sandbox_SkillRecoveryJournal_SecurityFeatures_tooltip = "Whether journals check against username, steamID, both, or none. Warning: Disabling this entirely would mean people can share journals.",
+
+    Sandbox_SkillRecoveryJournal_SecFeat_Values_option1 = "Prevent Username/SteamID Mismatch"
+    Sandbox_SkillRecoveryJournal_SecFeat_Values_option2 = "Only Prevent SteamID Mismatch",
+    Sandbox_SkillRecoveryJournal_SecFeat_Values_option3 = "Don't Prevent Mismatches",
+
 	}

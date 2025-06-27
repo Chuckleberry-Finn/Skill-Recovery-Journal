@@ -39,12 +39,14 @@ option SkillRecoveryJournal.RecoverRecipes
 option SkillRecoveryJournal.RecoveryJournalUsed
 {type = boolean, default = false, page = SkillRecoveryJournal, translation = SkillRecoveryJournalUsed,}
 
+option SkillRecoveryJournal.KillsTrack
+{type = integer, min = 0, max = 100, default = 0, page = SkillRecoveryJournal, translation = SkillRecoveryJournalKillsTrack,}
+
 option SkillRecoveryJournal.CraftRecipe
 {type = string, default = item 1 [Base.Notebook;Base.Journal] flags[Prop2] mode:destroy| item 1 tags[Glue] flags[Prop1]| item 3 [Base.LeatherStrips;Base.LeatherStripsDirty] mode:destroy| item 1 [Base.Thread;Base.Yarn], page = SkillRecoveryJournal, translation = SkillRecoveryJournalCraftRecipe,}
 
 option SkillRecoveryJournal.ModDataTrack
 {type = string, default = , page = SkillRecoveryJournal, translation = SkillRecoveryJournalModDataTrack,}
 
-
-option SkillRecoveryJournal.KillsTrack
-{type = integer, min = 0, max = 100, default = 0, page = SkillRecoveryJournal, translation = SkillRecoveryJournalKillsTrack,}
+option SkillRecoveryJournal.SecurityFeatures
+{type = enum, numValues = 3, default = 1, page = SkillRecoveryJournal, translation = SkillRecoveryJournal_SecurityFeatures, valueTranslation = SkillRecoveryJournal_SecFeat_Values,}

@@ -305,17 +305,22 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 		local pSteamID = character:getSteamID()
 		local pUsername = character:getUsername()
 
-		if pSteamID ~= 0 then
+		local protections = SandboxVars.SkillRecoveryJournal.SecurityFeatures or 1
+		---1 = "Prevent Username/SteamID Mismatch"
+		---2 = "Only Prevent SteamID Mismatch",
+		---3 = "Don't Prevent Mismatches",
+
+		if (protections<=2) and pSteamID ~= 0 then
 			if journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
 				sayText=getText("IGUI_PlayerText_DoesntFeelRightToWrite"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default"
 				o.willWrite = false
 			end
-			if o.willWrite and pSteamID and (not journalID["steamID"]) then
+			if o.willWrite and pSteamID then
 				journalID["steamID"] = pSteamID
 			end
 		end
 
-		if isClient() then
+		if (protections==1) and isClient() then
 			if pUsername and journalID["username"] and (journalID["username"] ~= pUsername) then
 				sayText=getText("IGUI_PlayerText_DoesntFeelRightToWrite"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default"
 				o.willWrite = false

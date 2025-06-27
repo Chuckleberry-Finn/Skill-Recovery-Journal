@@ -126,3 +126,10 @@ Added additional debug messages for recipe generation.
 - Removed the decayed/conversion journal system.
     (This was for the transition period between how the journals recorded XP, see update from: 1/6/24)
 [ ------ ]
+
+[ 6/28/25 ]
+- Added sandbox option to configure security-protections on journal use.
+    1 = "Prevent Username/SteamID Mismatch"
+    2 = "Only Prevent SteamID Mismatch"
+    3 = "Don't Prevent Mismatches"
+[ ------ ]
