@@ -105,8 +105,7 @@ function ReadSkillRecoveryJournal:update()
 			delayedStop = true
 			sayText = getText("IGUI_PlayerText_IGUI_PlayerText_Illiterate"..ZombRand(2)+1)-- 0,1 + 1
 
-		elseif pSteamID ~= 0 then
-			JMD["ID"] = JMD["ID"] or {}
+		else
 			local journalID = JMD["ID"]
 			if journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
 				delayedStop = true

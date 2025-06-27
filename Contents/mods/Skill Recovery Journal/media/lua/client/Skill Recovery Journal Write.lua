@@ -264,14 +264,15 @@ function ISCraftAction:new(character, item, time, recipe, container, containers)
 				if o.willWrite and pSteamID then
 					journalID["steamID"] = pSteamID
 				end
+			end
 
-				if pUsername and journalID["username"] and (journalID["username"] ~= pUsername) then
-					sayText=getText("IGUI_PlayerText_DoesntFeelRightToWrite"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default"
-					o.willWrite = false
-				end
-				if o.willWrite and pUsername and (not journalID["username"]) then
-					journalID["username"] = pUsername
-				end
+			if pUsername and journalID["username"] and (journalID["username"] ~= pUsername) then
+				sayText=getText("IGUI_PlayerText_DoesntFeelRightToWrite"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default"
+				o.willWrite = false
+			end
+
+			if o.willWrite and pUsername and (not journalID["username"]) then
+				journalID["username"] = pUsername
 			end
 		end
 
