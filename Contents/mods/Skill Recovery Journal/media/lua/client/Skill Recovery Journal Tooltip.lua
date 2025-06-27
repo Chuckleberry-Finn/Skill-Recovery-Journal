@@ -245,9 +245,6 @@ function ISToolTipInv:render()
 			tooltipRenderOverTime.ticks = 1
 		end
 
-		---Convert Journal
-		if itemObj:getType() == "SkillRecoveryJournal" then SRJ.convertJournal(itemObj, player) end
-
 		if itemObj and player and itemObj:getType() == "SkillRecoveryBoundJournal" then
 
 			local journalModData = itemObj:getModData()
