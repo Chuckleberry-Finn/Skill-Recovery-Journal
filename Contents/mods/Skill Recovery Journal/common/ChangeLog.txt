@@ -133,3 +133,9 @@ Added additional debug messages for recipe generation.
     2 = "Only Prevent SteamID Mismatch"
     3 = "Don't Prevent Mismatches"
 [ ------ ]
+
+
+[ 8/15/25 ]
+- Fixed B42 recipe learning issues.
+Credit: anonpony1/pcgames3112.
+[ ------ ]
