@@ -366,7 +366,7 @@ function ReadSkillRecoveryJournal:new(character, item)
 			local learnedRecipes = JMD["learnedRecipes"]
 			if learnedRecipes then
 				for recipeID,_ in pairs(learnedRecipes) do
-					if not character:isRecipeKnown(recipeID) then
+					if not character:isRecipeActuallyKnown(recipeID) then
 						table.insert(o.learnedRecipes, recipeID)
 					end
 				end
