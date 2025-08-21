@@ -139,3 +139,7 @@ Added additional debug messages for recipe generation.
 - Fixed B42 recipe learning issues.
 Credit: anonpony1/pcgames3112.
 [ ------ ]
+
+[ 8/21/15 ]
+- Fix issue allowing people to share kills/modData.
+[ ------ ]

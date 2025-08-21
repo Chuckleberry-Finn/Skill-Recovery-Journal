@@ -11,4 +11,18 @@ module Base
         StaticModel = SkillRecoveryJournal,
         WorldStaticModel = SkillRecoveryJournal_ground,
     }
+
+    item SkillRecoveryJournal
+    {
+        Weight	=	0,
+        Type	=	Normal,
+        DisplayName	=	DELETE THIS,
+        DisplayCategory = SkillJournal,
+        DisappearOnUse = TRUE,
+        Icon	=	SkillRecoveryJournalDECAYED,
+        StaticModel = SkillRecoveryJournal,
+        WorldStaticModel = SkillRecoveryJournal_ground,
+        Tooltip = Tooltip_DecayedJournal,
+        OBSOLETE = TRUE,
+    }
 }

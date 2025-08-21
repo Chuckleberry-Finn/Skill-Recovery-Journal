@@ -133,3 +133,8 @@ Added additional debug messages for recipe generation.
     2 = "Only Prevent SteamID Mismatch"
     3 = "Don't Prevent Mismatches"
 [ ------ ]
+
+[ 8/21/15 ]
+- Re-added decayed journal item for older(?) saves that still had them around.
+- Fix issue allowing people to share kills/modData.
+[ ------ ]
