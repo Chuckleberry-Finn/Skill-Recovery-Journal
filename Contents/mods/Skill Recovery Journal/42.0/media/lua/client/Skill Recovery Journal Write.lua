@@ -1,5 +1,3 @@
-require "TimedActions/ISCraftAction"
-
 local SRJ = require "Skill Recovery Journal Main"
 local modDataCapture = require "Skill Recovery Journal ModData"
 
@@ -61,14 +59,12 @@ function WriteSkillRecoveryJournal:update()
 
 	if not self.loopedAction then return end
 
-	self.writeTimer = (self.writeTimer or 0) + (getGameTime():getMultiplier() or 0)
+	self.writeTimer = (self.writeTimer or 0) - (getGameTime():getMultiplier() or 0)
 	self.haloTextDelay = self.haloTextDelay - (getGameTime():getMultiplier() or 0)
 
-	--self.item:setJobDelta(0.0)
-	local updateInterval = 10
-	if self.writeTimer >= updateInterval then
+	if self.writeTimer <= 0 then
 
-		self.writeTimer = 0
+		self.writeTimer = 10
 		self.changesMade = false
 
 		local changesBeingMade, changesBeingMadeIndex = {}, {}

@@ -8,6 +8,8 @@ IGUI_EN = {
     IGUI_PlayerText_Illiterate1 = "I can't read.",
     IGUI_PlayerText_Illiterate2 = "I am illiterate.",
 
+    IGUI_TranscribeIntoJournal = "Transcribe Into Journal",
+
     IGUI_PlayerText_NeedGainWeight = "I should put on a few pounds first...",
     IGUI_PlayerText_NeedLoseWeight = "I should drop a few pounds first...",
 

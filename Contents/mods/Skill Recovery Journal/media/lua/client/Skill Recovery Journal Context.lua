@@ -41,6 +41,21 @@ function contextSRJ.readItems(items, player)
 end
 
 
+function contextSRJ.writeItems(items, player, writingTool)
+	items = ISInventoryPane.getActualItems(items)
+
+	if writingTool:getContainer() ~= nil then ISInventoryPaneContextMenu.transferIfNeeded(player, writingTool) end
+
+	for i,item in ipairs(items) do
+		if item:getContainer() ~= nil then
+			ISInventoryPaneContextMenu.transferIfNeeded(player, item)
+		end
+		ISTimedActionQueue.add(WriteSkillRecoveryJournal:new(player, item, writingTool))
+		break
+	end
+end
+
+
 ---@param context ISContextMenu
 function contextSRJ.doContextMenu(playerID, context, items)
 
@@ -81,6 +96,21 @@ function contextSRJ.doContextMenu(playerID, context, items)
 						or (emptyBook and getText("IGUI_PlayerText_NothingWritten"))
 						or (mismatchID and getText("IGUI_PlayerText_DoesntFeelRightToRead"))
 				readOption.toolTip = tooltip
+			end
+
+			local inv = player:getInventory()
+			local hasWritingTool = inv:getFirstTagRecurse("Write")
+
+			local writeOption = context:addOptionOnTop(getText("IGUI_TranscribeIntoJournal"), actualItems, contextSRJ.writeItems, player, hasWritingTool)
+
+			if asleep or illiterate or mismatchID or (not hasWritingTool) then
+				writeOption.notAvailable = true
+				local tooltip = ISInventoryPaneContextMenu.addToolTip()
+				tooltip.description = (asleep and getText("ContextMenu_NoOptionSleeping"))
+						or (illiterate and getText("IGUI_PlayerText_Illiterate2"))
+						or (mismatchID and getText("IGUI_PlayerText_DoesntFeelRightToWrite"))
+						or ((not hasWritingTool) and getText("Tooltip_Map_CantWrite"))
+				writeOption.toolTip = tooltip
 			end
 
 			break
