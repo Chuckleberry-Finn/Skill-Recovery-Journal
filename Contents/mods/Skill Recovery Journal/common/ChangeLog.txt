@@ -143,3 +143,8 @@ Credit: anonpony1/pcgames3112.
 [ 8/21/15 ]
 - Fix issue allowing people to share kills/modData.
 [ ------ ]
+
+[ 8/25/25 ]
+- Under the hood: Changed the update-check to a count-down (from a count-up).
+   This should help avoid issues with timed-actions/craft-time changes being so fast it breaks the process.
+[ ------ ]

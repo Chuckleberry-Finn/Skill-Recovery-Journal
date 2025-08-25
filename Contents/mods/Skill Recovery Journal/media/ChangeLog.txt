@@ -138,3 +138,9 @@ Added additional debug messages for recipe generation.
 - Re-added decayed journal item for older(?) saves that still had them around.
 - Fix issue allowing people to share kills/modData.
 [ ------ ]
+
+[ 8/25/25 ]
+- Changed the 'writing' to a timed-action. (no longer a recipe)
+- Under the hood: Changed the update-check to a count-down (from a count-up).
+   This should help avoid issues with timed-actions/craft-time changes being so fast it breaks the process.
+[ ------ ]
