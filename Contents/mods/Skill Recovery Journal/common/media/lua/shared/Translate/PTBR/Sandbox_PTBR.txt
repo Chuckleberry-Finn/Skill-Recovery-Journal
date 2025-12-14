@@ -1,0 +1,50 @@
+Sandbox_PTBR = {
+    Sandbox_SkillRecoveryJournal = "Diario de Recuperacao de Habilidades",
+
+    Sandbox_SkillRecoveryJournalPercentage = "Porcentagem Geral de Recuperacao de Habilidades",
+    Sandbox_SkillRecoveryJournalPercentage_tooltip = "A quantidade de experiencia recuperada ao ler diários encadernados.<br>Este valor é o padrão se outras opcoes estiverem configuradas para -1.",
+
+    Sandbox_SkillRecoveryJournalTranscribeSpeed = "Multiplicador de Velocidade de Transcricao de Habilidades",
+    Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "Um multiplicador na velocidade de transcricao dos diários.",
+
+    Sandbox_SkillRecoveryJournalReadTimeSpeed = "Multiplicador de Velocidade de Leitura de Habilidades",
+    Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "Um multiplicador na velocidade de leitura dos diários encadernados.",
+
+    Sandbox_SkillRecoveryJournalTranscribeTVXP = "Transcrever XP ganho de TV/VHS",
+    Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Ativar isso permitirá que as pessoas transcrevam XP ganho ao assistir TV/VHS. Nota: Isso significa que os jogadores podem transferir XP assistido entre personagens de forma cumulativa.",
+
+    Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Porcentagem de Recuperacao de Habilidades Passivas",
+    Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Porcentagem de recuperação para habilidades passivas.<br>Defina isso como -1 para usar a Porcentagem Geral de Recuperação de Habilidades.",
+    
+    Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills = "Porcentagem de Recuperacao da Capacidade Física"
+	Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills_tooltip = "Porcentagem de Recuperacao da Capacidade Física.<br>Defina isso como -1 para usar a Porcentagem Geral de Recuperação de Habilidades."
+
+    Sandbox_SkillRecoveryJournalRecoverCombatMeleeSkills = "Porcentagem de Recuperacao de Habilidades de Combate",
+    Sandbox_SkillRecoveryJournalRecoverCombatMeleeSkills_tooltip = "Porcentagem de recuperação para habilidades de combate.<br>Defina isso como -1 para usar a Porcentagem Geral de Recuperação de Habilidades.",
+
+    Sandbox_SkillRecoveryJournalRecoverCombatFirearmsSkills = "Porcentagem de Recuperacao de Habilidades de Armas de Fogo",
+    Sandbox_SkillRecoveryJournalRecoverCombatFirearmsSkills_tooltip = "Porcentagem de recuperação para habilidades de armas de fogo.<br>Defina isso como -1 para usar a Porcentagem Geral de Recuperação de Habilidades.",
+
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "Porcentagem de Recuperacao de Habilidades de Artesanato",
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Porcentagem de recuperação para habilidades de artesanato.<br>Defina isso como -1 para usar a Porcentagem Geral de Recuperação de Habilidades.",
+
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "Porcentagem de Recuperacao de Habilidades de Sobrevivencialismo",
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Porcentagem de recuperação para habilidades de sobrevivencialismo.<br>Defina isso como -1 para usar a Porcentagem Geral de Recuperação de Habilidades.",
+
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "Porcentagem de Recuperacao de Habilidades de Agilidade",
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "Porcentagem de recuperação para habilidades de agilidade.<br>Defina isso como -1 para usar a Porcentagem Geral de Recuperação de Habilidades.",
+
+    Sandbox_SkillRecoveryJournalRecoverRecipes = "Recuperar Receitas",
+    Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "Desative para impedir que os diários recuperem/transcrevam receitas.",
+
+    Sandbox_SkillRecoveryJournalUsed = "XP do Diario Usado Ao Ler",
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "Normalmente, você pode reler o diário quantas vezes quiser - com isso ativado, cada ponto de XP individual só pode ser recuperado uma vez. Você ainda pode adicionar ao diário, mas cada ponto só pode ser recuperado uma vez em cada diário. Nota: a dica do diário agora exibirá uma fração para os pontos não usados.",
+
+    Sandbox_SkillRecoveryJournalCraftRecipe = "Receita do Diario",
+    Sandbox_SkillRecoveryJournalCraftRecipe_tooltip = "Deixar isso em branco significa que os diários não podem ser feitos.\n\nA sintaxe segue os ingredientes da receita, da seguinte forma:\nCada item é separado por '|'.\nSuporta 'manter n' e 'destruir n', onde n é um tipo de item que será mantido ou consumido.\nUsar 'n = 5' exigirá 5 desse item.\nUsar 'n;5' exigirá 5 'unidades' desse item no caso de ingredientes drenáveis.\nUsar [função] utilizará as funções da receita para casos especiais.\n\nTodos esses são parte da sintaxe padrão de receitas.\nQualquer coisa não listada aqui também funcionará como seria com um script de receita.",
+
+    Sandbox_SkillRecoveryJournalModDataTrack = "Rastrear Valores de ModData",
+    Sandbox_SkillRecoveryJournalModDataTrack_tooltip = "USE COM CUIDADO.\n\nSintaxe de exemplo: ModDataKey1|ModDataKey2\nA transcrição armazenará uma cópia da tabela correspondente dos dados do mod do jogador.\nIsso pode criar problemas significativos se os dados forem grandes.\nSe você não souber o que significa qualquer coisa disso, ignore e deixe em branco.",
+
+    Sandbox_SkillRecoveryJournalKillsTrack = "Porcentagem de Recuperação de Mortes de Zumbis/ Sobreviventes",
+}
