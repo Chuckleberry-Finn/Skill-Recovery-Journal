@@ -13,6 +13,9 @@ Sandbox_EN = {
 	Sandbox_SkillRecoveryJournalTranscribeTVXP = "Transcribe XP earned from TV/VHS",
 	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Toggling this on will allow people to transcribe XP earned from watching TV/VHS. Note: This means players can carry over watched XP between characters cumulatively."
 
+    Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Passive Skill Recovery Percentage"
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Recovery percentage for passive skills (Fitness + Strength).<br>Set this to -1 to use the General Skill Recovery Percentage."
+
 	Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills = "Physical Skill Recovery Percentage"
 	Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills_tooltip = "Recovery percentage for physical skills.<br>Set this to -1 to use the General Skill Recovery Percentage."
 

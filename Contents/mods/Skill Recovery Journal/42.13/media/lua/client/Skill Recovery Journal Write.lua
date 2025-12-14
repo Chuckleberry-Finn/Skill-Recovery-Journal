@@ -1,3 +1,5 @@
+require "TimedActions/ISCraftAction"
+
 local SRJ = require "Skill Recovery Journal Main"
 local modDataCapture = require "Skill Recovery Journal ModData"
 
@@ -13,12 +15,12 @@ function WriteSkillRecoveryJournal:isValid()
 	return self.character:getInventory():contains(self.item) and self.character:getInventory():contains(self.writingTool)
 end
 
-
 function WriteSkillRecoveryJournal:start()
 	self.action:setTime(-1)
 	self.item:setJobType(getText("ContextMenu_Write") ..' '.. self.item:getName())
-	self:setAnimVariable("PerformingAction", "TranscribeJournal")
-	--self:setActionAnim(CharacterActionAnims.Read)
+	--self:setAnimVariable("PerformingAction", "TranscribeJournal") --FIXME: is not animating
+	self:setAnimVariable("ReadType", "book")
+	self:setActionAnim(CharacterActionAnims.Read)
 	self:setOverrideHandModels(self.writingTool, self.item)
 	--self.character:setReading(true)
 	--self.character:reportEvent("EventRead")
@@ -59,12 +61,14 @@ function WriteSkillRecoveryJournal:update()
 
 	if not self.loopedAction then return end
 
-	self.writeTimer = (self.writeTimer or 0) - (getGameTime():getMultiplier() or 0)
+	self.writeTimer = (self.writeTimer or 0) + (getGameTime():getMultiplier() or 0)
 	self.haloTextDelay = self.haloTextDelay - (getGameTime():getMultiplier() or 0)
 
-	if self.writeTimer <= 0 then
+	--self.item:setJobDelta(0.0)
+	local updateInterval = 10
+	if self.writeTimer >= updateInterval then
 
-		self.writeTimer = 10
+		self.writeTimer = 0
 		self.changesMade = false
 
 		local changesBeingMade, changesBeingMadeIndex = {}, {}
@@ -276,13 +280,14 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
 		for _,recipeID in pairs(gainedRecipes) do
 			if learnedRecipes[recipeID] ~= true then
+				if getDebug() then print("Writing gained recipe " .. tostring(recipeID)) end
 				table.insert(o.gainedRecipes,recipeID)
 			end
 		end
 	end
 
 
-	o.gainedSkills = SRJ.calculateGainedSkills(character) or false
+	o.gainedSkills = SRJ.calculateAllGainedSkills(character) or false
 	o.oldJournalTotalXP = 0
 	for perkID, xp in pairs(JMD["gainedXP"]) do
 		o.oldJournalTotalXP = o.oldJournalTotalXP + xp
@@ -290,7 +295,7 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	o.willWrite = true
 	local sayText
 
-	--print("gainedSkills: "..tostring(gainedSkills))
+	--if getDebug() then print("gainedSkills: "..tostring(#o.gainedSkills)) end
 
 	if not o.gainedSkills and (#o.gainedRecipes <= 0) then
 		sayText=getText("IGUI_PlayerText_DontHaveAnyXP"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default"
@@ -328,7 +333,7 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 		end
 	end
 
-	if character:HasTrait("Illiterate") then
+	if character:hasTrait(CharacterTrait.ILLITERATE) then
 		local sayTextChoices = {"IGUI_PlayerText_DontUnderstand", "IGUI_PlayerText_TooComplicated", "IGUI_PlayerText_DontGet"}
 		sayText=getText(sayTextChoices[ZombRand(#sayTextChoices)+1]).." ("..getText("UI_trait_Illiterate")..")"
 		o.willWrite = false

@@ -13,7 +13,7 @@ SRJ_XPHandler.tmpStoredValues = {}
 function SRJ_XPHandler.getOrStoreXPMultipliers(player)
     ---Need to check for stuff like dynamic traits edge cases
     ---@type TraitCollection
-    local traitsSize = player:getCharacterTraits():size()
+    local traitsSize = player:getCharacterTraits():getKnownTraits():size()
     local previouslyStored = SRJ_XPHandler.tmpStoredValues[player]
 
     if not previouslyStored or previouslyStored.size ~= traitsSize then
@@ -95,9 +95,9 @@ function SRJ_XPHandler.fetchMultipliers(player,perk)
     ---trait impacting XP gains
     local traitMultiplier = 1
     --if not SRJ_XPHandler.isSkillExcludedFrom.SpeedReduction(perk) then traitMultiplier = 0.25 end
-    if player:HasTrait("FastLearner") and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedIncrease(perk)) then traitMultiplier = 1.3 end
-    if player:HasTrait("SlowLearner") and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedReduction(perk)) then traitMultiplier = 0.7 end
-    if player:HasTrait("Pacifist") and (perk:getParent()==Perks.Combat or perk==Perks.Aiming) then traitMultiplier = 0.75 end
+    if player:hasTrait(CharacterTrait.FAST_LEARNER) and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedIncrease(perk)) then traitMultiplier = 1.3 end
+    if player:hasTrait(CharacterTrait.SLOW_LEARNER) and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedReduction(perk)) then traitMultiplier = 0.7 end
+    if player:hasTrait(CharacterTrait.PACIFIST) and (perk:getParent()==Perks.Combat or perk==Perks.Aiming) then traitMultiplier = 0.75 end
 
     --[[
     local sandboxMultiplier = 1

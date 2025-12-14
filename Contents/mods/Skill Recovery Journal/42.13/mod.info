@@ -7,5 +7,5 @@ description=
 poster=poster.png
 author=Chuckleberry Finn
 icon=icon.png
-versionMin=42.0
+versionMin=42.13
 require=\ChuckleberryFinnAlertSystem,\errorMagnifier,

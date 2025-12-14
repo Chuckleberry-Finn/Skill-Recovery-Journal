@@ -84,8 +84,7 @@ function contextSRJ.doContextMenu(playerID, context, items)
 			end
 
 			local asleep = player:isAsleep()
-			local illiterate = player:getTraits():isIlliterate()
-
+			local illiterate = player:hasTrait(CharacterTrait.ILLITERATE)
 			local readOption = context:addOptionOnTop(getText("ContextMenu_Read"), actualItems, contextSRJ.readItems, player)
 
 			if asleep or illiterate or emptyBook or mismatchID then
@@ -99,7 +98,7 @@ function contextSRJ.doContextMenu(playerID, context, items)
 			end
 
 			local inv = player:getInventory()
-			local hasWritingTool = inv:getFirstTagRecurse("Write")
+			local hasWritingTool = inv:getFirstTagRecurse(ItemTag.WRITE)
 
 			local writeOption = context:addOptionOnTop(getText("IGUI_TranscribeIntoJournal"), actualItems, contextSRJ.writeItems, player, hasWritingTool)
 

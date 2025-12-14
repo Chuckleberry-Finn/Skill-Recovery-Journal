@@ -148,3 +148,15 @@ Credit: anonpony1/pcgames3112.
 - Under the hood: Changed the update-check to a count-down (from a count-up).
    This should help avoid issues with timed-actions/craft-time changes being so fast it breaks the process.
 [ ------ ]
+
+[ 12/14/25 ]
+- Add changes for 42.13 (by MassCraxx)
+    - renaming lots of definitions, type in item def is now ItemType Tags, Traits and Professions are now constants and are used a bit differently
+    - methods on character infos have moved like xpBoost info, some also got more convenient to use
+    - free recipes from trait and profession now checked individually
+    - fix getFreeLevelsFromTraitsAndProfession, now there can be 3 or more levels for 125% boost
+    - fix recovery sandbox options, some category names have changed
+    - fix lag on tooltips due to redundant overcalculation
+    - re-add RecoverPassiveSkills as distinction from other PhysicalCategorySkills
+    - use vanilla writing animation
+[ ------ ]

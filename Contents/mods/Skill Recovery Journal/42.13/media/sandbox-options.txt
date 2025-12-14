@@ -15,13 +15,16 @@ option SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses
 option SkillRecoveryJournal.TranscribeTVXP
 {type = boolean, default = false, page = SkillRecoveryJournal, translation = SkillRecoveryJournalTranscribeTVXP,}
 
-option SkillRecoveryJournal.RecoverPhysicalCategorySkills
-{type = integer, min = -1, max = 100, default = 0, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverPhysicalCategorySkills,}
+option SkillRecoveryJournal.RecoverPassiveSkills
+{type = integer, min = -1, max = 100, default = 0, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverPassiveSkills,}
 
-option SkillRecoveryJournal.RecoverCombatMeleeSkills
+option SkillRecoveryJournal.RecoverPhysicalCategorySkills
+{type = integer, min = -1, max = 100, default = -1, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverPhysicalCategorySkills,}
+
+option SkillRecoveryJournal.RecoverCombatSkills
 {type = integer, min = -1, max = 100, default = -1, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverCombatMeleeSkills,}
 
-option SkillRecoveryJournal.RecoverCombatFirearmsSkills
+option SkillRecoveryJournal.RecoverFirearmSkills
 {type = integer, min = -1, max = 100, default = -1, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverCombatFirearmsSkills,}
 
 option SkillRecoveryJournal.RecoverCraftingSkills

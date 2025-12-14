@@ -97,11 +97,11 @@ function ReadSkillRecoveryJournal:update()
 		local pSteamID = player:getSteamID()
 		local pUsername = player:getUsername()
 
-		if (not JMD) then
+		if (not JMD) or (not JMD["ID"]) then
 			delayedStop = true
 			sayText = getText("IGUI_PlayerText_NothingWritten")
 
-		elseif self.character:HasTrait("Illiterate") then
+		elseif self.character:hasTrait(CharacterTrait.ILLITERATE) then
 			delayedStop = true
 			sayText = getText("IGUI_PlayerText_IGUI_PlayerText_Illiterate"..ZombRand(2)+1)-- 0,1 + 1
 
@@ -344,7 +344,7 @@ function ReadSkillRecoveryJournal:new(character, item)
 
 	o.character = character
 	o.oldCharacterXP = 0
-	local charSkills = SRJ.calculateGainedSkills(character) or {}
+	local charSkills = SRJ.calculateAllGainedSkills(character) or {}
 	for perkID, xp in pairs(charSkills) do
 		o.oldCharacterXP = o.oldCharacterXP + xp
 	end
