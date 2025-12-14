@@ -1,0 +1,20 @@
+module Base
+{
+   	craftRecipe BindSkillRecoveryJournal
+	{
+        timedAction = Making,
+		Time = 150,
+        Tags = InHandCraft,
+        category = Skill Journal,
+
+		inputs
+		{
+
+		}
+
+		outputs
+		{
+			item 1 Base.SkillRecoveryBoundJournal,
+		}
+	}
+}

@@ -1,0 +1,11 @@
+name=Skill Recovery Journal
+id=SkillRecoveryJournal
+description=Craft a journal which can transcribe (record) one's skill levels; later, when read, will recover those skill levels.
+description=
+description=WARNING: If you're attempting to add this to an on-going save make sure to enable it under 'Load' > 'More...' >
+description=
+poster=poster.png
+author=Chuckleberry Finn
+icon=icon.png
+versionMin=42.0
+require=\ChuckleberryFinnAlertSystem,\errorMagnifier,

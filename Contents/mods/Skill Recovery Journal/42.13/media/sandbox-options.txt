@@ -1,0 +1,52 @@
+VERSION = 1,
+
+option SkillRecoveryJournal.RecoveryPercentage
+{type = integer, min = 1, max = 100, default = 100, page = SkillRecoveryJournal, translation = SkillRecoveryJournalPercentage,}
+
+option SkillRecoveryJournal.TranscribeSpeed
+{type = double, min = 0.001, max = 1000, default = 1, page = SkillRecoveryJournal, translation = SkillRecoveryJournalTranscribeSpeed,}
+
+option SkillRecoveryJournal.ReadTimeSpeed
+{type = double, min = 0.001, max = 1000, default = 1, page = SkillRecoveryJournal, translation = SkillRecoveryJournalReadTimeSpeed,}
+
+option SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses
+{type = boolean, default = false, page =, translation =,}
+
+option SkillRecoveryJournal.TranscribeTVXP
+{type = boolean, default = false, page = SkillRecoveryJournal, translation = SkillRecoveryJournalTranscribeTVXP,}
+
+option SkillRecoveryJournal.RecoverPhysicalCategorySkills
+{type = integer, min = -1, max = 100, default = 0, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverPhysicalCategorySkills,}
+
+option SkillRecoveryJournal.RecoverCombatMeleeSkills
+{type = integer, min = -1, max = 100, default = -1, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverCombatMeleeSkills,}
+
+option SkillRecoveryJournal.RecoverCombatFirearmsSkills
+{type = integer, min = -1, max = 100, default = -1, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverCombatFirearmsSkills,}
+
+option SkillRecoveryJournal.RecoverCraftingSkills
+{type = integer, min = -1, max = 100, default = -1, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverCraftingSkills,}
+
+option SkillRecoveryJournal.RecoverSurvivalistSkills
+{type = integer, min = -1, max = 100, default = -1, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverSurvivalistSkills,}
+
+option SkillRecoveryJournal.RecoverFarmingCategorySkills
+{type = integer, min = -1, max = 100, default = -1, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverFarmingCategorySkills,}
+
+option SkillRecoveryJournal.RecoverRecipes
+{type = boolean, default = true, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverRecipes,}
+
+option SkillRecoveryJournal.RecoveryJournalUsed
+{type = boolean, default = false, page = SkillRecoveryJournal, translation = SkillRecoveryJournalUsed,}
+
+option SkillRecoveryJournal.KillsTrack
+{type = integer, min = 0, max = 100, default = 0, page = SkillRecoveryJournal, translation = SkillRecoveryJournalKillsTrack,}
+
+option SkillRecoveryJournal.CraftRecipe
+{type = string, default = item 1 [Base.Notebook;Base.Journal] flags[Prop2] mode:destroy| item 1 tags[Glue] flags[Prop1]| item 3 [Base.LeatherStrips;Base.LeatherStripsDirty] mode:destroy| item 1 [Base.Thread;Base.Yarn], page = SkillRecoveryJournal, translation = SkillRecoveryJournalCraftRecipe,}
+
+option SkillRecoveryJournal.ModDataTrack
+{type = string, default = , page = SkillRecoveryJournal, translation = SkillRecoveryJournalModDataTrack,}
+
+option SkillRecoveryJournal.SecurityFeatures
+{type = enum, numValues = 3, default = 1, page = SkillRecoveryJournal, translation = SkillRecoveryJournal_SecurityFeatures, valueTranslation = SkillRecoveryJournal_SecFeat_Values,}
