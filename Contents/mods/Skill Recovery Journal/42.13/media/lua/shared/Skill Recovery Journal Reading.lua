@@ -8,6 +8,10 @@ ReadSkillRecoveryJournal = ISBaseTimedAction:derive("ReadSkillRecoveryJournal")
 
 
 function ReadSkillRecoveryJournal:isValid()
+	if self.character:tooDarkToRead() then
+		HaloTextHelper.addBadText(self.character, getText("ContextMenu_TooDark"));
+		return false
+	end
 	local vehicle = self.character:getVehicle()
 	if vehicle and vehicle:isDriver(self.character) then return not vehicle:isEngineRunning() or vehicle:getSpeed2D() == 0 end
 	return self.character:getInventory():contains(self.item)
@@ -15,7 +19,6 @@ end
 
 
 function ReadSkillRecoveryJournal:start()
-	self.action:setTime(-1)
 	self.item:setJobType(getText("ContextMenu_Read") ..' '.. self.item:getName())
 	self:setAnimVariable("ReadType", "book")
 	self:setActionAnim(CharacterActionAnims.Read)
@@ -43,7 +46,17 @@ end
 function ReadSkillRecoveryJournal:stop()
 	local logText = ISLogSystem.getGenericLogText(self.character)
 	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP READING] (stop)"})
+
+	-- FIXME: only if we actually changed stuff
+	SRJ.sendModDataToServer(self.character, self.item)
+
 	ISBaseTimedAction.stop(self)
+end
+
+
+function ReadSkillRecoveryJournal:serverStop()
+	if getDebug() then print("ReadSkillRecoveryJournal serverStop") end
+	SRJ.syncModDataFromClient(self.character, self.item)
 end
 
 
@@ -53,6 +66,18 @@ function ReadSkillRecoveryJournal:perform()
 	local logText = ISLogSystem.getGenericLogText(self.character)
 	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP READING] (perform)"})
 	ISBaseTimedAction.perform(self)
+end
+
+
+-- run on server - never called, but needed for serverStop
+function ReadSkillRecoveryJournal:complete()
+	if getDebug() then print("WriteSkillRecoveryJournal complete") end
+	return true
+end
+
+-- infinite Timed Action
+function ReadSkillRecoveryJournal:getDuration() 
+	return -1
 end
 
 
@@ -228,15 +253,16 @@ function ReadSkillRecoveryJournal:update()
 										addedFlatXP = oldXp[skill]
 										perPerkXpRate = math.max(0,perPerkXpRate-oldXp[skill])
 									end
-									player:getXp():AddXP(Perks[skill], addedFlatXP, false, false, true)
+									--player:getXp():AddXP(Perks[skill], addedFlatXP, false, false, true)
+									sendAddXp(player, Perks[skill], addedFlatXP, true)
 								end
 								if perPerkXpRate > 0 then
 									----------------------------------------------------------------------------------------
 
 									---- perksType, XP, passHook, applyXPBoosts, transmitMP)
 									local addedXP = SRJ.xpHandler.reBoostXP(player,Perks[skill],perPerkXpRate)
-									player:getXp():AddXP(Perks[skill], addedXP, false, false, true)
-
+									--player:getXp():AddXP(Perks[skill], addedXP, false, false, true)
+									sendAddXp(player, Perks[skill], addedXP, true)
 									----------------------------------------------------------------------------------------
 								end
 								----------------------------------------------------------------------------------------

@@ -10,6 +10,10 @@ WriteSkillRecoveryJournal = ISBaseTimedAction:derive("WriteSkillRecoveryJournal"
 
 
 function WriteSkillRecoveryJournal:isValid()
+	if self.character:tooDarkToRead() then
+		HaloTextHelper.addBadText(self.character, getText("ContextMenu_TooDark"));
+		return false
+	end
 	local vehicle = self.character:getVehicle()
 	if vehicle and vehicle:isDriver(self.character) then return not vehicle:isEngineRunning() or vehicle:getSpeed2D() == 0 end
 	return self.character:getInventory():contains(self.item) and self.character:getInventory():contains(self.writingTool)
@@ -18,7 +22,7 @@ end
 function WriteSkillRecoveryJournal:start()
 	self.action:setTime(-1)
 	self.item:setJobType(getText("ContextMenu_Write") ..' '.. self.item:getName())
-	--self:setAnimVariable("PerformingAction", "TranscribeJournal") --FIXME: is not animating
+	--self:setAnimVariable("PerformingAction", "TranscribeJournal") -- is not animating
 	self:setAnimVariable("ReadType", "book")
 	self:setActionAnim(CharacterActionAnims.Read)
 	self:setOverrideHandModels(self.writingTool, self.item)
@@ -33,7 +37,6 @@ function WriteSkillRecoveryJournal:forceStop()
 	--self.character:setReading(false)
 	self.item:setJobDelta(0.0)
 	if self.action then self.action:setLoopedAction(false) end
-	self.character:playSound("CloseBook")
 	local logText = ISLogSystem.getGenericLogText(self.character)
 	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP WRITING] (forceStop)"})
 	ISBaseTimedAction.forceStop(self)
@@ -41,13 +44,30 @@ end
 
 
 function WriteSkillRecoveryJournal:stop()
+	if getDebug() then print("WriteSkillRecoveryJournal stop with changes " .. tostring(self.changesWereMade)) end
+	self.character:playSound("CloseBook")
 	local logText = ISLogSystem.getGenericLogText(self.character)
 	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP WRITING] (stop)"})
+
+	if self.changesWereMade then
+		-- send changed journal moddata to server
+		SRJ.sendModDataToServer(self.character, self.item)
+	end
+
 	ISBaseTimedAction.stop(self)
 end
 
 
+function WriteSkillRecoveryJournal:serverStop()
+    --self.character:setReading(false);
+
+	if getDebug() then print("WriteSkillRecoveryJournal serverStop") end
+	SRJ.syncModDataFromClient(self.character, self.item)
+end
+
+-- run on client
 function WriteSkillRecoveryJournal:perform()
+	if getDebug() then print("WriteSkillRecoveryJournal perform") end
 	--self.character:setReading(false)
 	self.item:getContainer():setDrawDirty(true)
 	self.character:playSound("CloseBook")
@@ -56,6 +76,16 @@ function WriteSkillRecoveryJournal:perform()
 	ISBaseTimedAction.perform(self)
 end
 
+-- run on server - never called, but needed for serverStop
+function WriteSkillRecoveryJournal:complete()
+	if getDebug() then print("WriteSkillRecoveryJournal complete") end
+	return true
+end
+
+-- infinite Timed Action
+function WriteSkillRecoveryJournal:getDuration() 
+	return -1
+end
 
 function WriteSkillRecoveryJournal:update()
 
@@ -280,7 +310,7 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
 		for _,recipeID in pairs(gainedRecipes) do
 			if learnedRecipes[recipeID] ~= true then
-				if getDebug() then print("Writing gained recipe " .. tostring(recipeID)) end
+				--if getDebug() then print("Writing gained recipe " .. tostring(recipeID)) end
 				table.insert(o.gainedRecipes,recipeID)
 			end
 		end

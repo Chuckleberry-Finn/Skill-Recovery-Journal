@@ -47,7 +47,7 @@ function SRJ.getMaxXPDifferential(perk)
 	return SRJ.maxXPDifferential[perk]
 end
 
-
+-- deducted xp from radio and tv
 function SRJ.checkForDeductedXP(player,perksType,XP)
 	local fN, lCF = nil, getCoroutineCallframeStack(getCurrentCoroutine(),0)
 	local fD = lCF ~= nil and lCF and getFilenameOfCallframe(lCF)
@@ -345,5 +345,62 @@ function SRJ.getGainedRecipes(player)
 	return returnedGainedRecipes
 end
 
+-- MOD DATA SYNC - FIXME: move to own file
+local serverStoredClientModData = {}
+
+-- handle receive mod data from client
+local function SkillRecoveryJournalOnClientCommand(module, command, player, args)
+    if module == "SkillRecoveryJournal" and command == "update" then
+		local playerID = player:getOnlineID()
+		if getDebug() then print("SkillRecoveryJournal received modData from player " .. tostring(playerID)) end
+        serverStoredClientModData[playerID] = {
+            journalData = args.journalData,
+			playerData = args.playerData
+        }
+    end
+end
+
+
+-- apply prior received moddata from client
+function SRJ.syncModDataFromClient(player, item)
+	-- check if client sent us some changes to sync
+	local playerID = player:getOnlineID()
+    if serverStoredClientModData[playerID] then
+		if item then
+			-- overwrite server mod data with client's
+			local journalModData = serverStoredClientModData[playerID].journalData
+			local serverItemData = item:getModData()
+			print("Overwriting item data")
+			for key,val in pairs(journalModData) do
+				print(tostring(key) .. " -> " .. tostring(val))
+				serverItemData[key] = val
+			end
+
+			syncItemModData(player, item)
+		end
+
+		-- update player mod data FIXME: only override our own data...
+		local playerModData = serverStoredClientModData[playerID].playerData
+		local serverPlayerData = player:getModData()
+		print("Overwriting player data")
+		for key,val in pairs(playerModData) do
+			print(tostring(key) .. " -> " .. tostring(val))
+			serverPlayerData[key] = val
+		end
+
+        serverStoredClientModData[playerID] = nil
+    end
+end
+
+
+-- send mod data to server
+function SRJ.sendModDataToServer(player, item)
+	if getDebug() then print("SkillRecoveryJournal sync with server") end
+	local srjData = item:getModData()
+	local charData = player:getModData()
+	sendClientCommand(player, "SkillRecoveryJournal", "update", {journalData = srjData, playerData = charData})
+end
+
+Events.OnClientCommand.Add(SkillRecoveryJournalOnClientCommand)
 
 return SRJ
