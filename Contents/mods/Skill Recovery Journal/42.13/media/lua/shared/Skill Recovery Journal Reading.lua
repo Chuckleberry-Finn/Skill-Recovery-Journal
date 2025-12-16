@@ -47,8 +47,9 @@ function ReadSkillRecoveryJournal:stop()
 	local logText = ISLogSystem.getGenericLogText(self.character)
 	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP READING] (stop)"})
 
-	-- FIXME: only if we actually changed stuff
-	SRJ.sendModDataToServer(self.character, self.item)
+	if self.changesWereMade then
+		SRJ.sendModDataToServer(self.character, self.item)
+	end
 
 	ISBaseTimedAction.stop(self)
 end
@@ -335,7 +336,8 @@ function ReadSkillRecoveryJournal:update()
 				sayTextChoices = {"IGUI_PlayerText_KnowSkill"}
 				sayText = getText(sayTextChoices[ZombRand(#sayTextChoices)+1])
 			end
-
+		elseif changesMade then
+			self.changesWereMade = true
 		end 
 
 		if self.haloTextDelay <= 0 and #changesBeingMade > 0 then
