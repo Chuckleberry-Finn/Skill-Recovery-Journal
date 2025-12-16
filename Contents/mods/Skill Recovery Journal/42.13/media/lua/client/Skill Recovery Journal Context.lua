@@ -79,7 +79,7 @@ function contextSRJ.doContextMenu(playerID, context, items)
 				end
 			end
 
-			if emptyBook==false and mismatchID==false then
+			if emptyBook==false and mismatchID==false and player:getInventory():containsRecursive(item) then
 				context:addOptionOnTop(getText("IGUI_Rename"), item, contextSRJ.onRenameJournal, player)
 			end
 
@@ -130,19 +130,11 @@ end
 ---@param item InventoryItem
 function contextSRJ:onRenameJournalClick(button, player, item)
 	if button.internal == "OK" and button.parent.entry:getText() and button.parent.entry:getText() ~= "" then
-		local journalModData = item:getModData()
-		local JMD = journalModData["SRJ"]
-		if JMD then
-			JMD.usedRenameOption = nil
-			JMD.renamedJournal = true
-		end
-		
-		item:setName(button.parent.entry:getText())
-		local pdata = getPlayerData(player:getPlayerNum())
-		if pdata then
-			pdata.playerInventory:refreshBackpacks()
-			pdata.lootInventory:refreshBackpacks()
-		end
+		local newName = button.parent.entry:getText()
+		item:setName(newName)
+
+		-- send changes to server
+		sendClientCommand(player, "SkillRecoveryJournal", "rename", {itemID = item:getID(), name = newName})
 	end
 end
 

@@ -348,16 +348,35 @@ end
 -- MOD DATA SYNC - FIXME: move to own file
 local serverStoredClientModData = {}
 
--- handle receive mod data from client
+-- handle receive data from client
 local function SkillRecoveryJournalOnClientCommand(module, command, player, args)
-    if module == "SkillRecoveryJournal" and command == "update" then
+    if module == "SkillRecoveryJournal" then 
 		local playerID = player:getOnlineID()
-		if getDebug() then print("SkillRecoveryJournal received modData from player " .. tostring(playerID)) end
-        serverStoredClientModData[playerID] = {
-            journalData = args.journalData,
-			playerData = args.playerData
-        }
-    end
+		if command == "update" then
+			if getDebug() then print("SkillRecoveryJournal received modData from player " .. tostring(playerID)) end
+    	    serverStoredClientModData[playerID] = {
+    	        journalData = args.journalData,
+				playerData = args.playerData
+    	    }
+		elseif command == "rename" then
+			if getDebug() then print("SkillRecoveryJournal received rename for item " .. tostring(args.itemID) .. " from player " .. tostring(playerID)) end
+			local item = player:getInventory():getItemWithIDRecursiv(args.itemID)
+        	if item then
+				item:setName(args.name)
+
+				local JMD = item:getModData()["SRJ"]
+				if JMD then
+					JMD.renamedJournal = true
+					JMD.usedRenameOption = nil
+				end
+
+				sendItemStats(item)
+				syncItemModData(player, item)
+			else
+				if getDebug() then print("SkillRecoveryJournal rename failed for player " .. tostring(playerID)) end
+        	end
+    	end
+	end
 end
 
 
@@ -370,9 +389,8 @@ function SRJ.syncModDataFromClient(player, item)
 			-- overwrite server mod data with client's
 			local journalModData = serverStoredClientModData[playerID].journalData
 			local serverItemData = item:getModData()
-			print("Overwriting item data")
+			if getDebug() then print("SkillRecoveryJournal syncing journal item mod data") end
 			for key,val in pairs(journalModData) do
-				print(tostring(key) .. " -> " .. tostring(val))
 				serverItemData[key] = val
 			end
 
@@ -382,9 +400,8 @@ function SRJ.syncModDataFromClient(player, item)
 		-- update player mod data FIXME: only override our own data...
 		local playerModData = serverStoredClientModData[playerID].playerData
 		local serverPlayerData = player:getModData()
-		print("Overwriting player data")
+		if getDebug() then print("SkillRecoveryJournal syncing player mod data") end
 		for key,val in pairs(playerModData) do
-			print(tostring(key) .. " -> " .. tostring(val))
 			serverPlayerData[key] = val
 		end
 
