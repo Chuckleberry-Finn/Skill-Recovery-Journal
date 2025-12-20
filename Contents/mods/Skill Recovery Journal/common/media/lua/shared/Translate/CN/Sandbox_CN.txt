@@ -1,32 +1,50 @@
 Sandbox_CN = {
-	Sandbox_SkillRecoveryJournal = "技能日志",
-	Sandbox_SkillRecoveryJournalPercentage = "技能恢复百分比",
-	Sandbox_SkillRecoveryJournalPercentage_tooltip = "调整从阅读日志中获得技能经验的百分比（能获得多少日志中的经验）。",
-	Sandbox_SkillRecoveryJournalTranscribeSpeed = "记录日志速率",
-	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "调整记录日志的速度。"
-	Sandbox_SkillRecoveryJournalReadTimeSpeed = "阅读日志速率",
-	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "调整阅读日志的速度。"
+	Sandbox_SkillRecoveryJournal = "技能恢复日志",
 
-	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "记录被动技能"
-	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "启用以允许日志记录被动技能（体格、力量）"
+	Sandbox_SkillRecoveryJournalPercentage = "通用技能恢复百分比",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "从阅读装订日志中恢复的经验值数量。<br>如果其他选项设置为-1，则默认为此值。",
 
-	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "记录战斗技能"
-    Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "启用以允许日志记录战斗技能（长短棍、长短刀）"
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "技能恢复抄写速度倍数",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "抄写日志的速度倍数。", 
 
-    Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "记录枪械技能"
-    Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "启用以允许日志记录战斗技能（瞄准、装填）"
+	Sandbox_SkillRecoveryJournalReadTimeSpeed = "技能恢复阅读速度倍数",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "阅读装订日志的速度倍数。", 
 
-    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "记录制造技能"
-    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "启用以允许日志记录制造技能（烹饪、木工、金工等）"
+	Sandbox_SkillRecoveryJournalTranscribeTVXP = "抄写从电视/录像带获得的经验值",
+	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "开启此选项将允许人们抄写从观看电视/录像带获得的经验值。注意：这意味着玩家可以在不同角色之间累积观看经验值。", 
 
-    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "记录生存技能"
-    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "启用以允许日志记录生存技能（采集、搜寻、钓鱼）"
+    Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Passive Skill Recovery Percentage"
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Recovery percentage for passive skills (Fitness + Strength).<br>Set this to -1 to use the General Skill Recovery Percentage."
 
-    Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "记录身法技能"
-    Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "启用以允许日志记录身法技能（灵活、轻巧等）"
+	Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills = "体能技能恢复百分比", 
+	Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills_tooltip = "体能技能的恢复百分比。<br>设置为-1以使用通用技能恢复百分比。", 
 
-	Sandbox_SkillRecoveryJournalRecoverRecipes = "记录配方"
-    Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "启用以允许日志记录各类制造配方。"
-    Sandbox_SkillRecoveryJournalUsed = "消耗经验"
-    Sandbox_SkillRecoveryJournalUsed_tooltip = "启用该选项后阅读日志会消耗日志中记录的经验。"
-	}
+	Sandbox_SkillRecoveryJournalRecoverCombatMeleeSkills = "近战格斗技能恢复百分比", 
+	Sandbox_SkillRecoveryJournalRecoverCombatMeleeSkills_tooltip = "近战格斗技能的恢复百分比。<br>设置为-1以使用通用技能恢复百分比。", 
+
+	Sandbox_SkillRecoveryJournalRecoverCombatFirearmsSkills = "枪械格斗技能恢复百分比", 
+	Sandbox_SkillRecoveryJournalRecoverCombatFirearmsSkills_tooltip = "枪械格斗技能的恢复百分比。<br>设置为-1以使用通用技能恢复百分比。", 
+
+	Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "制作技能恢复百分比", 
+	Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "制作技能的恢复百分比。<br>设置为-1以使用通用技能恢复百分比。", 
+
+	Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "生存技能恢复百分比", 
+	Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "生存技能的恢复百分比。<br>设置为-1以使用通用技能恢复百分比。", 
+
+	Sandbox_SkillRecoveryJournalRecoverFarmingCategorySkills = "农业技能恢复百分比", 
+	Sandbox_SkillRecoveryJournalRecoverFarmingCategorySkills_tooltip = "农业技能的恢复百分比。<br>设置为-1以使用通用技能恢复百分比。", 
+
+	Sandbox_SkillRecoveryJournalRecoverRecipes = "恢复配方", 
+	Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "关闭此选项以防止日志恢复/抄写配方。",
+
+	Sandbox_SkillRecoveryJournalUsed = "阅读时使用的日志经验值", 
+	Sandbox_SkillRecoveryJournalUsed_tooltip = "通常你可以无限次重读日志 - 开启此选项后，每个单独的经验值只能恢复一次。<br>你仍然可以向日志中添加内容，但每个点只能在每个日志中恢复一次。<br>注意：日志的提示现在会显示未使用点数的分数。", 
+
+	Sandbox_SkillRecoveryJournalCraftRecipe = "日志配方", 
+	Sandbox_SkillRecoveryJournalCraftRecipe_tooltip = "留空意味着无法制作日志。\n\n语法如下：\n每个物品用'|'分隔。\n这些直接输入到配方脚本的input{}中。", 
+
+	Sandbox_SkillRecoveryJournalModDataTrack = "跟踪ModData值", 
+	Sandbox_SkillRecoveryJournalModDataTrack_tooltip = "谨慎使用。\n\n示例语法：ModDataKey1|ModDataKey2\n抄写将存储玩家mod数据中相应表的副本。\n如果数据量大，可能会造成重大问题。\n如果你不确定这些是什么意思，请忽略它，留空。", 
+
+	Sandbox_SkillRecoveryJournalKillsTrack = "僵尸/幸存者击杀恢复百分比", 
+}
