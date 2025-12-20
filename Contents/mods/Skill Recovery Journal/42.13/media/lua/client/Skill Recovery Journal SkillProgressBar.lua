@@ -12,15 +12,12 @@ function ISSkillProgressBar:updateTooltip(lvlSelected)
     if self.level ~= lvlSelected then
         local xpForLvl = ISSkillProgressBar.getXpForLvl(self.perk, lvlSelected)
 
-        local state
-        local xp
+        local state = xpSystemText.locked
+        local xp = 0
 
         if (lvlSelected < self.level) then
             state = xpSystemText.unlocked
             xp = xpForLvl
-        else
-            state = xpSystemText.locked
-            xp = 0
         end
 
         local xpText = getText("IGUI_XP_tooltipxp", round(xp, 2), xpForLvl)
