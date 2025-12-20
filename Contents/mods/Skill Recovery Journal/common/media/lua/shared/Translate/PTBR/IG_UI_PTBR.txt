@@ -1,0 +1,37 @@
+IGUI_PTBR = {
+    IGUI_PlayerText_NothingWritten = "Não há nada escrito aqui.",
+    IGUI_PlayerText_DontHaveAnyXP = "Eu não tenho nenhuma experiência para registrar.",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "Não parece certo escrever no diário de outra pessoa.",
+    IGUI_PlayerText_DoesntFeelRightToRead = "Não parece certo ler o diário de outra pessoa.",
+    IGUI_PlayerText_NothingToAddToJournal = "Não há mais nada a adicionar.",
+    IGUI_PlayerText_AllDoneWithJournal = "Tudo pronto.",
+    IGUI_PlayerText_Illiterate1 = "Eu não sei ler.",
+    IGUI_PlayerText_Illiterate2 = "Eu sou analfabeto.",
+    
+    IGUI_TranscribeIntoJournal = "Transcrever para o diário",
+
+    IGUI_PlayerText_NeedGainWeight = "Eu deveria ganhar alguns quilos primeiro...",
+    IGUI_PlayerText_NeedLoseWeight = "Eu deveria perder alguns quilos primeiro...",
+    
+    IGUI_Tooltip_Empty = "Um diário vazio pronto para ser registrado.",
+    IGUI_Tooltip_Start = "Um registro de",
+    IGUI_Tooltip_End = "vida.",
+    IGUI_Tooltip_Recipe = "receita",
+    IGUI_Tooltip_Recipes = "receitas",
+    IGUI_Tooltip_Transcribing = "Transcrevendo",
+    IGUI_Tooltip_Learning = "Aprendendo",
+    IGUI_perks_Lightfoot = "Leve como uma pluma",
+    IGUI_perks_Sneak = "Furtividade",
+    IGUI_perks_PlantScavenging = "Coleta de plantas",
+    IGUI_Rename = "Renomear",
+    IGUI_JournalXPUsedUp = "A escrita está muito desgastada para ler... (XP usado)",
+    
+    IGUI_CraftCategory_SkillJournal = "Diário de Recuperação de Habilidades",
+    
+    IGUI_ItemCat_SkillJournal = "Diário de Habilidade",
+    IGUI_GainedXPText = "XP Recuperável",
+    IGUI_OLDXP_WARNING = "Aviso: Este diário contém XP 'ANTIGO' de antes da(s) atualização(ões). O diário pode ter alguns problemas no início. Esta mensagem de aviso desaparecerá conforme o diário for usado.",
+    IGUI_OneTimeUse_Warning = "Opção de Sandbox para XP Usado ao Ler está ativada.",
+    IGUI_TV_XP_Warning = "Opção de Sandbox para XP ganho de programas de TV e fitas VHS está desativada.",
+    IGUI_Rename_Warning = "Renomeie este diário para desativar este alerta.",
+}
