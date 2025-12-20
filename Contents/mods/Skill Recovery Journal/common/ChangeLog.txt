@@ -160,3 +160,11 @@ Credit: anonpony1/pcgames3112.
     - re-add RecoverPassiveSkills as distinction from other PhysicalCategorySkills
     - use vanilla writing animation
 [ ------ ]
+
+[ 12/15/25 ]
+- Add changes for 42.13 multiplayer (by MassCraxx)
+    - move shared classes to shared space
+    - send moddata changes made on write/read to server
+    - (add light check for read/write)
+    - sync with server on renaming journal, disable rename when not in inventory
+[ ------ ]
