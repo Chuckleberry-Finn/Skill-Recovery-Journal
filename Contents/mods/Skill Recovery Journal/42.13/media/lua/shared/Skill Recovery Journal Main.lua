@@ -3,38 +3,7 @@ local SRJ = {}
 SRJ.xpPatched = false
 
 SRJ.xpHandler = require "Skill Recovery Journal XP"
-
-
-function SRJ.backgroundFix(journalModData, journal)
-	---background fixes / changes / updates to how journals work
-	local backgroundFix = journalModData.backgroundFix or 0
-	local currentBackgroundFix = 1
-
-	if journal:getType() == "SkillRecoveryBoundJournal" and (backgroundFix ~= currentBackgroundFix) then
-		journalModData.backgroundFix = currentBackgroundFix
-
-		---fix name issues where decayed was added incorrectly -DEC23
-		local currentName = journal:getName()
-		currentName=currentName:gsub("%s+%(Decayed%)","")
-		journal:setName(currentName)
-
-		local JMD = journalModData["SRJ"]
-		if JMD and (not journalModData.oldXP) then
-			journalModData.oldXP = {}
-			local XpStoredInJournal = JMD["gainedXP"]
-			for skill,xp in pairs(XpStoredInJournal) do
-				journalModData.oldXP[skill] = xp
-			end
-		end
-	end
-end
-
-
-function SRJ.setOrGetDeductedXP(player)
-	local pMD = player:getModData()
-	pMD.deductedXP = pMD.deductedXP or {}
-	return pMD.deductedXP
-end
+SRJ.modDataHandler = require "Skill Recovery Journal ModData"
 
 
 SRJ.maxXPDifferential = {}
@@ -45,63 +14,6 @@ function SRJ.getMaxXPDifferential(perk)
 
 	SRJ.maxXPDifferential[perk] =maxXPDefault/maxXPPerk
 	return SRJ.maxXPDifferential[perk]
-end
-
--- deducted xp from radio and tv
-function SRJ.checkForDeductedXP(player,perksType,XP)
-	local fN, lCF = nil, getCoroutineCallframeStack(getCurrentCoroutine(),0)
-	local fD = lCF ~= nil and lCF and getFilenameOfCallframe(lCF)
-	local i = fD and fD:match('^.*()/')
-	fN = i and fD:sub(i+1):gsub(".lua", "")
-
-	if fN and fN=="ISRadioInteractions" then
-		--if getDebug() then print("deductibleXP: `",fN,"` \n (",perksType,", ",XP," )") end
-		local perkID = perksType:getId()
-		local deductibleXP = SRJ.setOrGetDeductedXP(player)
-		deductibleXP[perkID] = (deductibleXP[perkID] or 0) + XP
-	end
-end
-
-
-function SRJ.clearOldXPParams(pMD)
-	---Clear out old variable
-	pMD.bSyncedOldXP = nil
-	pMD.bRolledOverOldXP = nil
-	pMD.recoverableXP = nil
-	pMD.recoveryJournalPassiveSkillsInit = nil
-end
-
-
-function SRJ.getPassiveLevels(player)
-	local pMD = player:getModData()
-	return pMD.SRJPassiveSkillsInit
-end
-
-
-function SRJ.setPassiveLevels(id, player)
-	local pMD = player:getModData()
-
-	SRJ.clearOldXPParams(pMD)
-
-	if not pMD.SRJPassiveSkillsInit then
-		for i=1, Perks.getMaxIndex()-1 do
-			---@type PerkFactory.Perks
-			local perks = Perks.fromIndex(i)
-			if perks then
-				---@type PerkFactory.Perk
-				local perk = PerkFactory.getPerk(perks)
-				if perk and perk:isPassiv() and tostring(perk:getParent():getType())~="None" then
-					local currentLevel = (player:getHoursSurvived() > 0 and 5) or player:getPerkLevel(perk)
-					if currentLevel > 0 then
-						local perkType = tostring(perk:getType())
-						pMD.SRJPassiveSkillsInit = pMD.SRJPassiveSkillsInit or {}
-						pMD.SRJPassiveSkillsInit[perkType] = currentLevel
-					end
-				end
-			end
-		end
-	end
-	--if getDebug() then for k,v in pairs(pMD.SRJPassiveSkillsInit) do print(" -- PASSIVE-INIT: "..k.." = "..v) end end
 end
 
 
@@ -180,14 +92,6 @@ function SRJ.getFreeLevelsFromTraitsAndProfession(player)
 end
 
 
-function SRJ.getReadXP(player)
-	local pMD = player:getModData()
-
-	pMD.recoveryJournalXpLog = pMD.recoveryJournalXpLog or {}
-	return pMD.recoveryJournalXpLog
-end
-
-
 function SRJ.correctSandBoxOptions(ID)
 	if SandboxVars.SkillRecoveryJournal[ID] == false then
 		SandboxVars.SkillRecoveryJournal[ID] = 0
@@ -217,11 +121,12 @@ function SRJ.bSkillValid(perk)
 	return (not (recoverPercentage <= 0)), (recoverPercentage/100)
 end
 
+
 -- returns all gained skills as per config or false if no valid skill xp gained
 function SRJ.calculateGainedSkill(player, perk, passiveSkillsInit, startingLevels, deductibleXP)
 
 	if not passiveSkillsInit then
-		passiveSkillsInit = SRJ.getPassiveLevels(player)
+		passiveSkillsInit = SRJ.modDataHandler.getPassiveLevels(player)
 	end
 
 	if not startingLevels then
@@ -229,7 +134,7 @@ function SRJ.calculateGainedSkill(player, perk, passiveSkillsInit, startingLevel
 	end
 
 	if not deductibleXP then
-		deductibleXP = SRJ.setOrGetDeductedXP(player)
+		deductibleXP = SRJ.modDataHandler.getDeductedXP(player)
 	end
 
 	if perk and perk:getParent():getId()~="None" then
@@ -272,13 +177,14 @@ function SRJ.calculateGainedSkill(player, perk, passiveSkillsInit, startingLevel
 	return false
 end
 
+
 -- returns all gained skills as per config or nil if no valid skill xp gained
 function SRJ.calculateAllGainedSkills(player)
 	local gainedXP
 
-	local passiveSkillsInit = SRJ.getPassiveLevels(player)
+	local passiveSkillsInit = SRJ.modDataHandler.getPassiveLevels(player)
 	local startingLevels = SRJ.getFreeLevelsFromTraitsAndProfession(player)
-	local deductibleXP = SRJ.setOrGetDeductedXP(player)
+	local deductibleXP = SRJ.modDataHandler.getDeductedXP(player)
 
 	for i=1, Perks.getMaxIndex()-1 do
 		---@type PerkFactory.Perk
@@ -345,79 +251,5 @@ function SRJ.getGainedRecipes(player)
 	return returnedGainedRecipes
 end
 
--- MOD DATA SYNC - FIXME: move to own file
-local serverStoredClientModData = {}
-
--- handle receive data from client
-local function SkillRecoveryJournalOnClientCommand(module, command, player, args)
-    if module == "SkillRecoveryJournal" then 
-		local playerID = player:getOnlineID()
-		if command == "update" then
-			if getDebug() then print("SkillRecoveryJournal received modData from player " .. tostring(playerID)) end
-    	    serverStoredClientModData[playerID] = {
-    	        journalData = args.journalData,
-				playerData = args.playerData
-    	    }
-		elseif command == "rename" then
-			if getDebug() then print("SkillRecoveryJournal received rename for item " .. tostring(args.itemID) .. " from player " .. tostring(playerID)) end
-			local item = player:getInventory():getItemWithIDRecursiv(args.itemID)
-        	if item then
-				item:setName(args.name)
-
-				local JMD = item:getModData()["SRJ"]
-				if JMD then
-					JMD.renamedJournal = true
-					JMD.usedRenameOption = nil
-				end
-
-				sendItemStats(item)
-				syncItemModData(player, item)
-			else
-				if getDebug() then print("SkillRecoveryJournal rename failed for player " .. tostring(playerID)) end
-        	end
-    	end
-	end
-end
-
-
--- apply prior received moddata from client
-function SRJ.syncModDataFromClient(player, item)
-	-- check if client sent us some changes to sync
-	local playerID = player:getOnlineID()
-    if serverStoredClientModData[playerID] then
-		if item then
-			-- overwrite server mod data with client's
-			local journalModData = serverStoredClientModData[playerID].journalData
-			local serverItemData = item:getModData()
-			if getDebug() then print("SkillRecoveryJournal syncing journal item mod data") end
-			for key,val in pairs(journalModData) do
-				serverItemData[key] = val
-			end
-
-			syncItemModData(player, item)
-		end
-
-		-- update player mod data FIXME: only override our own data...
-		local playerModData = serverStoredClientModData[playerID].playerData
-		local serverPlayerData = player:getModData()
-		if getDebug() then print("SkillRecoveryJournal syncing player mod data") end
-		for key,val in pairs(playerModData) do
-			serverPlayerData[key] = val
-		end
-
-        serverStoredClientModData[playerID] = nil
-    end
-end
-
-
--- send mod data to server
-function SRJ.sendModDataToServer(player, item)
-	if getDebug() then print("SkillRecoveryJournal sync with server") end
-	local srjData = item:getModData()
-	local charData = player:getModData()
-	sendClientCommand(player, "SkillRecoveryJournal", "update", {journalData = srjData, playerData = charData})
-end
-
-Events.OnClientCommand.Add(SkillRecoveryJournalOnClientCommand)
 
 return SRJ
