@@ -1,7 +1,6 @@
-local SRJ = require "Skill Recovery Journal Main"
-local modDataCapture = require "Skill Recovery Journal ModData"
-
 require "TimedActions/ISBaseTimedAction"
+
+local SRJ = require "Skill Recovery Journal Main"
 
 ---@class ReadSkillRecoveryJournal : ISBaseTimedAction
 ReadSkillRecoveryJournal = ISBaseTimedAction:derive("ReadSkillRecoveryJournal")
@@ -48,7 +47,7 @@ function ReadSkillRecoveryJournal:stop()
 	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP READING] (stop)"})
 
 	if self.changesWereMade then
-		SRJ.sendModDataToServer(self.character, self.item)
+		SRJ.modDataHandler.sendModDataToServer(self.character, self.item)
 	end
 
 	ISBaseTimedAction.stop(self)
@@ -56,8 +55,8 @@ end
 
 
 function ReadSkillRecoveryJournal:serverStop()
-	if getDebug() then print("ReadSkillRecoveryJournal serverStop") end
-	SRJ.syncModDataFromClient(self.character, self.item)
+	--if getDebug() then print("ReadSkillRecoveryJournal serverStop") end
+	SRJ.modDataHandler.syncModDataFromClient(self.character, self.item)
 end
 
 
@@ -110,8 +109,7 @@ function ReadSkillRecoveryJournal:update()
 		---@type IsoGameCharacter | IsoPlayer | IsoMovingObject | IsoObject
 		local player = self.character
 
-		local journalModData = journal:getModData()
-		local JMD = journalModData["SRJ"]
+		local JMD = SRJ.modDataHandler.getItemModData(journal)
 		local changesMade = false
 		local changesBeingMade = {}
 		local delayedStop = false
@@ -123,6 +121,7 @@ function ReadSkillRecoveryJournal:update()
 		local pSteamID = player:getSteamID()
 		local pUsername = player:getUsername()
 
+		-- check permissions
 		if (not JMD) or (not JMD["ID"]) then
 			delayedStop = true
 			sayText = getText("IGUI_PlayerText_NothingWritten")
@@ -151,9 +150,9 @@ function ReadSkillRecoveryJournal:update()
 		end
 
 		if not delayedStop then
-
 			local readTimeMulti = SandboxVars.SkillRecoveryJournal.ReadTimeSpeed or 1
 
+			-- apply read recipes
 			if (#self.learnedRecipes > 0) then
 
 				self.recipeIntervals = self.recipeIntervals+1
@@ -174,6 +173,7 @@ function ReadSkillRecoveryJournal:update()
 				end
 			end
 
+			-- apply read xp
 			local XpStoredInJournal = JMD["gainedXP"]
 			local greatestXp = 0
 
@@ -196,16 +196,12 @@ function ReadSkillRecoveryJournal:update()
 				end
 
 				local xpRate = math.sqrt(greatestXp)/25
-				local readXP = SRJ.getReadXP(player)
+				local readXP = SRJ.modDataHandler.getReadXP(player)
 
-				journalModData.recoveryJournalXpLog = journalModData.recoveryJournalXpLog or {}
-				local jmdUsedXP = journalModData.recoveryJournalXpLog
+				JMD.recoveryJournalXpLog = JMD.recoveryJournalXpLog or {}
+				local jmdUsedXP = JMD.recoveryJournalXpLog
 
 				local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
-
-				---background fix for old XP-------
-				local oldXp = journalModData.oldXP
-				-----------------------------------
 
 				for skill,xp in pairs(XpStoredInJournal) do
 					totalRecoverableXP = totalRecoverableXP + xp
@@ -239,37 +235,22 @@ function ReadSkillRecoveryJournal:update()
 
 							--print("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..(perkLevelPlusOne-1).."  xpStored:"..xp.."  currentXP:"..currentlyReadXP)
 
-							if perPerkXpRate~=false then
-
+							if perPerkXpRate~=false and perPerkXpRate > 0 then
+								-- normalize perPerkXpRate
 								if currentlyReadXP+perPerkXpRate > journalXP then perPerkXpRate = math.max(journalXP-currentlyReadXP, 0.001) end
 
+								-- store amount already red in player data
 								readXP[skill] = readXP[skill]+perPerkXpRate
+								-- and in journal for decay
 								jmdUsedXP[skill] = (jmdUsedXP[skill] or 0)+perPerkXpRate
 
-								---background fix for old XP------------------------------------------------------------
-								local addedFlatXP
-								if oldXp and oldXp[skill] and oldXp[skill] > 0 and readXP[skill] < oldXp[skill] then
-									addedFlatXP = perPerkXpRate
-									if perPerkXpRate > oldXp[skill] then
-										addedFlatXP = oldXp[skill]
-										perPerkXpRate = math.max(0,perPerkXpRate-oldXp[skill])
-									end
-									--player:getXp():AddXP(Perks[skill], addedFlatXP, false, false, true)
-									sendAddXp(player, Perks[skill], addedFlatXP, true)
-								end
-								if perPerkXpRate > 0 then
-									----------------------------------------------------------------------------------------
-
-									---- perksType, XP, passHook, applyXPBoosts, transmitMP)
-									local addedXP = SRJ.xpHandler.reBoostXP(player,Perks[skill],perPerkXpRate)
-									--player:getXp():AddXP(Perks[skill], addedXP, false, false, true)
-									sendAddXp(player, Perks[skill], addedXP, true)
-									----------------------------------------------------------------------------------------
-								end
-								----------------------------------------------------------------------------------------
+								-- send add xp to server
+								local addedXP = SRJ.xpHandler.reBoostXP(player,Perks[skill],perPerkXpRate)
+								sendAddXp(player, Perks[skill], addedXP, true)
 
 								changesMade = true
 
+								-- build halo text
 								local skill_name = getText("IGUI_perks_"..skill)
 								if skill_name == ("IGUI_perks_"..skill) then skill_name = skill end
 								table.insert(changesBeingMade, skill_name)
@@ -279,10 +260,10 @@ function ReadSkillRecoveryJournal:update()
 				end
 			end
 
-
+			-- apply stored custom mod data
 			if not self.modDataReadComplete then
 				self.modDataReadComplete = true
-				local modDataStored = modDataCapture.copyDataToPlayer(player, journal)
+				local modDataStored = SRJ.modDataHandler.copyDataToPlayer(player, journal)
 				if modDataStored then
 					for _,dataID in pairs(modDataStored) do
 						table.insert(changesBeingMade, dataID)
@@ -291,11 +272,12 @@ function ReadSkillRecoveryJournal:update()
 				end
 			end
 
+			-- apply stored player kills
 			SRJ.correctSandBoxOptions("KillsTrack")
 			if JMD and (SandboxVars.SkillRecoveryJournal.KillsTrack or 0) > 0 then
 
 				--JMD.kills = {}
-				local readXP = SRJ.getReadXP(player)
+				local readXP = SRJ.modDataHandler.getReadXP(player)
 
 				local readZKills = readXP and readXP.kills and readXP.kills.Zombie or 0
 				local readSKills = readXP and readXP.kills and readXP.kills.Survivor or 0
@@ -326,7 +308,7 @@ function ReadSkillRecoveryJournal:update()
 			end
 		end
 
-
+		-- handle no changes made
 		if JMD and (not changesMade) then
 			delayedStop = true
 
@@ -340,9 +322,10 @@ function ReadSkillRecoveryJournal:update()
 			self.changesWereMade = true
 		end 
 
+		-- show halo text
 		if self.haloTextDelay <= 0 and #changesBeingMade > 0 then
 			self.haloTextDelay = 100
-			--print("totalRead: " .. totalRedXP .. " | totalRecovery: ".. totalRecoverableXP .. " | oldXP: " .. self.oldCharacterXP)
+			--print("totalRead: " .. totalRedXP .. " | totalRecovery: ".. totalRecoverableXP .. ")
 			local progressText = math.floor(((totalRedXP - self.oldCharacterXP) / (totalRecoverableXP - self.oldCharacterXP)) * 100 + 0.5) .. "%" 
 			local changesBeingMadeText = getText("IGUI_Tooltip_Learning") .." (" .. progressText .. "): "
 			for k,v in pairs(changesBeingMade) do
@@ -356,6 +339,7 @@ function ReadSkillRecoveryJournal:update()
 			HaloTextHelper.addText(self.character, changesBeingMadeText, "", HaloTextHelper.getColorWhite())
 		end
 
+		-- show player text
 		if sayText and not self.spoke then
 			self.spoke = true
 			player:Say(sayText, 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
@@ -389,8 +373,7 @@ function ReadSkillRecoveryJournal:new(character, item)
 	o.maxTime = -1
 	o.haloTextDelay = 0
 
-	local journalModData = item:getModData()
-	local JMD = journalModData["SRJ"]
+	local JMD = SRJ.modDataHandler.getItemModData(item)
 	if JMD then
 		if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
 			local learnedRecipes = JMD["learnedRecipes"]

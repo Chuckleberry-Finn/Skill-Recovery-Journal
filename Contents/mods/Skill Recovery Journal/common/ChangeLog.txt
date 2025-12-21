@@ -168,3 +168,10 @@ Credit: anonpony1/pcgames3112.
     - (add light check for read/write)
     - sync with server on renaming journal, disable rename when not in inventory
 [ ------ ]
+
+[ 12/20/25 ]
+- Restructure modData (by MassCraxx)
+    - move all SRJ modData to unified table
+    - sync only that table with server
+    - general cleanup modData, remove legacy oldXp and background fix
+[ ------ ]

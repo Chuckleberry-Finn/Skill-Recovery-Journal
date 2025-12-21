@@ -1,12 +1,8 @@
 require "ISUI/ISToolTipInv"
 
 local SRJ = require "Skill Recovery Journal Main"
-local modDataCapture = require "Skill Recovery Journal ModData"
 
-local function SRJ_generateTooltip(journalModData, player)
-
-	local JMD = journalModData["SRJ"]
-
+local function SRJ_generateTooltip(JMD, player)
 	local blankJournalTooltip = getText("IGUI_Tooltip_Empty").."\n"
 
 	if not JMD or not JMD["author"] then return blankJournalTooltip end
@@ -17,14 +13,6 @@ local function SRJ_generateTooltip(journalModData, player)
 	local warning --= {}
 
 	local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
-
-	---background fix for old XP
-	local oldXp = journalModData.oldXP
-
-	if oldXp then
-		warning = warning or {}
-		table.insert(warning, "IGUI_OLDXP_WARNING")
-	end
 	
 	if (not JMD.renamedJournal) then
 
@@ -54,20 +42,18 @@ local function SRJ_generateTooltip(journalModData, player)
 			local show, percent = SRJ.bSkillValid(perk)
 			if show then
 				local journalXP = xp
-				local jmdUsedXP = journalModData.recoveryJournalXpLog
+				local jmdUsedXP = JMD.recoveryJournalXpLog
 				if oneTimeUse and jmdUsedXP and jmdUsedXP[perkID] and jmdUsedXP[perkID] then
 					journalXP = math.max(0, journalXP-jmdUsedXP[perkID])
 				end
 
-				local oldPerkXP = oldXp and oldXp[perkID] or 0
-
 				local perkName = perk:getName()
 				local multi = multipliers[perkID] or 1
-				local availableXP = round(((journalXP-oldPerkXP)*multi)+oldPerkXP, 2)
+				local availableXP = round(((journalXP)*multi), 2)
 
 				skillsRecord = skillsRecord..perkName.." ("..availableXP
 				if oneTimeUse then
-					local totalXP = round(((xp-oldPerkXP)*multi)+oldPerkXP, 2)
+					local totalXP = round(((xp)*multi), 2)
 					skillsRecord = skillsRecord.."/"..totalXP
 				end
 				skillsRecord = skillsRecord.." xp)\n"
@@ -102,7 +88,7 @@ local function SRJ_generateTooltip(journalModData, player)
 		end
 	end
 
-	local stored_keys = modDataCapture.returnCapturedKeys(JMD)
+	local stored_keys = SRJ.modDataHandler.returnCapturedKeys(JMD)
 	if stored_keys then
 		skillsRecord = skillsRecord.."\nModData:"
 		for i,keyID in pairs(stored_keys) do
@@ -248,8 +234,7 @@ function ISToolTipInv:render()
 
 		if itemObj and player and instanceof(itemObj, "InventoryItem") and itemObj:getType() == "SkillRecoveryBoundJournal" then
 
-			local journalModData = itemObj:getModData()
-			SRJ.backgroundFix(journalModData, itemObj)
+			local journalModData = SRJ.modDataHandler.getItemModData(itemObj)
 
 			local tooltipStart, skillsRecord, warning = SRJ_generateTooltip(journalModData, player)
 
@@ -269,7 +254,7 @@ function ISToolTipInv:render()
 			end
 
 			if warning then
-				local renamed = journalModData["SRJ"].renamedJournal
+				local renamed = journalModData.renamedJournal
 				warning = wrappedWarningMessage[itemObj] or wrapWarningMessage(itemObj, warning, fontType, renamed)
 				textHeight = textHeight+fontHeight+getTextManager():MeasureStringY(fontType, warning)
 			end

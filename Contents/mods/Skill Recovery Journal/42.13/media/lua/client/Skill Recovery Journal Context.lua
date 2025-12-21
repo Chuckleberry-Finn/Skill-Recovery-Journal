@@ -1,5 +1,4 @@
 require "ISUI/ISInventoryPaneContextMenu"
-require "Skill Recovery Journal Reading"
 
 local contextSRJ = {}
 
