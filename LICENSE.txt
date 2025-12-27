@@ -1,4 +1,5 @@
 CHUCK (CHUCKLEBERRY FINN) LICENSE
+Version 1, 27 December 2025
 Copyright (c) 2025 Chuck (Chuckleberry Finn)
 
 ====================================================================
@@ -98,7 +99,7 @@ author(s).
 LICENSE HISTORY
 ---------------
 
-Versions of this Mod released prior to 12/27/2025 used GNU AFFERO GENERAL PUBLIC LICENSE (Version 3, 19 November 2007) and remain governed by that license.
+Versions of this Mod prior to 12/27/2025 used GNU GENERAL PUBLIC LICENSE (Version 3, 29 June 2007) and remain governed by that license.
 
 All versions released ON OR AFTER this date are governed by this
 Chuck (Chuckleberry Finn) License.
