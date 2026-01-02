@@ -48,6 +48,9 @@ option SkillRecoveryJournal.KillsTrack
 option SkillRecoveryJournal.CraftRecipe
 {type = string, default = item 1 [Base.Notebook;Base.Journal] flags[Prop2] mode:destroy| item 1 tags[Glue] flags[Prop1]| item 3 [Base.LeatherStrips;Base.LeatherStripsDirty] mode:destroy| item 1 [Base.Thread;Base.Yarn], page = SkillRecoveryJournal, translation = SkillRecoveryJournalCraftRecipe,}
 
+option SkillRecoveryJournal.CraftRecipeNeedLearn
+{type = boolean, default = false, page = SkillRecoveryJournal, translation = SkillRecoveryJournalCraftRecipeNeedLearn,}
+
 option SkillRecoveryJournal.ModDataTrack
 {type = string, default = , page = SkillRecoveryJournal, translation = SkillRecoveryJournalModDataTrack,}
 
