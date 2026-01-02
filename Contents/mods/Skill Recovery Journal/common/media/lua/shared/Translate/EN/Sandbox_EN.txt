@@ -40,8 +40,11 @@ Sandbox_EN = {
     Sandbox_SkillRecoveryJournalUsed = "Journal XP Used When Read"
     Sandbox_SkillRecoveryJournalUsed_tooltip = "Normally you can reread the journal as many times as you like - with this toggled on each individual XP point can only be recovered once. You can still add onto the journal, but each point can only be recovered once on each journal. Note: the tooltip for the journal will now display a fraction for unused points."
 
-    Sandbox_SkillRecoveryJournalCraftRecipe = "Journal Recipe"
-    Sandbox_SkillRecoveryJournalCraftRecipe_tooltip = "Setting this as blank means the journals cannot be crafted.\n\nSyntax follows recipe ingredients, as follows:\nEach item is separated by '|'.\nThese are fed directly into a recipe script's input{}.",
+    Sandbox_SkillRecoveryJournalCraftRecipe = "Custom Journal Recipe"
+    Sandbox_SkillRecoveryJournalCraftRecipe_tooltip = "Leaving this blank will use the default recipe.\n\nSyntax follows recipe ingredients, as follows:\nEach item is separated by '|'.\nThese are fed directly into a recipe script's input{}. Example:\nitem 1 [Base.Notebook;Base.Journal] flags[Prop2] mode:destroy| item 1 tags[Glue] flags[Prop1]| item 3 [Base.LeatherStrips;Base.LeatherStripsDirty] mode:destroy",
+    
+    Sandbox_SkillRecoveryJournalCraftRecipe = "Journal Recipe Needs Learning"
+    Sandbox_SkillRecoveryJournalCraftRecipe_tooltip = "If set to true, crafting the journal requires learning the recipe.\n\nCurrently there is no way to learn it, making the recipe uncraftable.",
 
     Sandbox_SkillRecoveryJournalModDataTrack = "Track ModData Values"
     Sandbox_SkillRecoveryJournalModDataTrack_tooltip = "USE WITH CAUTION.\n\nExample syntax: ModDataKey1|ModDataKey2\nTranscription will store a copy of the corresponding table from the player's mod data. \nThis can create significant issues if the data is large.\n If you're not sure what any of this means, ignore it, and leave blank."
