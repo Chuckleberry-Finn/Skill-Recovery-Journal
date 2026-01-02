@@ -41,7 +41,7 @@ Sandbox_EN = {
     Sandbox_SkillRecoveryJournalUsed_tooltip = "Normally you can reread the journal as many times as you like - with this toggled on each individual XP point can only be recovered once. You can still add onto the journal, but each point can only be recovered once on each journal. Note: the tooltip for the journal will now display a fraction for unused points."
 
     Sandbox_SkillRecoveryJournalCraftRecipe = "Custom Journal Recipe"
-    Sandbox_SkillRecoveryJournalCraftRecipe_tooltip = "Leaving this blank will use the default recipe.\n\nSyntax follows vanilla/standard recipe inputs/ingredients, except:\nEach item is separated by '|' rather than a ','.\nThese are fed directly into a recipe script's input{}. Example:\nitem 1 [Base.Notebook;Base.Journal;Base.Diary1;Base.Diary2;Base.Notepad] flags[Prop2] mode:destroy| item 1 tags[Glue] flags[Prop1]| item 3 [Base.LeatherStrips;Base.LeatherStripsDirty] mode:destroy| item 1 [Base.Thread;Base.Yarn]|",
+    Sandbox_SkillRecoveryJournalCraftRecipe_tooltip = "Leaving this blank will use the default recipe.\n\nSyntax follows vanilla/standard recipe inputs/ingredients.\nThese are fed directly into a recipe script's input{}. Example:\nitem 1 [Base.Notebook;Base.Journal;Base.Diary1;Base.Diary2;Base.Notepad] flags[Prop2] mode:destroy, item 1 tags[Glue] flags[Prop1], item 3 [Base.LeatherStrips;Base.LeatherStripsDirty] mode:destroy, item 1 [Base.Thread;Base.Yarn],",
     
     Sandbox_SkillRecoveryJournalCraftRecipeNeedLearn = "Journal Recipe Needs Learning"
     Sandbox_SkillRecoveryJournalCraftRecipeNeedLearn_tooltip = "If set to true, crafting the journal requires learning the recipe.\n\nCurrently there is no way to learn it, making the recipe uncraftable.",
