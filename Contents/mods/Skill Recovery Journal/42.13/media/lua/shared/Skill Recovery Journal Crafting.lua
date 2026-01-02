@@ -20,8 +20,4 @@ local function SkillRecoveryJournalRecipe()
     end
 end
 
-if isServer() then 
-    Events.OnGameBoot.Add(SkillRecoveryJournalRecipe) 
-else 
-    Events.OnInitWorld.Add(SkillRecoveryJournalRecipe)
-end
+Events.OnGameBoot.Add(SkillRecoveryJournalRecipe)
