@@ -78,7 +78,12 @@ end
 -- item mod data
 function SRJ_ModDataHandler.getItemModData(item)
     local iMd = item:getModData()
-    iMd["SRJ"] = iMd["SRJ"] or {}
+	if not iMd["SRJ"] then
+		-- init new journal mod data
+    	iMd["SRJ"] = {}
+		iMd["SRJ"]["gainedXP"] = {}
+		iMd["SRJ"]["learnedRecipes"] = {}
+	end
     return iMd["SRJ"]
 end
 
@@ -166,7 +171,7 @@ function SRJ_ModDataHandler.copyDataToJournal(player, journal)
 end
 
 
--- MOD DATA SYNC
+-- MOD DATA SYNC (old client -> server)
 local serverStoredClientModData = {}
 
 -- handle receive data from client
