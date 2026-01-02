@@ -10,7 +10,7 @@ local function SkillRecoveryJournalRecipe()
     else
         local modified_option = string.gsub(sandboxOption, "|", ",")
         if getDebug() then print("Add SRF custom crafting recipe with inputs " .. modified_option) end
-        newScript = "{ inputs { " .. modified_option .. " } }"
+        newScript = "{ NeedToBeLearn = ".. tostring(needToLearn == true) ..", inputs { " .. modified_option .. " } }"
     end
 
     if newScript then
