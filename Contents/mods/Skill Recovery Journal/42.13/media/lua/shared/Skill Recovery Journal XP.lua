@@ -98,7 +98,7 @@ function SRJ_XPHandler.fetchMultipliers(player,perk)
     if player:hasTrait(CharacterTrait.FAST_LEARNER) and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedIncrease(perk)) then traitMultiplier = 1.3 end
     if player:hasTrait(CharacterTrait.SLOW_LEARNER) and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedReduction(perk)) then traitMultiplier = 0.7 end
     if player:hasTrait(CharacterTrait.PACIFIST) and (perk:getParent()==Perks.Combat or perk==Perks.Aiming) then traitMultiplier = 0.75 end
-
+    if player:hasTrait(CharacterTrait.CRAFTY) and (perk:getParent()==Perks.Crafting) then traitMultiplier = 1.3 end
     --[[
     local sandboxMultiplier = 1
     if (not perk:isPassiv()) then
