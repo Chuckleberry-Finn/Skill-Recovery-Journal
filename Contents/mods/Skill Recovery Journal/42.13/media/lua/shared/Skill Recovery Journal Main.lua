@@ -5,6 +5,9 @@ SRJ.xpPatched = false
 SRJ.xpHandler = require "Skill Recovery Journal XP"
 SRJ.modDataHandler = require "Skill Recovery Journal ModData"
 
+Events.OnGameTimeLoaded.Add(function()
+    SRJ.gameTime = GameTime.getInstance()
+end)
 
 SRJ.maxXPDifferential = {}
 function SRJ.getMaxXPDifferential(perk)
@@ -201,7 +204,7 @@ function SRJ.calculateAllGainedSkills(player)
 end
 
 
-function SRJ.getGainedRecipes(player)
+function SRJ.getGainedRecipes(player, exclude)
 	local gainedRecipes = {}
 
 	-- get all recipes known by player
@@ -243,13 +246,23 @@ function SRJ.getGainedRecipes(player)
 	--- return iterable list
 	local returnedGainedRecipes = {}
 	for recipeID,_ in pairs(gainedRecipes) do
-		-- TODO: remove auto learned recipes from skills (maybe we had higher level/xpBoost last life)
-		table.insert(returnedGainedRecipes, recipeID)
-		--if getDebug() then print("Resulting gained recipe " .. tostring(recipeID) .. " -> " .. tostring(_)) end
+		if not exclude or exclude[recipeID] ~= true then
+			-- TODO: remove auto learned recipes from skills (maybe we had higher level/xpBoost last life)
+			table.insert(returnedGainedRecipes, recipeID)
+			--if getDebug() then print("Resulting gained recipe " .. tostring(recipeID) .. " -> " .. tostring(_)) end
+		end
 	end
 
 	return returnedGainedRecipes
 end
 
+
+function SRJ.handleHaloText(character, changesBeingMade, totalStoredXP, totalRecoverableXP, oldJournalTotalXP, title)
+	--print("In Book: " .. totalStoredXP - self.oldJournalTotalXP, " - in char: " .. totalRecoverableXP - self.oldJournalTotalXP)
+	local progressText = math.floor(((totalStoredXP - oldJournalTotalXP) / (totalRecoverableXP - oldJournalTotalXP)) * 100 + 0.5) .. "%"
+	local changesBeingMadeText = getText(title) .. " (" .. progressText ..") :"
+	for k,v in pairs(changesBeingMade) do changesBeingMadeText = changesBeingMadeText.." "..v..((k~=#changesBeingMade and ", ") or "") end
+	HaloTextHelper.addText(character, changesBeingMadeText, "", HaloTextHelper.getColorWhite())
+end
 
 return SRJ

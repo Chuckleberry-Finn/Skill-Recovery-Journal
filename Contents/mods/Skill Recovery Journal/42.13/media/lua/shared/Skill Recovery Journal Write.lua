@@ -6,6 +6,7 @@ local SRJ = require "Skill Recovery Journal Main"
 WriteSkillRecoveryJournal = ISBaseTimedAction:derive("WriteSkillRecoveryJournal")
 
 
+-- called on client on many occasions
 function WriteSkillRecoveryJournal:isValid()
 	if self.character:tooDarkToRead() then
 		HaloTextHelper.addBadText(self.character, getText("ContextMenu_TooDark"));
@@ -13,89 +14,167 @@ function WriteSkillRecoveryJournal:isValid()
 	end
 	local vehicle = self.character:getVehicle()
 	if vehicle and vehicle:isDriver(self.character) then return not vehicle:isEngineRunning() or vehicle:getSpeed2D() == 0 end
-	return self.character:getInventory():contains(self.item) and self.character:getInventory():contains(self.writingTool)
+	
+	-- FIXME#4 if :isValid (and :perform) is handled correctly, self.item will be null in :new on server and updateWriting will crash
+	if isClient() and self.item and self.writingTool then
+        return self.character:getInventory():containsID(self.item:getID()) and self.character:getInventory():containsID(self.writingTool:getID())
+    else
+		return self.character:getInventory():contains(self.item) and self.character:getInventory():contains(self.writingTool)
+	end
+	--return self.character:getInventory():contains(self.item) and self.character:getInventory():contains(self.writingTool)
 end
 
+
+-- called on client on client start
 function WriteSkillRecoveryJournal:start()
+	self.action:setUseProgressBar(false) --TODO: Config
 	self.action:setTime(-1)
 	self.item:setJobType(getText("ContextMenu_Write") ..' '.. self.item:getName())
 	--self:setAnimVariable("PerformingAction", "TranscribeJournal") -- is not animating
 	self:setAnimVariable("ReadType", "book")
 	self:setActionAnim(CharacterActionAnims.Read)
 	self:setOverrideHandModels(self.writingTool, self.item)
-	--self.character:setReading(true)
-	--self.character:reportEvent("EventRead")
+	self.character:setReading(true)
+	self.character:reportEvent("EventRead")
 	local logText = ISLogSystem.getGenericLogText(self.character)
 	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ START WRITING]"})
 end
 
 
-function WriteSkillRecoveryJournal:forceStop()
-	--self.character:setReading(false)
-	self.item:setJobDelta(0.0)
-	if self.action then self.action:setLoopedAction(false) end
-	local logText = ISLogSystem.getGenericLogText(self.character)
-	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP WRITING] (forceStop)"})
-	ISBaseTimedAction.forceStop(self)
-end
-
-
+-- called on client on client stop
 function WriteSkillRecoveryJournal:stop()
-	--if getDebug() then print("WriteSkillRecoveryJournal stop with changes " .. tostring(self.changesWereMade)) end
+	print("WriteSkillRecoveryJournal stop with changes " .. tostring(self.wroteNewContent) .. " after " .. tostring(SRJ.gameTime:getWorldAgeHours() - self.startTime))
+	self.character:setReading(false);
 	self.character:playSound("CloseBook")
 	local logText = ISLogSystem.getGenericLogText(self.character)
 	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP WRITING] (stop)"})
-
-	if self.changesWereMade then
-		-- send changed journal moddata to server
-		SRJ.modDataHandler.sendModDataToServer(self.character, self.item)
-	end
 
 	ISBaseTimedAction.stop(self)
 end
 
 
+-- called on server on client start
+function WriteSkillRecoveryJournal:serverStart()
+	--if getDebug() then print("WriteSkillRecoveryJournal serverStart") end
+	print("WriteSkillRecoveryJournal serverStart")
+	emulateAnimEvent(self.netAction, 10, "update", nil)
+end
+
+
+-- called on server on client stop
 function WriteSkillRecoveryJournal:serverStop()
     --self.character:setReading(false);
 
 	--if getDebug() then print("WriteSkillRecoveryJournal serverStop") end
-	SRJ.modDataHandler.syncModDataFromClient(self.character, self.item)
+	print("WriteSkillRecoveryJournal serverStop after " .. tostring(SRJ.gameTime:getWorldAgeHours() - self.startTime))
+	syncItemModData(self.character, self.item)
 end
 
--- run on client
+
+-- called on client on server complete
 function WriteSkillRecoveryJournal:perform()
-	if getDebug() then print("WriteSkillRecoveryJournal perform") end
-	--self.character:setReading(false)
-	self.item:getContainer():setDrawDirty(true)
+	print("WriteSkillRecoveryJournal perform")
+
+    self.character:setReading(false);
 	self.character:playSound("CloseBook")
 	local logText = ISLogSystem.getGenericLogText(self.character)
 	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP READING] (perform)"})
+
+	self:finish() -- FIXME#1! This should not be necessary... breaks queuing, but is broken anyway (#4)
 	ISBaseTimedAction.perform(self)
 end
 
--- run on server - never called, but needed for serverStop
+
+-- called on server on server complete
 function WriteSkillRecoveryJournal:complete()
-	if getDebug() then print("WriteSkillRecoveryJournal complete") end
+	print("WriteSkillRecoveryJournal complete after " .. tostring(SRJ.gameTime:getWorldAgeHours() - self.startTime))
+	syncItemModData(self.character, self.item)
 	return true
 end
+
 
 -- infinite Timed Action
 function WriteSkillRecoveryJournal:getDuration() 
 	return -1
 end
 
-function WriteSkillRecoveryJournal:update()
 
+function WriteSkillRecoveryJournal:animEvent(event, parameter)
+	if event == "update" then
+		-- only on server in MP
+		if isServer() then
+			self:updateWriting()
+		end
+	end
+end
+
+
+function WriteSkillRecoveryJournal:finish()
+	if isServer() then
+		-- stops action and calls complete on server, calls perform on client FIXME#1: Does not stop action on client!
+		self.netAction:forceComplete()
+	else
+		-- feedback only visible when called on client
+		if self.wroteNewContent or isClient() then -- FIXME#3: client does not know if we actually wrote stuff...
+			self.character:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+		else
+			self.character:Say(getText("IGUI_PlayerText_NothingToAddToJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+		end
+
+		self:forceStop()
+	end
+end
+
+
+-- only on client SP/MP
+function WriteSkillRecoveryJournal:update()
 	if not self.loopedAction then return end
 
-	self.writeTimer = (self.writeTimer or 0) + (getGameTime():getMultiplier() or 0)
-	self.haloTextDelay = self.haloTextDelay - (getGameTime():getMultiplier() or 0)
+	-- if updateTick was reached
+	if self:updateWriting() then
+		-- handle sound if changes made or MP
+		if self.changesMade==true or isClient() then
+			self.playSoundLater = self.playSoundLater or 0
+			if self.playSoundLater > 0 then
+				self.playSoundLater = self.playSoundLater-1
+			else
+				self.playSoundLater = (ZombRand(2,6) + SRJ.gameTime:getMultiplier())
+				self.character:playSound(self.writingToolSound)
+			end
+		end
+	end
+end
 
-	--self.item:setJobDelta(0.0)
-	local updateInterval = 10
-	if self.writeTimer >= updateInterval then
 
-		self.writeTimer = 0
+-- Updates the write journal action if the last update has been longer ago than updateInterval
+-- returns true if time for next writing step was reached false otherwise
+function WriteSkillRecoveryJournal:updateWriting()
+	local now = SRJ.gameTime:getWorldAgeHours()
+
+	-- on client, handle halotext FIXME#2: timing is off, should not use getMultipier in MP
+	self.haloTextDelay = self.haloTextDelay - (SRJ.gameTime:getMultiplier() or 0)
+	-- debug things - remove later
+	self.lastUpdateTime = now or 0
+	self.writeTimer = 0
+
+	self.writeTimer = (now - (self.lastUpdateTime or 0))
+	--self.writeTimer = self.writeTimer + (SRJ.gameTime:getMultiplier() or 0)
+
+	--print("WriteSkillRecoveryJournal updateWriting")
+	--print("write timer: ".. tostring(self.writeTimer))
+
+	-- if time has progressed over planned update time, do update
+	if now >= self.updateTime then
+		--print("update after " ..  tostring(self.writeTimer * 60 * 60) .. " in-game seconds -> " .. tostring(self.writeTimer))
+
+		-- plan next update one interval later
+		self.updateTime = self.updateTime + self.updateInterval
+
+		-- all updating is done by server
+		if isClient() then
+			return true
+		end
+
 		self.changesMade = false
 
 		local changesBeingMade, changesBeingMadeIndex = {}, {}
@@ -150,13 +229,15 @@ function WriteSkillRecoveryJournal:update()
 
 						local perkLevelPlusOne = self.character:getPerkLevel(Perks[perkID])+1
 
-						local differential = SRJ.getMaxXPDifferential(perkID)
+						local differential = SRJ.getMaxXPDifferential(perkID) or 1
 
 						local xpRate = math.sqrt(xp)/25
 
-						--print("xpRate: ", xpRate, "  perkLevelPlusOne: ", perkLevelPlusOne, "  differential:", differential)
+						local timeFactor = (self.updateInterval / self.defaultUpdateInterval)
 
-						xpRate = round(((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * transcribeTimeMulti / differential, 2)
+						--print("xpRate: ", xpRate, "  perkLevelPlusOne: ", perkLevelPlusOne, "  differential: ", differential, " timeFactor: ", timeFactor)
+
+						xpRate = round(((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * transcribeTimeMulti * timeFactor / differential, 2)
 
 						if xpRate>0 then
 							self.changesMade = true
@@ -225,48 +306,42 @@ function WriteSkillRecoveryJournal:update()
 			end
 		end
 
-		-- show transcript progress as halo text, prevent overlapping addTexts
-		if self.haloTextDelay <= 0 and #changesBeingMade > 0 then
-			self.haloTextDelay = 100
-			--print("In Book: " .. totalStoredXP - self.oldJournalTotalXP, " - in char: " .. totalRecoverableXP - self.oldJournalTotalXP)
-			local progressText = math.floor(((totalStoredXP - self.oldJournalTotalXP) / (totalRecoverableXP - self.oldJournalTotalXP)) * 100 + 0.5) .. "%"
-			local changesBeingMadeText = getText("IGUI_Tooltip_Transcribing") .. " (" .. progressText ..") :"
-			for k,v in pairs(changesBeingMade) do changesBeingMadeText = changesBeingMadeText.." "..v..((k~=#changesBeingMade and ", ") or "") end
-			HaloTextHelper.addText(self.character, changesBeingMadeText, "", HaloTextHelper.getColorWhite())
-		end
-
-		-- handle sound
-		if self.changesMade==true then
-
-			self.changesWereMade = true
-
-			self.playSoundLater = self.playSoundLater or 0
-			if self.playSoundLater > 0 then
-				self.playSoundLater = self.playSoundLater-1
-			else
-				self.playSoundLater = (ZombRand(2,6) + getGameTime():getMultiplier())
-				self.character:playSound(self.writingToolSound)
-			end
-
-			--self:resetJobDelta()
+		-- end if nothing gained
+		if self.changesMade == false then
+			self:finish()
 		else
+			self.wroteNewContent = true
 
-			if self.changesWereMade then
-				self.character:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
-			else
-				self.character:Say(getText("IGUI_PlayerText_NothingToAddToJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+			-- show transcript progress as halo text, prevent overlapping addTexts
+			if self.haloTextDelay <= 0 and #changesBeingMade > 0 then
+				self.haloTextDelay = 100
+				if not isServer() then
+					SRJ.handleHaloText(self.character, changesBeingMade, totalStoredXP, totalRecoverableXP, self.oldJournalTotalXP, "IGUI_Tooltip_Transcribing")
+				else
+					local args = {}
+					args.changesBeingMade = changesBeingMade
+					args.totalStoredXP = totalStoredXP
+					args.totalRecoverableXP = totalRecoverableXP
+					args.oldJournalTotalXP = self.oldJournalTotalXP
+					sendServerCommand(self.character, "SkillRecoveryJournal", "write_changes", args)
+					syncItemModData(self.character, self.item)
+				end
 			end
-
-			self:forceStop()
 		end
+
+		return true
 	end
+	-- return false if tick was skipped
+	return false
 end
 
 
 ---@param character IsoGameCharacter
 function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, recipe, container, containers)
+	local now = SRJ.gameTime:getWorldAgeHours()
+	print("WriteSkillRecoveryJournal:new - at " .. tostring(now) .. " isServer "..tostring(isServer()) .. " isClient " .. tostring(isClient()))
 
-	local o = {}
+	local o = ISBaseTimedAction.new(self, character);
 	setmetatable(o, self)
 	self.__index = self
 
@@ -281,18 +356,11 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 		o.writingToolSound = "PencilWriteSounds"
 	end
 
-	JMD["gainedXP"] = JMD["gainedXP"] or {}
-	JMD["learnedRecipes"] = JMD["learnedRecipes"] or {}
-	local learnedRecipes = JMD["learnedRecipes"]
-	local gainedRecipes = SRJ.getGainedRecipes(character)
 	o.gainedRecipes = {}
 	if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
-		for _,recipeID in pairs(gainedRecipes) do
-			if learnedRecipes[recipeID] ~= true then
-				--if getDebug() then print("Writing gained recipe " .. tostring(recipeID)) end
-				table.insert(o.gainedRecipes,recipeID)
-			end
-		end
+		local learnedRecipes = JMD["learnedRecipes"]
+		local gainedRecipes = SRJ.getGainedRecipes(character, learnedRecipes)
+		o.gainedRecipes = gainedRecipes
 	end
 
 
@@ -358,10 +426,28 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	o.ignoreHandsWounds = true
 	o.caloriesModifier = 0.5
 	o.forceProgressBar = true
-	o.learnedRecipes = {}
 	o.recipeIntervals = 0
 	o.maxTime = -1
 	o.haloTextDelay = 0
 
+	-- interval between updates in in-game seconds
+	local updateIntervalSeconds = SandboxVars.SkillRecoveryJournal.UpdateIntervalSeconds or 10
+	o.updateInterval = updateIntervalSeconds / 3600 -- in hours
+	o.defaultUpdateInterval = 3.48 / 3600 -- legacy ~ 3.48 sec to maintain old duration
+	o.updateTime = now + o.updateInterval
+
+	-- for debug
+	o.lastUpdateTime = now
+	o.startTime = now
+
 	return o
 end
+
+function OnServerWriteCommand(module, command, args)
+    -- server sends changes for client to show
+	if module == "SkillRecoveryJournal" and command == "write_changes" then
+		SRJ.handleHaloText(getPlayer(), args.changesBeingMade, args.totalStoredXP, args.totalRecoverableXP, args.oldJournalTotalXP, "IGUI_Tooltip_Transcribing")
+	end
+end
+
+Events.OnServerCommand.Add(OnServerWriteCommand)
