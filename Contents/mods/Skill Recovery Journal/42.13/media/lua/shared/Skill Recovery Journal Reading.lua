@@ -273,7 +273,6 @@ function ReadSkillRecoveryJournal:update()
 			end
 
 			-- apply stored player kills
-			SRJ.correctSandBoxOptions("KillsTrack")
 			if JMD and (SandboxVars.SkillRecoveryJournal.KillsTrack or 0) > 0 then
 
 				--JMD.kills = {}

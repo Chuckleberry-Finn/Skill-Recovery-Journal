@@ -94,31 +94,12 @@ function SRJ.getFreeLevelsFromTraitsAndProfession(player)
 	return bonusLevels
 end
 
-
-function SRJ.correctSandBoxOptions(ID)
-	if SandboxVars.SkillRecoveryJournal[ID] == false then
-		SandboxVars.SkillRecoveryJournal[ID] = 0
-		return 0
-	elseif SandboxVars.SkillRecoveryJournal[ID] == true then
-		local recoverRate = SandboxVars.SkillRecoveryJournal.RecoveryPercentage or 100
-		SandboxVars.SkillRecoveryJournal[ID] = recoverRate
-		return recoverRate
-	end
-end
-
-
 function SRJ.bSkillValid(perk)
 	local ID = perk and perk:isPassiv() and "Passive" or perk:getParent():getId()
-
-	local correction = SRJ.correctSandBoxOptions("Recover"..ID.."Skills")
-
 	local specific = SandboxVars.SkillRecoveryJournal["Recover"..ID.."Skills"]
-	
 	--if getDebug() then print("bSkillValid check sandbox option 'SkillRecoveryJournal.Recover"..ID.."Skills' -> ".. tostring(specific)) end
-	if specific and type(specific)~="number" then specific = correction end
 
 	local default = SandboxVars.SkillRecoveryJournal.RecoveryPercentage or 100
-
 	local recoverPercentage = ((specific==nil) or (specific==-1)) and default or specific
 
 	return (not (recoverPercentage <= 0)), (recoverPercentage/100)
