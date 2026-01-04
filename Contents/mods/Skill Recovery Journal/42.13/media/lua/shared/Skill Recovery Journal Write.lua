@@ -151,7 +151,7 @@ end
 function WriteSkillRecoveryJournal:determineDuration(journalModData)
 	local durationData = {
 		rates = {},
-		duration = 0,
+		intervals = 0,
 		recipeChunk = 0,
 		kills = {},
 	}
@@ -165,7 +165,7 @@ function WriteSkillRecoveryJournal:determineDuration(journalModData)
 	if (#self.gainedRecipes > 0) then
 		durationData.recipeChunk = math.min(#self.gainedRecipes, math.floor(1.09^math.sqrt(#self.gainedRecipes))) * transcribeTimeMulti
 		local currentDuration = durationData.recipeChunk * 5
-		durationData.duration = math.max(currentDuration,durationData.duration)
+		durationData.intervals = math.max(currentDuration,durationData.intervals)
 	end
 
 	--kills
@@ -184,11 +184,11 @@ function WriteSkillRecoveryJournal:determineDuration(journalModData)
 	local unaccountedSKills = (sKills > survivorKills) and sKills-survivorKills
 	if unaccountedSKills and unaccountedSKills > 0 then durationData.survivors = unaccountedSKills end
 
-	if (unaccountedZKills and unaccountedZKills > 0) or (unaccountedSKills and unaccountedSKills > 0) then durationData.duration = durationData.duration+1 end
+	if (unaccountedZKills and unaccountedZKills > 0) or (unaccountedSKills and unaccountedSKills > 0) then durationData.intervals = durationData.intervals+1 end
 
 	--modData
 	local modDataStored = SRJ.modDataHandler.copyDataToJournal(self.character, self.item)
-	if modDataStored then durationData.duration = durationData.duration+1 end
+	if modDataStored then durationData.intervals = durationData.intervals+1 end
 	
 	--xp
 	if storedJournalXP and self.gainedSkills then
@@ -208,16 +208,16 @@ function WriteSkillRecoveryJournal:determineDuration(journalModData)
 					durationData.rates[perkID] = xpRate
 
 					local currentDuration = xpToWrite/xpRate
-					durationData.duration = math.max(currentDuration, durationData.duration)
+					durationData.intervals = math.max(currentDuration, durationData.intervals)
 				end
 			end
 		end
 
 	end
 
-	durationData.durationTime = durationData.duration * self.updateInterval * 60 * 60
+	durationData.durationTime = durationData.intervals * self.updateInterval * 60 * 60
 
-	if getDebug() then print("SRJ DEBUG DURATION (in ticks) ", durationData.duration, " (in in-game time) ", durationData.durationTime) for k,v in pairs(durationData.rates) do print(" - ",k," = ",v) end end
+	if getDebug() then print("SRJ DEBUG DURATION (in ticks) ", durationData.intervals, " (in in-game time) ", durationData.durationTime) for k,v in pairs(durationData.rates) do print(" - ",k," = ",v) end end
 
 	return durationData
 end
@@ -394,8 +394,6 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	print("WriteSkillRecoveryJournal:new - at " .. tostring(now) .. " isServer "..tostring(isServer()) .. " isClient " .. tostring(isClient()))
 
 	local o = ISBaseTimedAction.new(self, character)
-	--setmetatable(o, self) -- not needed when using above new
-	--self.__index = self -- not sure what this does, seems unnessecary
 
 	o.character = character
 	o.item = item
@@ -414,9 +412,6 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 		local gainedRecipes = SRJ.getGainedRecipes(character, learnedRecipes)
 		o.gainedRecipes = gainedRecipes
 	end
-
-	--o.durationData.duration
-	--o.durationData.rates
 
 	o.gainedSkills = SRJ.calculateAllGainedSkills(character) or false
 	o.oldJournalTotalXP = 0
@@ -487,12 +482,10 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	o.defaultUpdateInterval = 3.48 / 3600 -- legacy ~ 3.48 sec to maintain old duration
 	o.updateTime = now + o.updateInterval
 
-
 	-- for debug
 	o.lastUpdateTime = now
 	o.startTime = now
 
-	
 	o.durationData = o:determineDuration(JMD)
 	-- maxTime is normally set by the game and auto applies game speed multipliers to getDuration()
 	o.maxTime = o.durationData.durationTime -- we need to set this ourselves because getDuration is null at ISBaseTimedAction.new()
