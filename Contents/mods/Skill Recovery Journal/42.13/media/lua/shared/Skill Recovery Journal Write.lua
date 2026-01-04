@@ -27,8 +27,7 @@ end
 
 -- called on client on client start
 function WriteSkillRecoveryJournal:start()
-	self.action:setUseProgressBar(false) --TODO: Config
-	self.action:setTime(-1)
+	self.item:setJobDelta(0.0);
 	self.item:setJobType(getText("ContextMenu_Write") ..' '.. self.item:getName())
 	--self:setAnimVariable("PerformingAction", "TranscribeJournal") -- is not animating
 	self:setAnimVariable("ReadType", "book")
@@ -75,6 +74,7 @@ end
 function WriteSkillRecoveryJournal:perform()
 	print("WriteSkillRecoveryJournal perform")
 
+    self.item:setJobDelta(0.0);
     self.character:setReading(false);
 	self.character:playSound("CloseBook")
 	local logText = ISLogSystem.getGenericLogText(self.character)
@@ -88,6 +88,8 @@ end
 -- called on server on server complete
 function WriteSkillRecoveryJournal:complete()
 	print("WriteSkillRecoveryJournal complete after " .. tostring(SRJ.gameTime:getWorldAgeHours() - self.startTime))
+    self.item:setJobDelta(0.0);
+	self.character:setReading(false);
 	syncItemModData(self.character, self.item)
 	return true
 end
@@ -95,7 +97,7 @@ end
 
 -- infinite Timed Action
 function WriteSkillRecoveryJournal:getDuration() 
-	return -1
+	return self.durationData.durationTime
 end
 
 
@@ -146,7 +148,7 @@ function WriteSkillRecoveryJournal:update()
 end
 
 
-function WriteSkillRecoveryJournal:determineDuration(journalModData, readXp)
+function WriteSkillRecoveryJournal:determineDuration(journalModData)
 	local durationData = {
 		rates = {},
 		duration = 0,
@@ -168,22 +170,21 @@ function WriteSkillRecoveryJournal:determineDuration(journalModData, readXp)
 
 	--kills
 	local killsRecoveryPercentage = SandboxVars.SkillRecoveryJournal.KillsTrack or 0
-	local zKills = math.floor(self.character:getZombieKills() * (killsRecoveryPercentage/100) )
-	local sKills = math.floor(self.character:getSurvivorKills() * (killsRecoveryPercentage/100) )
+	local zKills = math.floor(self.character:getZombieKills() * (killsRecoveryPercentage / 100))
+	local sKills = math.floor(self.character:getSurvivorKills() * (killsRecoveryPercentage / 100))
 
 	journalModData.kills = journalModData.kills or {}
-	readXp.kills = readXp.kills or {}
 
 	local zombieKills = (journalModData.kills.Zombie or 0)
 	local survivorKills = (journalModData.kills.Survivor or 0)
 
 	local unaccountedZKills = (zKills > zombieKills) and zKills-zombieKills
-	if unaccountedZKills > 0 then durationData.zombies = unaccountedZKills end
+	if unaccountedZKills and unaccountedZKills > 0 then durationData.zombies = unaccountedZKills end
 
 	local unaccountedSKills = (sKills > survivorKills) and sKills-survivorKills
-	if unaccountedSKills > 0 then durationData.survivors = unaccountedSKills end
+	if unaccountedSKills and unaccountedSKills > 0 then durationData.survivors = unaccountedSKills end
 
-	if unaccountedZKills>0 or unaccountedSKills>0 then durationData.duration = durationData.duration+1 end
+	if (unaccountedZKills and unaccountedZKills > 0) or (unaccountedSKills and unaccountedSKills > 0) then durationData.duration = durationData.duration+1 end
 
 	--modData
 	local modDataStored = SRJ.modDataHandler.copyDataToJournal(self.character, self.item)
@@ -199,22 +200,24 @@ function WriteSkillRecoveryJournal:determineDuration(journalModData, readXp)
 
 				local perkLevelPlusOne = self.character:getPerkLevel(Perks[perkID])+1
 				local differential = SRJ.getMaxXPDifferential(perkID) or 1
-				local xpRate = math.sqrt(xp)/25
+				local xpRate = math.sqrt(xp) / 25
 
-				xpRate = round(((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * transcribeTimeMulti * timeFactor / differential, 2)
+				xpRate = round(((xpRate * math.sqrt(perkLevelPlusOne)) * 1000) / 1000 * transcribeTimeMulti * timeFactor / differential, 2)
 
 				if xpRate>0 then
 					durationData.rates[perkID] = xpRate
 
 					local currentDuration = xpToWrite/xpRate
-					durationData.duration = math.max(currentDuration,durationData.duration)
+					durationData.duration = math.max(currentDuration, durationData.duration)
 				end
 			end
 		end
 
 	end
 
-	if getDebug() then print("SRJ DEBUG DURATION: ", durationData.duration) for k,v in pairs(durationData.rates) do print(" - ",k," = ",v) end end
+	durationData.durationTime = durationData.duration * self.updateInterval * 60 * 60
+
+	if getDebug() then print("SRJ DEBUG DURATION (in ticks) ", durationData.duration, " (in in-game time) ", durationData.durationTime) for k,v in pairs(durationData.rates) do print(" - ",k," = ",v) end end
 
 	return durationData
 end
@@ -391,8 +394,8 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	print("WriteSkillRecoveryJournal:new - at " .. tostring(now) .. " isServer "..tostring(isServer()) .. " isClient " .. tostring(isClient()))
 
 	local o = ISBaseTimedAction.new(self, character)
-	setmetatable(o, self)
-	self.__index = self
+	--setmetatable(o, self) -- not needed when using above new
+	--self.__index = self -- not sure what this does, seems unnessecary
 
 	o.character = character
 	o.item = item
@@ -412,7 +415,6 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 		o.gainedRecipes = gainedRecipes
 	end
 
-	o.durationData = self:determineDuration(JMD)
 	--o.durationData.duration
 	--o.durationData.rates
 
@@ -476,7 +478,6 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	o.loopedAction = true
 	o.ignoreHandsWounds = true
 	o.caloriesModifier = 0.5
-	o.forceProgressBar = true
 	o.recipeIntervals = 0
 	o.haloTextDelay = 0
 
@@ -486,11 +487,15 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	o.defaultUpdateInterval = 3.48 / 3600 -- legacy ~ 3.48 sec to maintain old duration
 	o.updateTime = now + o.updateInterval
 
-	o.maxTime = o.durationData.duration * o.updateInterval
 
 	-- for debug
 	o.lastUpdateTime = now
 	o.startTime = now
+
+	
+	o.durationData = o:determineDuration(JMD)
+	-- maxTime is normally set by the game and auto applies game speed multipliers to getDuration()
+	o.maxTime = o.durationData.durationTime -- we need to set this ourselves because getDuration is null at ISBaseTimedAction.new()
 
 	return o
 end
