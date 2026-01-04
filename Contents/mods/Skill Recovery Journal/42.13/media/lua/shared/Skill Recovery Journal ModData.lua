@@ -3,7 +3,7 @@ local SRJ_ModDataHandler = {}
 -- player mod data
 function SRJ_ModDataHandler.setPassiveLevels(id, player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
-
+	--TODO: Check if this is still needed -- the issue before was that strength and fitness would be 5/5 by default and count towards earned XP.
 	if not pMD.SRJPassiveSkillsInit then
 		for i=1, Perks.getMaxIndex()-1 do
 			---@type PerkFactory.Perks
