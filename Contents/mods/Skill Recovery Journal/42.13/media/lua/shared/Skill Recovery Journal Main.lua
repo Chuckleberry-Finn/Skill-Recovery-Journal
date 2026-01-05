@@ -238,12 +238,34 @@ function SRJ.getGainedRecipes(player, exclude)
 end
 
 
-function SRJ.handleHaloText(character, changesBeingMade, totalStoredXP, totalRecoverableXP, oldJournalTotalXP, title)
-	--print("In Book: " .. totalStoredXP - self.oldJournalTotalXP, " - in char: " .. totalRecoverableXP - self.oldJournalTotalXP)
-	local progressText = math.floor(((totalStoredXP - oldJournalTotalXP) / (totalRecoverableXP - oldJournalTotalXP)) * 100 + 0.5) .. "%"
-	local changesBeingMadeText = getText(title) .. " (" .. progressText ..") :"
-	for k,v in pairs(changesBeingMade) do changesBeingMadeText = changesBeingMadeText.." "..v..((k~=#changesBeingMade and ", ") or "") end
-	HaloTextHelper.addText(character, changesBeingMadeText, "", HaloTextHelper.getColorWhite())
+function SRJ.showHaloProgressText(character, changesBeingMade, totalStoredXP, totalRecoverableXP, oldJournalTotalXP, title)
+	if isServer() then
+		local args = {}
+		args.changesBeingMade = changesBeingMade
+		args.totalStoredXP = totalStoredXP
+		args.totalRecoverableXP = totalRecoverableXP
+		args.oldJournalTotalXP = oldJournalTotalXP
+		sendServerCommand(character, "SkillRecoveryJournal", "write_changes", args)
+	else
+		local progressText = math.floor(((totalStoredXP - oldJournalTotalXP) / (totalRecoverableXP - oldJournalTotalXP)) * 100 + 0.5) .. "%"
+		--if getDebug() then print("In Book " .. totalStoredXP - oldJournalTotalXP, " - in char " .. totalRecoverableXP - oldJournalTotalXP .. " = " .. progressText) end
+
+		local changesBeingMadeText = getText(title) .. " (" .. progressText ..") :"
+		for k,v in pairs(changesBeingMade) do changesBeingMadeText = changesBeingMadeText.." "..v..((k~=#changesBeingMade and ", ") or "") end
+		HaloTextHelper.addText(character, changesBeingMadeText, "", HaloTextHelper.getColorWhite())
+	end
+end
+
+
+function SRJ.showCharacterFeedback(character, text)
+	-- only visible when called on client
+	if isServer() then
+		local args = {}
+		args.text = text
+		sendServerCommand(character, "SkillRecoveryJournal", "character_say", args)
+	else
+		character:Say(getText(text), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+	end
 end
 
 return SRJ

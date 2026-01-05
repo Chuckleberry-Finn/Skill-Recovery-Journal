@@ -96,7 +96,7 @@ end
 
 -- infinite Timed Action
 function WriteSkillRecoveryJournal:getDuration() 
-	return self.durationData.durationTime
+	return -1
 end
 
 
@@ -106,22 +106,6 @@ function WriteSkillRecoveryJournal:animEvent(event, parameter)
 		if isServer() then
 			self:updateWriting()
 		end
-	end
-end
-
-
-function WriteSkillRecoveryJournal:finish()
-	if isServer() then
-		self.netAction:forceComplete()
-	else
-		-- FIXME#5: feedback only visible when called on client
-		if self.wroteNewContent or isClient() then -- FIXME#3: client does not know if we actually wrote stuff...
-			self.character:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
-		else
-			self.character:Say(getText("IGUI_PlayerText_NothingToAddToJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
-		end
-
-		self:forceStop()
 	end
 end
 
@@ -224,21 +208,10 @@ end
 function WriteSkillRecoveryJournal:updateWriting()
 	local now = SRJ.gameTime:getWorldAgeHours()
 
-	-- on client, handle halotext FIXME#2: timing is off, should not use getMultipier in MP
-	self.haloTextDelay = self.haloTextDelay - (SRJ.gameTime:getMultiplier() or 0)
-	-- debug things - remove later
-	self.lastUpdateTime = now or 0
-	---self.writeTimer = 0
-
-	---self.writeTimer = (now - (self.lastUpdateTime or 0))
-	--self.writeTimer = self.writeTimer + (SRJ.gameTime:getMultiplier() or 0)
-
-	--print("WriteSkillRecoveryJournal updateWriting")
-	--print("write timer: ".. tostring(self.writeTimer))
-
 	-- if time has progressed over planned update time, do update
 	if now >= self.updateTime then
-		--print("update after " ..  tostring(self.writeTimer * 60 * 60) .. " in-game seconds -> " .. tostring(self.writeTimer))
+		--print("update after " ..  tostring((now - self.lastUpdateTime) * 60 * 60) .. " in-game seconds -> lastUpdate " .. tostring(self.lastUpdateTime))
+		self.lastUpdateTime = now or 0 -- for debug
 
 		-- plan next update one interval later
 		self.updateTime = self.updateTime + self.updateInterval
@@ -248,7 +221,7 @@ function WriteSkillRecoveryJournal:updateWriting()
 
 		self.changesMade = false
 
-		local changesBeingMade, changesBeingMadeIndex = {}, {}
+		local changesBeingMade, changesBeingMadeIndex = {}, {} -- FIXME: halo only shows changes of this tick instead of all changes since last halo
 
 		local JMD = SRJ.modDataHandler.getItemModData(self.item)
 		local journalID = JMD["ID"]
@@ -258,8 +231,6 @@ function WriteSkillRecoveryJournal:updateWriting()
 		local bOwner = true
 		if pSteamID ~= 0 and journalID and journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then bOwner = false end
 		if pUsername and journalID and journalID["username"] and (journalID["username"] ~= pUsername) then bOwner = false end
-
-		local transcribeTimeMulti = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 1
 
 		-- write gained recipes
 		if bOwner and (#self.gainedRecipes > 0) then
@@ -356,24 +327,34 @@ function WriteSkillRecoveryJournal:updateWriting()
 
 		-- end if nothing gained
 		if self.changesMade == false then
-			self:finish()
+			-- give feedback why we stop
+			local feedback ="IGUI_PlayerText_NothingToAddToJournal"
+			if self.wroteNewContent then
+				feedback = "IGUI_PlayerText_AllDoneWithJournal"
+			end
+
+			SRJ.showCharacterFeedback(self.character, feedback)
+
+			-- invoke stop
+			if isServer() then
+				self.netAction:forceComplete()
+			else
+				self:forceStop()
+			end
 		else
+			-- we wrote xp
 			self.wroteNewContent = true
 
-			-- show transcript progress as halo text, prevent overlapping addTexts
-			if self.haloTextDelay <= 0 and #changesBeingMade > 0 then
-				self.haloTextDelay = 100
-				if not isServer() then
-					SRJ.handleHaloText(self.character, changesBeingMade, totalStoredXP, totalRecoverableXP, self.oldJournalTotalXP, "IGUI_Tooltip_Transcribing")
-				else
-					local args = {}
-					args.changesBeingMade = changesBeingMade
-					args.totalStoredXP = totalStoredXP
-					args.totalRecoverableXP = totalRecoverableXP
-					args.oldJournalTotalXP = self.oldJournalTotalXP
-					sendServerCommand(self.character, "SkillRecoveryJournal", "write_changes", args)
-					syncItemModData(self.character, self.item)
-				end
+			if isServer() then
+				syncItemModData(self.character, self.item) -- syncs item tooltip
+			end
+
+			-- show transcript progress as halo text
+			if self.haloTextDelay <= 0 then
+				self.haloTextDelay = 3 -- every fourth update show a halo (should be >40 in-game seconds)
+				SRJ.showHaloProgressText(self.character, changesBeingMade, totalStoredXP, totalRecoverableXP, self.oldJournalTotalXP, "IGUI_Tooltip_Transcribing")
+			else
+				self.haloTextDelay = self.haloTextDelay - 1
 			end
 		end
 
@@ -463,37 +444,25 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	if sayText then character:Say(sayText) end
 	if o.willWrite then JMD["author"] = character:getFullName() end
 
-	o.writeTimer = 0
+	o.useProgressBar = false
 	o.stopOnWalk = false
 	o.stopOnRun = true
-	o.loopedAction = false
 	o.ignoreHandsWounds = true
 	o.caloriesModifier = 0.5
 	o.recipeIntervals = 0
-	o.haloTextDelay = 0
 
-	-- interval between updates in in-game seconds
-	local updateIntervalSeconds = SandboxVars.SkillRecoveryJournal.UpdateIntervalSeconds or 10
-	o.updateInterval = updateIntervalSeconds / 3600 -- in hours
+	-- interval between updates in in-game hours
+	o.updateInterval = 10 / 3600 -- every in-game 10 seconds
 	o.defaultUpdateInterval = 3.48 / 3600 -- legacy ~ 3.48 sec to maintain old duration
-	o.updateTime = now + o.updateInterval
+	o.updateTime = now + o.updateInterval -- do first update after one interval
+
+	o.haloTextDelay = 0
 
 	-- for debug
 	o.lastUpdateTime = now
 	o.startTime = now
 
 	o.durationData = o:determineDuration(JMD)
-	-- maxTime is normally set by the game and auto applies game speed multipliers to getDuration()
-	o.maxTime = o.durationData.durationTime -- we need to set this ourselves because getDuration is null at ISBaseTimedAction.new()
 
 	return o
 end
-
-function OnServerWriteCommand(module, command, args)
-    -- server sends changes for client to show
-	if module == "SkillRecoveryJournal" and command == "write_changes" then
-		SRJ.handleHaloText(getPlayer(), args.changesBeingMade, args.totalStoredXP, args.totalRecoverableXP, args.oldJournalTotalXP, "IGUI_Tooltip_Transcribing")
-	end
-end
-
-Events.OnServerCommand.Add(OnServerWriteCommand)
