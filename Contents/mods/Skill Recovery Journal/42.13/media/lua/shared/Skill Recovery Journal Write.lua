@@ -16,12 +16,12 @@ function WriteSkillRecoveryJournal:isValid()
 	if vehicle and vehicle:isDriver(self.character) then return not vehicle:isEngineRunning() or vehicle:getSpeed2D() == 0 end
 	
 	-- FIXME#4 if :isValid (and :perform) is handled correctly, self.item will be null in :new on server and updateWriting will crash
-	if isClient() and self.item and self.writingTool then
-        return self.character:getInventory():containsID(self.item:getID()) and self.character:getInventory():containsID(self.writingTool:getID())
-    else
-		return self.character:getInventory():contains(self.item) and self.character:getInventory():contains(self.writingTool)
-	end
-	--return self.character:getInventory():contains(self.item) and self.character:getInventory():contains(self.writingTool)
+	--if isClient() and self.item and self.writingTool then
+    --    return self.character:getInventory():containsID(self.item:getID()) and self.character:getInventory():containsID(self.writingTool:getID())
+    --else
+	--	return self.character:getInventory():contains(self.item) and self.character:getInventory():contains(self.writingTool)
+	--end
+	return self.character:getInventory():contains(self.item) and self.character:getInventory():contains(self.writingTool)
 end
 
 
@@ -80,7 +80,6 @@ function WriteSkillRecoveryJournal:perform()
 	local logText = ISLogSystem.getGenericLogText(self.character)
 	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP READING] (perform)"})
 
-	self:finish() -- FIXME#1! This should not be necessary... breaks queuing, but is broken anyway (#4)
 	ISBaseTimedAction.perform(self)
 end
 
@@ -111,10 +110,9 @@ end
 
 function WriteSkillRecoveryJournal:finish()
 	if isServer() then
-		-- stops action and calls complete on server, calls perform on client FIXME#1: Does not stop action on client!
 		self.netAction:forceComplete()
 	else
-		-- feedback only visible when called on client
+		-- FIXME#5: feedback only visible when called on client
 		if self.wroteNewContent or isClient() then -- FIXME#3: client does not know if we actually wrote stuff...
 			self.character:Say(getText("IGUI_PlayerText_AllDoneWithJournal"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 		else
@@ -421,7 +419,7 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	o.writeTimer = 0
 	o.stopOnWalk = false
 	o.stopOnRun = true
-	o.loopedAction = true
+	o.loopedAction = false
 	o.ignoreHandsWounds = true
 	o.caloriesModifier = 0.5
 	o.forceProgressBar = true
