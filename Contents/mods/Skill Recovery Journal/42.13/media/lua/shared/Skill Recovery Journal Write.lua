@@ -27,8 +27,7 @@ end
 
 -- called on client on client start
 function WriteSkillRecoveryJournal:start()
-	self.action:setUseProgressBar(false) --TODO: Config
-	self.action:setTime(-1)
+	self.item:setJobDelta(0.0);
 	self.item:setJobType(getText("ContextMenu_Write") ..' '.. self.item:getName())
 	--self:setAnimVariable("PerformingAction", "TranscribeJournal") -- is not animating
 	self:setAnimVariable("ReadType", "book")
@@ -75,6 +74,7 @@ end
 function WriteSkillRecoveryJournal:perform()
 	print("WriteSkillRecoveryJournal perform")
 
+    self.item:setJobDelta(0.0);
     self.character:setReading(false);
 	self.character:playSound("CloseBook")
 	local logText = ISLogSystem.getGenericLogText(self.character)
@@ -87,6 +87,8 @@ end
 -- called on server on server complete
 function WriteSkillRecoveryJournal:complete()
 	print("WriteSkillRecoveryJournal complete after " .. tostring(SRJ.gameTime:getWorldAgeHours() - self.startTime))
+    self.item:setJobDelta(0.0);
+	self.character:setReading(false);
 	syncItemModData(self.character, self.item)
 	return true
 end
@@ -94,7 +96,7 @@ end
 
 -- infinite Timed Action
 function WriteSkillRecoveryJournal:getDuration() 
-	return -1
+	return self.durationData.durationTime
 end
 
 
@@ -126,8 +128,6 @@ end
 
 -- only on client SP/MP
 function WriteSkillRecoveryJournal:update()
-	if not self.loopedAction then return end
-
 	-- if updateTick was reached
 	if self:updateWriting() then
 		-- handle sound if changes made or MP
@@ -144,6 +144,81 @@ function WriteSkillRecoveryJournal:update()
 end
 
 
+function WriteSkillRecoveryJournal:determineDuration(journalModData)
+	local durationData = {
+		rates = {},
+		intervals = 0,
+		recipeChunk = 0,
+		kills = {},
+	}
+
+	local storedJournalXP = journalModData["gainedXP"]
+
+	local transcribeTimeMulti = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 1
+	local timeFactor = (self.updateInterval / self.defaultUpdateInterval)
+
+	--recipes
+	if (#self.gainedRecipes > 0) then
+		durationData.recipeChunk = math.min(#self.gainedRecipes, math.floor(1.09^math.sqrt(#self.gainedRecipes))) * transcribeTimeMulti
+		local intervalsNeeded = math.ceil((durationData.recipeChunk * 5))
+		durationData.intervals = math.max(intervalsNeeded,durationData.intervals)
+	end
+
+	--kills
+	local killsRecoveryPercentage = SandboxVars.SkillRecoveryJournal.KillsTrack or 0
+	local zKills = math.floor(self.character:getZombieKills() * (killsRecoveryPercentage / 100))
+	local sKills = math.floor(self.character:getSurvivorKills() * (killsRecoveryPercentage / 100))
+
+	journalModData.kills = journalModData.kills or {}
+
+	local zombieKills = (journalModData.kills.Zombie or 0)
+	local survivorKills = (journalModData.kills.Survivor or 0)
+
+	local unaccountedZKills = (zKills > zombieKills) and zKills-zombieKills
+	if unaccountedZKills and unaccountedZKills > 0 then durationData.zombies = unaccountedZKills end
+
+	local unaccountedSKills = (sKills > survivorKills) and sKills-survivorKills
+	if unaccountedSKills and unaccountedSKills > 0 then durationData.survivors = unaccountedSKills end
+
+	if (unaccountedZKills and unaccountedZKills > 0) or (unaccountedSKills and unaccountedSKills > 0) then durationData.intervals = durationData.intervals+1 end
+
+	--modData
+	local modDataStored = SRJ.modDataHandler.copyDataToJournal(self.character, self.item)
+	if modDataStored then durationData.intervals = durationData.intervals+1 end
+	
+	--xp
+	if storedJournalXP and self.gainedSkills then
+		for perkID,xp in pairs(self.gainedSkills) do
+
+			local xpToWrite = xp-(storedJournalXP[perkID] or 0)
+
+			if xpToWrite and (xpToWrite > 0) then
+
+				local perkLevelPlusOne = self.character:getPerkLevel(Perks[perkID])+1
+				local differential = SRJ.getMaxXPDifferential(perkID) or 1
+				local xpRate = math.sqrt(xp) / 25
+
+				xpRate = round(((xpRate * math.sqrt(perkLevelPlusOne)) * 1000) / 1000 * transcribeTimeMulti * timeFactor / differential, 2)
+
+				if xpRate>0 then
+					durationData.rates[perkID] = xpRate
+
+					local intervalsNeeded = math.ceil((xpToWrite/xpRate))
+					print(" - ",perkID, "- xprate = ",xpRate,", ",xpToWrite, " (",intervalsNeeded,")")
+					durationData.intervals = math.max(intervalsNeeded, durationData.intervals)
+				end
+			end
+		end
+	end
+
+	durationData.durationTime = durationData.intervals * self.updateInterval * 60 * 60 * 3
+
+	if getDebug() then print("SRJ DEBUG DURATION (in ticks) ", durationData.intervals, " (in in-game time) ", durationData.durationTime) for k,v in pairs(durationData.rates) do print(" - ",k," = ",v) end end
+
+	return durationData
+end
+
+
 -- Updates the write journal action if the last update has been longer ago than updateInterval
 -- returns true if time for next writing step was reached false otherwise
 function WriteSkillRecoveryJournal:updateWriting()
@@ -153,9 +228,9 @@ function WriteSkillRecoveryJournal:updateWriting()
 	self.haloTextDelay = self.haloTextDelay - (SRJ.gameTime:getMultiplier() or 0)
 	-- debug things - remove later
 	self.lastUpdateTime = now or 0
-	self.writeTimer = 0
+	---self.writeTimer = 0
 
-	self.writeTimer = (now - (self.lastUpdateTime or 0))
+	---self.writeTimer = (now - (self.lastUpdateTime or 0))
 	--self.writeTimer = self.writeTimer + (SRJ.gameTime:getMultiplier() or 0)
 
 	--print("WriteSkillRecoveryJournal updateWriting")
@@ -169,9 +244,7 @@ function WriteSkillRecoveryJournal:updateWriting()
 		self.updateTime = self.updateTime + self.updateInterval
 
 		-- all updating is done by server
-		if isClient() then
-			return true
-		end
+		if isClient() then return true end
 
 		self.changesMade = false
 
@@ -194,12 +267,10 @@ function WriteSkillRecoveryJournal:updateWriting()
 			self.changesMade = true
 
 			if self.recipeIntervals > 5 then
-				local recipeChunk = math.min(#self.gainedRecipes, math.floor(1.09^math.sqrt(#self.gainedRecipes))) * transcribeTimeMulti
+				local recipeChunk = self.durationData.recipeChunk
 
 				local properPlural = getText("IGUI_Tooltip_Recipe")
-				if recipeChunk>1 then
-					properPlural = getText("IGUI_Tooltip_Recipes")
-				end
+				if recipeChunk>1 then properPlural = getText("IGUI_Tooltip_Recipes") end
 				table.insert(changesBeingMade, recipeChunk.." "..properPlural)
 
 				for i=0, recipeChunk do
@@ -225,21 +296,10 @@ function WriteSkillRecoveryJournal:updateWriting()
 					storedJournalXP[perkID] = storedJournalXP[perkID] or 0
 					if xp > storedJournalXP[perkID] then
 
-						local perkLevelPlusOne = self.character:getPerkLevel(Perks[perkID])+1
-
-						local differential = SRJ.getMaxXPDifferential(perkID) or 1
-
-						local xpRate = math.sqrt(xp)/25
-
-						local timeFactor = (self.updateInterval / self.defaultUpdateInterval)
-
-						--print("xpRate: ", xpRate, "  perkLevelPlusOne: ", perkLevelPlusOne, "  differential: ", differential, " timeFactor: ", timeFactor)
-
-						xpRate = round(((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * transcribeTimeMulti * timeFactor / differential, 2)
-
+						local xpRate = self.durationData.rates[perkID] or 0
 						if xpRate>0 then
-							self.changesMade = true
 
+							self.changesMade = true
 							local skill_name = getTextOrNull("IGUI_perks_"..perkID) or perkID
 
 							if not changesBeingMadeIndex[skill_name] then
@@ -251,7 +311,7 @@ function WriteSkillRecoveryJournal:updateWriting()
 							--print("TESTING: "..perkID.." recoverable:"..xp.." gained:"..storedJournalXP[perkID].." +"..xpRate)
 							storedJournalXP[perkID] = resultingXp
 
-							-- store amount as already red in player data, so it cant be gained again
+							-- store amount as already read in player data, so it cant be gained again
 							readXp[perkID] = math.max(resultingXp,(readXp[perkID] or 0))
 						end
 					end
@@ -264,17 +324,8 @@ function WriteSkillRecoveryJournal:updateWriting()
 		local killsRecoveryPercentage = SandboxVars.SkillRecoveryJournal.KillsTrack or 0
 		if JMD and killsRecoveryPercentage > 0 then
 
-			local zKills = math.floor(self.character:getZombieKills() * (killsRecoveryPercentage/100) )
-			local sKills = math.floor(self.character:getSurvivorKills() * (killsRecoveryPercentage/100) )
-
-			JMD.kills = JMD.kills or {}
-			readXp.kills = readXp.kills or {}
-
-			local zombieKills = (JMD.kills.Zombie or 0)
-			local survivorKills = (JMD.kills.Survivor or 0)
-
-			local unaccountedZKills = (zKills > zombieKills) and zKills-zombieKills
-			local unaccountedSKills = (sKills > survivorKills) and sKills-survivorKills
+			local unaccountedZKills = self.durationData.kills and self.durationData.kills.zombie
+			local unaccountedSKills = self.durationData.kills and self.durationData.kills.survivor
 
 			if unaccountedZKills or unaccountedSKills then
 				if unaccountedZKills then
@@ -338,9 +389,7 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	local now = SRJ.gameTime:getWorldAgeHours()
 	print("WriteSkillRecoveryJournal:new - at " .. tostring(now) .. " isServer "..tostring(isServer()) .. " isClient " .. tostring(isClient()))
 
-	local o = ISBaseTimedAction.new(self, character);
-	setmetatable(o, self)
-	self.__index = self
+	local o = ISBaseTimedAction.new(self, character)
 
 	o.character = character
 	o.item = item
@@ -360,12 +409,10 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 		o.gainedRecipes = gainedRecipes
 	end
 
-
 	o.gainedSkills = SRJ.calculateAllGainedSkills(character) or false
 	o.oldJournalTotalXP = 0
-	for perkID, xp in pairs(JMD["gainedXP"]) do
-		o.oldJournalTotalXP = o.oldJournalTotalXP + xp
-	end
+	for perkID, xp in pairs(JMD["gainedXP"]) do o.oldJournalTotalXP = o.oldJournalTotalXP + xp end
+
 	o.willWrite = true
 	local sayText
 
@@ -422,9 +469,7 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	o.loopedAction = false
 	o.ignoreHandsWounds = true
 	o.caloriesModifier = 0.5
-	o.forceProgressBar = true
 	o.recipeIntervals = 0
-	o.maxTime = -1
 	o.haloTextDelay = 0
 
 	-- interval between updates in in-game seconds
@@ -436,6 +481,10 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	-- for debug
 	o.lastUpdateTime = now
 	o.startTime = now
+
+	o.durationData = o:determineDuration(JMD)
+	-- maxTime is normally set by the game and auto applies game speed multipliers to getDuration()
+	o.maxTime = o.durationData.durationTime -- we need to set this ourselves because getDuration is null at ISBaseTimedAction.new()
 
 	return o
 end
