@@ -221,8 +221,6 @@ function WriteSkillRecoveryJournal:updateWriting()
 
 		self.changesMade = false
 
-		local changesBeingMade, changesBeingMadeIndex = {}, {} -- FIXME: halo only shows changes of this tick instead of all changes since last halo
-
 		local JMD = SRJ.modDataHandler.getItemModData(self.item)
 		local journalID = JMD["ID"]
 		local pSteamID = self.character:getSteamID()
@@ -242,7 +240,7 @@ function WriteSkillRecoveryJournal:updateWriting()
 
 				local properPlural = getText("IGUI_Tooltip_Recipe")
 				if recipeChunk>1 then properPlural = getText("IGUI_Tooltip_Recipes") end
-				table.insert(changesBeingMade, recipeChunk.." "..properPlural)
+				table.insert(self.changesBeingMade, recipeChunk.." "..properPlural)
 
 				for i=0, recipeChunk do
 					local recipeID = self.gainedRecipes[#self.gainedRecipes]
@@ -273,9 +271,9 @@ function WriteSkillRecoveryJournal:updateWriting()
 							self.changesMade = true
 							local skill_name = getTextOrNull("IGUI_perks_"..perkID) or perkID
 
-							if not changesBeingMadeIndex[skill_name] then
-								changesBeingMadeIndex[skill_name] = true
-								table.insert(changesBeingMade, skill_name)
+							if not self.changesBeingMadeIndex[skill_name] then
+								self.changesBeingMadeIndex[skill_name] = true
+								table.insert(self.changesBeingMade, skill_name)
 							end
 
 							local resultingXp = math.min(xp, storedJournalXP[perkID]+xpRate)
@@ -300,12 +298,12 @@ function WriteSkillRecoveryJournal:updateWriting()
 
 			if unaccountedZKills or unaccountedSKills then
 				if unaccountedZKills then
-					table.insert(changesBeingMade, getText("IGUI_char_Zombies_Killed"))
+					table.insert(self.changesBeingMade, getText("IGUI_char_Zombies_Killed"))
 					JMD.kills.Zombie = (JMD.kills.Zombie or 0) + unaccountedZKills
 					readXp.kills.Zombie = (readXp.kills.Zombie or 0) + unaccountedZKills
 				end
 				if unaccountedSKills then
-					table.insert(changesBeingMade, getText("IGUI_char_Survivor_Killed"))
+					table.insert(self.changesBeingMade, getText("IGUI_char_Survivor_Killed"))
 					JMD.kills.Survivor = (JMD.kills.Survivor or 0) + unaccountedSKills
 					readXp.kills.Survivor = (readXp.kills.Survivor or 0) + unaccountedSKills
 				end
@@ -319,7 +317,7 @@ function WriteSkillRecoveryJournal:updateWriting()
 			local modDataStored = SRJ.modDataHandler.copyDataToJournal(self.character, self.item)
 			if modDataStored then
 				for _,dataID in pairs(modDataStored) do
-					table.insert(changesBeingMade, dataID)
+					table.insert(self.changesBeingMade, dataID)
 				end
 				self.changesMade = true
 			end
@@ -351,8 +349,11 @@ function WriteSkillRecoveryJournal:updateWriting()
 
 			-- show transcript progress as halo text
 			if self.haloTextDelay <= 0 then
-				self.haloTextDelay = 3 -- every fourth update show a halo (should be >40 in-game seconds)
-				SRJ.showHaloProgressText(self.character, changesBeingMade, totalStoredXP, totalRecoverableXP, self.oldJournalTotalXP, "IGUI_Tooltip_Transcribing")
+				self.haloTextDelay = 3 -- every fourth update show a halo (should be >= 40 in-game seconds)
+				SRJ.showHaloProgressText(self.character, self.changesBeingMade, totalStoredXP, totalRecoverableXP, self.oldJournalTotalXP, "IGUI_Tooltip_Transcribing")
+				
+				self.changesBeingMade = {}
+				self.changesBeingMadeIndex = {}
 			else
 				self.haloTextDelay = self.haloTextDelay - 1
 			end
@@ -463,6 +464,9 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	o.startTime = now
 
 	o.durationData = o:determineDuration(JMD)
+
+	o.changesBeingMade = {}
+	o.changesBeingMadeIndex = {}
 
 	return o
 end
