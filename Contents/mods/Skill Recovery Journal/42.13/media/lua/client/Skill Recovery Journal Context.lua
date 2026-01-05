@@ -120,6 +120,8 @@ end
 ---@param player IsoGameCharacter|IsoPlayer
 ---@param journal InventoryItem|Literature
 function contextSRJ.onRenameJournal(journal, player)
+	-- once vanilla fixed it, this could maybe be used:
+	--local modal = ISTextBox:new(0, 0, 280, 180, journal:getDisplayName()..":", journal:getName(), nil, ISInventoryPaneContextMenu.onRenameBagClick, player, getSpecificPlayer(player), journal);
 	local modal = ISTextBox:new(0, 0, 280, 100, journal:getDisplayName()..":", journal:getName(), nil, contextSRJ.onRenameJournalClick, player:getPlayerNum(), player, journal)
 	modal:initialise()
 	modal:addToUIManager()
