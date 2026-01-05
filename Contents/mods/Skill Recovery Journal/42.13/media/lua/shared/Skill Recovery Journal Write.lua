@@ -130,8 +130,6 @@ end
 
 -- only on client SP/MP
 function WriteSkillRecoveryJournal:update()
-	if not self.loopedAction then return end
-
 	-- if updateTick was reached
 	if self:updateWriting() then
 		-- handle sound if changes made or MP
@@ -470,7 +468,6 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	o.writeTimer = 0
 	o.stopOnWalk = false
 	o.stopOnRun = true
-	o.loopedAction = true
 	o.ignoreHandsWounds = true
 	o.caloriesModifier = 0.5
 	o.recipeIntervals = 0
