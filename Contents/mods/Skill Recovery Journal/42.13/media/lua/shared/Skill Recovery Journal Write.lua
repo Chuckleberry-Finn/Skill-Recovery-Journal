@@ -164,8 +164,8 @@ function WriteSkillRecoveryJournal:determineDuration(journalModData)
 	--recipes
 	if (#self.gainedRecipes > 0) then
 		durationData.recipeChunk = math.min(#self.gainedRecipes, math.floor(1.09^math.sqrt(#self.gainedRecipes))) * transcribeTimeMulti
-		local currentDuration = durationData.recipeChunk * 5
-		durationData.intervals = math.max(currentDuration,durationData.intervals)
+		local intervalsNeeded = math.ceil((durationData.recipeChunk * 5))
+		durationData.intervals = math.max(intervalsNeeded,durationData.intervals)
 	end
 
 	--kills
@@ -207,15 +207,15 @@ function WriteSkillRecoveryJournal:determineDuration(journalModData)
 				if xpRate>0 then
 					durationData.rates[perkID] = xpRate
 
-					local currentDuration = xpToWrite/xpRate
-					durationData.intervals = math.max(currentDuration, durationData.intervals)
+					local intervalsNeeded = math.ceil((xpToWrite/xpRate))
+					print(" - ",perkID, "- xprate = ",xpRate,", ",xpToWrite, " (",intervalsNeeded,")")
+					durationData.intervals = math.max(intervalsNeeded, durationData.intervals)
 				end
 			end
 		end
-
 	end
 
-	durationData.durationTime = durationData.intervals * self.updateInterval * 60 * 60
+	durationData.durationTime = durationData.intervals * self.updateInterval * 60 * 60 * 3
 
 	if getDebug() then print("SRJ DEBUG DURATION (in ticks) ", durationData.intervals, " (in in-game time) ", durationData.durationTime) for k,v in pairs(durationData.rates) do print(" - ",k," = ",v) end end
 
@@ -232,9 +232,9 @@ function WriteSkillRecoveryJournal:updateWriting()
 	self.haloTextDelay = self.haloTextDelay - (SRJ.gameTime:getMultiplier() or 0)
 	-- debug things - remove later
 	self.lastUpdateTime = now or 0
-	self.writeTimer = 0
+	---self.writeTimer = 0
 
-	self.writeTimer = (now - (self.lastUpdateTime or 0))
+	---self.writeTimer = (now - (self.lastUpdateTime or 0))
 	--self.writeTimer = self.writeTimer + (SRJ.gameTime:getMultiplier() or 0)
 
 	--print("WriteSkillRecoveryJournal updateWriting")
@@ -315,7 +315,7 @@ function WriteSkillRecoveryJournal:updateWriting()
 							--print("TESTING: "..perkID.." recoverable:"..xp.." gained:"..storedJournalXP[perkID].." +"..xpRate)
 							storedJournalXP[perkID] = resultingXp
 
-							-- store amount as already red in player data, so it cant be gained again
+							-- store amount as already read in player data, so it cant be gained again
 							readXp[perkID] = math.max(resultingXp,(readXp[perkID] or 0))
 						end
 					end
