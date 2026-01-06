@@ -1,13 +1,15 @@
 local function SkillRecoveryJournalRecipe()
 
-    local sandboxOption = SandboxVars.SkillRecoveryJournal.CraftRecipe or "item 1 [Base.Notebook;Base.Journal] flags[Prop2] mode:destroy| item 1 tags[Glue] flags[Prop1]| item 3 [Base.LeatherStrips;Base.LeatherStripsDirty] mode:destroy| item 1 [Base.Thread;Base.Yarn]"
+    local defaultRecipe = "item 1 [Base.Notebook;Base.Journal;Base.Diary1;Base.Diary2;Base.Notepad] flags[Prop2] mode:destroy, item 1 tags[Glue] flags[Prop1], item 3 [Base.LeatherStrips;Base.LeatherStripsDirty] mode:destroy, item 1 [Base.Thread;Base.Yarn],"
+    local sandboxOption = SandboxVars.SkillRecoveryJournal.CraftRecipe
+    local needToLearn = SandboxVars.SkillRecoveryJournal.CraftRecipeNeedLearn
     local newScript
 
     if not sandboxOption or sandboxOption == "" then
-        newScript = "{ needTobeLearn = true, }"
+        newScript = "{ NeedToBeLearn = ".. tostring(needToLearn == true) ..", inputs { " .. defaultRecipe .. " } }"
     else
-        local modified_option = string.gsub(sandboxOption, "|", ",")
-        newScript = "{ inputs { " .. modified_option .. " } }"
+        if getDebug() then print("Add SRF custom crafting recipe with inputs " .. sandboxOption) end
+        newScript = "{ NeedToBeLearn = ".. tostring(needToLearn == true) ..", inputs { " .. sandboxOption .. " } }"
     end
 
     if newScript then
@@ -17,8 +19,4 @@ local function SkillRecoveryJournalRecipe()
     end
 end
 
-if isServer() then 
-    Events.OnGameBoot.Add(SkillRecoveryJournalRecipe) 
-else 
-    Events.OnInitWorld.Add(SkillRecoveryJournalRecipe)
-end
+Events.OnGameBoot.Add(SkillRecoveryJournalRecipe)
