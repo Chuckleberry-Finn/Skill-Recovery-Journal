@@ -33,6 +33,7 @@ end
 
 
 function ReadSkillRecoveryJournal:stop()
+	if getDebug() then print("ReadSkillRecoveryJournal stop after " .. tostring((SRJ.gameTime:getWorldAgeHours() - self.startTime) * 3600)) end
 	self.character:setReading(false);
 	self.item:setJobDelta(0.0);
 	self.character:playSound("CloseBook")
@@ -108,10 +109,9 @@ function ReadSkillRecoveryJournal:updateReading()
 
 	local bJournalUsedUp = false
 
-	self.haloTextDelay = self.haloTextDelay - (getGameTime():getMultiplier() or 0)
-
+	-- normalize update time via in game time. Adjust updateInterval as needed
 	if now >= self.updateTime then
-		print("update after " ..  tostring((now - self.lastUpdateTime) * 60 * 60) .. " in-game seconds -> lastUpdate " .. tostring(self.lastUpdateTime))
+		--print("update after " ..  tostring((now - self.lastUpdateTime) * 60 * 60) .. " in-game seconds -> lastUpdate " .. tostring(self.lastUpdateTime))
 		self.lastUpdateTime = now or 0 -- for debug
 
 		-- plan next update one interval later
@@ -245,7 +245,7 @@ function ReadSkillRecoveryJournal:updateReading()
 								end
 							end
 
-							print("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..(perkLevelPlusOne-1).."  xpStored:"..xp.."  currentXP:"..currentlyReadXP)
+							--print("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..(perkLevelPlusOne-1).."  xpStored:"..xp.."  currentXP:"..currentlyReadXP)
 
 							if perPerkXpRate~=false and perPerkXpRate > 0 then
 								-- normalize perPerkXpRate
@@ -258,7 +258,7 @@ function ReadSkillRecoveryJournal:updateReading()
 
 								-- send add xp to server
 								local addedXP = SRJ.xpHandler.reBoostXP(player,Perks[skill],perPerkXpRate)
-								sendAddXp(player, Perks[skill], addedXP, true)
+								addXpNoMultiplier(player, Perks[skill], addedXP)
 
 								changesMade = true
 
@@ -329,32 +329,23 @@ function ReadSkillRecoveryJournal:updateReading()
 				sayTextChoices = {"IGUI_PlayerText_KnowSkill"}
 				sayText = getText(sayTextChoices[ZombRand(#sayTextChoices)+1])
 			end
-		elseif changesMade then
-			self.changesWereMade = true
 		end 
 
-		-- show halo text TODO
-		if self.haloTextDelay <= 0 and #changesBeingMade > 0 then
-			self.haloTextDelay = 100
-			--print("totalRead: " .. totalRedXP .. " | totalRecovery: ".. totalRecoverableXP .. ")
-			local progressText = math.floor(((totalRedXP - self.oldCharacterXP) / (totalRecoverableXP - self.oldCharacterXP)) * 100 + 0.5) .. "%" 
-			local changesBeingMadeText = getText("IGUI_Tooltip_Learning") .." (" .. progressText .. "): "
-			for k,v in pairs(changesBeingMade) do
-				changesBeingMadeText = changesBeingMadeText.." "..v
-				if k~=#changesBeingMade then
-					changesBeingMadeText = changesBeingMadeText..", "
-				end
-			end
-
-			HaloTextHelper:update()
-			HaloTextHelper.addText(self.character, changesBeingMadeText, "", HaloTextHelper.getColorWhite())
-		end
-
-		-- show player text --TODO
+		-- show player text
 		if sayText and not self.spoke then
 			self.spoke = true
-			player:Say(sayText, 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+			SRJ.showCharacterFeedback(player, sayText)
+		else
+			-- show halo text
+			self.haloTextIntervals = self.haloTextIntervals + 1
+				if self.haloTextIntervals < 1 or self.haloTextIntervals > 3 then
+				self.haloTextIntervals = 0
+
+				SRJ.showHaloProgressText(self.character, changesBeingMade, totalRedXP, totalRecoverableXP, self.oldCharacterXP, "IGUI_Tooltip_Learning")
+			end
 		end
+
+		-- invoke stop
 		if delayedStop then 
 			if isServer() then
 				self.netAction:forceComplete()
@@ -375,7 +366,6 @@ function ReadSkillRecoveryJournal:new(character, item)
 
 	o.stopOnWalk = false
 	o.stopOnRun = true
-	o.loopedAction = true
 	o.ignoreHandsWounds = true
 	o.forceProgressBar = true
 	o.caloriesModifier = 0.5
@@ -414,10 +404,6 @@ function ReadSkillRecoveryJournal:new(character, item)
 	o.startTime = now
 
 	--o.durationData = o:determineDuration(JMD) TODO
-
-	-- legacy (TODO: remove)
-	o.readTimer = -30
-	o.haloTextDelay = 0
 
 	return o
 end
