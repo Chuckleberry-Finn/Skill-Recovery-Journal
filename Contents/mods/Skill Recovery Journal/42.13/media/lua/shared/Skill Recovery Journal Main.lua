@@ -245,6 +245,7 @@ function SRJ.showHaloProgressText(character, changesBeingMade, totalStoredXP, to
 		args.totalStoredXP = totalStoredXP
 		args.totalRecoverableXP = totalRecoverableXP
 		args.oldJournalTotalXP = oldJournalTotalXP
+		args.title = title
 		sendServerCommand(character, "SkillRecoveryJournal", "write_changes", args)
 	else
 		local progressText = math.floor(((totalStoredXP - oldJournalTotalXP) / (totalRecoverableXP - oldJournalTotalXP)) * 100 + 0.5) .. "%"

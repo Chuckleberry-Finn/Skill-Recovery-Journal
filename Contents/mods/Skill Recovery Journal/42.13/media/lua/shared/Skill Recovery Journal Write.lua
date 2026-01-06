@@ -33,8 +33,10 @@ function WriteSkillRecoveryJournal:start()
 	self:setAnimVariable("ReadType", "book")
 	self:setActionAnim(CharacterActionAnims.Read)
 	self:setOverrideHandModels(self.writingTool, self.item)
+	
 	self.character:setReading(true)
 	self.character:reportEvent("EventRead")
+	
 	local logText = ISLogSystem.getGenericLogText(self.character)
 	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ START WRITING]"})
 end
@@ -42,9 +44,11 @@ end
 
 -- called on client on client stop
 function WriteSkillRecoveryJournal:stop()
-	print("WriteSkillRecoveryJournal stop with changes " .. tostring(self.wroteNewContent) .. " after " .. tostring(SRJ.gameTime:getWorldAgeHours() - self.startTime))
+	if getDebug() then print("WriteSkillRecoveryJournal stop with changes " .. tostring(self.wroteNewContent) .. " after " .. tostring((SRJ.gameTime:getWorldAgeHours() - self.startTime) * 3600)) end
 	self.character:setReading(false);
+	self.item:setJobDelta(0.0);
 	self.character:playSound("CloseBook")
+
 	local logText = ISLogSystem.getGenericLogText(self.character)
 	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP WRITING] (stop)"})
 
@@ -62,20 +66,16 @@ end
 
 -- called on server on client stop
 function WriteSkillRecoveryJournal:serverStop()
-    --self.character:setReading(false);
-
 	--if getDebug() then print("WriteSkillRecoveryJournal serverStop") end
-	print("WriteSkillRecoveryJournal serverStop after " .. tostring(SRJ.gameTime:getWorldAgeHours() - self.startTime))
-	syncItemModData(self.character, self.item)
+	print("WriteSkillRecoveryJournal serverStop after " .. tostring((SRJ.gameTime:getWorldAgeHours() - self.startTime) * 3600))
 end
 
 
 -- called on client on server complete
 function WriteSkillRecoveryJournal:perform()
 	print("WriteSkillRecoveryJournal perform")
-
-    self.item:setJobDelta(0.0);
     self.character:setReading(false);
+    self.item:setJobDelta(0.0);
 	self.character:playSound("CloseBook")
 	local logText = ISLogSystem.getGenericLogText(self.character)
 	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP READING] (perform)"})
@@ -86,9 +86,8 @@ end
 
 -- called on server on server complete
 function WriteSkillRecoveryJournal:complete()
-	print("WriteSkillRecoveryJournal complete after " .. tostring(SRJ.gameTime:getWorldAgeHours() - self.startTime))
+	print("WriteSkillRecoveryJournal complete after " .. tostring((SRJ.gameTime:getWorldAgeHours() - self.startTime) * 3600))
     self.item:setJobDelta(0.0);
-	self.character:setReading(false);
 	syncItemModData(self.character, self.item)
 	return true
 end
@@ -101,11 +100,9 @@ end
 
 
 function WriteSkillRecoveryJournal:animEvent(event, parameter)
-	if event == "update" then
+	if event == "update" and isServer() then
 		-- only on server in MP
-		if isServer() then
-			self:updateWriting()
-		end
+		self:updateWriting()
 	end
 end
 
@@ -116,6 +113,7 @@ function WriteSkillRecoveryJournal:update()
 	if self:updateWriting() then
 		-- handle sound if changes made or MP
 		if self.changesMade==true or isClient() then
+			-- play sound every 2-6 updates
 			self.playSoundLater = self.playSoundLater or 0
 			if self.playSoundLater > 0 then
 				self.playSoundLater = self.playSoundLater-1
@@ -221,6 +219,8 @@ function WriteSkillRecoveryJournal:updateWriting()
 
 		self.changesMade = false
 
+		local changesBeingMade, changesBeingMadeIndex = {}, {}
+
 		local JMD = SRJ.modDataHandler.getItemModData(self.item)
 		local journalID = JMD["ID"]
 		local pSteamID = self.character:getSteamID()
@@ -240,7 +240,7 @@ function WriteSkillRecoveryJournal:updateWriting()
 
 				local properPlural = getText("IGUI_Tooltip_Recipe")
 				if recipeChunk>1 then properPlural = getText("IGUI_Tooltip_Recipes") end
-				table.insert(self.changesBeingMade, recipeChunk.." "..properPlural)
+				table.insert(changesBeingMade, recipeChunk.." "..properPlural)
 
 				for i=0, recipeChunk do
 					local recipeID = self.gainedRecipes[#self.gainedRecipes]
@@ -271,9 +271,9 @@ function WriteSkillRecoveryJournal:updateWriting()
 							self.changesMade = true
 							local skill_name = getTextOrNull("IGUI_perks_"..perkID) or perkID
 
-							if not self.changesBeingMadeIndex[skill_name] then
-								self.changesBeingMadeIndex[skill_name] = true
-								table.insert(self.changesBeingMade, skill_name)
+							if not changesBeingMadeIndex[skill_name] then
+								changesBeingMadeIndex[skill_name] = true
+								table.insert(changesBeingMade, skill_name)
 							end
 
 							local resultingXp = math.min(xp, storedJournalXP[perkID]+xpRate)
@@ -298,12 +298,12 @@ function WriteSkillRecoveryJournal:updateWriting()
 
 			if unaccountedZKills or unaccountedSKills then
 				if unaccountedZKills then
-					table.insert(self.changesBeingMade, getText("IGUI_char_Zombies_Killed"))
+					table.insert(changesBeingMade, getText("IGUI_char_Zombies_Killed"))
 					JMD.kills.Zombie = (JMD.kills.Zombie or 0) + unaccountedZKills
 					readXp.kills.Zombie = (readXp.kills.Zombie or 0) + unaccountedZKills
 				end
 				if unaccountedSKills then
-					table.insert(self.changesBeingMade, getText("IGUI_char_Survivor_Killed"))
+					table.insert(changesBeingMade, getText("IGUI_char_Survivor_Killed"))
 					JMD.kills.Survivor = (JMD.kills.Survivor or 0) + unaccountedSKills
 					readXp.kills.Survivor = (readXp.kills.Survivor or 0) + unaccountedSKills
 				end
@@ -317,7 +317,7 @@ function WriteSkillRecoveryJournal:updateWriting()
 			local modDataStored = SRJ.modDataHandler.copyDataToJournal(self.character, self.item)
 			if modDataStored then
 				for _,dataID in pairs(modDataStored) do
-					table.insert(self.changesBeingMade, dataID)
+					table.insert(changesBeingMade, dataID)
 				end
 				self.changesMade = true
 			end
@@ -347,15 +347,12 @@ function WriteSkillRecoveryJournal:updateWriting()
 				syncItemModData(self.character, self.item) -- syncs item tooltip
 			end
 
-			-- show transcript progress as halo text
-			if self.haloTextDelay <= 0 then
-				self.haloTextDelay = 3 -- every fourth update show a halo (should be >= 40 in-game seconds)
-				SRJ.showHaloProgressText(self.character, self.changesBeingMade, totalStoredXP, totalRecoverableXP, self.oldJournalTotalXP, "IGUI_Tooltip_Transcribing")
-				
-				self.changesBeingMade = {}
-				self.changesBeingMadeIndex = {}
-			else
-				self.haloTextDelay = self.haloTextDelay - 1
+			-- show transcript progress as halo text 
+			-- every nth update show a halo (should be >= 40 in-game seconds)
+			self.haloTextIntervals = self.haloTextIntervals + 1
+			if self.haloTextIntervals < 1 or self.haloTextIntervals > 3 then
+				self.haloTextIntervals = 0
+				SRJ.showHaloProgressText(self.character, changesBeingMade, totalStoredXP, totalRecoverableXP, self.oldJournalTotalXP, "IGUI_Tooltip_Transcribing")
 			end
 		end
 
@@ -373,17 +370,25 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 
 	local o = ISBaseTimedAction.new(self, character)
 
+	-- vanilla fields
+	o.useProgressBar = false
+	o.stopOnWalk = false
+	o.stopOnRun = true
+	o.ignoreHandsWounds = true
+	o.caloriesModifier = 0.5
+
+	-- params
 	o.character = character
 	o.item = item
 	o.writingTool = writingTool
 
-	local JMD = SRJ.modDataHandler.getItemModData(o.item)
-
+	-- SRJ
 	o.writingToolSound = "PenWriteSounds"
 	if character:getInventory():contains("Pencil") then
 		o.writingToolSound = "PencilWriteSounds"
 	end
 
+	local JMD = SRJ.modDataHandler.getItemModData(o.item)
 	o.gainedRecipes = {}
 	if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
 		local learnedRecipes = JMD["learnedRecipes"]
@@ -445,19 +450,13 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	if sayText then character:Say(sayText) end
 	if o.willWrite then JMD["author"] = character:getFullName() end
 
-	o.useProgressBar = false
-	o.stopOnWalk = false
-	o.stopOnRun = true
-	o.ignoreHandsWounds = true
-	o.caloriesModifier = 0.5
-	o.recipeIntervals = 0
-
-	-- interval between updates in in-game hours
+	-- timings, update intervals between updates in in-game hours
 	o.updateInterval = 10 / 3600 -- every in-game 10 seconds
 	o.defaultUpdateInterval = 3.48 / 3600 -- legacy ~ 3.48 sec to maintain old duration
 	o.updateTime = now + o.updateInterval -- do first update after one interval
-
-	o.haloTextDelay = 0
+	
+	o.recipeIntervals = 0 -- counter for recipe ticks
+	o.haloTextIntervals = -1 -- counter for halo text ticks, show init halo
 
 	-- for debug
 	o.lastUpdateTime = now
