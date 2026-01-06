@@ -18,6 +18,7 @@ end
 
 
 function ReadSkillRecoveryJournal:start()
+	self.item:setJobDelta(0.0);
 	self.item:setJobType(getText("ContextMenu_Read") ..' '.. self.item:getName())
 	self:setAnimVariable("ReadType", "book")
 	self:setActionAnim(CharacterActionAnims.Read)
@@ -31,47 +32,47 @@ function ReadSkillRecoveryJournal:start()
 end
 
 
-function ReadSkillRecoveryJournal:forceStop()
-	self.character:setReading(false)
-	self.item:setJobDelta(0.0)
-	if self.action then self.action:setLoopedAction(false) end
-	self.character:playSound("CloseBook")
-	local logText = ISLogSystem.getGenericLogText(self.character)
-	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP READING] (forceStop)"})
-	ISBaseTimedAction.forceStop(self)
-end
-
-
 function ReadSkillRecoveryJournal:stop()
+	self.character:setReading(false);
+	self.item:setJobDelta(0.0);
+	self.character:playSound("CloseBook")
+
 	local logText = ISLogSystem.getGenericLogText(self.character)
 	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP READING] (stop)"})
-
-	if self.changesWereMade then
-		SRJ.modDataHandler.sendModDataToServer(self.character, self.item)
-	end
 
 	ISBaseTimedAction.stop(self)
 end
 
 
+-- called on server on client start
+function ReadSkillRecoveryJournal:serverStart()
+	--if getDebug() then print("ReadSkillRecoveryJournal serverStart") end
+	emulateAnimEvent(self.netAction, 10, "update", nil)
+end
+
+
 function ReadSkillRecoveryJournal:serverStop()
 	--if getDebug() then print("ReadSkillRecoveryJournal serverStop") end
-	SRJ.modDataHandler.syncModDataFromClient(self.character, self.item)
+	syncItemModData(self.character, self.item)
 end
 
 
 function ReadSkillRecoveryJournal:perform()
 	self.character:setReading(false)
+	self.item:setJobDelta(0.0);
 	self.item:getContainer():setDrawDirty(true)
+	
 	local logText = ISLogSystem.getGenericLogText(self.character)
 	sendClientCommand(self.character, 'ISLogSystem', 'writeLog', {loggerName = "PerkLog", logText = logText.."[SRJ STOP READING] (perform)"})
+	
 	ISBaseTimedAction.perform(self)
 end
 
 
--- run on server - never called, but needed for serverStop
 function ReadSkillRecoveryJournal:complete()
 	if getDebug() then print("WriteSkillRecoveryJournal complete") end
+	self.item:setJobDelta(0.0);
+	syncItemModData(self.character, self.item)
 	return true
 end
 
@@ -85,26 +86,36 @@ function ReadSkillRecoveryJournal:animEvent(event, parameter)
 	if event == "PageFlip" then
 		if getGameSpeed() ~= 1 then return end
 		self.character:playSound("PageFlipBook")
+	elseif event == "update" and isServer() then
+		self:updateReading()
 	end
 end
 
 
 function ReadSkillRecoveryJournal:update()
+	-- in MP, all updating is done by server
+	if not isClient() then 
+		self:updateReading()
+	end
+end
 
-	if not self.loopedAction then return end
+
+function ReadSkillRecoveryJournal:updateReading()
+	local now = SRJ.gameTime:getWorldAgeHours()
 
 	---@type Literature
 	local journal = self.item
 
 	local bJournalUsedUp = false
 
-	self.readTimer = (self.readTimer or 0) + (getGameTime():getMultiplier() or 0)
 	self.haloTextDelay = self.haloTextDelay - (getGameTime():getMultiplier() or 0)
 
-	-- normalize update time via in game time. Adjust updateInterval as needed
-	local updateInterval = 10
-	if self.readTimer >= updateInterval then
-		self.readTimer = 0
+	if now >= self.updateTime then
+		print("update after " ..  tostring((now - self.lastUpdateTime) * 60 * 60) .. " in-game seconds -> lastUpdate " .. tostring(self.lastUpdateTime))
+		self.lastUpdateTime = now or 0 -- for debug
+
+		-- plan next update one interval later
+		self.updateTime = self.updateTime + self.updateInterval
 
 		---@type IsoGameCharacter | IsoPlayer | IsoMovingObject | IsoObject
 		local player = self.character
@@ -151,6 +162,7 @@ function ReadSkillRecoveryJournal:update()
 
 		if not delayedStop then
 			local readTimeMulti = SandboxVars.SkillRecoveryJournal.ReadTimeSpeed or 1
+			local timeFactor = (self.updateInterval / self.defaultUpdateInterval)
 
 			-- apply read recipes
 			if (#self.learnedRecipes > 0) then
@@ -222,7 +234,7 @@ function ReadSkillRecoveryJournal:update()
 							local differential = SRJ.getMaxXPDifferential(skill)
 
 							local perkLevelPlusOne = player:getPerkLevel(Perks[skill])+1
-							local perPerkXpRate = round(((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * readTimeMulti / differential, 2)
+							local perPerkXpRate = round(((xpRate*math.sqrt(perkLevelPlusOne))*1000)/1000 * readTimeMulti * timeFactor / differential, 2)
 							if perkLevelPlusOne == 11 then perPerkXpRate=false end
 
 							if skill=="Fitness" then
@@ -233,7 +245,7 @@ function ReadSkillRecoveryJournal:update()
 								end
 							end
 
-							--print("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..(perkLevelPlusOne-1).."  xpStored:"..xp.."  currentXP:"..currentlyReadXP)
+							print("TESTING:  perPerkXpRate:"..perPerkXpRate.."  perkLevel:"..(perkLevelPlusOne-1).."  xpStored:"..xp.."  currentXP:"..currentlyReadXP)
 
 							if perPerkXpRate~=false and perPerkXpRate > 0 then
 								-- normalize perPerkXpRate
@@ -321,7 +333,7 @@ function ReadSkillRecoveryJournal:update()
 			self.changesWereMade = true
 		end 
 
-		-- show halo text
+		-- show halo text TODO
 		if self.haloTextDelay <= 0 and #changesBeingMade > 0 then
 			self.haloTextDelay = 100
 			--print("totalRead: " .. totalRedXP .. " | totalRecovery: ".. totalRecoverableXP .. ")
@@ -338,40 +350,43 @@ function ReadSkillRecoveryJournal:update()
 			HaloTextHelper.addText(self.character, changesBeingMadeText, "", HaloTextHelper.getColorWhite())
 		end
 
-		-- show player text
+		-- show player text --TODO
 		if sayText and not self.spoke then
 			self.spoke = true
 			player:Say(sayText, 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
 		end
-		if delayedStop then self:forceStop() end
+		if delayedStop then 
+			if isServer() then
+				self.netAction:forceComplete()
+			else
+				self:forceStop()
+			end
+		end
 	end
 end
 
 
 function ReadSkillRecoveryJournal:new(character, item)
-	local o = {}
-	setmetatable(o, self)
-	self.__index = self
+	local now = SRJ.gameTime:getWorldAgeHours()
+	local o = ISBaseTimedAction.new(self, character)
 
 	o.character = character
-	o.oldCharacterXP = 0
-	local charSkills = SRJ.calculateAllGainedSkills(character) or {}
-	for perkID, xp in pairs(charSkills) do
-		o.oldCharacterXP = o.oldCharacterXP + xp
-	end
 	o.item = item
+
 	o.stopOnWalk = false
 	o.stopOnRun = true
 	o.loopedAction = true
 	o.ignoreHandsWounds = true
-	o.caloriesModifier = 0.5
-	o.readTimer = -30
 	o.forceProgressBar = true
-	o.learnedRecipes = {}
-	o.recipeIntervals = 0
-	o.maxTime = -1
-	o.haloTextDelay = 0
+	o.caloriesModifier = 0.5
 
+	o.oldCharacterXP = 0 -- used for progress percentage
+	local charSkills = SRJ.calculateAllGainedSkills(character) or {}
+	for perkID, xp in pairs(charSkills) do
+		o.oldCharacterXP = o.oldCharacterXP + xp
+	end
+
+	o.learnedRecipes = {}
 	local JMD = SRJ.modDataHandler.getItemModData(item)
 	if JMD then
 		if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
@@ -385,6 +400,24 @@ function ReadSkillRecoveryJournal:new(character, item)
 			end
 		end
 	end
+
+	-- timings,  update intervals between updates in in-game hours
+	o.updateInterval = 10 / 3600 -- every in-game 10 seconds
+	o.defaultUpdateInterval = 3.48 / 3600 -- legacy ~ 3.48 sec to maintain old duration
+	o.updateTime = now + o.updateInterval -- do first update after one interval
+	
+	o.recipeIntervals = 0 -- counter for recipe ticks
+	o.haloTextIntervals = -1
+
+	-- for debug
+	o.lastUpdateTime = now
+	o.startTime = now
+
+	--o.durationData = o:determineDuration(JMD) TODO
+
+	-- legacy (TODO: remove)
+	o.readTimer = -30
+	o.haloTextDelay = 0
 
 	return o
 end
