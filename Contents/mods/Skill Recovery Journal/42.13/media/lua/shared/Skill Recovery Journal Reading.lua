@@ -136,10 +136,12 @@ function ReadSkillRecoveryJournal:determineDuration(journalModData)
 	--- the CopyData function actually does the copying - we need a function to JUST check if the data exists for this step
 	local modDataStored = SRJ.modDataHandler.copyDataToPlayer(self.character, self.item)
 	if modDataStored then durationData.intervals = durationData.intervals+1 end
+	
+	local XpStoredInJournal = journalModData["gainedXP"]
 
 	--xp
-	if storedJournalXP and self.gainedSkills then
-		for perkID,xp in pairs(self.gainedSkills) do
+	if storedJournalXP and XpStoredInJournal then
+		for perkID,xp in pairs(XpStoredInJournal) do
 
 			local xpToWrite = xp-(storedJournalXP[perkID] or 0)
 
