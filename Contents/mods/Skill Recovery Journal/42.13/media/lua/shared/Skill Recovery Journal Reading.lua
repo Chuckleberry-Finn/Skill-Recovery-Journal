@@ -206,7 +206,7 @@ function ReadSkillRecoveryJournal:updateReading()
 		local sayText
 		local sayTextChoices = {"IGUI_PlayerText_DontUnderstand", "IGUI_PlayerText_TooComplicated", "IGUI_PlayerText_DontGet"}
 		local totalRecoverableXP = 0
-		local totalRedXP = 0
+		local totalReadXP = 0
 
 		local pSteamID = player:getSteamID()
 		local pUsername = player:getUsername()
@@ -297,7 +297,7 @@ function ReadSkillRecoveryJournal:updateReading()
 
 						readXP[perkID] = readXP[perkID] or 0
 						local currentlyReadXP = readXP[perkID]
-						totalRedXP = totalRedXP + currentlyReadXP
+						totalReadXP = totalReadXP + currentlyReadXP
 						local journalXP = xp
 
 						if oneTimeUse and jmdUsedXP[perkID] and jmdUsedXP[perkID] then
@@ -409,7 +409,7 @@ function ReadSkillRecoveryJournal:updateReading()
 				if self.haloTextIntervals < 1 or self.haloTextIntervals > 3 then
 				self.haloTextIntervals = 0
 
-				SRJ.showHaloProgressText(self.character, changesBeingMade, totalRedXP, totalRecoverableXP, self.oldCharacterXP, "IGUI_Tooltip_Learning")
+				SRJ.showHaloProgressText(self.character, changesBeingMade, totalReadXP, totalRecoverableXP, self.oldCharacterXP, "IGUI_Tooltip_Learning")
 			end
 		end
 
