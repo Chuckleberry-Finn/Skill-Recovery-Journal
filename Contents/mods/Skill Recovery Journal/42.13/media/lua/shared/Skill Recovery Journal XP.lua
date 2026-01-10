@@ -8,6 +8,7 @@ function SRJ_XPHandler.isSkillExcludedFrom.SpeedIncrease(perk) return (perk == P
 
 
 SRJ_XPHandler.tmpStoredValues = {}
+SRJ_XPHandler.perkXpTable = {}
 
 ---@param player IsoGameCharacter|IsoPlayer
 function SRJ_XPHandler.getOrStoreXPMultipliers(player)
@@ -130,6 +131,40 @@ function SRJ_XPHandler.fetchMultipliers(player,perk)
     --]]
 
     return traitMultiplier, xpBoostMultiplier
+end
+
+
+-- Cache XP thresholds for levels
+function SRJ_XPHandler.initXPTable()
+    local perkXpTable = SRJ_XPHandler.perkXpTable or {}
+    for i = 0, Perks.getMaxIndex() - 1 do
+        local perk = Perks.fromIndex(i)
+        if perk then
+            local perkID = perk:getId()
+            perkXpTable[perkID] = {}
+
+            for level = 1, 10 do
+                perkXpTable[perkID][level] = perk:getTotalXpForLevel(level)
+            end
+        end
+    end
+    SRJ_XPHandler.perkXpTable = perkXpTable
+    return SRJ_XPHandler.perkXpTable
+end
+
+
+-- Get level from XP amount
+function SRJ_XPHandler.getPerkLevelFromXP(perkID, xp)
+    local xpTable = SRJ_XPHandler.perkXpTable[perkID] or SRJ_XPHandler.initXPTable()[perkID]
+    if xpTable then
+        for level = 10, 1, -1 do
+            local required = xpTable[level]
+            if xp >= required then
+                return level
+            end
+        end
+    end
+    return 0
 end
 
 

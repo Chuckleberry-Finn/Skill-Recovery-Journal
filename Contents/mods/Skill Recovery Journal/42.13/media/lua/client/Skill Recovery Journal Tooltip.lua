@@ -50,8 +50,18 @@ local function SRJ_generateTooltip(JMD, player)
 				local perkName = perk:getName()
 				local multi = multipliers[perkID] or 1
 				local availableXP = round(((journalXP)*multi), 2)
+				
+				local levelString = ""
+				-- FIXME: this needs to be cached if used in prod
+				if SandboxVars.SkillRecoveryJournal.ShowTranscribeLevelInTooltip or getDebug() then	
+					local readXP = SRJ.modDataHandler.getReadXP(player)
+					local playerXP = player:getXp():getXP(perk) / multi
+					--print("JournalXP ", availableXP, " multi ", multi, " Player ", playerXP,  " Read ", readXP[perkID])
+					local level = SRJ.xpHandler.getPerkLevelFromXP(perkID, availableXP + playerXP - (readXP[perkID] or 0) + 1)
+					levelString = " to Level "..level
+				end
 
-				skillsRecord = skillsRecord..perkName.." ("..availableXP
+				skillsRecord = skillsRecord..perkName..levelString.." ("..availableXP
 				if oneTimeUse then
 					local totalXP = round(((xp)*multi), 2)
 					skillsRecord = skillsRecord.."/"..totalXP

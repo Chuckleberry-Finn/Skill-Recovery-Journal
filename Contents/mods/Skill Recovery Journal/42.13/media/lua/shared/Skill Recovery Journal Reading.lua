@@ -167,6 +167,8 @@ function ReadSkillRecoveryJournal:determineDuration(journalModData)
 
 		local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
 
+		local multipliers = SRJ.xpHandler.getOrStoreXPMultipliers(self.character)
+
 		for perkID,xp in pairs(storedJournalXP) do
 			--totalRecoverableXP = totalRecoverableXP + xp
 			if Perks[perkID] and validSkills[perkID] then
@@ -183,8 +185,16 @@ function ReadSkillRecoveryJournal:determineDuration(journalModData)
 
 				if currentlyReadXP < journalXP then
 
-					local perkLevelPlusOne = self.character:getPerkLevel(Perks[perkID])+1
+					--local perkLevelPlusOne = self.character:getPerkLevel(Perks[perkID])+1
+					local multi = multipliers[perkID] or 1
+					local multiXP = round(((journalXP)*multi), 2)
+					-- for perkLevelPlusOne assume we have acquired the skill xp we are heading for 
+					local playerXP = self.character:getXp():getXP(Perks[perkID])
+					--print("multiXP ", multiXP, " playerXP ", playerXP)
+					local perkLevelPlusOne = SRJ.xpHandler.getPerkLevelFromXP(perkID, multiXP + playerXP) + 1
 					local differential = SRJ.getMaxXPDifferential(perkID) or 1
+					--print("XP " , xp, " - XP2 ", (journalXP - currentlyReadXP), " - multiXP ", multiXP)
+					--print("PlPO ", perkLevelPlusOne, " - multi ",  readTimeMulti, " - time factor ", timeFactor, " - diff ", differential)
 					local xpRate = round((((math.sqrt(xp) / 25) * math.sqrt(perkLevelPlusOne)) * 1000) / 1000 * readTimeMulti * timeFactor / differential, 2)
 					if perkLevelPlusOne == 11 then xpRate=false end
 
@@ -470,6 +480,8 @@ end
 
 function ReadSkillRecoveryJournal:new(character, item)
 	local now = SRJ.gameTime:getWorldAgeHours()
+	if getDebug() then print("ReadSkillRecoveryJournal:new - at " .. tostring(now) .. " isServer "..tostring(isServer()) .. " isClient " .. tostring(isClient())) end 
+
 	local o = ISBaseTimedAction.new(self, character)
 
 	o.character = character

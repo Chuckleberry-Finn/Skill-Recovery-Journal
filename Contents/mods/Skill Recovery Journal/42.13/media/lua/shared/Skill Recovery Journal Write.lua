@@ -178,7 +178,11 @@ function WriteSkillRecoveryJournal:determineDuration(journalModData)
 
 				local perkLevelPlusOne = self.character:getPerkLevel(Perks[perkID])+1
 				local differential = SRJ.getMaxXPDifferential(perkID) or 1
-				local xpRate = math.sqrt(xp) / 25
+				--print("XP " , xp, " - XP2 ", xpToWrite)
+				--print("PlPO ", perkLevelPlusOne, " - multi ",  transcribeTimeMulti, " - time factor ", timeFactor, " - diff ", differential)
+
+				--local xpRate = math.sqrt(xp) / 25 --FIXME shouldnt this use xpToWrite?
+				local xpRate = math.sqrt(xpToWrite) / 25 
 
 				xpRate = round(((xpRate * math.sqrt(perkLevelPlusOne)) * 1000) / 1000 * transcribeTimeMulti * timeFactor / differential, 2)
 
@@ -366,7 +370,7 @@ end
 ---@param character IsoGameCharacter
 function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, recipe, container, containers)
 	local now = SRJ.gameTime:getWorldAgeHours()
-	print("WriteSkillRecoveryJournal:new - at " .. tostring(now) .. " isServer "..tostring(isServer()) .. " isClient " .. tostring(isClient()))
+	if getDebug() then print("WriteSkillRecoveryJournal:new - at " .. tostring(now) .. " isServer "..tostring(isServer()) .. " isClient " .. tostring(isClient())) end 
 
 	local o = ISBaseTimedAction.new(self, character)
 
