@@ -54,6 +54,20 @@ function contextSRJ.writeItems(items, player, writingTool)
 	end
 end
 
+function contextSRJ.selectDebug(items, player, writingTool)
+	items = ISInventoryPane.getActualItems(items)
+
+	if writingTool and writingTool:getContainer() ~= nil then ISInventoryPaneContextMenu.transferIfNeeded(player, writingTool) end
+
+	for i,item in ipairs(items) do
+		if item:getContainer() ~= nil then
+			ISInventoryPaneContextMenu.transferIfNeeded(player, item)
+		end
+		ISTimedActionQueue.add(TestSkillRecoveryJournal:new(player, item, writingTool))
+		break
+	end
+end
+
 
 ---@param context ISContextMenu
 function contextSRJ.doContextMenu(playerID, context, items)
@@ -109,6 +123,10 @@ function contextSRJ.doContextMenu(playerID, context, items)
 						or (mismatchID and getText("IGUI_PlayerText_DoesntFeelRightToWrite"))
 						or ((not hasWritingTool) and getText("Tooltip_Map_CantWrite"))
 				writeOption.toolTip = tooltip
+			end
+
+			if getDebug() then
+				local debugOption = context:addOptionOnTop("SRJ DEBUG", actualItems, contextSRJ.selectDebug, player, hasWritingTool)
 			end
 
 			break
