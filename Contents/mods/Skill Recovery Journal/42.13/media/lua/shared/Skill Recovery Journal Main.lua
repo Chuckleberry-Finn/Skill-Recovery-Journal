@@ -5,16 +5,9 @@ SRJ.xpPatched = false
 SRJ.xpHandler = require "Skill Recovery Journal XP"
 SRJ.modDataHandler = require "Skill Recovery Journal ModData"
 
-
-SRJ.maxXPDifferential = {}
-function SRJ.getMaxXPDifferential(perk)
-	if SRJ.maxXPDifferential[perk] then return SRJ.maxXPDifferential[perk] end
-	local maxXPDefault = Perks.PhysicalCategory:getTotalXpForLevel(10)
-	local maxXPPerk = Perks[perk]:getTotalXpForLevel(10)
-
-	SRJ.maxXPDifferential[perk] =maxXPDefault/maxXPPerk
-	return SRJ.maxXPDifferential[perk]
-end
+Events.OnGameTimeLoaded.Add(function()
+    SRJ.gameTime = GameTime.getInstance()
+end)
 
 
 ---@param player IsoGameCharacter|IsoPlayer
@@ -91,31 +84,12 @@ function SRJ.getFreeLevelsFromTraitsAndProfession(player)
 	return bonusLevels
 end
 
-
-function SRJ.correctSandBoxOptions(ID)
-	if SandboxVars.SkillRecoveryJournal[ID] == false then
-		SandboxVars.SkillRecoveryJournal[ID] = 0
-		return 0
-	elseif SandboxVars.SkillRecoveryJournal[ID] == true then
-		local recoverRate = SandboxVars.SkillRecoveryJournal.RecoveryPercentage or 100
-		SandboxVars.SkillRecoveryJournal[ID] = recoverRate
-		return recoverRate
-	end
-end
-
-
 function SRJ.bSkillValid(perk)
 	local ID = perk and perk:isPassiv() and "Passive" or perk:getParent():getId()
-
-	local correction = SRJ.correctSandBoxOptions("Recover"..ID.."Skills")
-
 	local specific = SandboxVars.SkillRecoveryJournal["Recover"..ID.."Skills"]
-	
 	--if getDebug() then print("bSkillValid check sandbox option 'SkillRecoveryJournal.Recover"..ID.."Skills' -> ".. tostring(specific)) end
-	if specific and type(specific)~="number" then specific = correction end
 
 	local default = SandboxVars.SkillRecoveryJournal.RecoveryPercentage or 100
-
 	local recoverPercentage = ((specific==nil) or (specific==-1)) and default or specific
 
 	return (not (recoverPercentage <= 0)), (recoverPercentage/100)
@@ -201,7 +175,7 @@ function SRJ.calculateAllGainedSkills(player)
 end
 
 
-function SRJ.getGainedRecipes(player)
+function SRJ.getGainedRecipes(player, exclude)
 	local gainedRecipes = {}
 
 	-- get all recipes known by player
@@ -243,13 +217,46 @@ function SRJ.getGainedRecipes(player)
 	--- return iterable list
 	local returnedGainedRecipes = {}
 	for recipeID,_ in pairs(gainedRecipes) do
-		-- TODO: remove auto learned recipes from skills (maybe we had higher level/xpBoost last life)
-		table.insert(returnedGainedRecipes, recipeID)
-		--if getDebug() then print("Resulting gained recipe " .. tostring(recipeID) .. " -> " .. tostring(_)) end
+		if not exclude or exclude[recipeID] ~= true then
+			-- TODO: remove auto learned recipes from skills (maybe we had higher level/xpBoost last life)
+			table.insert(returnedGainedRecipes, recipeID)
+			--if getDebug() then print("Resulting gained recipe " .. tostring(recipeID) .. " -> " .. tostring(_)) end
+		end
 	end
 
 	return returnedGainedRecipes
 end
 
+
+function SRJ.showHaloProgressText(character, changesBeingMade, totalStoredXP, totalRecoverableXP, oldJournalTotalXP, title)
+	if isServer() then
+		local args = {}
+		args.changesBeingMade = changesBeingMade
+		args.totalStoredXP = totalStoredXP
+		args.totalRecoverableXP = totalRecoverableXP
+		args.oldJournalTotalXP = oldJournalTotalXP
+		args.title = title
+		sendServerCommand(character, "SkillRecoveryJournal", "write_changes", args)
+	else
+		local progressText = math.floor(((totalStoredXP - oldJournalTotalXP) / (totalRecoverableXP - oldJournalTotalXP)) * 100 + 0.5) .. "%"
+		--if getDebug() then print("In Book " .. totalStoredXP - oldJournalTotalXP, " - in char " .. totalRecoverableXP - oldJournalTotalXP .. " = " .. progressText) end
+
+		local changesBeingMadeText = getText(title) .. " (" .. progressText ..") :"
+		for k,v in pairs(changesBeingMade) do changesBeingMadeText = changesBeingMadeText.." "..v..((k~=#changesBeingMade and ", ") or "") end
+		HaloTextHelper.addText(character, changesBeingMadeText, "", HaloTextHelper.getColorWhite())
+	end
+end
+
+
+function SRJ.showCharacterFeedback(character, text)
+	-- only visible when called on client
+	if isServer() then
+		local args = {}
+		args.text = text
+		sendServerCommand(character, "SkillRecoveryJournal", "character_say", args)
+	else
+		character:Say(getText(text), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+	end
+end
 
 return SRJ
