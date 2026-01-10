@@ -17,7 +17,7 @@ function SRJ_XPHandler.getMaxXPDifferential(perk)
 	local maxXPDefault = Perks.PhysicalCategory:getTotalXpForLevel(10)
 	local maxXPPerk = Perks[perk]:getTotalXpForLevel(10)
 
-	SRJ_XPHandler.maxXPDifferential[perk] =maxXPDefault/maxXPPerk
+	SRJ_XPHandler.maxXPDifferential[perk] = maxXPDefault/maxXPPerk
 	return SRJ_XPHandler.maxXPDifferential[perk]
 end
 
@@ -261,10 +261,8 @@ function SRJ_XPHandler.calculateReadWriteXpRates(SRJ, player, item, timeFactor, 
                 print("XP " , xp, " - XP2 ", xpToWrite)
                 print("PlPO ", perkLevelPlusOne, " - multi ",  actionTimeMulti, " - time factor ", timeFactor, " - diff ", differential)
 
-                --local xpRate = math.sqrt(xp) / 25 --FIXME shouldnt this use xpToWrite?
-                local xpRate = math.sqrt(xpToWrite) / 25 
-
-                xpRate = round(((xpRate * math.sqrt(perkLevelPlusOne)) * 1000) / 1000 * actionTimeMulti * timeFactor / differential, 2)
+                local xpRate = round((math.sqrt(xpToWrite * perkLevelPlusOne) / 25) * actionTimeMulti * timeFactor / differential, 2)
+                
         --PART durationData
                 if xpRate>0 then
                     durationData.rates[perkID] = xpRate
@@ -333,11 +331,8 @@ function SRJ_XPHandler.calculateReadWriteXpRates(SRJ, player, item, timeFactor, 
 					local differential = SRJ_XPHandler.getMaxXPDifferential(perkID) or 1
 					print("XP " , xp, " - XP2 ", (journalXP - currentlyReadXP))
 					print("PlPO ", perkLevelPlusOne, " - multi ",  actionTimeMulti, " - time factor ", timeFactor, " - diff ", differential)
-					
-                    --local xpRate = math.sqrt(xp) / 25 FIXME: shouldnt this use xpToRead?
-                    local xpRate = math.sqrt(xpToRead) / 25
 
-                    xpRate = round(((xpRate * math.sqrt(perkLevelPlusOne)) * 1000) / 1000 * actionTimeMulti * timeFactor / differential, 2)
+                    local xpRate = round((math.sqrt(xpToRead * perkLevelPlusOne) / 25) * actionTimeMulti * timeFactor / differential, 2)
 					
                     if perkLevelPlusOne == 11 then xpRate=false end
         --PART durationData
