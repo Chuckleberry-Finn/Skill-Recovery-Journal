@@ -52,9 +52,9 @@ local function SRJ_generateTooltip(JMD, player)
 				local availableXP = round(((journalXP)*multi), 2)
 				
 				local levelString = ""
-				-- FIXME: this needs to be cached if used in prod
-				if SandboxVars.SkillRecoveryJournal.ShowTranscribeLevelInTooltip or getDebug() then	
-					local level = SRJ.xpHandler.getPerkLevelAfterJournalRead(SRJ,player, perkID, multi, journalXP)
+				-- this would need to be cached, but not available in MP anyway because client has no player mod data
+				if not isClient() and getDebug() then
+					local level = SRJ.xpHandler.getPerkLevelAfterJournalRead(SRJ ,player, perkID, multi, journalXP)
 					levelString = " to Level "..level
 				end
 

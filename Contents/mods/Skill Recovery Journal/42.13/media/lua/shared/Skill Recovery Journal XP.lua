@@ -366,7 +366,7 @@ function SRJ_XPHandler.getPerkLevelAfterJournalRead(SRJ, player, perkID, multi, 
 	local playerXP = player:getXp():getXP(Perks[perkID]) / multi
 	--print("Player ", playerXP, " JournalXP ", journalXP, " Read ", readXP[perkID], " Multi ", multi)
 	local playerXPAfterFullRead = playerXP + math.max(0, journalXP - (readXP[perkID] or 0))
-	local level = SRJ.xpHandler.getPerkLevelFromXP(perkID, playerXPAfterFullRead * multi + 1)
+	local level = SRJ_XPHandler.getPerkLevelFromXP(perkID, math.ceil(playerXPAfterFullRead * multi))
 
     return level
 end

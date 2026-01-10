@@ -3,7 +3,6 @@ local SRJ_ModDataHandler = {}
 -- player mod data
 function SRJ_ModDataHandler.setPassiveLevels(id, player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
-	--TODO: Check if this is still needed -- the issue before was that strength and fitness would be 5/5 by default and count towards earned XP.
 	if not pMD.SRJPassiveSkillsInit then
 		for i=1, Perks.getMaxIndex()-1 do
 			---@type PerkFactory.Perks
@@ -22,7 +21,7 @@ function SRJ_ModDataHandler.setPassiveLevels(id, player)
 			end
 		end
 	end
-	--if getDebug() then for k,v in pairs(pMD.SRJPassiveSkillsInit) do print(" -- PASSIVE-INIT: "..k.." = "..v) end end
+	if getDebug() then for k,v in pairs(pMD.SRJPassiveSkillsInit) do print(" -- PASSIVE-INIT: "..k.." = "..v) end end
 end
 
 
@@ -170,5 +169,32 @@ function SRJ_ModDataHandler.copyDataToJournal(player, journal)
     return data
 end
 
+
+-- handle receive data from client
+local function SkillRecoveryJournalOnClientCommand(module, command, player, args)
+	if module == "SkillRecoveryJournal" then 
+		local playerID = player:getOnlineID()
+		if command == "rename" then
+			if getDebug() then print("SkillRecoveryJournal received rename for item " .. tostring(args.itemID) .. " from player " .. tostring(playerID)) end
+			local item = player:getInventory():getItemWithIDRecursiv(args.itemID)
+			if item then
+				item:setName(args.name)
+
+				local JMD = SRJ_ModDataHandler.getItemModData(item)
+				if JMD then
+					JMD.renamedJournal = true
+					JMD.usedRenameOption = nil
+				end
+
+				sendItemStats(item)
+				syncItemModData(player, item)
+			else
+				if getDebug() then print("SkillRecoveryJournal rename failed for player " .. tostring(playerID)) end
+			end
+		end
+	end
+end
+
+if isServer() then Events.OnClientCommand.Add(SkillRecoveryJournalOnClientCommand) end
 
 return SRJ_ModDataHandler
