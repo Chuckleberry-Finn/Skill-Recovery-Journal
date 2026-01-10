@@ -126,85 +126,6 @@ function WriteSkillRecoveryJournal:update()
 end
 
 
-function WriteSkillRecoveryJournal:determineDuration(journalModData)
-	local durationData = {
-		rates = {},
-		intervals = 0,
-		recipeChunk = 0,
-		kills = {},
-	}
-
-	local storedJournalXP = journalModData["gainedXP"]
-
-	local transcribeTimeMulti = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 1
-	local timeFactor = (self.updateInterval / self.defaultUpdateInterval)
-
-	--recipes
-	if (#self.gainedRecipes > 0) then
-		durationData.recipeChunk = math.min(#self.gainedRecipes, math.floor(1.09^math.sqrt(#self.gainedRecipes))) * transcribeTimeMulti
-		local intervalsNeeded = math.ceil((durationData.recipeChunk * 5))
-		durationData.intervals = math.max(intervalsNeeded,durationData.intervals)
-	end
-
-	--kills
-	local killsRecoveryPercentage = SandboxVars.SkillRecoveryJournal.KillsTrack or 0
-	local zKills = math.floor(self.character:getZombieKills() * (killsRecoveryPercentage / 100))
-	local sKills = math.floor(self.character:getSurvivorKills() * (killsRecoveryPercentage / 100))
-
-	journalModData.kills = journalModData.kills or {}
-
-	local zombieKills = (journalModData.kills.Zombie or 0)
-	local survivorKills = (journalModData.kills.Survivor or 0)
-
-	local unaccountedZKills = (zKills > zombieKills) and zKills-zombieKills
-	if unaccountedZKills and unaccountedZKills > 0 then durationData.zombies = unaccountedZKills end
-
-	local unaccountedSKills = (sKills > survivorKills) and sKills-survivorKills
-	if unaccountedSKills and unaccountedSKills > 0 then durationData.survivors = unaccountedSKills end
-
-	if (unaccountedZKills and unaccountedZKills > 0) or (unaccountedSKills and unaccountedSKills > 0) then durationData.intervals = durationData.intervals+1 end
-
-	--modData
-	local modDataStored = SRJ.modDataHandler.copyDataToJournal(self.character, self.item)
-	if modDataStored then durationData.intervals = durationData.intervals+1 end
-	
-	--xp
-	if storedJournalXP and self.gainedSkills then
-		for perkID,xp in pairs(self.gainedSkills) do
-
-			local xpToWrite = xp-(storedJournalXP[perkID] or 0)
-
-			if xpToWrite and (xpToWrite > 0) then
-
-				local perkLevelPlusOne = self.character:getPerkLevel(Perks[perkID])+1
-				local differential = SRJ.getMaxXPDifferential(perkID) or 1
-				--print("XP " , xp, " - XP2 ", xpToWrite)
-				--print("PlPO ", perkLevelPlusOne, " - multi ",  transcribeTimeMulti, " - time factor ", timeFactor, " - diff ", differential)
-
-				--local xpRate = math.sqrt(xp) / 25 --FIXME shouldnt this use xpToWrite?
-				local xpRate = math.sqrt(xpToWrite) / 25 
-
-				xpRate = round(((xpRate * math.sqrt(perkLevelPlusOne)) * 1000) / 1000 * transcribeTimeMulti * timeFactor / differential, 2)
-
-				if xpRate>0 then
-					durationData.rates[perkID] = xpRate
-
-					local intervalsNeeded = math.ceil((xpToWrite/xpRate))
-					print(" - ",perkID, "- xprate = ",xpRate,", ",xpToWrite, " (",intervalsNeeded,")")
-					durationData.intervals = math.max(intervalsNeeded, durationData.intervals)
-				end
-			end
-		end
-	end
-
-	durationData.durationTime = durationData.intervals * self.updateInterval * 60 * 60 * 3
-
-	if getDebug() then print("SRJ DEBUG DURATION (in ticks) ", durationData.intervals, " (in in-game time) ", durationData.durationTime) for k,v in pairs(durationData.rates) do print(" - ",k," = ",v) end end
-
-	return durationData
-end
-
-
 -- Updates the write journal action if the last update has been longer ago than updateInterval
 -- returns true if time for next writing step was reached false otherwise
 function WriteSkillRecoveryJournal:updateWriting()
@@ -457,6 +378,7 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	-- timings, update intervals between updates in in-game hours
 	o.updateInterval = 10 / 3600 -- every in-game 10 seconds
 	o.defaultUpdateInterval = 3.48 / 3600 -- legacy ~ 3.48 sec to maintain old duration
+	o.timeFactor = (o.updateInterval / o.defaultUpdateInterval)
 	o.updateTime = now + o.updateInterval -- do first update after one interval
 	
 	o.recipeIntervals = 0 -- counter for recipe ticks
@@ -466,7 +388,7 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	o.lastUpdateTime = now
 	o.startTime = now
 
-	o.durationData = o:determineDuration(JMD)
+	o.durationData = SRJ.xpHandler.calculateReadWriteXpRates(SRJ, character, item, o.timeFactor, o.gainedRecipes, o.gainedSkills, false, o.updateInterval)
 
 	o.changesBeingMade = {}
 	o.changesBeingMadeIndex = {}

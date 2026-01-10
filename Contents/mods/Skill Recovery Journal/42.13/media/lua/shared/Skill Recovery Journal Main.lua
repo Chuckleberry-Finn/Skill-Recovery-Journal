@@ -9,16 +9,6 @@ Events.OnGameTimeLoaded.Add(function()
     SRJ.gameTime = GameTime.getInstance()
 end)
 
-SRJ.maxXPDifferential = {}
-function SRJ.getMaxXPDifferential(perk)
-	if SRJ.maxXPDifferential[perk] then return SRJ.maxXPDifferential[perk] end
-	local maxXPDefault = Perks.PhysicalCategory:getTotalXpForLevel(10)
-	local maxXPPerk = Perks[perk]:getTotalXpForLevel(10)
-
-	SRJ.maxXPDifferential[perk] =maxXPDefault/maxXPPerk
-	return SRJ.maxXPDifferential[perk]
-end
-
 
 ---@param player IsoGameCharacter|IsoPlayer
 function SRJ.checkFitnessCanAddXp(player)

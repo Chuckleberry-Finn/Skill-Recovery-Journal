@@ -93,138 +93,6 @@ function ReadSkillRecoveryJournal:animEvent(event, parameter)
 end
 
 
-function ReadSkillRecoveryJournal:determineDuration(journalModData)
-	local durationData = {
-		rates = {},
-		intervals = 0,
-		recipeChunk = 0,
-		kills = {},
-	}
-
-	local storedJournalXP = journalModData["gainedXP"]
-
-	local readTimeMulti = SandboxVars.SkillRecoveryJournal.ReadTimeSpeed or 1
-	local timeFactor = (self.updateInterval / self.defaultUpdateInterval)
-
-	--recipes
-	if (#self.learnedRecipes > 0) then
-		durationData.recipeChunk = math.min(#self.learnedRecipes, math.floor(1.09^math.sqrt(#self.learnedRecipes))) * readTimeMulti
-		local intervalsNeeded = math.ceil((durationData.recipeChunk * 5))
-		durationData.intervals = math.max(intervalsNeeded,durationData.intervals)
-	end
-
-	--kills
-	local readXP = SRJ.modDataHandler.getReadXP(self.character)
-
-	local readZKills = readXP and readXP.kills and readXP.kills.Zombie or 0
-	local readSKills = readXP and readXP.kills and readXP.kills.Survivor or 0
-
-	local jmdZKills = journalModData.kills and journalModData.kills.Zombie
-	local jmdSKills = journalModData.kills and journalModData.kills.Survivor
-
-	local unaccountedZKills = jmdZKills and (jmdZKills > readZKills) and jmdZKills-readZKills
-	if unaccountedZKills and unaccountedZKills > 0 then durationData.zombies = unaccountedZKills end
-
-	local unaccountedSKills = jmdSKills and (jmdSKills > readSKills) and jmdSKills-readSKills
-	if unaccountedSKills and unaccountedSKills > 0 then durationData.survivors = unaccountedSKills end
-
-	if (unaccountedZKills and unaccountedZKills > 0) or (unaccountedSKills and unaccountedSKills > 0) then
-		durationData.intervals = durationData.intervals+1
-	end
-
-	--modData
-	--- the CopyData function actually does the copying - we need a function to JUST check if the data exists for this step
-	local modDataStored = SRJ.modDataHandler.copyDataToPlayer(self.character, self.item)
-	if modDataStored then durationData.intervals = durationData.intervals+1 end
-
-	--xp
-	if storedJournalXP then
-
-		local greatestXp = 0
-		--local totalRecoverableXP = 0
-		--local totalReadXP = 0
-		---need to spend more time pulling calculations that don't need to occur every tick to here and storing it in the duration-data
-		local validSkills = {}
-		local bJournalUsedUp = false
-
-		for skill,xp in pairs(storedJournalXP) do
-			local perk = Perks[skill]
-			if perk then
-				local valid, percent = SRJ.bSkillValid(perk)
-				if valid then
-					validSkills[skill] = true
-					if skill=="NONE" or skill=="MAX" then
-						storedJournalXP[skill] = nil
-					else
-						if xp > greatestXp then greatestXp = xp end
-					end
-				end
-			end
-		end
-
-		journalModData.recoveryJournalXpLog = journalModData.recoveryJournalXpLog or {}
-		local jmdUsedXP = journalModData.recoveryJournalXpLog
-
-		local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
-
-		local multipliers = SRJ.xpHandler.getOrStoreXPMultipliers(self.character)
-
-		for perkID,xp in pairs(storedJournalXP) do
-			--totalRecoverableXP = totalRecoverableXP + xp
-			if Perks[perkID] and validSkills[perkID] then
-
-				readXP[perkID] = readXP[perkID] or 0
-				local currentlyReadXP = readXP[perkID]
-				--totalReadXP = totalReadXP + currentlyReadXP
-				local journalXP = xp
-
-				if oneTimeUse and jmdUsedXP[perkID] and jmdUsedXP[perkID] then
-					if jmdUsedXP[perkID] >= currentlyReadXP then bJournalUsedUp = true end
-					currentlyReadXP = math.max(currentlyReadXP, jmdUsedXP[perkID])
-				end
-
-				if currentlyReadXP < journalXP then
-
-					--local perkLevelPlusOne = self.character:getPerkLevel(Perks[perkID])+1
-					local multi = multipliers[perkID] or 1
-					local multiXP = round(((journalXP)*multi), 2)
-					-- for perkLevelPlusOne assume we have acquired the skill xp we are heading for 
-					local playerXP = self.character:getXp():getXP(Perks[perkID])
-					--print("multiXP ", multiXP, " playerXP ", playerXP)
-					local perkLevelPlusOne = SRJ.xpHandler.getPerkLevelFromXP(perkID, multiXP + playerXP) + 1
-					local differential = SRJ.getMaxXPDifferential(perkID) or 1
-					--print("XP " , xp, " - XP2 ", (journalXP - currentlyReadXP), " - multiXP ", multiXP)
-					--print("PlPO ", perkLevelPlusOne, " - multi ",  readTimeMulti, " - time factor ", timeFactor, " - diff ", differential)
-					local xpRate = round((((math.sqrt(xp) / 25) * math.sqrt(perkLevelPlusOne)) * 1000) / 1000 * readTimeMulti * timeFactor / differential, 2)
-					if perkLevelPlusOne == 11 then xpRate=false end
-
-					if perkID=="Fitness" then
-						local cannotGain, message = SRJ.checkFitnessCanAddXp(self.character)
-						if cannotGain then
-							xpRate = false
-						end
-					end
-
-					if xpRate and xpRate>0 then
-						local recoverableXpForPerk = journalXP-currentlyReadXP
-						durationData.rates[perkID] = xpRate
-						local intervalsNeeded = math.ceil((recoverableXpForPerk/xpRate))
-						print(" - ",perkID, "- xprate = ",xpRate,", ",recoverableXpForPerk, " (",intervalsNeeded,")")
-						durationData.intervals = math.max(intervalsNeeded, durationData.intervals)
-					end
-				end
-			end
-		end
-	end
-
-	durationData.durationTime = durationData.intervals * self.updateInterval * 60 * 60 * 3
-
-	if getDebug() then print("SRJ DEBUG DURATION (in ticks) ", durationData.intervals, " (in in-game time) ", durationData.durationTime) for k,v in pairs(durationData.rates) do print(" - ",k," = ",v) end end
-
-	return durationData
-end
-
-
 function ReadSkillRecoveryJournal:update()
 	-- in MP, all updating is done by server
 	if not isClient() then 
@@ -525,6 +393,7 @@ function ReadSkillRecoveryJournal:new(character, item)
 	-- timings,  update intervals between updates in in-game hours
 	o.updateInterval = 10 / 3600 -- every in-game 10 seconds
 	o.defaultUpdateInterval = 3.48 / 3600 -- legacy ~ 3.48 sec to maintain old duration
+	o.timeFactor = (o.updateInterval / o.defaultUpdateInterval)
 	o.updateTime = now + o.updateInterval -- do first update after one interval
 	
 	o.recipeIntervals = 0 -- counter for recipe ticks
@@ -534,7 +403,7 @@ function ReadSkillRecoveryJournal:new(character, item)
 	o.lastUpdateTime = now
 	o.startTime = now
 	
-	o.durationData = o:determineDuration(JMD)
+	o.durationData = SRJ.xpHandler.calculateReadWriteXpRates(SRJ, character, item, o.timeFactor, self.learnedRecipes, nil, true, o.updateInterval)
 
 	return o
 end
