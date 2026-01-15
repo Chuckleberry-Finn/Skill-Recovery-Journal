@@ -2,7 +2,20 @@ require "XpSystem/ISUI/ISSkillProgressBar"
 
 local totalXPText = getText("IGUI_Total").." "..getText("IGUI_XP_xp")
 local gainedXPText = getText("IGUI_GainedXPText")
+local startingLevelText = getText("IGUI_StartingLevelText")
 local SRJ = require "Skill Recovery Journal Main"
+
+
+function ISSkillProgressBar:registerStartingLevels()
+    if ISSkillProgressBar.registeredStartingLevels then return ISSkillProgressBar.registeredStartingLevels end
+    local progressBarLevels = {}
+    local startingLevels = SRJ.getFreeLevelsFromTraitsAndProfession(self.char)
+    if startingLevels then for perkID, level in pairs(startingLevels) do progressBarLevels[perkID] = level end end
+    local passiveSkillsInit = SRJ.modDataHandler.getPassiveLevels(self.char)
+    if passiveSkillsInit then for perkID, level in pairs(passiveSkillsInit) do progressBarLevels[perkID] = level end end
+    ISSkillProgressBar.registeredStartingLevels = progressBarLevels
+end
+
 
 local ISSkillProgressBar_updateTooltip = ISSkillProgressBar.updateTooltip
 function ISSkillProgressBar:updateTooltip(lvlSelected)
@@ -28,6 +41,11 @@ function ISSkillProgressBar:updateTooltip(lvlSelected)
         local perkID = self.perk:getId()
         local multipliers = SRJ.xpHandler.getOrStoreXPMultipliers(self.char)
         local gainedXP = SRJ.calculateGainedSkill(self.char, self.perk)
+
+        self:registerStartingLevels()
+        if ISSkillProgressBar.registeredStartingLevels and ISSkillProgressBar.registeredStartingLevels[perkID] then
+            self.message = self.message.."\n"..startingLevelText..": "..ISSkillProgressBar.registeredStartingLevels[perkID]
+        end
 
         local currentXP = tostring(self.char:getXp():getXP(self.perk))
         self.message = self.message .. "\n\n"..totalXPText..": "..round(currentXP, 2)

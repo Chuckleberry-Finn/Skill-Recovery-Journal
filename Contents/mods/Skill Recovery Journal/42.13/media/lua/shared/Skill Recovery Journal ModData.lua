@@ -3,7 +3,6 @@ local SRJ_ModDataHandler = {}
 -- player mod data
 function SRJ_ModDataHandler.setPassiveLevels(id, player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
-
 	if not pMD.SRJPassiveSkillsInit then
 		for i=1, Perks.getMaxIndex()-1 do
 			---@type PerkFactory.Perks
@@ -22,7 +21,7 @@ function SRJ_ModDataHandler.setPassiveLevels(id, player)
 			end
 		end
 	end
-	--if getDebug() then for k,v in pairs(pMD.SRJPassiveSkillsInit) do print(" -- PASSIVE-INIT: "..k.." = "..v) end end
+	if getDebug() then for k,v in pairs(pMD.SRJPassiveSkillsInit) do print(" -- PASSIVE-INIT: "..k.." = "..v) end end
 end
 
 
@@ -78,7 +77,12 @@ end
 -- item mod data
 function SRJ_ModDataHandler.getItemModData(item)
     local iMd = item:getModData()
-    iMd["SRJ"] = iMd["SRJ"] or {}
+	if not iMd["SRJ"] then
+		-- init new journal mod data
+    	iMd["SRJ"] = {}
+		iMd["SRJ"]["gainedXP"] = {}
+		iMd["SRJ"]["learnedRecipes"] = {}
+	end
     return iMd["SRJ"]
 end
 
@@ -166,20 +170,11 @@ function SRJ_ModDataHandler.copyDataToJournal(player, journal)
 end
 
 
--- MOD DATA SYNC
-local serverStoredClientModData = {}
-
 -- handle receive data from client
 local function SkillRecoveryJournalOnClientCommand(module, command, player, args)
 	if module == "SkillRecoveryJournal" then 
 		local playerID = player:getOnlineID()
-		if command == "update" then
-			if getDebug() then print("SkillRecoveryJournal received modData from player " .. tostring(playerID)) end
-			serverStoredClientModData[playerID] = {
-				journalData = args.journalData,
-				playerData = args.playerData
-			}
-		elseif command == "rename" then
+		if command == "rename" then
 			if getDebug() then print("SkillRecoveryJournal received rename for item " .. tostring(args.itemID) .. " from player " .. tostring(playerID)) end
 			local item = player:getInventory():getItemWithIDRecursiv(args.itemID)
 			if item then
@@ -200,40 +195,6 @@ local function SkillRecoveryJournalOnClientCommand(module, command, player, args
 	end
 end
 
-Events.OnClientCommand.Add(SkillRecoveryJournalOnClientCommand)
-
-
--- apply prior received moddata from client
-function SRJ_ModDataHandler.syncModDataFromClient(player, item)
-	-- check if client sent us some changes to sync
-	local playerID = player:getOnlineID()
-    if serverStoredClientModData[playerID] then
-		if item then
-			-- overwrite server mod data with client's
-			local journalModData = serverStoredClientModData[playerID].journalData
-			if getDebug() then print("SkillRecoveryJournal syncing journal item mod data") end
-			SRJ_ModDataHandler.setItemModData(item, journalModData)
-
-			syncItemModData(player, item)
-		end
-
-        if player then
-            -- update player mod data
-            local playerModData = serverStoredClientModData[playerID].playerData
-            if getDebug() then print("SkillRecoveryJournal syncing player mod data") end
-            SRJ_ModDataHandler.setPlayerModData(player, playerModData)
-        end
-        serverStoredClientModData[playerID] = nil
-    end
-end
-
-
--- send mod data to server
-function SRJ_ModDataHandler.sendModDataToServer(player, item)
-	if getDebug() then print("SkillRecoveryJournal sync with server") end
-	local srjData = SRJ_ModDataHandler.getItemModData(item)
-	local charData = SRJ_ModDataHandler.getPlayerModData(player)
-	sendClientCommand(player, "SkillRecoveryJournal", "update", {journalData = srjData, playerData = charData})
-end
+if isServer() then Events.OnClientCommand.Add(SkillRecoveryJournalOnClientCommand) end
 
 return SRJ_ModDataHandler

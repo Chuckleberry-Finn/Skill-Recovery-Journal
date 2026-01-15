@@ -50,8 +50,15 @@ local function SRJ_generateTooltip(JMD, player)
 				local perkName = perk:getName()
 				local multi = multipliers[perkID] or 1
 				local availableXP = round(((journalXP)*multi), 2)
+				
+				local levelString = ""
+				-- this would need to be cached, but not available in MP anyway because client has no player mod data
+				if not isClient() and getDebug() then
+					local level = SRJ.xpHandler.getPerkLevelAfterJournalRead(SRJ ,player, perkID, multi, journalXP)
+					levelString = " to Level "..level
+				end
 
-				skillsRecord = skillsRecord..perkName.." ("..availableXP
+				skillsRecord = skillsRecord..perkName..levelString.." ("..availableXP
 				if oneTimeUse then
 					local totalXP = round(((xp)*multi), 2)
 					skillsRecord = skillsRecord.."/"..totalXP
@@ -76,7 +83,6 @@ local function SRJ_generateTooltip(JMD, player)
 		end
 	end
 
-	SRJ.correctSandBoxOptions("KillsTrack")
 	if (SandboxVars.SkillRecoveryJournal.KillsTrack or 0) > 0 then
 		local jmdZKills = JMD and JMD.kills and JMD.kills.Zombie
 		local jmdSKills = JMD and JMD.kills and JMD.kills.Survivor
