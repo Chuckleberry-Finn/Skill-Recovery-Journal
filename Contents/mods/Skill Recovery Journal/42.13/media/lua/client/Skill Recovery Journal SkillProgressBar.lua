@@ -3,7 +3,11 @@ require "XpSystem/ISUI/ISSkillProgressBar"
 local totalXPText = getText("IGUI_Total").." "..getText("IGUI_XP_xp")
 local gainedXPText = getText("IGUI_GainedXPText")
 local startingLevelText = getText("IGUI_StartingLevelText")
+local deductedXPText = getText("IGUI_DeductedXP")
+local untranscribedXPText = getText("IGUI_UntranscribedXP")
+
 local SRJ = require "Skill Recovery Journal Main"
+local SRJ_ModDataHandler = require "Skill Recovery Journal ModData"
 
 
 function ISSkillProgressBar:registerStartingLevels()
@@ -42,17 +46,25 @@ function ISSkillProgressBar:updateTooltip(lvlSelected)
         local multipliers = SRJ.xpHandler.getOrStoreXPMultipliers(self.char)
         local gainedXP = SRJ.calculateGainedSkill(self.char, self.perk)
 
+        self.message = self.message.."\n\n<RGB:0.3,0.3,0.3> Skill Recovery Journal"
+
         self:registerStartingLevels()
         if ISSkillProgressBar.registeredStartingLevels and ISSkillProgressBar.registeredStartingLevels[perkID] then
-            self.message = self.message.."\n"..startingLevelText..": "..ISSkillProgressBar.registeredStartingLevels[perkID]
+            self.message = self.message.."\n<RGB:0.8,0.8,0.8> "..startingLevelText..": "..ISSkillProgressBar.registeredStartingLevels[perkID]
         end
 
         local currentXP = tostring(self.char:getXp():getXP(self.perk))
-        self.message = self.message .. "\n\n"..totalXPText..": "..round(currentXP, 2)
+        self.message = self.message .. "\n<WHITE> "..totalXPText..": "..round(currentXP, 2)
 
         if gainedXP then
             local currentSkillGainedXP = tostring(gainedXP * (multipliers[perkID] or 1))
-            self.message = self.message.."\n"..gainedXPText..": "..round(currentSkillGainedXP, 2)
+            self.message = self.message.."\n<GREEN> "..gainedXPText..": "..round(currentSkillGainedXP, 2)
         end
+
+        local deductedXP = SRJ_ModDataHandler.getDeductedXP(self.char)
+        if deductedXP and deductedXP[perkID] then
+            self.message = self.message .. "\n<RED> "..deductedXPText..": "..round(deductedXP[perkID], 2)
+        end
+
     end
 end
