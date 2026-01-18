@@ -26,7 +26,7 @@ end
 
 
 -- deducted xp from radio and tv
-function SRJ_ModDataHandler.checkForDeductedXP(player, perksType, XP)
+function SRJ_ModDataHandler.checkIfDeductedXP(player, perksType, XP)
 	local fN, lCF = nil, getCoroutineCallframeStack(getCurrentCoroutine(),0)
 	local fD = lCF ~= nil and lCF and getFilenameOfCallframe(lCF)
 	local i = fD and fD:match('^.*()/')
