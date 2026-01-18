@@ -30,6 +30,8 @@ IGUI_EN = {
 
     IGUI_ItemCat_SkillJournal = "Skill Journal",
     IGUI_GainedXPText = "Recoverable XP",
+    IGUI_DeductedXP = "Unrecoverable XP",
+    IGUI_UntranscribedXP = "Untranscribed XP",
     IGUI_StartingLevelText = "Starting Level",
     IGUI_OLDXP_WARNING = "Warning: This journal contains 'OLD' XP from before the but update(s). The journal make have some issues initially. This warning message will go away the more this journal is used.",
     IGUI_OneTimeUse_Warning = "Sandbox Option for XP Used When Read is enabled.",
