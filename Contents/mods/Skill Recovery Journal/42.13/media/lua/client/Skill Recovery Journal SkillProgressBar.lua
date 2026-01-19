@@ -46,24 +46,24 @@ function ISSkillProgressBar:updateTooltip(lvlSelected)
         local multipliers = SRJ.xpHandler.getOrStoreXPMultipliers(self.char)
         local gainedXP = SRJ.calculateGainedSkill(self.char, self.perk)
 
-        self.message = self.message.."\n\n<RGB:0.3,0.3,0.3> Skill Recovery Journal"
+        self.message = self.message.." <LINE><LINE> <RGB:0.3,0.3,0.3> Skill Recovery Journal"
 
         self:registerStartingLevels()
         if ISSkillProgressBar.registeredStartingLevels and ISSkillProgressBar.registeredStartingLevels[perkID] then
-            self.message = self.message.."\n<RGB:0.8,0.8,0.8> "..startingLevelText..": "..ISSkillProgressBar.registeredStartingLevels[perkID]
+            self.message = self.message.." <LINE> <RGB:0.8,0.8,0.8> "..startingLevelText..": "..ISSkillProgressBar.registeredStartingLevels[perkID]
         end
 
         local currentXP = tostring(self.char:getXp():getXP(self.perk))
-        self.message = self.message .. "\n<WHITE> "..totalXPText..": "..round(currentXP, 2)
+        self.message = self.message .. " <LINE> <RGB:1,1,1> "..totalXPText..": "..round(currentXP, 2)
 
         if gainedXP then
             local currentSkillGainedXP = tostring(gainedXP * (multipliers[perkID] or 1))
-            self.message = self.message.."\n<GREEN> "..gainedXPText..": "..round(currentSkillGainedXP, 2)
+            self.message = self.message.." <LINE> <GREEN> "..gainedXPText..": "..round(currentSkillGainedXP, 2)
         end
 
         local deductedXP = SRJ_ModDataHandler.getDeductedXP(self.char)
         if deductedXP and deductedXP[perkID] then
-            self.message = self.message .. "\n<RED> "..deductedXPText..": "..round(deductedXP[perkID], 2)
+            self.message = self.message .. " <LINE> <RED> "..deductedXPText..": "..round(deductedXP[perkID], 2)
         end
 
     end
