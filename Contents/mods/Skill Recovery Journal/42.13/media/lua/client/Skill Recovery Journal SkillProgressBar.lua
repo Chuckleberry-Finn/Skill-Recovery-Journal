@@ -7,18 +7,6 @@ local deductedXPText = getText("IGUI_DeductedXP")
 local untranscribedXPText = getText("IGUI_UntranscribedXP")
 
 local SRJ = require "Skill Recovery Journal Main"
-local SRJ_ModDataHandler = require "Skill Recovery Journal ModData"
-
-
-function ISSkillProgressBar:registerStartingLevels()
-    if ISSkillProgressBar.registeredStartingLevels then return ISSkillProgressBar.registeredStartingLevels end
-    local progressBarLevels = {}
-    local startingLevels = SRJ.getFreeLevelsFromTraitsAndProfession(self.char)
-    if startingLevels then for perkID, level in pairs(startingLevels) do progressBarLevels[perkID] = level end end
-    local passiveSkillsInit = SRJ.modDataHandler.getPassiveLevels(self.char)
-    if passiveSkillsInit then for perkID, level in pairs(passiveSkillsInit) do progressBarLevels[perkID] = level end end
-    ISSkillProgressBar.registeredStartingLevels = progressBarLevels
-end
 
 
 local ISSkillProgressBar_updateTooltip = ISSkillProgressBar.updateTooltip
@@ -48,37 +36,44 @@ function ISSkillProgressBar:updateTooltip(lvlSelected)
 
         self.message = self.message.." <LINE><LINE> <RGB:0.3,0.3,0.3> Skill Recovery Journal"
 
-        self:registerStartingLevels()
-        local startingLevel = ISSkillProgressBar.registeredStartingLevels and ISSkillProgressBar.registeredStartingLevels[perkID]
+        -- show starting level
+        local traitLevels = SRJ.modDataHandler.getFreeLevelsFromTraitsAndProfession(self.char)
+        local passiveLevels = SRJ.modDataHandler.getPassiveLevels(self.char)
+        local startingLevel = passiveLevels[perkID] or traitLevels[perkID] or 0
         if startingLevel then
-            self.message = self.message.." <LINE> <RGB:0.8,0.8,0.8> "..startingLevelText..": "..ISSkillProgressBar.registeredStartingLevels[perkID]
+            self.message = self.message.." <LINE> <RGB:0.8,0.8,0.8> "..startingLevelText..": "..startingLevel
         end
 
+        -- show total xp
         local currentXP = tostring(self.char:getXp():getXP(self.perk))
         self.message = self.message .. " <LINE> <RGB:1,1,1> "..totalXPText..": "..round(currentXP, 2)
 
-        if gainedXP then
-            local currentSkillGainedXP = tostring(gainedXP * (multipliers[perkID] or 1))
-            self.message = self.message.." <LINE> <GREEN> "..gainedXPText..": "..round(currentSkillGainedXP, 2)
+        -- show mod data values on SP only (in MP client does not have up2date info)
+        if getDebug() and not isClient() then 
+            -- show gained xp
+            if gainedXP then
+                local currentSkillGainedXP = tostring(gainedXP * (multipliers[perkID] or 1))
+                self.message = self.message.." <LINE> <GREEN> "..gainedXPText..": "..round(currentSkillGainedXP, 2)
+            end
+
+            -- show deducted xp
+            local charDeductedXP = SRJ.modDataHandler.getDeductedXP(self.char)
+            local deductedXP = charDeductedXP and charDeductedXP[perkID]
+
+            if deductedXP then
+                self.message = self.message .. " <LINE> <RED> "..deductedXPText..": "..round(deductedXP, 2)
+            end
+
+            -- show untranscribed xp
+            local charReadXP = SRJ.modDataHandler.getReadXP(self.char)
+            local readXP = charReadXP and charReadXP[perkID]
+
+            local startingLevelXP = startingLevel and ISSkillProgressBar.getXpForLvl(self.perk, startingLevel)
+
+            local looseXP = currentXP - (startingLevelXP or 0) - (deductedXP or 0) - (readXP or 0) --untranscribed XP
+            if looseXP then
+                self.message = self.message .. " <LINE> <ORANGE> "..untranscribedXPText..": "..round(looseXP, 2)
+            end
         end
-
-        local charDeductedXP = SRJ_ModDataHandler.getDeductedXP(self.char)
-        local deductedXP = charDeductedXP and charDeductedXP[perkID]
-
-        if deductedXP then
-            self.message = self.message .. " <LINE> <RED> "..deductedXPText..": "..round(deductedXP, 2)
-        end
-
-        local charReadXP = SRJ.modDataHandler.getReadXP(self.char)
-        local readXP = charReadXP and charReadXP[perkID]
-
-        local startingLevelXP = startingLevel and ISSkillProgressBar.getXpForLvl(self.perk, startingLevel)
-
-        local looseXP = currentXP - (startingLevelXP or 0) - (deductedXP or 0) - (readXP or 0) --untranscribed XP
-        if looseXP then
-            self.message = self.message .. " <LINE> <ORANGE> "..untranscribedXPText..": "..round(looseXP, 2)
-        end
-
-
     end
 end

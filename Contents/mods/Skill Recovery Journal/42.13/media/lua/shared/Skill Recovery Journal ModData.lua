@@ -1,9 +1,50 @@
 local SRJ_ModDataHandler = {}
 
 -- player mod data
+
+-- store initial skill levels from traits and profession in player mod data
+function SRJ_ModDataHandler.getFreeLevelsFromTraitsAndProfession(player)
+	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
+	if not pMD.SRJTraitSkillsInit then
+		pMD.SRJTraitSkillsInit = {}
+
+		-- xp granted by profession
+		local playerDesc = player:getDescriptor()
+		local playerProfessionID = playerDesc:getCharacterProfession()
+		local profDef = CharacterProfessionDefinition.getCharacterProfessionDefinition(playerProfessionID)
+		local profXpBoost = transformIntoKahluaTable(profDef:getXpBoosts())
+		if profXpBoost then
+			for perk,level in pairs(profXpBoost) do
+				local perky = tostring(perk)
+				local levely = tonumber(tostring(level))
+				pMD.SRJTraitSkillsInit[perky] = levely
+			end
+		end
+
+		-- xp granted by trait
+		local playerTraits = player:getCharacterTraits()
+		for i=0, playerTraits:getKnownTraits():size()-1 do
+			local traitTrait = playerTraits:getKnownTraits():get(i)
+			local traitDef = CharacterTraitDefinition.getCharacterTraitDefinition(traitTrait)
+			local traitXpBoost = transformIntoKahluaTable(traitDef:getXpBoosts())
+			if traitXpBoost then
+				for perk,level in pairs(traitXpBoost) do
+					local perky = tostring(perk)
+					local levely = tonumber(tostring(level))
+					pMD.SRJTraitSkillsInit[perky] = (pMD.SRJTraitSkillsInit[perky] or 0) + levely
+				end
+			end
+		end
+	end
+	
+	return pMD.SRJTraitSkillsInit
+end
+
+-- store initial passive levels in player mod data
 function SRJ_ModDataHandler.setPassiveLevels(id, player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
 	if not pMD.SRJPassiveSkillsInit then
+		pMD.SRJPassiveSkillsInit = {}
 		for i=1, Perks.getMaxIndex()-1 do
 			---@type PerkFactory.Perks
 			local perks = Perks.fromIndex(i)
@@ -11,22 +52,25 @@ function SRJ_ModDataHandler.setPassiveLevels(id, player)
 				---@type PerkFactory.Perk
 				local perk = PerkFactory.getPerk(perks)
 				if perk and perk:isPassiv() and tostring(perk:getParent():getType())~="None" then
-					local currentLevel = (player:getHoursSurvived() > 0 and 5) or player:getPerkLevel(perk)
+					local currentLevel = player:getPerkLevel(perk)
 					if currentLevel > 0 then
 						local perkType = tostring(perk:getType())
-						pMD.SRJPassiveSkillsInit = pMD.SRJPassiveSkillsInit or {}
 						pMD.SRJPassiveSkillsInit[perkType] = currentLevel
 					end
 				end
 			end
 		end
+		for k,v in pairs(pMD.SRJPassiveSkillsInit) do print(" -- PASSIVE-INIT: "..k.." = "..v) end
+		--if getDebug() then for k,v in pairs(pMD.SRJPassiveSkillsInit) do print(" -- PASSIVE-INIT: "..k.." = "..v) end end
 	end
-	if getDebug() then for k,v in pairs(pMD.SRJPassiveSkillsInit) do print(" -- PASSIVE-INIT: "..k.." = "..v) end end
 end
 
 
 -- deducted xp from radio and tv
 function SRJ_ModDataHandler.checkIfDeductedXP(player, perksType, XP)
+	-- check if passive levels are init (workaround for mp server)
+	SRJ_ModDataHandler.setPassiveLevels(_, player)
+
 	local fN, lCF = nil, getCoroutineCallframeStack(getCurrentCoroutine(),0)
 	local fD = lCF ~= nil and lCF and getFilenameOfCallframe(lCF)
 	local i = fD and fD:match('^.*()/')
@@ -50,6 +94,11 @@ end
 
 function SRJ_ModDataHandler.getPassiveLevels(player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
+	if not pMD.SRJPassiveSkillsInit then
+		-- on the rare chance it was not init before, check again
+		-- can happen if on mp server and player uses SRJ before gaining xp
+		SRJ_ModDataHandler.setPassiveLevels(_, player)
+	end
 	return pMD.SRJPassiveSkillsInit
 end
 

@@ -50,40 +50,6 @@ function SRJ.checkProteinLevelMulti(player)
 end
 
 
-function SRJ.getFreeLevelsFromTraitsAndProfession(player)
-	local bonusLevels = {}
-
-	-- xp granted by profession
-	local playerDesc = player:getDescriptor()
-	local playerProfessionID = playerDesc:getCharacterProfession()
-	local profDef = CharacterProfessionDefinition.getCharacterProfessionDefinition(playerProfessionID)
-	local profXpBoost = transformIntoKahluaTable(profDef:getXpBoosts())
-	if profXpBoost then
-		for perk,level in pairs(profXpBoost) do
-			local perky = tostring(perk)
-			local levely = tonumber(tostring(level))
-			bonusLevels[perky] = levely
-		end
-	end
-
-	-- xp granted by trait
-	local playerTraits = player:getCharacterTraits()
-	for i=0, playerTraits:getKnownTraits():size()-1 do
-		local traitTrait = playerTraits:getKnownTraits():get(i)
-		local traitDef = CharacterTraitDefinition.getCharacterTraitDefinition(traitTrait)
-		local traitXpBoost = transformIntoKahluaTable(traitDef:getXpBoosts())
-		if traitXpBoost then
-			for perk,level in pairs(traitXpBoost) do
-				local perky = tostring(perk)
-				local levely = tonumber(tostring(level))
-				bonusLevels[perky] = (bonusLevels[perky] or 0) + levely
-			end
-		end
-	end
-
-	return bonusLevels
-end
-
 function SRJ.bSkillValid(perk)
 	local ID = perk and perk:isPassiv() and "Passive" or perk:getParent():getId()
 	local specific = SandboxVars.SkillRecoveryJournal["Recover"..ID.."Skills"]
@@ -104,7 +70,7 @@ function SRJ.calculateGainedSkill(player, perk, passiveSkillsInit, startingLevel
 	end
 
 	if not startingLevels then
-		startingLevels = SRJ.getFreeLevelsFromTraitsAndProfession(player)
+		startingLevels = SRJ.modDataHandler.getFreeLevelsFromTraitsAndProfession(player)
 	end
 
 	if not deductibleXP then

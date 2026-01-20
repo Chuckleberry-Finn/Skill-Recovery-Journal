@@ -15,7 +15,7 @@ function WriteSkillRecoveryJournal:isValid()
 	local vehicle = self.character:getVehicle()
 	if vehicle and vehicle:isDriver(self.character) then return not vehicle:isEngineRunning() or vehicle:getSpeed2D() == 0 end
 	
-	-- FIXME#4 if :isValid (and :perform) is handled correctly, self.item will be null in :new on server and updateWriting will crash
+	-- FIXME if :isValid (and :perform) is handled correctly, self.item will be null in :new on server and updateWriting will crash
 	--if isClient() and self.item and self.writingTool then
     --    return self.character:getInventory():containsID(self.item:getID()) and self.character:getInventory():containsID(self.writingTool:getID())
     --else
