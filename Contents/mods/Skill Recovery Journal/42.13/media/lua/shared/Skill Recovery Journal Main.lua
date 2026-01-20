@@ -123,7 +123,7 @@ function SRJ.calculateAllGainedSkills(player)
 	local gainedXP
 
 	local passiveSkillsInit = SRJ.modDataHandler.getPassiveLevels(player)
-	local startingLevels = SRJ.getFreeLevelsFromTraitsAndProfession(player)
+	local startingLevels = SRJ.modDataHandler.getFreeLevelsFromTraitsAndProfession(player)
 	local deductibleXP = SRJ.modDataHandler.getDeductedXP(player)
 
 	for i=1, Perks.getMaxIndex()-1 do

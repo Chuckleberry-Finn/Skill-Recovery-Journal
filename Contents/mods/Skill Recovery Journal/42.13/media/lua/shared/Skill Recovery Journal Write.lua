@@ -68,6 +68,7 @@ end
 function WriteSkillRecoveryJournal:serverStop()
 	--if getDebug() then print("WriteSkillRecoveryJournal serverStop") end
 	print("WriteSkillRecoveryJournal serverStop after " .. tostring((SRJ.gameTime:getWorldAgeHours() - self.startTime) * 3600))
+	syncItemModData(self.character, self.item)
 end
 
 
