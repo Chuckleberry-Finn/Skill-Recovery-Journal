@@ -225,7 +225,7 @@ function SRJ.calculateGainedKills(journalModData, player, doReading)
 
     local unaccountedZKills = math.max(0, (zKills - accountedZombieKills))
     local unaccountedSKills = math.max(0, (sKills - accountedSurvivorKills))
-	print("--calculateGainedKills - Z", unaccountedZKills,", S",  unaccountedSKills)
+	--if getDebug() then print("--calculateGainedKills - Z", unaccountedZKills,", S",  unaccountedSKills) end
 
 	return unaccountedZKills, unaccountedSKills
 end
@@ -237,7 +237,7 @@ function  SRJ.handleKills(durationData, player, journalModData, changesBeingMade
 	local zKillGainRate = math.ceil((durationData.kills.Zombie or 0) / (durationData.intervals * 0.5)) -- kill processing will be completed after ~50% or earlier
 	local sKillGainRate = math.ceil((durationData.kills.Survivor or 0) / (durationData.intervals * 0.5))
 
-	print("--handleKills - Z", zKillGainRate,", S",  sKillGainRate)
+	--if getDebug() then print("--handleKills - Z", zKillGainRate,", S",  sKillGainRate) end
 	local changesMade = false
 	if zKillGainRate == 0 and sKillGainRate == 0 then return changesMade end
 

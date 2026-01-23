@@ -181,14 +181,14 @@ end
 local function calculateXpRate(perkID, xpToProcess, perkLevelPlusOne, durationData, actionTimeMulti, timeFactor)
     local differential = SRJ_XPHandler.getMaxXPDifferential(perkID) or 1
 
-    print("XP ", xpToProcess, " PlPO ", perkLevelPlusOne, " - multi ", actionTimeMulti, " - time factor ", timeFactor, " - diff ", differential)
+    if getDebug() then print("XP ", xpToProcess, " PlPO ", perkLevelPlusOne, " - multi ", actionTimeMulti, " - time factor ", timeFactor, " - diff ", differential) end
 
     local xpRate = round((math.sqrt(xpToProcess * perkLevelPlusOne) / 25) * actionTimeMulti * timeFactor / differential, 2)
 
     if xpRate and xpRate > 0 then
         durationData.rates[perkID] = xpRate
         local intervalsNeeded = math.ceil(xpToProcess / xpRate)
-        print(" - ", perkID, "- xprate = ", xpRate, ", ", xpToProcess, " (", intervalsNeeded, ")")
+        if getDebug() then print(" - ", perkID, "- xprate = ", xpRate, ", ", xpToProcess, " (", intervalsNeeded, ")") end
         durationData.intervals = math.max(intervalsNeeded, durationData.intervals)
     end
 end
