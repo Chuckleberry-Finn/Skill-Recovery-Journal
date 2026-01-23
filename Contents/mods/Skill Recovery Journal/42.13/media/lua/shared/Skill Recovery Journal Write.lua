@@ -215,9 +215,9 @@ function WriteSkillRecoveryJournal:updateWriting()
 			end
 		end
 
-		-- write kills if player has more kills than stored
+		-- write kills if player has more kills than previously stored / read
 		local writeKills = self.durationData.kills.Zombie > 0 or self.durationData.kills.Survivor > 0
-		if writeKills and ((self.character:getZombieKills() or 0) > (JMD.kills.Zombie or 0)) or ((self.character:getSurvivorKills() or 0) > (JMD.kills.Survivor or 0)) then
+		if writeKills and ((self.character:getZombieKills() or 0) > (readXP.kills.Zombie or 0)) or ((self.character:getSurvivorKills() or 0) > (readXP.kills.Survivor or 0)) then
 			local killsWritten = SRJ.handleKills(self.durationData, self.character, JMD, changesBeingMade, false)
 			self.changesMade = self.changesMade or killsWritten
 		end
