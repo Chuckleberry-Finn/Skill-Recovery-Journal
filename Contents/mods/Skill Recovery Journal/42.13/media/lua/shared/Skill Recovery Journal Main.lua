@@ -245,14 +245,12 @@ function  SRJ.handleKills(durationData, player, journalModData, changesBeingMade
 		local newZKills = 0
 		if doReading then
 			newZKills = zKillGainRate + player:getZombieKills()
-			newZKills = math.min(newZKills, journalModData.kills.Zombie) -- max is stored value
 			player:setZombieKills(newZKills) 
 		else
 			newZKills = zKillGainRate + (journalModData.kills.Zombie or 0)
-			newZKills = math.min(newZKills, player:getZombieKills()) -- max is player value
 			journalModData.kills.Zombie = newZKills
 		end
-		readXP.kills.Zombie = newZKills
+		readXP.kills.Zombie = (readXP.kills.Zombie or 0) + zKillGainRate
 
 		table.insert(changesBeingMade, getText("IGUI_char_Zombies_Killed"))
 		changesMade = true
@@ -269,7 +267,7 @@ function  SRJ.handleKills(durationData, player, journalModData, changesBeingMade
 			newSKills = math.min(newSKills, player:getSurvivorKills()) -- max is player value
 			journalModData.kills.Survivor = newSKills
 		end
-		readXP.kills.Survivor = newSKills
+		readXP.kills.Survivor = (readXP.kills.Survivor or 0) + sKillGainRate
 		
 		table.insert(changesBeingMade, getText("IGUI_char_Survivor_Killed"))
 		changesMade = true
