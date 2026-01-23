@@ -306,10 +306,8 @@ function ReadSkillRecoveryJournal:updateReading()
 		else
 			-- show halo text
 			self.haloTextIntervals = self.haloTextIntervals + 1
-			if self.haloTextIntervals < 1 or self.haloTextIntervals > 3 then
-				self.haloTextIntervals = 0
-
-				SRJ.showHaloProgressText(player, changesBeingMade, totalReadXP, totalRecoverableXP, self.oldCharacterXP, "IGUI_Tooltip_Learning")
+			if self.haloTextIntervals % 4 == 0 then -- show halo text every 4th update
+				SRJ.showHaloProgressText(player, changesBeingMade, self.haloTextIntervals, self.durationData.intervals, "IGUI_Tooltip_Learning")
 			end
 		end
 

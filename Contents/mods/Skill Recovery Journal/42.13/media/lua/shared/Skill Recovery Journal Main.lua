@@ -277,22 +277,22 @@ function  SRJ.handleKills(durationData, player, journalModData, changesBeingMade
 end
 
 
-function SRJ.showHaloProgressText(character, changesBeingMade, totalStoredXP, totalRecoverableXP, oldJournalTotalXP, title)
+function SRJ.showHaloProgressText(character, changesBeingMade, updateCount, maxUpdates, title)
 	if isServer() then
 		local args = {}
 		args.changesBeingMade = changesBeingMade
-		args.totalStoredXP = totalStoredXP
-		args.totalRecoverableXP = totalRecoverableXP
-		args.oldJournalTotalXP = oldJournalTotalXP
+		args.updateCount = updateCount
+		args.maxUpdates = maxUpdates
 		args.title = title
 		sendServerCommand(character, "SkillRecoveryJournal", "write_changes", args)
 	else
-		local percentFinished = ((totalStoredXP - oldJournalTotalXP) / (totalRecoverableXP - oldJournalTotalXP)) * 100
+		local percentFinished = math.floor(updateCount / maxUpdates * 100 + 0.5)
 		local progressText = "?%"
 		if percentFinished >= 0 then
-			progressText = math.floor(percentFinished + 0.5) .. "%"
+			progressText = math.floor(percentFinished) .. "%"
+		else 
+		 	if getDebug() then print("Interval " .. updateCount, " / " .. maxUpdates) end
 		end
-		--if getDebug() then print("In Book " .. totalStoredXP - oldJournalTotalXP, " - in char " .. totalRecoverableXP - oldJournalTotalXP .. " = " .. progressText) end
 
 		local changesBeingMadeText = getText(title) .. " (" .. progressText ..") :"
 		for k,v in pairs(changesBeingMade) do changesBeingMadeText = changesBeingMadeText.." "..v..((k~=#changesBeingMade and ", ") or "") end
