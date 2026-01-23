@@ -160,6 +160,7 @@ function ReadSkillRecoveryJournal:updateReading()
 			end
 		end
 
+		local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
 		if not delayedStop then
 
 			-- apply read recipes
@@ -209,8 +210,6 @@ function ReadSkillRecoveryJournal:updateReading()
 
 				JMD.recoveryJournalXpLog = JMD.recoveryJournalXpLog or {}
 				local jmdUsedXP = JMD.recoveryJournalXpLog
-
-				local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
 
 				for perkID,xp in pairs(XpStoredInJournal) do
 					totalRecoverableXP = totalRecoverableXP + xp
@@ -308,6 +307,11 @@ function ReadSkillRecoveryJournal:updateReading()
 			self.haloTextIntervals = self.haloTextIntervals + 1
 			if self.haloTextIntervals % 4 == 0 then -- show halo text every 4th update
 				SRJ.showHaloProgressText(player, changesBeingMade, self.haloTextIntervals, self.durationData.intervals, "IGUI_Tooltip_Learning")
+			end
+
+			-- sync modData to show journal decay tooltip
+			if oneTimeUse and isServer() then
+				syncItemModData(player, journal)
 			end
 		end
 
