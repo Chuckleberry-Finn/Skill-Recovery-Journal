@@ -49,7 +49,8 @@ Sandbox_EN = {
     Sandbox_SkillRecoveryJournalModDataTrack = "Track ModData Values"
     Sandbox_SkillRecoveryJournalModDataTrack_tooltip = "USE WITH CAUTION.\n\nExample syntax: ModDataKey1|ModDataKey2\nTranscription will store a copy of the corresponding table from the player's mod data. \nThis can create significant issues if the data is large.\n If you're not sure what any of this means, ignore it, and leave blank."
 
-    Sandbox_SkillRecoveryJournalKillsTrack = "Recovery percentage for Zombie and Survivor Kills.<br>Set this to -1 to use the General Skill Recovery Percentage."
+    Sandbox_SkillRecoveryJournalKillsTrack = "Zombie/Survivor Kills Recovery Percentage"
+    Sandbox_SkillRecoveryJournalKillsTrack_tooltip = "Recovery percentage for Zombie and Survivor Kills.<br>Set this to -1 to use the General Skill Recovery Percentage."
 
     Sandbox_SkillRecoveryJournal_SecurityFeatures = "Account Security Protections",
     Sandbox_SkillRecoveryJournal_SecurityFeatures_tooltip = "Whether journals check against username, steamID, both, or none. Warning: Disabling this entirely would mean people can share journals.",
