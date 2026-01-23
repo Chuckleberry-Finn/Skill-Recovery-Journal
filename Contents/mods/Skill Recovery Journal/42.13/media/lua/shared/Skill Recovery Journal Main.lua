@@ -210,23 +210,28 @@ function SRJ.calculateGainedKills(journalModData, player, doReading)
 	local accountedSurvivorKills = 0
 
     if doReading then
+		local readXP = SRJ.modDataHandler.getReadXP(player)
        -- read journal kills
         zKills = journalModData.kills and journalModData.kills.Zombie or 0
         sKills = journalModData.kills and journalModData.kills.Survivor or 0
+
+        -- dont count kills already read 
+        accountedZombieKills = readXP.kills and readXP.kills.Zombie or 0
+        accountedSurvivorKills = readXP.kills and readXP.kills.Survivor or 0
+
     else
         -- write player kills
 	    zKills = math.floor(player:getZombieKills() * (killsRecoveryPercentage / 100))
 	    sKills = math.floor(player:getSurvivorKills() * (killsRecoveryPercentage / 100))
-    end
 
-    -- dont count kills already read 
-	local readXP = SRJ.modDataHandler.getReadXP(player)
-    accountedZombieKills = readXP.kills and readXP.kills.Zombie or 0
-    accountedSurvivorKills = readXP.kills and readXP.kills.Survivor or 0
+        -- dont count kills already transcribed 
+        accountedZombieKills = (journalModData.kills.Zombie or 0)
+        accountedSurvivorKills = (journalModData.kills.Survivor or 0)
+    end
 
     local unaccountedZKills = math.max(0, (zKills - accountedZombieKills))
     local unaccountedSKills = math.max(0, (sKills - accountedSurvivorKills))
-	if getDebug() then print("--calculateGainedKills - Z", unaccountedZKills,", S",  unaccountedSKills) end
+	--if getDebug() then print("--calculateGainedKills - Z", unaccountedZKills,", S",  unaccountedSKills) end
 
 	return unaccountedZKills, unaccountedSKills
 end
