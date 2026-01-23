@@ -189,6 +189,7 @@ function ReadSkillRecoveryJournal:updateReading()
 
 			local validSkills = {}
 
+			local readXP = SRJ.modDataHandler.getReadXP(player)
 			if XpStoredInJournal then
 				for skill,xp in pairs(XpStoredInJournal) do
 					local perk = Perks[skill]
@@ -205,7 +206,6 @@ function ReadSkillRecoveryJournal:updateReading()
 					end
 				end
 
-				local readXP = SRJ.modDataHandler.getReadXP(player)
 
 				JMD.recoveryJournalXpLog = JMD.recoveryJournalXpLog or {}
 				local jmdUsedXP = JMD.recoveryJournalXpLog
@@ -279,32 +279,11 @@ function ReadSkillRecoveryJournal:updateReading()
 				end
 			end
 
-			-- apply stored player kills
-			if JMD and (SandboxVars.SkillRecoveryJournal.KillsTrack or 0) > 0 then
-
-				--JMD.kills = {}
-				local readXP = SRJ.modDataHandler.getReadXP(player)
-
-				local zKills = player:getZombieKills()
-				local sKills = player:getSurvivorKills()
-
-				local unaccountedZKills = self.durationData.kills and self.durationData.kills.zombie
-				local unaccountedSKills = self.durationData.kills and self.durationData.kills.survivor
-
-				if unaccountedZKills or unaccountedSKills then
-					readXP.kills = readXP.kills or {}
-					if unaccountedZKills then
-						table.insert(changesBeingMade, getText("IGUI_char_Zombies_Killed"))
-						player:setZombieKills(zKills + unaccountedZKills)
-						readXP.kills.Zombie = (readXP.kills.Zombie or 0) + unaccountedZKills
-					end
-					if unaccountedSKills then
-						table.insert(changesBeingMade, getText("IGUI_char_Survivor_Killed"))
-						player:setSurvivorKills(sKills + unaccountedSKills)
-						readXP.kills.Survivor = (readXP.kills.Survivor or 0) + unaccountedSKills
-					end
-					changesMade = true
-				end
+			-- read kills if journal contains more kills than previously read
+			local readKills = self.durationData.kills.Zombie > 0 or self.durationData.kills.Survivor > 0
+			if readKills and (((JMD.kills.Zombie or 0) > (readXP.kills.Zombie or 0)) or ((JMD.kills.Survivor or 0) > (readXP.kills.Survivor or 0))) then
+				local killsRead = SRJ.handleKills(self.durationData, player, JMD, changesBeingMade, true)
+				changesMade = changesMade or killsRead
 			end
 		end
 
@@ -327,10 +306,10 @@ function ReadSkillRecoveryJournal:updateReading()
 		else
 			-- show halo text
 			self.haloTextIntervals = self.haloTextIntervals + 1
-				if self.haloTextIntervals < 1 or self.haloTextIntervals > 3 then
+			if self.haloTextIntervals < 1 or self.haloTextIntervals > 3 then
 				self.haloTextIntervals = 0
 
-				SRJ.showHaloProgressText(self.character, changesBeingMade, totalReadXP, totalRecoverableXP, self.oldCharacterXP, "IGUI_Tooltip_Learning")
+				SRJ.showHaloProgressText(player, changesBeingMade, totalReadXP, totalRecoverableXP, self.oldCharacterXP, "IGUI_Tooltip_Learning")
 			end
 		end
 

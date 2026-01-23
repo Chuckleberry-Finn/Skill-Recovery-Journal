@@ -179,7 +179,7 @@ function WriteSkillRecoveryJournal:updateWriting()
 
 		-- write gained xp
 		local storedJournalXP = JMD["gainedXP"]
-		local readXp = SRJ.modDataHandler.getReadXP(self.character)
+		local readXP = SRJ.modDataHandler.getReadXP(self.character)
 		local totalRecoverableXP = 1
 		local totalStoredXP = 1
 
@@ -207,7 +207,7 @@ function WriteSkillRecoveryJournal:updateWriting()
 							storedJournalXP[perkID] = resultingXp
 
 							-- store amount as already read in player data, so it cant be gained again
-							readXp[perkID] = math.max(resultingXp,(readXp[perkID] or 0))
+							readXP[perkID] = math.max(resultingXp,(readXP[perkID] or 0))
 						end
 					end
 				end
@@ -215,26 +215,11 @@ function WriteSkillRecoveryJournal:updateWriting()
 			end
 		end
 
-		-- store player kills
-		local killsRecoveryPercentage = SandboxVars.SkillRecoveryJournal.KillsTrack or 0
-		if JMD and killsRecoveryPercentage > 0 then
-
-			local unaccountedZKills = self.durationData.kills and self.durationData.kills.zombie
-			local unaccountedSKills = self.durationData.kills and self.durationData.kills.survivor
-
-			if unaccountedZKills or unaccountedSKills then
-				if unaccountedZKills then
-					table.insert(changesBeingMade, getText("IGUI_char_Zombies_Killed"))
-					JMD.kills.Zombie = (JMD.kills.Zombie or 0) + unaccountedZKills
-					readXp.kills.Zombie = (readXp.kills.Zombie or 0) + unaccountedZKills
-				end
-				if unaccountedSKills then
-					table.insert(changesBeingMade, getText("IGUI_char_Survivor_Killed"))
-					JMD.kills.Survivor = (JMD.kills.Survivor or 0) + unaccountedSKills
-					readXp.kills.Survivor = (readXp.kills.Survivor or 0) + unaccountedSKills
-				end
-				self.changesMade = true
-			end
+		-- write kills if player has more kills than stored
+		local writeKills = self.durationData.kills.Zombie > 0 or self.durationData.kills.Survivor > 0
+		if writeKills and ((self.character:getZombieKills() or 0) > (JMD.kills.Zombie or 0)) or ((self.character:getSurvivorKills() or 0) > (JMD.kills.Survivor or 0)) then
+			local killsWritten = SRJ.handleKills(self.durationData, self.character, JMD, changesBeingMade, false)
+			self.changesMade = self.changesMade or killsWritten
 		end
 
 		-- copy custom mod data to journal

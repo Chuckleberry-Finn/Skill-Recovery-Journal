@@ -218,39 +218,10 @@ function SRJ_XPHandler.calculateReadWriteXpRates(SRJ, player, item, timeFactor, 
 	end
 
 	--kills
-    local zKills, sKills, unaccountedZKills, unaccountedSKills, accountedZombieKills, accountedSurvivorKills
-	local killsRecoveryPercentage = SandboxVars.SkillRecoveryJournal.KillsTrack or 0
-	journalModData.kills = journalModData.kills or {}
-
-    if doReading then
-       -- read journal kills
-        zKills = journalModData.kills and journalModData.kills.Zombie or 0
-        sKills = journalModData.kills and journalModData.kills.Survivor or 0
-
-        -- dont count kills already read 
-        accountedZombieKills = readXP.kills and readXP.kills.Zombie or 0
-        accountedSurvivorKills = readXP.kills and readXP.kills.Survivor or 0
-
-    else
-        -- write player kills
-	    zKills = math.floor(player:getZombieKills() * (killsRecoveryPercentage / 100))
-	    sKills = math.floor(player:getSurvivorKills() * (killsRecoveryPercentage / 100))
-
-        -- dont count kills already transcribed 
-        accountedZombieKills = (journalModData.kills.Zombie or 0)
-        accountedSurvivorKills = (journalModData.kills.Survivor or 0)
-    end
-
-    unaccountedZKills = (zKills > accountedZombieKills) and zKills-accountedSurvivorKills
-    if unaccountedZKills and unaccountedZKills > 0 then durationData.zombies = unaccountedZKills end
-
-    unaccountedSKills = (sKills > accountedSurvivorKills) and sKills-accountedSurvivorKills
-    if unaccountedSKills and unaccountedSKills > 0 then durationData.survivors = unaccountedSKills end
-
-	if (unaccountedZKills and unaccountedZKills > 0) or (unaccountedSKills and unaccountedSKills > 0) then 
-        
-        durationData.intervals = durationData.intervals+1 
-    end
+    local gainedZombieKills, gainedSurvivorKills = SRJ.calculateGainedKills(journalModData, player, doReading)
+    durationData.kills.Zombie = gainedZombieKills
+    durationData.kills.Survivor = gainedSurvivorKills
+    durationData.intervals = durationData.intervals + gainedZombieKills + gainedSurvivorKills
 
 	--modData
     local modDataStored

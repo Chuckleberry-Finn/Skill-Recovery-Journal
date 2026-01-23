@@ -194,6 +194,90 @@ function SRJ.getGainedRecipes(player, exclude)
 end
 
 
+function SRJ.calculateGainedKills(journalModData, player, doReading)
+	local killsRecoveryPercentage = SandboxVars.SkillRecoveryJournal.KillsTrack or 0
+	if killsRecoveryPercentage <= 0 then return 0,0 end
+
+    local zKills = 0
+	local sKills = 0
+	local accountedZombieKills = 0
+	local accountedSurvivorKills = 0
+
+    if doReading then
+		local readXP = SRJ.modDataHandler.getReadXP(player)
+       -- read journal kills
+        zKills = journalModData.kills and journalModData.kills.Zombie or 0
+        sKills = journalModData.kills and journalModData.kills.Survivor or 0
+
+        -- dont count kills already read 
+        accountedZombieKills = readXP.kills and readXP.kills.Zombie or 0
+        accountedSurvivorKills = readXP.kills and readXP.kills.Survivor or 0
+
+    else
+        -- write player kills
+	    zKills = math.floor(player:getZombieKills() * (killsRecoveryPercentage / 100))
+	    sKills = math.floor(player:getSurvivorKills() * (killsRecoveryPercentage / 100))
+
+        -- dont count kills already transcribed 
+        accountedZombieKills = (journalModData.kills.Zombie or 0)
+        accountedSurvivorKills = (journalModData.kills.Survivor or 0)
+    end
+
+    local unaccountedZKills = math.max(0, (zKills - accountedZombieKills))
+    local unaccountedSKills = math.max(0, (sKills - accountedSurvivorKills))
+	print("--calculateGainedKills - Z", unaccountedZKills,", S",  unaccountedSKills)
+
+	return unaccountedZKills, unaccountedSKills
+end
+
+
+function  SRJ.handleKills(durationData, player, journalModData, changesBeingMade, doReading)
+
+	local readXP = SRJ.modDataHandler.getReadXP(player)
+	local zKillGainRate = math.ceil((durationData.kills.Zombie or 0) / (durationData.intervals * 0.5)) -- kill processing will be completed after ~50% or earlier
+	local sKillGainRate = math.ceil((durationData.kills.Survivor or 0) / (durationData.intervals * 0.5))
+
+	print("--handleKills - Z", zKillGainRate,", S",  sKillGainRate)
+	local changesMade = false
+	if zKillGainRate == 0 and sKillGainRate == 0 then return changesMade end
+
+	if (zKillGainRate > 0) then
+		local newZKills = 0
+		if doReading then
+			newZKills = zKillGainRate + player:getZombieKills()
+			newZKills = math.min(newZKills, journalModData.kills.Zombie) -- max is stored value
+			player:setZombieKills(newZKills) 
+		else
+			newZKills = zKillGainRate + (journalModData.kills.Zombie or 0)
+			newZKills = math.min(newZKills, player:getZombieKills()) -- max is player value
+			journalModData.kills.Zombie = newZKills
+		end
+		readXP.kills.Zombie = newZKills
+
+		table.insert(changesBeingMade, getText("IGUI_char_Zombies_Killed"))
+		changesMade = true
+	end
+
+	if (sKillGainRate > 0) then
+		local newSKills = 0
+		if doReading then
+		 	newSKills = sKillGainRate + (player:getSurvivorKills() or 0)
+			newSKills = math.min(newSKills, journalModData.kills.Survivor) -- max is stored value
+			player:setSurvivorSKills(newSKills)
+		else
+		 	newSKills = sKillGainRate + (journalModData.kills.Survivor or 0)
+			newSKills = math.min(newSKills, player:getSurvivorKills()) -- max is player value
+			journalModData.kills.Survivor = newSKills
+		end
+		readXP.kills.Survivor = newSKills
+		
+		table.insert(changesBeingMade, getText("IGUI_char_Survivor_Killed"))
+		changesMade = true
+	end
+	return changesMade
+end
+
+
 function SRJ.showHaloProgressText(character, changesBeingMade, totalStoredXP, totalRecoverableXP, oldJournalTotalXP, title)
 	if isServer() then
 		local args = {}

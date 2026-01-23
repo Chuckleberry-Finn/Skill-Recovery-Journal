@@ -105,7 +105,10 @@ end
 
 function SRJ_ModDataHandler.getReadXP(player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
-	pMD.recoveryJournalXpLog = pMD.recoveryJournalXpLog or {}
+	if not pMD.recoveryJournalXpLog then
+		pMD.recoveryJournalXpLog = {}
+		pMD.recoveryJournalXpLog.kills = {}
+	end
 	return pMD.recoveryJournalXpLog
 end
 
@@ -131,6 +134,7 @@ function SRJ_ModDataHandler.getItemModData(item)
     	iMd["SRJ"] = {}
 		iMd["SRJ"]["gainedXP"] = {}
 		iMd["SRJ"]["learnedRecipes"] = {}
+		iMd["SRJ"]["kills"] = {}
 	end
     return iMd["SRJ"]
 end
