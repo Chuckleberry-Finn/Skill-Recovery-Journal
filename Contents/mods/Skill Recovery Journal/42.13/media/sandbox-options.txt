@@ -37,7 +37,7 @@ option SkillRecoveryJournal.RecoverFarmingCategorySkills
 {type = integer, min = -1, max = 100, default = -1, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverFarmingCategorySkills,}
 
 option SkillRecoveryJournal.KillsTrack
-{type = integer, min = 0, max = 100, default = 0, page = SkillRecoveryJournal, translation = SkillRecoveryJournalKillsTrack,}
+{type = integer, min = -1, max = 100, default = 0, page = SkillRecoveryJournal, translation = SkillRecoveryJournalKillsTrack,}
 
 option SkillRecoveryJournal.RecoverRecipes
 {type = boolean, default = true, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverRecipes,}
