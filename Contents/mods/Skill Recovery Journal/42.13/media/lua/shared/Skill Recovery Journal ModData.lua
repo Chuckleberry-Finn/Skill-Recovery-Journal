@@ -106,6 +106,8 @@ function SRJ_ModDataHandler.getReadXP(player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
 	if not pMD.recoveryJournalXpLog then
 		pMD.recoveryJournalXpLog = {}
+	end
+	if not pMD.recoveryJournalXpLog.kills then -- for pre-existing journals
 		pMD.recoveryJournalXpLog.kills = {}
 	end
 	return pMD.recoveryJournalXpLog
@@ -133,6 +135,8 @@ function SRJ_ModDataHandler.getItemModData(item)
     	iMd["SRJ"] = {}
 		iMd["SRJ"]["gainedXP"] = {}
 		iMd["SRJ"]["learnedRecipes"] = {}
+	end
+	if not iMd["SRJ"]["kills"] then -- for pre-existing journals
 		iMd["SRJ"]["kills"] = {}
 	end
     return iMd["SRJ"]

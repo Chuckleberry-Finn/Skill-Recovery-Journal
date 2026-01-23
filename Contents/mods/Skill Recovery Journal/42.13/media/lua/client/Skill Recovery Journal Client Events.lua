@@ -9,7 +9,7 @@ function OnServerWriteCommand(module, command, args)
     -- server sends changes for client to show
     if module == "SkillRecoveryJournal" then
         if command == "write_changes" then 
-            SRJ.showHaloProgressText(getPlayer(), args.changesBeingMade, args.totalStoredXP, args.totalRecoverableXP, args.oldJournalTotalXP, args.title)
+            SRJ.showHaloProgressText(getPlayer(), args.changesBeingMade, args.updateCount, args.maxUpdates, args.title)
         elseif command == "character_say" then
             SRJ.showCharacterFeedback(getPlayer(), args.text)
         end
