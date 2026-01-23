@@ -113,7 +113,7 @@ function WriteSkillRecoveryJournal:update()
 	-- if updateTick was reached
 	if self:updateWriting() then
 		-- handle sound if changes made or MP
-		if self.changesMade==true or isClient() then
+		if isClient() then
 			-- play sound every 2-6 updates
 			self.playSoundLater = self.playSoundLater or 0
 			if self.playSoundLater > 0 then
@@ -140,12 +140,12 @@ function WriteSkillRecoveryJournal:updateWriting()
 		-- plan next update one interval later
 		self.updateTime = self.updateTime + self.updateInterval
 
+		self.updates = self.updates + 1
+
 		-- all updating is done by server
 		if isClient() then return true end
 
-		self.changesMade = false
-
-		local changesBeingMade, changesBeingMadeIndex = {}, {}
+		local changesMade = false
 
 		local JMD = SRJ.modDataHandler.getItemModData(self.item)
 		local journalID = JMD["ID"]
@@ -155,25 +155,22 @@ function WriteSkillRecoveryJournal:updateWriting()
 		local bOwner = true
 		if pSteamID ~= 0 and journalID and journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then bOwner = false end
 		if pUsername and journalID and journalID["username"] and (journalID["username"] ~= pUsername) then bOwner = false end
-
+		
 		-- write gained recipes
 		if bOwner and (#self.gainedRecipes > 0) then
-			self.recipeIntervals = self.recipeIntervals+1
-			self.changesMade = true
+			changesMade = true
 
-			if self.recipeIntervals > 5 then
-				local recipeChunk = self.durationData.recipeChunk
+			local recipeChunk = self.durationData.recipeChunk
+			if recipeChunk and self.updates % self.durationData.recipeInterval == 0 then
 
-				local properPlural = getText("IGUI_Tooltip_Recipe")
-				if recipeChunk>1 then properPlural = getText("IGUI_Tooltip_Recipes") end
-				table.insert(changesBeingMade, recipeChunk.." "..properPlural)
-
-				for i=0, recipeChunk do
-					local recipeID = self.gainedRecipes[#self.gainedRecipes]
-					JMD["learnedRecipes"][recipeID] = true
-					table.remove(self.gainedRecipes,#self.gainedRecipes)
+				for i=1, recipeChunk do
+					if #self.gainedRecipes > 0 then
+						local recipeID = self.gainedRecipes[#self.gainedRecipes]
+						JMD["learnedRecipes"][recipeID] = true
+						table.remove(self.gainedRecipes,#self.gainedRecipes)
+						self.changesBeingMadeIndex["recipes"] = (self.changesBeingMadeIndex["recipes"] or 0) + 1
+					end
 				end
-				self.recipeIntervals = 0
 			end
 		end
 
@@ -194,12 +191,12 @@ function WriteSkillRecoveryJournal:updateWriting()
 						local xpRate = self.durationData.rates[perkID] or 0
 						if xpRate>0 then
 
-							self.changesMade = true
-							local skill_name = getTextOrNull("IGUI_perks_"..perkID) or perkID
+							changesMade = true
 
-							if not changesBeingMadeIndex[skill_name] then
-								changesBeingMadeIndex[skill_name] = true
-								table.insert(changesBeingMade, skill_name)
+							local skill_name = getTextOrNull("IGUI_perks_"..perkID) or perkID
+							if not self.changesBeingMadeIndex[skill_name] then
+								self.changesBeingMadeIndex[skill_name] = true
+								table.insert(self.changesBeingMade, skill_name)
 							end
 
 							local resultingXp = math.min(xp, storedJournalXP[perkID]+xpRate)
@@ -218,8 +215,17 @@ function WriteSkillRecoveryJournal:updateWriting()
 		-- write kills if player has more kills than stored
 		local writeKills = self.durationData.kills.Zombie > 0 or self.durationData.kills.Survivor > 0
 		if writeKills and ((self.character:getZombieKills() or 0) > (JMD.kills.Zombie or 0)) or ((self.character:getSurvivorKills() or 0) > (JMD.kills.Survivor or 0)) then
-			local killsWritten = SRJ.handleKills(self.durationData, self.character, JMD, changesBeingMade, false)
-			self.changesMade = self.changesMade or killsWritten
+			local zombies, survivor = SRJ.handleKills(self.durationData, self.character, JMD, false)
+			if survivor and not self.changesBeingMadeIndex["survivorKills"] then
+				table.insert(self.changesBeingMade, getText("IGUI_char_Survivor_Killed"))
+				self.changesBeingMadeIndex["survivorKills"] = true
+				changesMade = true
+			end
+			if zombies and not self.changesBeingMadeIndex["zombieKills"] then
+				table.insert(self.changesBeingMade, getText("IGUI_char_Zombies_Killed"))
+				self.changesBeingMadeIndex["zombieKills"] = true
+				changesMade = true
+			end
 		end
 
 		-- copy custom mod data to journal
@@ -228,14 +234,14 @@ function WriteSkillRecoveryJournal:updateWriting()
 			local modDataStored = SRJ.modDataHandler.copyDataToJournal(self.character, self.item)
 			if modDataStored then
 				for _,dataID in pairs(modDataStored) do
-					table.insert(changesBeingMade, dataID)
+					table.insert(self.changesBeingMade, dataID)
 				end
-				self.changesMade = true
+				changesMade = true
 			end
 		end
 
 		-- end if nothing gained
-		if self.changesMade == false then
+		if changesMade == false then
 			-- give feedback why we stop
 			local feedback ="IGUI_PlayerText_NothingToAddToJournal"
 			if self.wroteNewContent then
@@ -260,9 +266,20 @@ function WriteSkillRecoveryJournal:updateWriting()
 
 			-- show transcript progress as halo text 
 			-- every nth update show a halo (should be >= 40 in-game seconds)
-			self.haloTextIntervals = self.haloTextIntervals + 1
-			if self.haloTextIntervals % 4 == 0 then -- show halo text every 4th update
-				SRJ.showHaloProgressText(self.character, changesBeingMade, self.haloTextIntervals, self.durationData.intervals, "IGUI_Tooltip_Transcribing")
+			if self.updates % 4 == 0 then -- show halo text every 4th update
+				-- summarize recipes
+				local properPlural = getText("IGUI_Tooltip_Recipe")
+				local recipeChunk = self.changesBeingMadeIndex["recipes"]
+					if recipeChunk and recipeChunk > 0 then
+					if recipeChunk>1 then properPlural = getText("IGUI_Tooltip_Recipes") end
+					table.insert(self.changesBeingMade, recipeChunk.." "..properPlural)
+				end
+
+				SRJ.showHaloProgressText(self.character, self.changesBeingMade, self.updates, self.durationData.intervals, "IGUI_Tooltip_Transcribing")
+
+				-- reset pending changes
+				self.changesBeingMade = {}
+				self.changesBeingMadeIndex = {}
 			end
 		end
 
@@ -366,8 +383,7 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	o.timeFactor = (o.updateInterval / o.defaultUpdateInterval)
 	o.updateTime = now + o.updateInterval -- do first update after one interval
 	
-	o.recipeIntervals = 0 -- counter for recipe ticks
-	o.haloTextIntervals = -1 -- counter for halo text ticks, show init halo
+	o.updates = -1 -- update counter
 
 	-- for debug
 	o.lastUpdateTime = now

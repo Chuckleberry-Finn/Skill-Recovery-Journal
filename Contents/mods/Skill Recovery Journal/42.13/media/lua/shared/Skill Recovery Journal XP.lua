@@ -201,6 +201,7 @@ function SRJ_XPHandler.calculateReadWriteXpRates(SRJ, player, item, timeFactor, 
 		rates = {},
 		intervals = 0,
 		recipeChunk = 0,
+        recipeInterval = 4, -- update recipes every 4th update
 		kills = {},
 	}
 
@@ -213,7 +214,8 @@ function SRJ_XPHandler.calculateReadWriteXpRates(SRJ, player, item, timeFactor, 
 	--recipes
 	if gainedRecipes and #gainedRecipes > 0 then
 		durationData.recipeChunk = math.min(#gainedRecipes, math.floor(1.09^math.sqrt(#gainedRecipes))) * actionTimeMulti
-		local intervalsNeeded = math.ceil((durationData.recipeChunk * 5))
+		local intervalsNeeded = math.ceil((#gainedRecipes / (durationData.recipeChunk / durationData.recipeInterval)))
+        if getDebug() then print("New Recipes ", #gainedRecipes, " recipeChunk ", durationData.recipeChunk, " neededI ", intervalsNeeded) end
 		durationData.intervals = math.max(intervalsNeeded,durationData.intervals)
 	end
 

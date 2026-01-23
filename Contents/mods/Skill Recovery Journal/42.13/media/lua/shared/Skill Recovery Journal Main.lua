@@ -237,15 +237,15 @@ function SRJ.calculateGainedKills(journalModData, player, doReading)
 end
 
 
-function  SRJ.handleKills(durationData, player, journalModData, changesBeingMade, doReading)
-
+function  SRJ.handleKills(durationData, player, journalModData, doReading)
 	local readXP = SRJ.modDataHandler.getReadXP(player)
 	local zKillGainRate = math.ceil((durationData.kills.Zombie or 0) / (durationData.intervals * 0.5)) -- kill processing will be completed after ~50% or earlier
 	local sKillGainRate = math.ceil((durationData.kills.Survivor or 0) / (durationData.intervals * 0.5))
 
 	--if getDebug() then print("--handleKills - Z", zKillGainRate,", S",  sKillGainRate) end
-	local changesMade = false
-	if zKillGainRate == 0 and sKillGainRate == 0 then return changesMade end
+	local zombies = false
+	local survivor = false
+	if zKillGainRate == 0 and sKillGainRate == 0 then return false end
 
 	if (zKillGainRate > 0) then
 		local newZKills = 0
@@ -261,9 +261,7 @@ function  SRJ.handleKills(durationData, player, journalModData, changesBeingMade
 			journalModData.kills.Zombie = newZKills
 		end
 		readXP.kills.Zombie = (readXP.kills.Zombie or 0) + zKillGainRate
-
-		table.insert(changesBeingMade, getText("IGUI_char_Zombies_Killed"))
-		changesMade = true
+		zombies = true
 	end
 
 	if (sKillGainRate > 0) then
@@ -282,11 +280,9 @@ function  SRJ.handleKills(durationData, player, journalModData, changesBeingMade
 			journalModData.kills.Survivor = newSKills
 		end
 		readXP.kills.Survivor = (readXP.kills.Survivor or 0) + sKillGainRate
-		
-		table.insert(changesBeingMade, getText("IGUI_char_Survivor_Killed"))
-		changesMade = true
+		survivor = true
 	end
-	return changesMade
+	return zombies, survivor
 end
 
 
