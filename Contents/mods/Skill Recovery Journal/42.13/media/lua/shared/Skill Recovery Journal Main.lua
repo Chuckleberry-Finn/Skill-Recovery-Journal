@@ -196,7 +196,13 @@ end
 
 function SRJ.calculateGainedKills(journalModData, player, doReading)
 	local killsRecoveryPercentage = SandboxVars.SkillRecoveryJournal.KillsTrack or 0
-	if killsRecoveryPercentage <= 0 then return 0,0 end
+	if killsRecoveryPercentage < 0 then
+		killsRecoveryPercentage = SandboxVars.SkillRecoveryJournal.RecoveryPercentage
+	end
+	
+	if killsRecoveryPercentage == 0 then 
+		return 0,0
+ 	end
 
     local zKills = 0
 	local sKills = 0
