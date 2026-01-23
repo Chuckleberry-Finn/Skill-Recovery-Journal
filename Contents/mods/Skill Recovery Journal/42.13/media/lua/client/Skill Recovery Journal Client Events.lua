@@ -12,6 +12,10 @@ function OnServerWriteCommand(module, command, args)
             SRJ.showHaloProgressText(getPlayer(), args.changesBeingMade, args.updateCount, args.maxUpdates, args.title)
         elseif command == "character_say" then
             SRJ.showCharacterFeedback(getPlayer(), args.text)
+        elseif command == "zKills" then
+            getPlayer():setZombieKills(args.kills)
+        elseif command == "sKills" then
+            getPlayer():setSurvivorKills(args.kills)
         end
     end
 end

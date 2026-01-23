@@ -247,6 +247,10 @@ function  SRJ.handleKills(durationData, player, journalModData, changesBeingMade
 		if doReading then
 			newZKills = zKillGainRate + player:getZombieKills()
 			player:setZombieKills(newZKills) 
+			if isServer() then
+				-- let the client know about the change
+				sendServerCommand(player, "SkillRecoveryJournal", "zKills", {kills = newZKills})
+			end
 		else
 			newZKills = zKillGainRate + (journalModData.kills.Zombie or 0)
 			journalModData.kills.Zombie = newZKills
@@ -263,6 +267,10 @@ function  SRJ.handleKills(durationData, player, journalModData, changesBeingMade
 		 	newSKills = sKillGainRate + (player:getSurvivorKills() or 0)
 			newSKills = math.min(newSKills, journalModData.kills.Survivor) -- max is stored value
 			player:setSurvivorSKills(newSKills)
+			if isServer() then
+				-- let the client know about the change
+				sendServerCommand(player, "SkillRecoveryJournal", "sKills", {kills = newSKills})
+			end
 		else
 		 	newSKills = sKillGainRate + (journalModData.kills.Survivor or 0)
 			newSKills = math.min(newSKills, player:getSurvivorKills()) -- max is player value

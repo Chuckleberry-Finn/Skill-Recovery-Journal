@@ -89,8 +89,8 @@ local function SRJ_generateTooltip(JMD, player)
 
 		if jmdZKills or jmdSKills then
 			skillsRecord = skillsRecord.."\n"
-			if jmdZKills and jmdZKills>0 then skillsRecord = skillsRecord .. getText("IGUI_char_Zombies_Killed")..":"..jmdZKills.."\n" end
-			if jmdSKills and jmdSKills>0 then skillsRecord = skillsRecord .. getText("IGUI_char_Survivor_Killed")..":"..jmdSKills.."\n" end
+			if jmdZKills and jmdZKills>0 then skillsRecord = skillsRecord .. getText("IGUI_char_Zombies_Killed")..": "..jmdZKills.."\n" end
+			if jmdSKills and jmdSKills>0 then skillsRecord = skillsRecord .. getText("IGUI_char_Survivor_Killed")..": "..jmdSKills.."\n" end
 		end
 	end
 
