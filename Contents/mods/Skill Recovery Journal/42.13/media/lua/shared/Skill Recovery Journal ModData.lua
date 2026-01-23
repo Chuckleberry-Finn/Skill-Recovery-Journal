@@ -179,6 +179,11 @@ local function SkillRecoveryJournalOnClientCommand(module, command, player, args
 				journalData = args.journalData,
 				playerData = args.playerData
 			}
+		elseif command == "addxp" then
+			if getDebug() then print("SkillRecoveryJournal received add xp from player " .. tostring(playerID) .. " for skill " .. args.perk) end
+			local perk = args.perk
+			local xp = tonumber(args.xp) or 0
+			addXpNoMultiplier(player, Perks[perk], xp)
 		elseif command == "rename" then
 			if getDebug() then print("SkillRecoveryJournal received rename for item " .. tostring(args.itemID) .. " from player " .. tostring(playerID)) end
 			local item = player:getInventory():getItemWithIDRecursiv(args.itemID)

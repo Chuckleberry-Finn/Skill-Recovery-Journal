@@ -246,7 +246,7 @@ function ReadSkillRecoveryJournal:update()
 
 								-- send add xp to server
 								local addedXP = SRJ.xpHandler.reBoostXP(player,Perks[skill],perPerkXpRate)
-								sendAddXp(player, Perks[skill], addedXP, true)
+								sendClientCommand(player, "SkillRecoveryJournal", "addxp", {perk=skill, xp=addedXP})
 
 								changesMade = true
 
