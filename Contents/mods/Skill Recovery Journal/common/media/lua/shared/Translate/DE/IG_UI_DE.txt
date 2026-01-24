@@ -1,24 +1,26 @@
 IGUI_DE = {
     IGUI_PlayerText_NothingWritten = "Hier steht nichts geschrieben..",
-    IGUI_PlayerText_DontHaveAnyXP = "Ich habe keine Erfahrungen, die ich aufzeichnen koennte..",
-    IGUI_PlayerText_DoesntFeelRightToWrite = "Es fuehlt sich nicht richtig an, in das Journal von jemand anderem zu schreiben.",
-    IGUI_PlayerText_DoesntFeelRightToRead = "Es fuehlt sich nicht richtig an, das Journal von jemand anderem zu lesen.",
-    IGUI_PlayerText_NothingToAddToJournal = "Es gibt nichts mehr hinzuzufuegen.",
+    IGUI_PlayerText_DontHaveAnyXP = "Ich habe keine Erfahrungen, die ich aufzeichnen könnte..",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "Es fühlt sich nicht richtig an, in das Journal von jemand anderem zu schreiben.",
+    IGUI_PlayerText_DoesntFeelRightToRead = "Es fühlt sich nicht richtig an, das Journal von jemand anderem zu lesen.",
+    IGUI_PlayerText_NothingToAddToJournal = "Es gibt nichts mehr hinzuzufügen.",
     IGUI_PlayerText_AllDoneWithJournal = "Alles erledigt.",
     IGUI_PlayerText_Illiterate1 = "Ich kann nicht lesen.",
     IGUI_PlayerText_Illiterate2 = "Ich bin Analphabet.",
+
+    IGUI_TranscribeIntoJournal = "Schreibe in das Journal",
 
     IGUI_PlayerText_NeedGainWeight = "Ich sollte erst ein paar Pfunde zulegen...",
     IGUI_PlayerText_NeedLoseWeight = "Ich sollte erst ein paar Pfunde verlieren...",
 
     IGUI_Tooltip_Empty = "Ein leeres Journal, bereit zum Beschreiben.",
-    IGUI_Tooltip_Start = "Ein Eintrag ueber",
-    IGUI_Tooltip_End = "'das Leben von.",
+    IGUI_Tooltip_Start = "Aufgezeichnete Erfahrungen von ",
+    IGUI_Tooltip_End = ".",
     IGUI_Tooltip_Recipe = "Rezept",
     IGUI_Tooltip_Recipes = "Rezepte",
-    IGUI_Tooltip_Transcribing = "Abschrift erstellen",
-    IGUI_Tooltip_Learning = "Lernen",
-    IGUI_perks_Lightfoot = "Leichtfuessig",
+    IGUI_Tooltip_Transcribing = "Schreibe",
+    IGUI_Tooltip_Learning = "Lerne",
+    IGUI_perks_Lightfoot = "Leichtfüßig",
     IGUI_perks_Sneak = "Schleichen",
     IGUI_perks_PlantScavenging = "Nahrungssuche",
     IGUI_Rename = "Umbenennen",
@@ -28,8 +30,8 @@ IGUI_DE = {
 
     IGUI_ItemCat_SkillJournal = "Skill Journal",
     IGUI_GainedXPText = "Wiederherstellbare XP"
-    IGUI_OLDXP_WARNING = "Warnung: Dieses Journal enthaelt "ALTE" XP von vor den neuesten Updates. Es koennten anfaenglich einige Probleme auftreten. Diese Warnmeldung verschwindet, je mehr das Journal genutzt wird.",
-    IGUI_OneTimeUse_Warning = "Sandbox-Option fuer verwendete XP beim Lesen ist aktiviert.",
-    IGUI_TV_XP_Warning = "Sandbox-Option fuer XP, die durch Fernsehsendungen und VHS-Kassetten verdient werden, ist deaktiviert.",
+    IGUI_OLDXP_WARNING = "Warnung: Dieses Journal enthält "ALTE" XP von vor den neüsten Updates. Es könnten anfänglich einige Probleme auftreten. Diese Warnmeldung verschwindet, je mehr das Journal genutzt wird.",
+    IGUI_OneTimeUse_Warning = "Sandbox-Option für verwendete XP beim Lesen ist aktiviert.",
+    IGUI_TV_XP_Warning = "Sandbox-Option für XP, die durch Fernsehsendungen und VHS-Kassetten verdient werden, ist deaktiviert.",
     IGUI_Rename_Warning = "Benenne dieses Journal um, um diese Warnung zu deaktivieren.",
 }
