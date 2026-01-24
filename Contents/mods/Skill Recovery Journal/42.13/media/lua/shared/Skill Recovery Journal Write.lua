@@ -268,10 +268,10 @@ function WriteSkillRecoveryJournal:updateWriting()
 			-- every nth update show a halo (should be >= 40 in-game seconds)
 			if self.updates % 4 == 0 then -- show halo text every 4th update
 				-- summarize recipes
-				local properPlural = getText("IGUI_Tooltip_Recipe")
+				local properPlural = getTextOrNull("IGUI_Tooltip_Recipe") or "Recipe" -- FIXME: Server can not retrieve translation
 				local recipeChunk = self.changesBeingMadeIndex["recipes"]
 					if recipeChunk and recipeChunk > 0 then
-					if recipeChunk>1 then properPlural = getText("IGUI_Tooltip_Recipes") end
+					if recipeChunk>1 then properPlural = getTextOrNull("IGUI_Tooltip_Recipes") or "Recipes" end
 					table.insert(self.changesBeingMade, recipeChunk.." "..properPlural)
 				end
 
