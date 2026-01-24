@@ -231,7 +231,7 @@ function SRJ.calculateGainedKills(journalModData, player, doReading)
 
     local unaccountedZKills = math.max(0, (zKills - accountedZombieKills))
     local unaccountedSKills = math.max(0, (sKills - accountedSurvivorKills))
-	--if getDebug() then print("--calculateGainedKills - Z", unaccountedZKills,", S",  unaccountedSKills) end
+	if getDebug() then print("--calculateGainedKills - Z", unaccountedZKills,", S",  unaccountedSKills) end
 
 	return unaccountedZKills, unaccountedSKills
 end
