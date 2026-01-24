@@ -138,7 +138,7 @@ function ReadSkillRecoveryJournal:updateReading()
 			delayedStop = true
 			sayText = getText("IGUI_PlayerText_NothingWritten")
 
-		elseif self.character:hasTrait(CharacterTrait.ILLITERATE) then
+		elseif player:hasTrait(CharacterTrait.ILLITERATE) then
 			delayedStop = true
 			sayText = getText("IGUI_PlayerText_IGUI_PlayerText_Illiterate"..ZombRand(2)+1)-- 0,1 + 1
 
@@ -172,12 +172,14 @@ function ReadSkillRecoveryJournal:updateReading()
 				if recipeChunk > 0 and self.updates % self.durationData.recipeInterval == 0 then
 
 					for i=1, recipeChunk do
-						if #self.learnedRecipes > 0 then
-							local recipeID = self.learnedRecipes[#self.learnedRecipes]
-							if recipeID then player:learnRecipe(recipeID) end
-							table.remove(self.learnedRecipes,#self.learnedRecipes)
-							self.changesBeingMadeIndex["recipes"] = (self.changesBeingMadeIndex["recipes"] or 0) + 1
+						local recipeID = self.learnedRecipes[#self.learnedRecipes]
+						if recipeID then player:learnRecipe(recipeID) end
+						if isServer() and sendSyncPlayerFields then
+							-- sync PF_Recipes
+							sendSyncPlayerFields(player, 0x00000001);
 						end
+						table.remove(self.learnedRecipes,#self.learnedRecipes)
+						self.changesBeingMadeIndex["recipes"] = (self.changesBeingMadeIndex["recipes"] or 0) + 1
 					end
 				end
 			end

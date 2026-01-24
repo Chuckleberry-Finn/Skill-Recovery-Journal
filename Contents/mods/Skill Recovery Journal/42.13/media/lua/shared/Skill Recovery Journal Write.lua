@@ -145,12 +145,15 @@ function WriteSkillRecoveryJournal:updateWriting()
 		-- all updating is done by server
 		if isClient() then return true end
 
-		local changesMade = false
+		---@type IsoGameCharacter | IsoPlayer | IsoMovingObject | IsoObject
+		local player = self.character
 
 		local JMD = SRJ.modDataHandler.getItemModData(self.item)
+		local changesMade = false
+
 		local journalID = JMD["ID"]
-		local pSteamID = self.character:getSteamID()
-		local pUsername = self.character:getUsername()
+		local pSteamID = player:getSteamID()
+		local pUsername = player:getUsername()
 
 		local bOwner = true
 		if pSteamID ~= 0 and journalID and journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then bOwner = false end
@@ -164,19 +167,17 @@ function WriteSkillRecoveryJournal:updateWriting()
 			if recipeChunk and self.updates % self.durationData.recipeInterval == 0 then
 
 				for i=1, recipeChunk do
-					if #self.gainedRecipes > 0 then
-						local recipeID = self.gainedRecipes[#self.gainedRecipes]
-						JMD["learnedRecipes"][recipeID] = true
-						table.remove(self.gainedRecipes,#self.gainedRecipes)
-						self.changesBeingMadeIndex["recipes"] = (self.changesBeingMadeIndex["recipes"] or 0) + 1
-					end
+					local recipeID = self.gainedRecipes[#self.gainedRecipes]
+					JMD["learnedRecipes"][recipeID] = true
+					table.remove(self.gainedRecipes,#self.gainedRecipes)
+					self.changesBeingMadeIndex["recipes"] = (self.changesBeingMadeIndex["recipes"] or 0) + 1
 				end
 			end
 		end
 
 		-- write gained xp
 		local storedJournalXP = JMD["gainedXP"]
-		local readXP = SRJ.modDataHandler.getReadXP(self.character)
+		local readXP = SRJ.modDataHandler.getReadXP(player)
 		local totalRecoverableXP = 1
 		local totalStoredXP = 1
 
@@ -214,8 +215,8 @@ function WriteSkillRecoveryJournal:updateWriting()
 
 		-- write kills if player has more kills than stored
 		local writeKills = self.durationData.kills.Zombie > 0 or self.durationData.kills.Survivor > 0
-		if writeKills and ((self.character:getZombieKills() or 0) > (JMD.kills.Zombie or 0)) or ((self.character:getSurvivorKills() or 0) > (JMD.kills.Survivor or 0)) then
-			local zombies, survivor = SRJ.handleKills(self.durationData, self.character, JMD, false)
+		if writeKills and ((player:getZombieKills() or 0) > (JMD.kills.Zombie or 0)) or ((player:getSurvivorKills() or 0) > (JMD.kills.Survivor or 0)) then
+			local zombies, survivor = SRJ.handleKills(self.durationData, player, JMD, false)
 			if survivor and not self.changesBeingMadeIndex["survivorKills"] then
 				table.insert(self.changesBeingMade, getText("IGUI_char_Survivor_Killed"))
 				self.changesBeingMadeIndex["survivorKills"] = true
@@ -231,7 +232,7 @@ function WriteSkillRecoveryJournal:updateWriting()
 		-- copy custom mod data to journal
 		if not self.modDataStoredComplete then
 			self.modDataStoredComplete = true
-			local modDataStored = SRJ.modDataHandler.copyDataToJournal(self.character, self.item)
+			local modDataStored = SRJ.modDataHandler.copyDataToJournal(player, self.item)
 			if modDataStored then
 				for _,dataID in pairs(modDataStored) do
 					table.insert(self.changesBeingMade, dataID)
@@ -248,7 +249,7 @@ function WriteSkillRecoveryJournal:updateWriting()
 				feedback = "IGUI_PlayerText_AllDoneWithJournal"
 			end
 
-			SRJ.showCharacterFeedback(self.character, feedback)
+			SRJ.showCharacterFeedback(player, feedback)
 
 			-- invoke stop
 			if isServer() then
@@ -261,7 +262,7 @@ function WriteSkillRecoveryJournal:updateWriting()
 			self.wroteNewContent = true
 
 			if isServer() then
-				syncItemModData(self.character, self.item) -- syncs item tooltip
+				syncItemModData(player, self.item) -- syncs item tooltip
 			end
 
 			-- show transcript progress as halo text 
@@ -275,7 +276,7 @@ function WriteSkillRecoveryJournal:updateWriting()
 					table.insert(self.changesBeingMade, recipeChunk.." "..properPlural)
 				end
 
-				SRJ.showHaloProgressText(self.character, self.changesBeingMade, self.updates, self.durationData.intervals, "IGUI_Tooltip_Transcribing")
+				SRJ.showHaloProgressText(player, self.changesBeingMade, self.updates, self.durationData.intervals, "IGUI_Tooltip_Transcribing")
 
 				-- reset pending changes
 				self.changesBeingMade = {}
