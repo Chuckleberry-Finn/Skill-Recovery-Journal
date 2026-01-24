@@ -33,7 +33,7 @@ end
 
 
 function ReadSkillRecoveryJournal:stop()
-	if getDebug() then print("ReadSkillRecoveryJournal stop after " .. tostring((SRJ.gameTime:getWorldAgeHours() - self.startTime) * 3600)) end
+	if getDebug() then print("ReadSkillRecoveryJournal stop after " .. tostring((getTimestampMs() - self.startTime) * 3600)) end
 	self.character:setReading(false);
 	self.item:setJobDelta(0.0);
 	self.character:playSound("CloseBook")
@@ -54,6 +54,7 @@ end
 
 function ReadSkillRecoveryJournal:serverStop()
 	--if getDebug() then print("ReadSkillRecoveryJournal serverStop") end
+	if getDebug() then print("ReadSkillRecoveryJournal serverStop after " .. tostring((getTimestampMs() - self.startTime) * 3600)) end
 	syncItemModData(self.character, self.item)
 end
 
@@ -71,7 +72,7 @@ end
 
 
 function ReadSkillRecoveryJournal:complete()
-	if getDebug() then print("WriteSkillRecoveryJournal complete") end
+	if getDebug() then print("ReadSkillRecoveryJournal complete after " .. tostring((getTimestampMs() - self.startTime) * 3600)) end
 	self.item:setJobDelta(0.0);
 	syncItemModData(self.character, self.item)
 	return true
@@ -111,8 +112,6 @@ function ReadSkillRecoveryJournal:updateReading()
 
 	-- normalize update time via in game time. Adjust updateInterval as needed
 	if now >= self.updateTime then
-		--print("update after " ..  tostring((now - self.lastUpdateTime) * 60 * 60) .. " in-game seconds -> lastUpdate " .. tostring(self.lastUpdateTime))
-		self.lastUpdateTime = now or 0 -- for debug
 
 		-- plan next update one interval later
 		self.updateTime = self.updateTime + self.updateInterval
@@ -314,8 +313,9 @@ function ReadSkillRecoveryJournal:updateReading()
 			self.spoke = true
 			SRJ.showCharacterFeedback(player, sayText)
 		else
-			-- show halo text
-			if self.updates % 4 == 0 then -- show halo text every 4th update
+			-- show halo text every 2 real-time seconds
+			local rtNow = getTimestampMs()
+			if rtNow - self.lastUpdateTime > 2000 then
 				-- summarize recipes
 				local properPlural = getTextOrNull("IGUI_Tooltip_Recipe") or "Recipe" -- FIXME: Server can not retrieve translation
 				local recipeChunk = self.changesBeingMadeIndex["recipes"]
@@ -329,6 +329,8 @@ function ReadSkillRecoveryJournal:updateReading()
 				-- reset pending changes
 				self.changesBeingMade = {}
 				self.changesBeingMadeIndex = {}
+
+				self.lastUpdateTime = rtNow
 			end
 
 			-- sync modData to show journal decay tooltip
@@ -401,8 +403,8 @@ function ReadSkillRecoveryJournal:new(character, item)
 	o.updates = -1 -- update counter
 
 	-- for debug
-	o.lastUpdateTime = now
-	o.startTime = now
+	o.lastUpdateTime = 0
+	o.startTime = getTimestampMs()
 	
 	o.durationData = SRJ.xpHandler.calculateReadWriteXpRates(SRJ, character, item, o.timeFactor, o.learnedRecipes, nil, true, o.updateInterval)
 

@@ -44,7 +44,7 @@ end
 
 -- called on client on client stop
 function WriteSkillRecoveryJournal:stop()
-	if getDebug() then print("WriteSkillRecoveryJournal stop with changes " .. tostring(self.wroteNewContent) .. " after " .. tostring((SRJ.gameTime:getWorldAgeHours() - self.startTime) * 3600)) end
+	if getDebug() then print("WriteSkillRecoveryJournal stop with changes " .. tostring(self.wroteNewContent) .. " after " .. tostring((getTimestampMs() - self.startTime) * 3600)) end
 	self.character:setReading(false);
 	self.item:setJobDelta(0.0);
 	self.character:playSound("CloseBook")
@@ -59,15 +59,13 @@ end
 -- called on server on client start
 function WriteSkillRecoveryJournal:serverStart()
 	--if getDebug() then print("WriteSkillRecoveryJournal serverStart") end
-	print("WriteSkillRecoveryJournal serverStart")
 	emulateAnimEvent(self.netAction, 10, "update", nil)
 end
 
 
 -- called on server on client stop
 function WriteSkillRecoveryJournal:serverStop()
-	--if getDebug() then print("WriteSkillRecoveryJournal serverStop") end
-	print("WriteSkillRecoveryJournal serverStop after " .. tostring((SRJ.gameTime:getWorldAgeHours() - self.startTime) * 3600))
+	if getDebug() then print("WriteSkillRecoveryJournal serverStop after " .. tostring((getTimestampMs() - self.startTime) * 3600)) end
 	syncItemModData(self.character, self.item)
 end
 
@@ -87,7 +85,7 @@ end
 
 -- called on server on server complete
 function WriteSkillRecoveryJournal:complete()
-	print("WriteSkillRecoveryJournal complete after " .. tostring((SRJ.gameTime:getWorldAgeHours() - self.startTime) * 3600))
+	if getDebug() then print("WriteSkillRecoveryJournal complete after " .. tostring((getTimestampMs() - self.startTime) * 3600)) end
     self.item:setJobDelta(0.0);
 	syncItemModData(self.character, self.item)
 	return true
@@ -134,8 +132,6 @@ function WriteSkillRecoveryJournal:updateWriting()
 
 	-- if time has progressed over planned update time, do update
 	if now >= self.updateTime then
-		--print("update after " ..  tostring((now - self.lastUpdateTime) * 60 * 60) .. " in-game seconds -> lastUpdate " .. tostring(self.lastUpdateTime))
-		self.lastUpdateTime = now or 0 -- for debug
 
 		-- plan next update one interval later
 		self.updateTime = self.updateTime + self.updateInterval
@@ -265,9 +261,9 @@ function WriteSkillRecoveryJournal:updateWriting()
 				syncItemModData(player, self.item) -- syncs item tooltip
 			end
 
-			-- show transcript progress as halo text 
-			-- every nth update show a halo (should be >= 40 in-game seconds)
-			if self.updates % 4 == 0 then -- show halo text every 4th update
+			-- show transcript progress as halo text every 2 real-time seconds
+			local rtNow = getTimestampMs()
+			if (rtNow - self.lastUpdateTime) > 2000 then
 				-- summarize recipes
 				local properPlural = getTextOrNull("IGUI_Tooltip_Recipe") or "Recipe" -- FIXME: Server can not retrieve translation
 				local recipeChunk = self.changesBeingMadeIndex["recipes"]
@@ -281,6 +277,8 @@ function WriteSkillRecoveryJournal:updateWriting()
 				-- reset pending changes
 				self.changesBeingMade = {}
 				self.changesBeingMadeIndex = {}
+
+				self.lastUpdateTime = rtNow
 			end
 		end
 
@@ -386,9 +384,8 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 	
 	o.updates = -1 -- update counter
 
-	-- for debug
-	o.lastUpdateTime = now
-	o.startTime = now
+	o.lastUpdateTime = 0
+	o.startTime = getTimestampMs()
 
 	o.durationData = SRJ.xpHandler.calculateReadWriteXpRates(SRJ, character, item, o.timeFactor, o.gainedRecipes, o.gainedSkills, false, o.updateInterval)
 
