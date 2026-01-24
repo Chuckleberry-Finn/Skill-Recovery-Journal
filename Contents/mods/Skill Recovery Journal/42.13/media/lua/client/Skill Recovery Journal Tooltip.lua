@@ -78,7 +78,7 @@ local function SRJ_generateTooltip(JMD, player)
 			if recipeNum>0 then
 				local properPlural = getText("IGUI_Tooltip_Recipe")
 				if recipeNum>1 then properPlural = getText("IGUI_Tooltip_Recipes") end
-				skillsRecord = skillsRecord.."\n"..recipeNum.." "..properPlural..".".."\n"
+				skillsRecord = skillsRecord.."\n"..recipeNum.." "..properPlural.."\n"
 			end
 		end
 	end
