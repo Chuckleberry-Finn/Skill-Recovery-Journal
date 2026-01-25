@@ -5,7 +5,7 @@ description=[h1][i]Lore-friendly(ish) solution to the loss of a character.[/i][/
 description=[h2][i]Craftable journals which allow the recovery of skills and recipes.[/i][/h2]
 description=
 description=[url=https://ko-fi.com/chuckleberryfinn][img]https://raw.githubusercontent.com/ChuckTheSheep/chuckImages/main/kofi_big.png[/img][/url]
-description=
+description=[url=https://ko-fi.com/masscraxx][img]https://i.imgur.com/2Ip8ifN.png[/img][/url]
 description=[url=https://ko-fi.com/chuckleberryfinn][img]https://raw.githubusercontent.com/ChuckTheSheep/chuckImages/main/newRequired.png[/img][/url]
 description=
 description=[url=https://discord.gg/SReMnbV4V7][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/PZmodCommBanner2.png[/img][/url]
