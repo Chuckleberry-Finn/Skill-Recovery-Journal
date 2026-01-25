@@ -176,3 +176,15 @@ Credit: anonpony1/pcgames3112.
     - sync only that table with server
     - general cleanup modData, remove legacy oldXp and background fix
 [ ------ ]
+
+[ 01/25/26 ]
+- Changes for 42.13.2
+- This update moves all manipulative actions to the server side.
+    - transcription / read duration is now proportional to length of day set in sandbox vars.
+    - read duration is now calculated the same way as transcription time, resulting in lower reading times compared to before
+    - (passive) starting level for characters that existed before the mod was added will not be assumed to be 5, but is instead the current level of the character
+    - tooltip on skill list now shows stored starting level
+    - kills are now restored / recorded in chunks, just as xp
+    - halo text percentage is now based on number of updates instead of processed xp, making it more linear and accurate
+    - reading recipes may be a little slower
+[ ------ ]
