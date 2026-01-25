@@ -135,6 +135,7 @@ function SRJ_ModDataHandler.getItemModData(item)
     	iMd["SRJ"] = {}
 		iMd["SRJ"]["gainedXP"] = {}
 		iMd["SRJ"]["learnedRecipes"] = {}
+		iMd["SRJ"]["kills"] = {}
 	end
 	if not iMd["SRJ"]["kills"] then -- for pre-existing journals
 		iMd["SRJ"]["kills"] = {}

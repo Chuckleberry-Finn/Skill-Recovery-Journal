@@ -237,55 +237,6 @@ function SRJ.calculateGainedKills(journalModData, player, doReading)
 end
 
 
-function  SRJ.handleKills(durationData, player, journalModData, doReading)
-	local readXP = SRJ.modDataHandler.getReadXP(player)
-	local zKillGainRate = math.ceil((durationData.kills.Zombie or 0) / (durationData.intervals * 0.5)) -- kill processing will be completed after ~50% or earlier
-	local sKillGainRate = math.ceil((durationData.kills.Survivor or 0) / (durationData.intervals * 0.5))
-
-	--if getDebug() then print("--handleKills - Z", zKillGainRate,", S",  sKillGainRate) end
-	local zombies = false
-	local survivor = false
-	if zKillGainRate == 0 and sKillGainRate == 0 then return false end
-
-	if (zKillGainRate > 0) then
-		local newZKills = 0
-		if doReading then
-			newZKills = zKillGainRate + player:getZombieKills()
-			player:setZombieKills(newZKills) 
-			if isServer() then
-				-- let the client know about the change
-				sendServerCommand(player, "SkillRecoveryJournal", "zKills", {kills = newZKills})
-			end
-		else
-			newZKills = zKillGainRate + (journalModData.kills.Zombie or 0)
-			journalModData.kills.Zombie = newZKills
-		end
-		readXP.kills.Zombie = (readXP.kills.Zombie or 0) + zKillGainRate
-		zombies = true
-	end
-
-	if (sKillGainRate > 0) then
-		local newSKills = 0
-		if doReading then
-		 	newSKills = sKillGainRate + (player:getSurvivorKills() or 0)
-			newSKills = math.min(newSKills, journalModData.kills.Survivor) -- max is stored value
-			player:setSurvivorSKills(newSKills)
-			if isServer() then
-				-- let the client know about the change
-				sendServerCommand(player, "SkillRecoveryJournal", "sKills", {kills = newSKills})
-			end
-		else
-		 	newSKills = sKillGainRate + (journalModData.kills.Survivor or 0)
-			newSKills = math.min(newSKills, player:getSurvivorKills()) -- max is player value
-			journalModData.kills.Survivor = newSKills
-		end
-		readXP.kills.Survivor = (readXP.kills.Survivor or 0) + sKillGainRate
-		survivor = true
-	end
-	return zombies, survivor
-end
-
-
 function SRJ.showHaloProgressText(character, changesBeingMade, updateCount, maxUpdates, title)
 	if isServer() then
 		local args = {}
@@ -303,8 +254,19 @@ function SRJ.showHaloProgressText(character, changesBeingMade, updateCount, maxU
 		 	if getDebug() then print("Interval " .. updateCount, " / " .. maxUpdates) end
 		end
 
-		local changesBeingMadeText = getText(title) .. " (" .. progressText ..") :"
-		for k,v in pairs(changesBeingMade) do changesBeingMadeText = changesBeingMadeText.." "..v..((k~=#changesBeingMade and ", ") or "") end
+		local changesBeingMadeText = getText(title) .. " (" .. progressText .. ") : "
+		for k,v in pairs(changesBeingMade) do 
+			local seperator
+			local newText
+			if type(v) ~= "number" then
+				newText = getText(v)
+				seperator = (k ~= #changesBeingMade and ", ") or ""
+			else
+				newText = "+" .. tostring(v)
+				seperator = " "
+			end
+			changesBeingMadeText = changesBeingMadeText .. newText .. seperator
+		end
 		HaloTextHelper.addText(character, changesBeingMadeText, "", HaloTextHelper.getColorWhite())
 	end
 end

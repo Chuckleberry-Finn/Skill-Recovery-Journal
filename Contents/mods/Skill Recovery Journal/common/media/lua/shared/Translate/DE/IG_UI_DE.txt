@@ -14,7 +14,7 @@ IGUI_DE = {
     IGUI_PlayerText_NeedLoseWeight = "Ich sollte erst ein paar Pfunde verlieren...",
 
     IGUI_Tooltip_Empty = "Ein leeres Journal, bereit zum Beschreiben.",
-    IGUI_Tooltip_Start = "Aufgezeichnete Erfahrungen von ",
+    IGUI_Tooltip_Start = "Aufgezeichnete Erfahrungen von",
     IGUI_Tooltip_End = ".",
     IGUI_Tooltip_Recipe = "Rezept",
     IGUI_Tooltip_Recipes = "Rezepte",
