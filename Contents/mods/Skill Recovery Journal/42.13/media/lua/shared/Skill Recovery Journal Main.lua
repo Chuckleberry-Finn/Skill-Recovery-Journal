@@ -5,16 +5,9 @@ SRJ.xpPatched = false
 SRJ.xpHandler = require "Skill Recovery Journal XP"
 SRJ.modDataHandler = require "Skill Recovery Journal ModData"
 
-
-SRJ.maxXPDifferential = {}
-function SRJ.getMaxXPDifferential(perk)
-	if SRJ.maxXPDifferential[perk] then return SRJ.maxXPDifferential[perk] end
-	local maxXPDefault = Perks.PhysicalCategory:getTotalXpForLevel(10)
-	local maxXPPerk = Perks[perk]:getTotalXpForLevel(10)
-
-	SRJ.maxXPDifferential[perk] =maxXPDefault/maxXPPerk
-	return SRJ.maxXPDifferential[perk]
-end
+Events.OnGameTimeLoaded.Add(function()
+    SRJ.gameTime = GameTime.getInstance()
+end)
 
 
 ---@param player IsoGameCharacter|IsoPlayer
@@ -57,65 +50,12 @@ function SRJ.checkProteinLevelMulti(player)
 end
 
 
-function SRJ.getFreeLevelsFromTraitsAndProfession(player)
-	local bonusLevels = {}
-
-	-- xp granted by profession
-	local playerDesc = player:getDescriptor()
-	local playerProfessionID = playerDesc:getCharacterProfession()
-	local profDef = CharacterProfessionDefinition.getCharacterProfessionDefinition(playerProfessionID)
-	local profXpBoost = transformIntoKahluaTable(profDef:getXpBoosts())
-	if profXpBoost then
-		for perk,level in pairs(profXpBoost) do
-			local perky = tostring(perk)
-			local levely = tonumber(tostring(level))
-			bonusLevels[perky] = levely
-		end
-	end
-
-	-- xp granted by trait
-	local playerTraits = player:getCharacterTraits()
-	for i=0, playerTraits:getKnownTraits():size()-1 do
-		local traitTrait = playerTraits:getKnownTraits():get(i)
-		local traitDef = CharacterTraitDefinition.getCharacterTraitDefinition(traitTrait)
-		local traitXpBoost = transformIntoKahluaTable(traitDef:getXpBoosts())
-		if traitXpBoost then
-			for perk,level in pairs(traitXpBoost) do
-				local perky = tostring(perk)
-				local levely = tonumber(tostring(level))
-				bonusLevels[perky] = (bonusLevels[perky] or 0) + levely
-			end
-		end
-	end
-
-	return bonusLevels
-end
-
-
-function SRJ.correctSandBoxOptions(ID)
-	if SandboxVars.SkillRecoveryJournal[ID] == false then
-		SandboxVars.SkillRecoveryJournal[ID] = 0
-		return 0
-	elseif SandboxVars.SkillRecoveryJournal[ID] == true then
-		local recoverRate = SandboxVars.SkillRecoveryJournal.RecoveryPercentage or 100
-		SandboxVars.SkillRecoveryJournal[ID] = recoverRate
-		return recoverRate
-	end
-end
-
-
 function SRJ.bSkillValid(perk)
 	local ID = perk and perk:isPassiv() and "Passive" or perk:getParent():getId()
-
-	local correction = SRJ.correctSandBoxOptions("Recover"..ID.."Skills")
-
 	local specific = SandboxVars.SkillRecoveryJournal["Recover"..ID.."Skills"]
-	
 	--if getDebug() then print("bSkillValid check sandbox option 'SkillRecoveryJournal.Recover"..ID.."Skills' -> ".. tostring(specific)) end
-	if specific and type(specific)~="number" then specific = correction end
 
 	local default = SandboxVars.SkillRecoveryJournal.RecoveryPercentage or 100
-
 	local recoverPercentage = ((specific==nil) or (specific==-1)) and default or specific
 
 	return (not (recoverPercentage <= 0)), (recoverPercentage/100)
@@ -130,7 +70,7 @@ function SRJ.calculateGainedSkill(player, perk, passiveSkillsInit, startingLevel
 	end
 
 	if not startingLevels then
-		startingLevels = SRJ.getFreeLevelsFromTraitsAndProfession(player)
+		startingLevels = SRJ.modDataHandler.getFreeLevelsFromTraitsAndProfession(player)
 	end
 
 	if not deductibleXP then
@@ -183,7 +123,7 @@ function SRJ.calculateAllGainedSkills(player)
 	local gainedXP
 
 	local passiveSkillsInit = SRJ.modDataHandler.getPassiveLevels(player)
-	local startingLevels = SRJ.getFreeLevelsFromTraitsAndProfession(player)
+	local startingLevels = SRJ.modDataHandler.getFreeLevelsFromTraitsAndProfession(player)
 	local deductibleXP = SRJ.modDataHandler.getDeductedXP(player)
 
 	for i=1, Perks.getMaxIndex()-1 do
@@ -201,7 +141,7 @@ function SRJ.calculateAllGainedSkills(player)
 end
 
 
-function SRJ.getGainedRecipes(player)
+function SRJ.getGainedRecipes(player, exclude)
 	local gainedRecipes = {}
 
 	-- get all recipes known by player
@@ -243,13 +183,142 @@ function SRJ.getGainedRecipes(player)
 	--- return iterable list
 	local returnedGainedRecipes = {}
 	for recipeID,_ in pairs(gainedRecipes) do
-		-- TODO: remove auto learned recipes from skills (maybe we had higher level/xpBoost last life)
-		table.insert(returnedGainedRecipes, recipeID)
-		--if getDebug() then print("Resulting gained recipe " .. tostring(recipeID) .. " -> " .. tostring(_)) end
+		if not exclude or exclude[recipeID] ~= true then
+			-- TODO: remove auto learned recipes from skills (maybe we had higher level/xpBoost last life)
+			table.insert(returnedGainedRecipes, recipeID)
+			--if getDebug() then print("Resulting gained recipe " .. tostring(recipeID) .. " -> " .. tostring(_)) end
+		end
 	end
 
 	return returnedGainedRecipes
 end
 
+
+function SRJ.calculateGainedKills(journalModData, player, doReading)
+	local killsRecoveryPercentage = SandboxVars.SkillRecoveryJournal.KillsTrack or 0
+	if killsRecoveryPercentage < 0 then
+		killsRecoveryPercentage = SandboxVars.SkillRecoveryJournal.RecoveryPercentage
+	end
+	
+	if killsRecoveryPercentage == 0 then 
+		return 0,0
+ 	end
+
+    local zKills = 0
+	local sKills = 0
+	local accountedZombieKills = 0
+	local accountedSurvivorKills = 0
+
+    if doReading then
+		local readXP = SRJ.modDataHandler.getReadXP(player)
+       -- read journal kills
+        zKills = journalModData.kills and journalModData.kills.Zombie or 0
+        sKills = journalModData.kills and journalModData.kills.Survivor or 0
+
+        -- dont count kills already read 
+        accountedZombieKills = readXP.kills and readXP.kills.Zombie or 0
+        accountedSurvivorKills = readXP.kills and readXP.kills.Survivor or 0
+
+    else
+        -- write player kills
+	    zKills = math.floor(player:getZombieKills() * (killsRecoveryPercentage / 100))
+	    sKills = math.floor(player:getSurvivorKills() * (killsRecoveryPercentage / 100))
+
+        -- dont count kills already transcribed 
+        accountedZombieKills = (journalModData.kills.Zombie or 0)
+        accountedSurvivorKills = (journalModData.kills.Survivor or 0)
+    end
+
+    local unaccountedZKills = math.max(0, (zKills - accountedZombieKills))
+    local unaccountedSKills = math.max(0, (sKills - accountedSurvivorKills))
+	if getDebug() then print("--calculateGainedKills - Z", unaccountedZKills,", S",  unaccountedSKills) end
+
+	return unaccountedZKills, unaccountedSKills
+end
+
+
+function  SRJ.handleKills(durationData, player, journalModData, doReading)
+	local readXP = SRJ.modDataHandler.getReadXP(player)
+	local zKillGainRate = math.ceil((durationData.kills.Zombie or 0) / (durationData.intervals * 0.5)) -- kill processing will be completed after ~50% or earlier
+	local sKillGainRate = math.ceil((durationData.kills.Survivor or 0) / (durationData.intervals * 0.5))
+
+	--if getDebug() then print("--handleKills - Z", zKillGainRate,", S",  sKillGainRate) end
+	local zombies = false
+	local survivor = false
+	if zKillGainRate == 0 and sKillGainRate == 0 then return false end
+
+	if (zKillGainRate > 0) then
+		local newZKills = 0
+		if doReading then
+			newZKills = zKillGainRate + player:getZombieKills()
+			player:setZombieKills(newZKills) 
+			if isServer() then
+				-- let the client know about the change
+				sendServerCommand(player, "SkillRecoveryJournal", "zKills", {kills = newZKills})
+			end
+		else
+			newZKills = zKillGainRate + (journalModData.kills.Zombie or 0)
+			journalModData.kills.Zombie = newZKills
+		end
+		readXP.kills.Zombie = (readXP.kills.Zombie or 0) + zKillGainRate
+		zombies = true
+	end
+
+	if (sKillGainRate > 0) then
+		local newSKills = 0
+		if doReading then
+		 	newSKills = sKillGainRate + (player:getSurvivorKills() or 0)
+			newSKills = math.min(newSKills, journalModData.kills.Survivor) -- max is stored value
+			player:setSurvivorSKills(newSKills)
+			if isServer() then
+				-- let the client know about the change
+				sendServerCommand(player, "SkillRecoveryJournal", "sKills", {kills = newSKills})
+			end
+		else
+		 	newSKills = sKillGainRate + (journalModData.kills.Survivor or 0)
+			newSKills = math.min(newSKills, player:getSurvivorKills()) -- max is player value
+			journalModData.kills.Survivor = newSKills
+		end
+		readXP.kills.Survivor = (readXP.kills.Survivor or 0) + sKillGainRate
+		survivor = true
+	end
+	return zombies, survivor
+end
+
+
+function SRJ.showHaloProgressText(character, changesBeingMade, updateCount, maxUpdates, title)
+	if isServer() then
+		local args = {}
+		args.changesBeingMade = changesBeingMade
+		args.updateCount = updateCount
+		args.maxUpdates = maxUpdates
+		args.title = title
+		sendServerCommand(character, "SkillRecoveryJournal", "write_changes", args)
+	else
+		local percentFinished = math.floor(updateCount / maxUpdates * 100 + 0.5)
+		local progressText = "?%"
+		if percentFinished >= 0 then
+			progressText = math.floor(percentFinished) .. "%"
+		else 
+		 	if getDebug() then print("Interval " .. updateCount, " / " .. maxUpdates) end
+		end
+
+		local changesBeingMadeText = getText(title) .. " (" .. progressText ..") :"
+		for k,v in pairs(changesBeingMade) do changesBeingMadeText = changesBeingMadeText.." "..v..((k~=#changesBeingMade and ", ") or "") end
+		HaloTextHelper.addText(character, changesBeingMadeText, "", HaloTextHelper.getColorWhite())
+	end
+end
+
+
+function SRJ.showCharacterFeedback(character, text)
+	-- only visible when called on client
+	if isServer() then
+		local args = {}
+		args.text = text
+		sendServerCommand(character, "SkillRecoveryJournal", "character_say", args)
+	else
+		character:Say(getText(text), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default")
+	end
+end
 
 return SRJ

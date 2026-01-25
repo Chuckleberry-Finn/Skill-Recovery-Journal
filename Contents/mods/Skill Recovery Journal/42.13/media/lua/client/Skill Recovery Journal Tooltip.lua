@@ -50,8 +50,15 @@ local function SRJ_generateTooltip(JMD, player)
 				local perkName = perk:getName()
 				local multi = multipliers[perkID] or 1
 				local availableXP = round(((journalXP)*multi), 2)
+				
+				local levelString = ""
+				-- this would need to be cached, but not available in MP anyway because client has no player mod data
+				if not isClient() and getDebug() then
+					local level = SRJ.xpHandler.getPerkLevelAfterJournalRead(SRJ ,player, perkID, multi, journalXP)
+					levelString = " to Level "..level
+				end
 
-				skillsRecord = skillsRecord..perkName.." ("..availableXP
+				skillsRecord = skillsRecord..perkName..levelString.." ("..availableXP
 				if oneTimeUse then
 					local totalXP = round(((xp)*multi), 2)
 					skillsRecord = skillsRecord.."/"..totalXP
@@ -71,21 +78,18 @@ local function SRJ_generateTooltip(JMD, player)
 			if recipeNum>0 then
 				local properPlural = getText("IGUI_Tooltip_Recipe")
 				if recipeNum>1 then properPlural = getText("IGUI_Tooltip_Recipes") end
-				skillsRecord = skillsRecord.."\n"..recipeNum.." "..properPlural..".".."\n"
+				skillsRecord = skillsRecord.."\n"..recipeNum.." "..properPlural.."\n"
 			end
 		end
 	end
 
-	SRJ.correctSandBoxOptions("KillsTrack")
-	if (SandboxVars.SkillRecoveryJournal.KillsTrack or 0) > 0 then
-		local jmdZKills = JMD and JMD.kills and JMD.kills.Zombie
-		local jmdSKills = JMD and JMD.kills and JMD.kills.Survivor
-
-		if jmdZKills or jmdSKills then
-			skillsRecord = skillsRecord.."\n"
-			if jmdZKills and jmdZKills>0 then skillsRecord = skillsRecord .. getText("IGUI_char_Zombies_Killed")..":"..jmdZKills.."\n" end
-			if jmdSKills and jmdSKills>0 then skillsRecord = skillsRecord .. getText("IGUI_char_Survivor_Killed")..":"..jmdSKills.."\n" end
-		end
+	local jmdZKills = JMD and JMD.kills and JMD.kills.Zombie
+	local jmdSKills = JMD and JMD.kills and JMD.kills.Survivor
+	
+	if jmdZKills or jmdSKills then
+		skillsRecord = skillsRecord.."\n"
+		if jmdZKills and jmdZKills>0 then skillsRecord = skillsRecord .. getText("IGUI_char_Zombies_Killed")..": "..jmdZKills.."\n" end
+		if jmdSKills and jmdSKills>0 then skillsRecord = skillsRecord .. getText("IGUI_char_Survivor_Killed")..": "..jmdSKills.."\n" end
 	end
 
 	local stored_keys = SRJ.modDataHandler.returnCapturedKeys(JMD)

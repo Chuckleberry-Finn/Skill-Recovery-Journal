@@ -29,7 +29,10 @@ IGUI_EN = {
     IGUI_CraftCategory_SkillJournal = "Skill Recovery Journal",
 
     IGUI_ItemCat_SkillJournal = "Skill Journal",
-    IGUI_GainedXPText = "Recoverable XP"
+    IGUI_GainedXPText = "Recoverable XP",
+    IGUI_DeductedXP = "Unrecoverable XP",
+    IGUI_UntranscribedXP = "Untranscribed XP",
+    IGUI_StartingLevelText = "Starting Level",
     IGUI_OLDXP_WARNING = "Warning: This journal contains 'OLD' XP from before the but update(s). The journal make have some issues initially. This warning message will go away the more this journal is used.",
     IGUI_OneTimeUse_Warning = "Sandbox Option for XP Used When Read is enabled.",
     IGUI_TV_XP_Warning = "Sandbox Option for XP earned from TV shows and VHS tapes is disabled.",

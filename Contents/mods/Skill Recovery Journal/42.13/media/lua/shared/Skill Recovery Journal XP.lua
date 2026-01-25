@@ -8,6 +8,18 @@ function SRJ_XPHandler.isSkillExcludedFrom.SpeedIncrease(perk) return (perk == P
 
 
 SRJ_XPHandler.tmpStoredValues = {}
+SRJ_XPHandler.perkXpTable = {}
+SRJ_XPHandler.maxXPDifferential = {}
+
+
+function SRJ_XPHandler.getMaxXPDifferential(perk)
+	if SRJ_XPHandler.maxXPDifferential[perk] then return SRJ_XPHandler.maxXPDifferential[perk] end
+	local maxXPDefault = Perks.PhysicalCategory:getTotalXpForLevel(10)
+	local maxXPPerk = Perks[perk]:getTotalXpForLevel(10)
+
+	SRJ_XPHandler.maxXPDifferential[perk] = maxXPDefault/maxXPPerk
+	return SRJ_XPHandler.maxXPDifferential[perk]
+end
 
 ---@param player IsoGameCharacter|IsoPlayer
 function SRJ_XPHandler.getOrStoreXPMultipliers(player)
@@ -131,6 +143,177 @@ function SRJ_XPHandler.fetchMultipliers(player,perk)
 
     return traitMultiplier, xpBoostMultiplier
 end
+
+
+-- Cache XP thresholds for levels
+function SRJ_XPHandler.initXPTable()
+    local perkXpTable = SRJ_XPHandler.perkXpTable or {}
+    for i = 0, Perks.getMaxIndex() - 1 do
+        local perk = Perks.fromIndex(i)
+        if perk then
+            local perkID = perk:getId()
+            perkXpTable[perkID] = {}
+
+            for level = 1, 10 do
+                perkXpTable[perkID][level] = perk:getTotalXpForLevel(level)
+            end
+        end
+    end
+    SRJ_XPHandler.perkXpTable = perkXpTable
+    return SRJ_XPHandler.perkXpTable
+end
+
+
+-- Get level from XP amount
+function SRJ_XPHandler.getPerkLevelFromXP(perkID, xp)
+    local xpTable = SRJ_XPHandler.perkXpTable[perkID] or SRJ_XPHandler.initXPTable()[perkID]
+    if xpTable then
+        for level = 10, 1, -1 do
+            local required = xpTable[level]
+            if xp >= required then
+                return level
+            end
+        end
+    end
+    return 0
+end
+
+local function calculateXpRate(perkID, xpToProcess, perkLevelPlusOne, durationData, actionTimeMulti, timeFactor)
+    local differential = SRJ_XPHandler.getMaxXPDifferential(perkID) or 1
+
+    if getDebug() then print("XP ", xpToProcess, " PlPO ", perkLevelPlusOne, " - multi ", actionTimeMulti, " - time factor ", timeFactor, " - diff ", differential) end
+
+    local xpRate = round((math.sqrt(xpToProcess * perkLevelPlusOne) / 25) * actionTimeMulti * timeFactor / differential, 2)
+
+    if xpRate and xpRate > 0 then
+        durationData.rates[perkID] = xpRate
+        local intervalsNeeded = math.ceil(xpToProcess / xpRate)
+        if getDebug() then print(" - ", perkID, "- xprate = ", xpRate, ", ", xpToProcess, " (", intervalsNeeded, ")") end
+        durationData.intervals = math.max(intervalsNeeded, durationData.intervals)
+    end
+end
+
+
+-- Calculate xp rates and duration for read / writing
+function SRJ_XPHandler.calculateReadWriteXpRates(SRJ, player, item, timeFactor, gainedRecipes, gainedSkills, doReading, updateInterval)
+
+    local durationData = {
+		rates = {},
+		intervals = 0,
+		recipeChunk = 0,
+        recipeInterval = 4, -- update recipes every 4th update
+		kills = {},
+	}
+
+    local journalModData = SRJ.modDataHandler.getItemModData(item)
+    local readXP = SRJ.modDataHandler.getReadXP(player)
+	local storedJournalXP = journalModData["gainedXP"]
+
+	local actionTimeMulti = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 1
+
+	--recipes
+	if gainedRecipes and #gainedRecipes > 0 then
+		durationData.recipeChunk = math.min(#gainedRecipes, math.floor(1.09^math.sqrt(#gainedRecipes))) * actionTimeMulti
+		local intervalsNeeded = math.ceil((#gainedRecipes / (durationData.recipeChunk / durationData.recipeInterval)))
+        if getDebug() then print("New Recipes ", #gainedRecipes, " recipeChunk ", durationData.recipeChunk, " neededI ", intervalsNeeded) end
+		durationData.intervals = math.max(intervalsNeeded,durationData.intervals)
+	end
+
+	--kills
+    local gainedZombieKills, gainedSurvivorKills = SRJ.calculateGainedKills(journalModData, player, doReading)
+    durationData.kills.Zombie = gainedZombieKills
+    durationData.kills.Survivor = gainedSurvivorKills
+    durationData.intervals = durationData.intervals + gainedZombieKills + gainedSurvivorKills
+
+	--modData
+    local modDataStored
+    if doReading then
+        --- the CopyData function actually does the copying - we need a function to JUST check if the data exists for this step
+	    modDataStored = SRJ.modDataHandler.copyDataToPlayer(player, item)
+    else
+	    modDataStored = SRJ.modDataHandler.copyDataToJournal(player, item)
+    end
+	if modDataStored then durationData.intervals = durationData.intervals+1 end
+
+    --xp
+    if gainedSkills and not doReading then
+        -- write gainedSkills
+        for perkID, xp in pairs(gainedSkills) do
+            local xpToWrite = xp - (storedJournalXP[perkID] or 0)
+
+            if xpToWrite > 0 then
+                local perkLevelPlusOne = player:getPerkLevel(Perks[perkID]) + 1
+                calculateXpRate(perkID, xpToWrite, perkLevelPlusOne, durationData, actionTimeMulti, timeFactor)
+            end
+        end
+    elseif doReading then
+        -- read journal
+        local validSkills = {}
+        local greatestXp = 0
+
+        for skill, xp in pairs(storedJournalXP) do
+            local perk = Perks[skill]
+            if perk then
+                local valid = SRJ.bSkillValid(perk)
+                if valid then
+                    validSkills[skill] = true
+                    if skill == "NONE" or skill == "MAX" then
+                        storedJournalXP[skill] = nil
+                    else
+                        if xp > greatestXp then greatestXp = xp end
+                    end
+                end
+            end
+        end
+
+        journalModData.recoveryJournalXpLog = journalModData.recoveryJournalXpLog or {}
+        local jmdUsedXP = journalModData.recoveryJournalXpLog
+        local oneTimeUse = SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true
+        local multipliers = SRJ_XPHandler.getOrStoreXPMultipliers(player)
+
+        for perkID, journalXP in pairs(storedJournalXP) do
+            if Perks[perkID] and validSkills[perkID] then
+
+                readXP[perkID] = readXP[perkID] or 0
+                local currentlyReadXP = readXP[perkID]
+
+                if oneTimeUse and jmdUsedXP[perkID] then
+                    currentlyReadXP = math.max(currentlyReadXP, jmdUsedXP[perkID])
+                end
+
+                if currentlyReadXP < journalXP then
+                    local xpToRead = journalXP - currentlyReadXP
+                    local multi = multipliers[perkID] or 1
+
+					-- for perkLevelPlusOne assume we have acquired the skill xp we are heading for 
+                    local perkLevelPlusOne = SRJ_XPHandler.getPerkLevelAfterJournalRead(SRJ, player, perkID, multi, journalXP) + 1
+
+                    if perkLevelPlusOne ~= 11 then
+                        calculateXpRate(perkID, xpToRead, perkLevelPlusOne, durationData, actionTimeMulti, timeFactor)
+                    end
+                end
+            end
+        end
+    end
+
+    durationData.durationTime = durationData.intervals * updateInterval * 60 * 60 * 3
+
+	if getDebug() then print("SRJ DEBUG DURATION (in ticks) ", durationData.intervals, " (in in-game time) ", durationData.durationTime) for k,v in pairs(durationData.rates) do print(" - ",k," = ",v) end end
+
+	return durationData
+end
+
+
+function SRJ_XPHandler.getPerkLevelAfterJournalRead(SRJ, player, perkID, multi, journalXP)
+    local readXP = SRJ.modDataHandler.getReadXP(player)
+	local playerXP = player:getXp():getXP(Perks[perkID]) / multi
+	--print("Player ", playerXP, " JournalXP ", journalXP, " Read ", readXP[perkID], " Multi ", multi)
+	local playerXPAfterFullRead = playerXP + math.max(0, journalXP - (readXP[perkID] or 0))
+	local level = SRJ_XPHandler.getPerkLevelFromXP(perkID, math.ceil(playerXPAfterFullRead * multi))
+
+    return level
+end
+
 
 
 return SRJ_XPHandler

@@ -1,10 +1,50 @@
 local SRJ_ModDataHandler = {}
 
 -- player mod data
+
+-- store initial skill levels from traits and profession in player mod data
+function SRJ_ModDataHandler.getFreeLevelsFromTraitsAndProfession(player)
+	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
+	if not pMD.SRJTraitSkillsInit then
+		pMD.SRJTraitSkillsInit = {}
+
+		-- xp granted by profession
+		local playerDesc = player:getDescriptor()
+		local playerProfessionID = playerDesc:getCharacterProfession()
+		local profDef = CharacterProfessionDefinition.getCharacterProfessionDefinition(playerProfessionID)
+		local profXpBoost = transformIntoKahluaTable(profDef:getXpBoosts())
+		if profXpBoost then
+			for perk,level in pairs(profXpBoost) do
+				local perky = tostring(perk)
+				local levely = tonumber(tostring(level))
+				pMD.SRJTraitSkillsInit[perky] = levely
+			end
+		end
+
+		-- xp granted by trait
+		local playerTraits = player:getCharacterTraits()
+		for i=0, playerTraits:getKnownTraits():size()-1 do
+			local traitTrait = playerTraits:getKnownTraits():get(i)
+			local traitDef = CharacterTraitDefinition.getCharacterTraitDefinition(traitTrait)
+			local traitXpBoost = transformIntoKahluaTable(traitDef:getXpBoosts())
+			if traitXpBoost then
+				for perk,level in pairs(traitXpBoost) do
+					local perky = tostring(perk)
+					local levely = tonumber(tostring(level))
+					pMD.SRJTraitSkillsInit[perky] = (pMD.SRJTraitSkillsInit[perky] or 0) + levely
+				end
+			end
+		end
+	end
+	
+	return pMD.SRJTraitSkillsInit
+end
+
+-- store initial passive levels in player mod data
 function SRJ_ModDataHandler.setPassiveLevels(id, player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
-
 	if not pMD.SRJPassiveSkillsInit then
+		pMD.SRJPassiveSkillsInit = {}
 		for i=1, Perks.getMaxIndex()-1 do
 			---@type PerkFactory.Perks
 			local perks = Perks.fromIndex(i)
@@ -12,22 +52,24 @@ function SRJ_ModDataHandler.setPassiveLevels(id, player)
 				---@type PerkFactory.Perk
 				local perk = PerkFactory.getPerk(perks)
 				if perk and perk:isPassiv() and tostring(perk:getParent():getType())~="None" then
-					local currentLevel = (player:getHoursSurvived() > 0 and 5) or player:getPerkLevel(perk)
+					local currentLevel = player:getPerkLevel(perk)
 					if currentLevel > 0 then
 						local perkType = tostring(perk:getType())
-						pMD.SRJPassiveSkillsInit = pMD.SRJPassiveSkillsInit or {}
 						pMD.SRJPassiveSkillsInit[perkType] = currentLevel
 					end
 				end
 			end
 		end
+		if getDebug() then for k,v in pairs(pMD.SRJPassiveSkillsInit) do print(" -- PASSIVE-INIT: "..k.." = "..v) end end
 	end
-	--if getDebug() then for k,v in pairs(pMD.SRJPassiveSkillsInit) do print(" -- PASSIVE-INIT: "..k.." = "..v) end end
 end
 
 
 -- deducted xp from radio and tv
-function SRJ_ModDataHandler.checkForDeductedXP(player, perksType, XP)
+function SRJ_ModDataHandler.checkIfDeductedXP(player, perksType, XP)
+	-- check if passive levels are init (workaround for mp server)
+	SRJ_ModDataHandler.setPassiveLevels(_, player)
+
 	local fN, lCF = nil, getCoroutineCallframeStack(getCurrentCoroutine(),0)
 	local fD = lCF ~= nil and lCF and getFilenameOfCallframe(lCF)
 	local i = fD and fD:match('^.*()/')
@@ -51,13 +93,23 @@ end
 
 function SRJ_ModDataHandler.getPassiveLevels(player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
+	if not pMD.SRJPassiveSkillsInit then
+		-- on the rare chance it was not init before, check again
+		-- can happen if on mp server and player uses SRJ before gaining xp
+		SRJ_ModDataHandler.setPassiveLevels(_, player)
+	end
 	return pMD.SRJPassiveSkillsInit
 end
 
 
 function SRJ_ModDataHandler.getReadXP(player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
-	pMD.recoveryJournalXpLog = pMD.recoveryJournalXpLog or {}
+	if not pMD.recoveryJournalXpLog then
+		pMD.recoveryJournalXpLog = {}
+	end
+	if not pMD.recoveryJournalXpLog.kills then -- for pre-existing journals
+		pMD.recoveryJournalXpLog.kills = {}
+	end
 	return pMD.recoveryJournalXpLog
 end
 
@@ -78,7 +130,15 @@ end
 -- item mod data
 function SRJ_ModDataHandler.getItemModData(item)
     local iMd = item:getModData()
-    iMd["SRJ"] = iMd["SRJ"] or {}
+	if not iMd["SRJ"] then
+		-- init new journal mod data
+    	iMd["SRJ"] = {}
+		iMd["SRJ"]["gainedXP"] = {}
+		iMd["SRJ"]["learnedRecipes"] = {}
+	end
+	if not iMd["SRJ"]["kills"] then -- for pre-existing journals
+		iMd["SRJ"]["kills"] = {}
+	end
     return iMd["SRJ"]
 end
 
@@ -166,20 +226,11 @@ function SRJ_ModDataHandler.copyDataToJournal(player, journal)
 end
 
 
--- MOD DATA SYNC
-local serverStoredClientModData = {}
-
 -- handle receive data from client
 local function SkillRecoveryJournalOnClientCommand(module, command, player, args)
 	if module == "SkillRecoveryJournal" then 
 		local playerID = player:getOnlineID()
-		if command == "update" then
-			if getDebug() then print("SkillRecoveryJournal received modData from player " .. tostring(playerID)) end
-			serverStoredClientModData[playerID] = {
-				journalData = args.journalData,
-				playerData = args.playerData
-			}
-		elseif command == "rename" then
+		if command == "rename" then
 			if getDebug() then print("SkillRecoveryJournal received rename for item " .. tostring(args.itemID) .. " from player " .. tostring(playerID)) end
 			local item = player:getInventory():getItemWithIDRecursiv(args.itemID)
 			if item then
@@ -200,40 +251,6 @@ local function SkillRecoveryJournalOnClientCommand(module, command, player, args
 	end
 end
 
-Events.OnClientCommand.Add(SkillRecoveryJournalOnClientCommand)
-
-
--- apply prior received moddata from client
-function SRJ_ModDataHandler.syncModDataFromClient(player, item)
-	-- check if client sent us some changes to sync
-	local playerID = player:getOnlineID()
-    if serverStoredClientModData[playerID] then
-		if item then
-			-- overwrite server mod data with client's
-			local journalModData = serverStoredClientModData[playerID].journalData
-			if getDebug() then print("SkillRecoveryJournal syncing journal item mod data") end
-			SRJ_ModDataHandler.setItemModData(item, journalModData)
-
-			syncItemModData(player, item)
-		end
-
-        if player then
-            -- update player mod data
-            local playerModData = serverStoredClientModData[playerID].playerData
-            if getDebug() then print("SkillRecoveryJournal syncing player mod data") end
-            SRJ_ModDataHandler.setPlayerModData(player, playerModData)
-        end
-        serverStoredClientModData[playerID] = nil
-    end
-end
-
-
--- send mod data to server
-function SRJ_ModDataHandler.sendModDataToServer(player, item)
-	if getDebug() then print("SkillRecoveryJournal sync with server") end
-	local srjData = SRJ_ModDataHandler.getItemModData(item)
-	local charData = SRJ_ModDataHandler.getPlayerModData(player)
-	sendClientCommand(player, "SkillRecoveryJournal", "update", {journalData = srjData, playerData = charData})
-end
+if isServer() then Events.OnClientCommand.Add(SkillRecoveryJournalOnClientCommand) end
 
 return SRJ_ModDataHandler

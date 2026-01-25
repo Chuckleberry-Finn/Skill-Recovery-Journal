@@ -36,23 +36,23 @@ option SkillRecoveryJournal.RecoverSurvivalistSkills
 option SkillRecoveryJournal.RecoverFarmingCategorySkills
 {type = integer, min = -1, max = 100, default = -1, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverFarmingCategorySkills,}
 
+option SkillRecoveryJournal.KillsTrack
+{type = integer, min = -1, max = 100, default = 0, page = SkillRecoveryJournal, translation = SkillRecoveryJournalKillsTrack,}
+
 option SkillRecoveryJournal.RecoverRecipes
 {type = boolean, default = true, page = SkillRecoveryJournal, translation = SkillRecoveryJournalRecoverRecipes,}
 
 option SkillRecoveryJournal.RecoveryJournalUsed
 {type = boolean, default = false, page = SkillRecoveryJournal, translation = SkillRecoveryJournalUsed,}
 
-option SkillRecoveryJournal.KillsTrack
-{type = integer, min = 0, max = 100, default = 0, page = SkillRecoveryJournal, translation = SkillRecoveryJournalKillsTrack,}
-
-option SkillRecoveryJournal.CraftRecipe
-{type = string, default = , page = SkillRecoveryJournal, translation = SkillRecoveryJournalCraftRecipe,}
+option SkillRecoveryJournal.SecurityFeatures
+{type = enum, numValues = 3, default = 1, page = SkillRecoveryJournal, translation = SkillRecoveryJournal_SecurityFeatures, valueTranslation = SkillRecoveryJournal_SecFeat_Values,}
 
 option SkillRecoveryJournal.CraftRecipeNeedLearn
 {type = boolean, default = false, page = SkillRecoveryJournal, translation = SkillRecoveryJournalCraftRecipeNeedLearn,}
 
+option SkillRecoveryJournal.CraftRecipe
+{type = string, default = , page = SkillRecoveryJournal, translation = SkillRecoveryJournalCraftRecipe,}
+
 option SkillRecoveryJournal.ModDataTrack
 {type = string, default = , page = SkillRecoveryJournal, translation = SkillRecoveryJournalModDataTrack,}
-
-option SkillRecoveryJournal.SecurityFeatures
-{type = enum, numValues = 3, default = 1, page = SkillRecoveryJournal, translation = SkillRecoveryJournal_SecurityFeatures, valueTranslation = SkillRecoveryJournal_SecFeat_Values,}
