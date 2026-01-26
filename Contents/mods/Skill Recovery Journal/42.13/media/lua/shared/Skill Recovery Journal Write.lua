@@ -355,7 +355,7 @@ function WriteSkillRecoveryJournal:new(character, item, writingTool) --time, rec
 			end
 		end
 
-		if (protections==1) and isClient() then
+		if (protections==1) then
 			if pUsername and journalID["username"] and (journalID["username"] ~= pUsername) then
 				sayText=getText("IGUI_PlayerText_DoesntFeelRightToWrite"), 0.55, 0.55, 0.55, UIFont.Dialogue, 0, "default"
 				o.willWrite = false
