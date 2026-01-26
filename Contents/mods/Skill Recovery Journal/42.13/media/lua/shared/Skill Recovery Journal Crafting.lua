@@ -1,6 +1,6 @@
 local function SkillRecoveryJournalRecipe()
 
-    local defaultRecipe = "item 1 [Base.Notebook;Base.Journal;Base.Diary1;Base.Diary2;Base.Notepad] flags[Prop2] mode:destroy, item 1 tags[Glue] flags[Prop1], item 3 [Base.LeatherStrips;Base.LeatherStripsDirty] mode:destroy, item 1 [Base.Thread;Base.Yarn],"
+    local defaultRecipe = "item 1 [Base.Notebook;Base.Journal;Base.Diary1;Base.Diary2;Base.Notepad] flags[Prop2] mode:destroy, item 1 tags[Glue] flags[Prop1], item 3 [Base.LeatherStrips;Base.LeatherStripsDirty] mode:destroy, item 1 [Base.Thread;Base.Yarn;Base.Twine],"
     local sandboxOption = SandboxVars.SkillRecoveryJournal.CraftRecipe
     local needToLearn = SandboxVars.SkillRecoveryJournal.CraftRecipeNeedLearn
     local newScript
