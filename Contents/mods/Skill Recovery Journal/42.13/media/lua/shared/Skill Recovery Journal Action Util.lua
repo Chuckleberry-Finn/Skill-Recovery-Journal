@@ -61,47 +61,57 @@ end
 
 function  SRJ.handleKills(durationData, player, journalModData, doReading)
 	local readXP = SRJ.modDataHandler.getReadXP(player)
-	local zKillGainRate = math.ceil((durationData.kills.Zombie or 0) / (durationData.intervals * 0.5)) -- kill processing will be completed after ~50% or earlier
-	local sKillGainRate = math.ceil((durationData.kills.Survivor or 0) / (durationData.intervals * 0.5))
+    local zKillGainRate = durationData.rates.zKills
+    local sKillGainRate = durationData.rates.sKills
 	--if getDebug() then print("--handleKills - Z", zKillGainRate,", S",  sKillGainRate) end
 
+    local zKillsAdded, sKillsAdded = 0, 0
+
 	if (zKillGainRate > 0) then
+        local oldZKills = 0
 		local newZKills = 0
 		if doReading then
-			newZKills = zKillGainRate + player:getZombieKills()
-			newZKills = math.min(newZKills, journalModData.kills.Zombies) -- max is stored value
+            oldZKills = player:getZombieKills() or 0
+			newZKills = zKillGainRate + oldZKills
+			newZKills = math.min(newZKills, journalModData.kills.Zombie) -- max is stored value
 			player:setZombieKills(newZKills) 
 			if isServer() then
 				-- let the client know about the change
 				sendServerCommand(player, "SkillRecoveryJournal", "zKills", {kills = newZKills})
 			end
 		else
-			newZKills = zKillGainRate + (journalModData.kills.Zombie or 0)
+            oldZKills = journalModData.kills.Zombie or 0
+			newZKills = zKillGainRate + oldZKills
 			newZKills = math.min(newZKills, player:getZombieKills()) -- max is player value
 			journalModData.kills.Zombie = newZKills
 		end
-		readXP.kills.Zombie = (readXP.kills.Zombie or 0) + zKillGainRate
+        zKillsAdded = newZKills - oldZKills
+		readXP.kills.Zombie = (readXP.kills.Zombie or 0) + zKillsAdded
 	end
 
 	if (sKillGainRate > 0) then
+        local oldSKills = 0
 		local newSKills = 0
 		if doReading then
-		 	newSKills = sKillGainRate + (player:getSurvivorKills() or 0)
+            oldSKills = player:getSurvivorKills() or 0
+		 	newSKills = sKillGainRate + oldSKills
 			newSKills = math.min(newSKills, journalModData.kills.Survivor) -- max is stored value
-			player:setSurvivorSKills(newSKills)
+			player:setSurvivorKills(newSKills)
 			if isServer() then
 				-- let the client know about the change
 				sendServerCommand(player, "SkillRecoveryJournal", "sKills", {kills = newSKills})
 			end
 		else
-		 	newSKills = sKillGainRate + (journalModData.kills.Survivor or 0)
+            oldSKills = journalModData.kills.Survivor or 0
+		 	newSKills = sKillGainRate + oldSKills
 			newSKills = math.min(newSKills, player:getSurvivorKills()) -- max is player value
 			journalModData.kills.Survivor = newSKills
 		end
-		readXP.kills.Survivor = (readXP.kills.Survivor or 0) + sKillGainRate
+        sKillsAdded = newSKills - oldSKills
+		readXP.kills.Survivor = (readXP.kills.Survivor or 0) + sKillsAdded
 	end
 
-	return zKillGainRate, sKillGainRate
+	return zKillsAdded, sKillsAdded
 end
 
 
@@ -113,9 +123,9 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
     -- RECIPES
     local recipeList = self.gainedRecipes
     if #recipeList > 0 then
+        changesMade = true
         local chunk = self.durationData.recipeChunk
         if chunk > 0 and self.updates % self.durationData.recipeInterval == 0 then
-            changesMade = true
             for i = 1, chunk do
                 local recipeID = recipeList[#recipeList]
                 if not recipeID then break end
@@ -232,31 +242,17 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
 
     -- KILLS
     local killsEnabled = self.durationData.kills.Zombie > 0 or self.durationData.kills.Survivor > 0
-    if killsEnabled and JMD.kills then
-		-- continue if new kills to write / read
-        local cond =
-            (not doReading and (
-                (player:getZombieKills() or 0) > (JMD.kills.Zombie or 0) or
-                (player:getSurvivorKills() or 0) > (JMD.kills.Survivor or 0)
-            ))
-            or
-            (doReading and (
-                (JMD.kills.Zombie or 0) > (readXP.kills.Zombie or 0) or
-                (JMD.kills.Survivor or 0) > (readXP.kills.Survivor or 0)
-            ))
+    if killsEnabled then
+        local zombies, survivors = SRJ.handleKills(self.durationData, player, JMD, doReading)
 
-        if cond then
-            local zombies, survivors = SRJ.handleKills(self.durationData, player, JMD, doReading)
+        if survivors > 0 then
+            self.changesBeingMadeIndex.survivors  = (self.changesBeingMadeIndex.survivors or 0) + survivors
+            changesMade = true
+        end
 
-            if survivors > 0 then
-                self.changesBeingMadeIndex.survivors  = (self.changesBeingMadeIndex.survivors or 0) + survivors
-                changesMade = true
-            end
-
-            if zombies > 0 then
-                self.changesBeingMadeIndex.zombies =  (self.changesBeingMadeIndex.zombies or 0) + zombies
-                changesMade = true
-            end
+        if zombies > 0 then
+            self.changesBeingMadeIndex.zombies =  (self.changesBeingMadeIndex.zombies or 0) + zombies
+            changesMade = true
         end
     end
 

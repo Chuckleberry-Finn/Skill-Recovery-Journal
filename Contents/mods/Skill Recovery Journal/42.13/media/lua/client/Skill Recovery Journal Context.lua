@@ -34,7 +34,7 @@ function contextSRJ.readItems(items, player)
 		if item:getContainer() ~= nil then
 			ISInventoryPaneContextMenu.transferIfNeeded(player, item)
 		end
-		ISTimedActionQueue.add(SkillRecoveryJournalAction:new(player, item, true))
+		ISTimedActionQueue.add(ReadSkillRecoveryJournal:new(player, item))
 		break
 	end
 end
@@ -49,7 +49,7 @@ function contextSRJ.writeItems(items, player, writingTool)
 		if item:getContainer() ~= nil then
 			ISInventoryPaneContextMenu.transferIfNeeded(player, item)
 		end
-		ISTimedActionQueue.add(SkillRecoveryJournalAction:new(player, item, false, writingTool))
+		ISTimedActionQueue.add(WriteSkillRecoveryJournal:new(player, item, writingTool))
 		break
 	end
 end

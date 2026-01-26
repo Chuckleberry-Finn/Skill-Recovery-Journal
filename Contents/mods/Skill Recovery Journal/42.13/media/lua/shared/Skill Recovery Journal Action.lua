@@ -190,7 +190,7 @@ function SkillRecoveryJournalAction:updateTick()
             local survivorChunk = self.changesBeingMadeIndex.survivors
             if survivorChunk and survivorChunk > 0 then
                 table.insert(self.changesBeingMade, survivorChunk)
-                table.insert(self.changesBeingMade, "IGUI_char_Survivors_Killed")
+                table.insert(self.changesBeingMade, "IGUI_char_Survivor_Killed")
             end
 
 
@@ -226,9 +226,8 @@ end
 
 
 -- CONSTRUCTOR
-function SkillRecoveryJournalAction:newBase(character, item, doReading, writingTool)
+function SkillRecoveryJournalAction:new(character, item, doReading, writingTool)
     local now = SRJ.gameTime:getWorldAgeHours()
-    local JMD = SRJ.modDataHandler.getItemModData(item)
 
     if getDebug() then
         print((doReading and "Read" or "Write") ..
@@ -255,13 +254,19 @@ function SkillRecoveryJournalAction:newBase(character, item, doReading, writingT
     o.typeName  = doReading and "ReadSkillRecoveryJournal" or "WriteSkillRecoveryJournal"
 
     -- check if we are able to proceed (gainedXP, illiterate, permissions)
-    local isAllowed, sayText = SRJ.checkStaticConditions(character, SRJ.modDataHandler.getItemModData(item), doReading)
+    if not item then
+        print(o.typeName .. " ERROR: ITEM WAS NULL!!") 
+        return o 
+    end
+
+    local JMD = SRJ.modDataHandler.getItemModData(item)
+    local isAllowed, sayText = SRJ.checkStaticConditions(character, JMD, doReading)
 	o.isAllowed = isAllowed
 
     -- if not allowed, give feedback and stop here
 	if not o.isAllowed then 
         if sayText then character:Say(getText(sayText)) end
-        return o 
+        return o
     end
 
     -- ACTION SETUP
@@ -329,8 +334,7 @@ function SkillRecoveryJournalAction:newBase(character, item, doReading, writingT
     o.updates = -1 -- update counter
     
     -- durationData: XP rates, recipe chunking, kill rates, etc.
-    o.durationData = SRJ.xpHandler.calculateReadWriteXpRates(
-        SRJ,
+    o.durationData = SRJ.calculateReadWriteRates(
         character,
         item,
         o.timeFactor,

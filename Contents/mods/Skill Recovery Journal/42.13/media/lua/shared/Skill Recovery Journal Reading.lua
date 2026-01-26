@@ -4,5 +4,5 @@ require "SkillRecoveryJournalAction"
 ReadSkillRecoveryJournal = SkillRecoveryJournalAction:derive("ReadSkillRecoveryJournal")
 
 function ReadSkillRecoveryJournal:new(character, item)
-    return SkillRecoveryJournalAction.newBase(self, character, item, true)
+    return SkillRecoveryJournalAction:new(character, item, true)
 end
