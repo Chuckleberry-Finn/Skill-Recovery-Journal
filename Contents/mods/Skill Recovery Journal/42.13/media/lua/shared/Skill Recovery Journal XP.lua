@@ -285,12 +285,9 @@ function SRJ_XPHandler.calculateReadWriteXpRates(SRJ, player, item, timeFactor, 
                     local xpToRead = journalXP - currentlyReadXP
                     local multi = multipliers[perkID] or 1
 
-					-- for perkLevelPlusOne assume we have acquired the skill xp we are heading for 
-                    local perkLevelPlusOne = SRJ_XPHandler.getPerkLevelAfterJournalRead(SRJ, player, perkID, multi, journalXP) + 1
-
-                    if perkLevelPlusOne ~= 11 then
-                        calculateXpRate(perkID, xpToRead, perkLevelPlusOne, durationData, actionTimeMulti, timeFactor)
-                    end
+					-- for perkLevelPlusOne assume we have acquired the skill xp we are heading for (max 10 +1)
+                    local perkLevelPlusOne = math.min(11, SRJ_XPHandler.getPerkLevelAfterJournalRead(SRJ, player, perkID, multi, journalXP) + 1)
+                    calculateXpRate(perkID, xpToRead, perkLevelPlusOne, durationData, actionTimeMulti, timeFactor)
                 end
             end
         end
