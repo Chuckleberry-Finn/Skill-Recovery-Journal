@@ -188,3 +188,11 @@ Credit: anonpony1/pcgames3112.
     - halo text percentage is now based on number of updates instead of processed xp, making it more linear and accurate
     - reading recipes may be a little slower
 [ ------ ]
+
+[ 01/27/26 ]
+- fix localization in MP
+- fix reading up to lvl 10
+- improve kill recovery processing
+- add twine to default recipe ingredients
+- read and write are now handled by the same action
+[ ------ ]
