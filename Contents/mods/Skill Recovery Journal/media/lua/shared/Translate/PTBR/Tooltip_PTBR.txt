@@ -1,0 +1,4 @@
+Tooltip_PTBR = {
+    Tooltip_DecayedJournal = "Mova isso para o seu inventário para renovar.",
+    Tooltip_SkillJournal = "Os valores de XP dependem de quem os está lendo."
+}
