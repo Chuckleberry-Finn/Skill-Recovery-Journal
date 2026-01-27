@@ -1,0 +1,45 @@
+Sandbox_PTBR = {
+	Sandbox_SkillRecoveryJournal = "Diário de recuperação de habilidades",
+
+	Sandbox_SkillRecoveryJournalPercentage = "Porcentagem geral de recuperação de habilidades",
+	Sandbox_SkillRecoveryJournalPercentage_tooltip = "A quantidade de experiência recuperada da leitura de diários vinculados.<br>Esse valor será padronizado se outras opções forem definidas como -1.",
+
+	Sandbox_SkillRecoveryJournalTranscribeSpeed = "Multiplicador de velocidade de transcrição de recuperação de habilidade",
+	Sandbox_SkillRecoveryJournalTranscribeSpeed_tooltip = "Um multiplicador na velocidade de transcrição de diários."
+
+	Sandbox_SkillRecoveryJournalReadTimeSpeed = "Multiplicador de velocidade de leitura de recuperação de habilidade",
+	Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip = "Um multiplicador na velocidade de leitura de periódicos encadernados."
+
+	Sandbox_SkillRecoveryJournalTranscribeTVXP = "Transcrever XP ganho em TV/VHS",
+	Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip = "Ativar esta opção permitirá que as pessoas transcrevam o XP ganho assistindo TV/VHS. Observação: isso significa que os jogadores podem transferir XP assistido entre os personagens cumulativamente."
+
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills = "Porcentagem de recuperação de habilidades passivas"
+	Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip = "Porcentagem de recuperação para habilidades passivas.<br>Defina como -1 para usar a Porcentagem de recuperação de habilidade geral."
+
+	Sandbox_SkillRecoveryJournalRecoverCombatSkills = "Porcentagem de recuperação de habilidades de combate"
+    Sandbox_SkillRecoveryJournalRecoverCombatSkills_tooltip = "Porcentagem de recuperação de habilidades de combate.<br>Defina como -1 para usar a Porcentagem de recuperação de habilidade geral."
+
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills = "Porcentagem de recuperação de habilidades com armas de fogo"
+    Sandbox_SkillRecoveryJournalRecoverFirearmSkills_tooltip = "Porcentagem de recuperação de habilidades com armas de fogo.<br>Defina como -1 para usar a Porcentagem de recuperação de habilidade geral."
+
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills = "Porcentagem de recuperação de habilidade de elaboração"
+    Sandbox_SkillRecoveryJournalRecoverCraftingSkills_tooltip = "Porcentagem de recuperação para habilidades de criação.<br>Defina como -1 para usar a porcentagem geral de recuperação de habilidades."
+
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills = "Porcentagem de recuperação de habilidades de sobrevivência"
+    Sandbox_SkillRecoveryJournalRecoverSurvivalistSkills_tooltip = "Porcentagem de recuperação para habilidades de sobrevivência.<br>Defina como -1 para usar a Porcentagem de recuperação de habilidade geral."
+
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills = "Porcentagem de recuperação de habilidades de agilidade"
+    Sandbox_SkillRecoveryJournalRecoverAgilitySkills_tooltip = "Porcentagem de recuperação para habilidades de agilidade.<br>Defina como -1 para usar a Porcentagem de recuperação de habilidade geral."
+
+	Sandbox_SkillRecoveryJournalRecoverRecipes = "Recuperar receitas"
+    Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip = "Desative para evitar que os diários recuperem/transcrevam receitas."
+
+    Sandbox_SkillRecoveryJournalUsed = "Diário XP usado quando lido"
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "Normalmente você pode reler o diário quantas vezes quiser - com esta opção ativada, cada ponto de XP individual só pode ser recuperado uma vez. Você ainda pode adicionar pontos ao diário, mas cada ponto só pode ser recuperado uma vez em cada diário. Observação: a dica de ferramenta do diário agora exibirá uma fração para pontos não utilizados."
+
+    Sandbox_SkillRecoveryJournalCraft = "O diário pode ser fabricado"
+    Sandbox_SkillRecoveryJournalUsed_tooltip = "Desativar isso significa que os diários não podem ser criados."
+
+    Sandbox_SkillRecoveryJournalKillsTrack = "Porcentagem de recuperação de mortes de zumbis/sobreviventes"
+
+	}

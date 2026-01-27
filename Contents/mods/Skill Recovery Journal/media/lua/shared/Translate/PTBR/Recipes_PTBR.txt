@@ -1,0 +1,4 @@
+Recipe_PTBR = {
+    Recipe_Transcribe_Journal = "Transcrever para o diário",
+    Recipe_Bind_Journal = "Vincular diário",
+}

@@ -1,0 +1,33 @@
+IGUI_PTBR = {
+    IGUI_PlayerText_NothingWritten = "Não há nada escrito aqui.",
+    IGUI_PlayerText_DontHaveAnyXP = "Não tenho nenhuma experiência para registrar.",
+    IGUI_PlayerText_DoesntFeelRightToWrite = "Não parece certo escrever no diário de outra pessoa.",
+    IGUI_PlayerText_DoesntFeelRightToRead = "Não parece certo ler o diário de outra pessoa.",
+    IGUI_PlayerText_NothingToAddToJournal = "Não há mais nada a acrescentar.",
+    IGUI_PlayerText_AllDoneWithJournal = "Tudo feito.",
+    IGUI_PlayerText_Illiterate1 = "Eu não consigo ler.",
+    IGUI_PlayerText_Illiterate2 = "Eu sou analfabeto.",
+
+    IGUI_PlayerText_NeedGainWeight = "Eu deveria ganhar alguns quilos primeiro...",
+    IGUI_PlayerText_NeedLoseWeight = ""Eu deveria perder alguns quilos primeiro...",
+
+    IGUI_Tooltip_Empty = "Um diário vazio pronto para ser registrado.",
+    IGUI_Tooltip_Start = "Um registro de",
+    IGUI_Tooltip_End = "a vida.",
+    IGUI_Tooltip_Recipe = "receita",
+    IGUI_Tooltip_Recipes = "receitas",
+    IGUI_Tooltip_Transcribing = "Transcrever",
+    IGUI_Tooltip_Learning = "Aprendizado",
+    IGUI_perks_Lightfoot = "Pés leves",
+    IGUI_perks_Sneak = "Esgueirando-se",
+    IGUI_perks_PlantScavenging = "Forrageamento",
+    IGUI_Rename = "Renomear",
+    IGUI_JournalXPUsedUp = "A escrita está muito desgastada para ser lida... (XP esgotado)",
+
+    IGUI_ItemCat_SkillJournal = "Diário de habilidades",
+    IGUI_GainedXPText = "EXP recuperável"
+    IGUI_OLDXP_WARNING = "Aviso: Este diário contém XP 'ANTIGO' anterior à(s) atualização(ões). A revista apresenta alguns problemas inicialmente. Esta mensagem de aviso desaparecerá à medida que este diário for usado.",
+    IGUI_OneTimeUse_Warning = "Opção Sandbox para XP usada quando a leitura está habilitada.",
+    IGUI_TV_XP_Warning = "A opção Sandbox para XP obtida em programas de TV e fitas VHS está desativada.",
+    IGUI_Rename_Warning = "Renomeie este diário para desativar este alerta.",
+}

@@ -1,0 +1,4 @@
+ItemName_PTBR = {
+    ItemName_Base.SkillRecoveryJournal = "Diário encadernado (deteriorado)",
+    ItemName_Base.SkillRecoveryBoundJournal = "Diário encadernado",
+}
