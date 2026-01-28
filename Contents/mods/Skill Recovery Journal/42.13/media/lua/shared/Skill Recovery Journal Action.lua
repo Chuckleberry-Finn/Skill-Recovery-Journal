@@ -131,20 +131,26 @@ end
 -- UPDATE (client)
 function SkillRecoveryJournalAction:update()
     if self:updateTick() and not self.doReading then
-        -- writing sound every few ticks
-        self.playSoundLater = self.playSoundLater or 0
-        if self.playSoundLater > 0 then
-            self.playSoundLater = self.playSoundLater - 1
-        elseif self.writingToolSound then
-            self.playSoundLater = (ZombRand(4,8) + SRJ.gameTime:getMultiplier())
-            --self.character:playSound(self.writingToolSound) FIXME: breaks sound
-        end
+        -- writing sound every few ticks FIXME: breaks sound
+        --self.playSoundLater = self.playSoundLater or 0
+        --if self.playSoundLater > 0 then
+        --    self.playSoundLater = self.playSoundLater - 1
+        --elseif self.writingToolSound then
+        --    self.playSoundLater = (ZombRand(4,8) + SRJ.gameTime:getMultiplier())
+        --    self.character:playSound(self.writingToolSound) 
+        --end
     end
 end
 
 
 -- SHARED TICK LOGIC (server + client)
 function SkillRecoveryJournalAction:updateTick()
+    -- should not be called if not isValid()
+    if not self.isAllowed then
+        print("SRJ ERROR: Action is not valid!")
+        return false
+    end
+
     local now = SRJ.gameTime:getWorldAgeHours()
     if now < self.updateTime then
         return false
@@ -246,6 +252,16 @@ function SkillRecoveryJournalAction:new(character, item, doReading, writingTool)
     o.forceProgressBar  = false
     o.useProgressBar = false
 
+    -- timings, update intervals between updates in in-game hours
+    o.updateInterval        = 10 / 3600 -- every in-game 10 seconds
+    o.defaultUpdateInterval = 3.48 / 3600 -- legacy ~3.48 sec to maintain old duration
+    o.timeFactor            = o.updateInterval / o.defaultUpdateInterval
+    o.updateTime            = now + o.updateInterval -- do first update after one interval
+    o.lastUpdateTime        = 0
+    o.startTime             = getTimestampMs()
+
+    o.updates = -1 -- update counter
+
     -- params
     o.character = character
     o.item      = item
@@ -322,16 +338,6 @@ function SkillRecoveryJournalAction:new(character, item, doReading, writingTool)
             JMD.author = character:getFullName()
         end
     end
-
-    -- timings, update intervals between updates in in-game hours
-    o.updateInterval        = 10 / 3600 -- every in-game 10 seconds
-    o.defaultUpdateInterval = 3.48 / 3600 -- legacy ~3.48 sec to maintain old duration
-    o.timeFactor            = o.updateInterval / o.defaultUpdateInterval
-    o.updateTime            = now + o.updateInterval -- do first update after one interval
-    o.lastUpdateTime = 0
-    o.startTime      = getTimestampMs()
-
-    o.updates = -1 -- update counter
     
     -- durationData: XP rates, recipe chunking, kill rates, etc.
     o.durationData = SRJ.calculateReadWriteRates(

@@ -196,3 +196,8 @@ Credit: anonpony1/pcgames3112.
 - add twine to default recipe ingredients
 - read and write are now handled by the same action
 [ ------ ]
+
+[ 01/28/26 ]
+- fix derivation error for unix systems
+- remove security check in single player
+[ ------ ]

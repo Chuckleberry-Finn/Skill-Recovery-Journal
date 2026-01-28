@@ -50,9 +50,9 @@ function SRJ.checkStaticConditions(player, JMD, doReading)
 	elseif player:hasTrait(CharacterTrait.ILLITERATE) then
 		return false, "IGUI_PlayerText_IGUI_PlayerText_Illiterate"
 	
-	-- check permissions
-	elseif not SRJ.handleIdentity(player, JMD) then
-		return false, "IGUI_PlayerText_DoesntFeelRightToWrite"
+	-- check permissions only in MP
+	elseif (isClient() or isServer()) and not SRJ.handleIdentity(player, JMD) then
+		return false, (doReading and "IGUI_PlayerText_DoesntFeelRightToRead") or "IGUI_PlayerText_DoesntFeelRightToWrite"
 	end
 	
 	return true
