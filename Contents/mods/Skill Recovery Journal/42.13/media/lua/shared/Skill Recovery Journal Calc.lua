@@ -203,7 +203,7 @@ function SRJ.calculateReadWriteRates(player, item, timeFactor, gainedRecipes, ga
 
     local journalModData = SRJ.modDataHandler.getItemModData(item)
     local readXP = SRJ.modDataHandler.getReadXP(player)
-	local storedJournalXP = journalModData["gainedXP"]
+	local storedJournalXP = journalModData["gainedXP"] or {}
 
 	local actionTimeMulti = SandboxVars.SkillRecoveryJournal.TranscribeSpeed or 1
 
