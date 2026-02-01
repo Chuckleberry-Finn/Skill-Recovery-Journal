@@ -6,6 +6,8 @@ if errorMagnifier.registerDebugReport then
     errorMagnifier.registerDebugReport("SkillRecoveryJournal", function()
 
         local character
+        local journals
+
         local player = getPlayer()
         if player then
             character = {}
@@ -42,14 +44,27 @@ if errorMagnifier.registerDebugReport then
 
             character.survivorKills = player:getSurvivorKills()
             character.zombieKills = player:getZombieKills()
-        end
 
+            local playerInv = player:getInventory()
+            local js = playerInv:getItemsFromFullType("Base.SkillRecoveryBoundJournal")
+
+            for i=0, js:size()-1 do
+                local j = js:get(i)
+                if j then
+                    journals = journals or {}
+                    journals[i] = SRJ.modDataHandler.getItemModData(j)
+                end
+            end
+        end
 
         local sandboxVars = SandboxVars.SkillRecoveryJournal
 
         return {
-            sandbox = sandboxVars,
-            character = character or "NONE",
+            Version = getGameVersion(),
+            Mode = (isClient() and "MULTIPLAYER" or "SINGLE PLAYER"),
+            ["SANDBOX"] = sandboxVars,
+            ["CHARACTER"] = character or "NONE",
+            ["JOURNALS"] = journals or "NONE",
         }
     end, "Skill Recovery Journal")
 end
