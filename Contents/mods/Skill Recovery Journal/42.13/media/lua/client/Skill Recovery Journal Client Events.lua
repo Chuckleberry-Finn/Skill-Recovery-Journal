@@ -1,4 +1,60 @@
 local SRJ = require "Skill Recovery Journal Main"
+
+local errorMagnifier = require "errorMagnifier_Main"
+if not errorMagnifier then return end
+if errorMagnifier.registerDebugReport then
+    errorMagnifier.registerDebugReport("SkillRecoveryJournal", function()
+
+        local character
+        local player = getPlayer()
+        if player then
+            character = {}
+            local passiveSkillsInit = SRJ.modDataHandler.getPassiveLevels(player)
+            local startingLevels = SRJ.modDataHandler.getFreeLevelsFromTraitsAndProfession(player)
+            local deductibleXP = SRJ.modDataHandler.getDeductedXP(player)
+            local multipliers = SRJ.xpHandler.getOrStoreXPMultipliers(player)
+            local charReadXP = SRJ.modDataHandler.getReadXP(player)
+            local allGainedXP = SRJ.calculateAllGainedSkills(player)
+
+            for i=1, Perks.getMaxIndex()-1 do
+                ---@type PerkFactory.Perk
+                local perk = Perks.fromIndex(i)
+                local perkID = perk and perk:getId()
+                if perkID then
+                    local currentXP = player:getXp():getXP(perk)
+                    if currentXP > 0 then
+                        character[perkID] = {
+                            gainedXP = allGainedXP[perkID],
+                            readXP = charReadXP and charReadXP[perkID],
+                            currentXP = currentXP,
+                            startingLevel = (passiveSkillsInit[perkID] or startingLevels[perkID]),
+                            deductXP = deductibleXP[perkID],
+                            multis = multipliers[perkID],
+                        }
+                    end
+                end
+            end
+
+            local recipes = SRJ.getGainedRecipes(player)
+            local recipeCount = 0
+            for _ in pairs(recipes) do recipeCount = recipeCount + 1 end
+            character.recipeCount = recipeCount
+
+            character.survivorKills = player:getSurvivorKills()
+            character.zombieKills = player:getZombieKills()
+        end
+
+
+        local sandboxVars = SandboxVars.SkillRecoveryJournal
+
+        return {
+            sandbox = sandboxVars,
+            character = character or "NONE",
+        }
+    end, "Skill Recovery Journal")
+end
+
+
 local contextSRJ = require "Skill Recovery Journal Context"
 if contextSRJ then
     Events.OnPreFillInventoryObjectContextMenu.Add(contextSRJ.doContextMenu)
