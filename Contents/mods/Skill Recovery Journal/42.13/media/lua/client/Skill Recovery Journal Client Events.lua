@@ -46,7 +46,7 @@ if errorMagnifier.registerDebugReport then
             character.zombieKills = player:getZombieKills()
 
             local playerInv = player:getInventory()
-            local js = playerInv:getItemsFromFullType("Base.SkillRecoveryBoundJournal")
+            local js = playerInv:getItemsFromFullType("Base.SkillRecoveryBoundJournal", true)
 
             for i=0, js:size()-1 do
                 local j = js:get(i)
@@ -59,8 +59,10 @@ if errorMagnifier.registerDebugReport then
 
         local sandboxVars = SandboxVars.SkillRecoveryJournal
 
+        local version = (getCore():getVersion() .. (getSteamModeActive() and " (Steam)" or ""))
+
         return {
-            Version = getGameVersion(),
+            Version = version,
             Mode = (isClient() and "MULTIPLAYER" or "SINGLE PLAYER"),
             ["SANDBOX"] = sandboxVars,
             ["CHARACTER"] = character or "NONE",
