@@ -1,7 +1,7 @@
 local SRJ = require "Skill Recovery Journal Main"
 
 local errorMagnifier = require "errorMagnifier_Main"
-if not errorMagnifier then return end
+if not errorMagnifier then print("ERROR: ","errorMagnifier missing!") return end
 if errorMagnifier.registerDebugReport then
     errorMagnifier.registerDebugReport("SkillRecoveryJournal", function()
 
@@ -58,19 +58,13 @@ if errorMagnifier.registerDebugReport then
         end
 
         local sandboxVars = SandboxVars.SkillRecoveryJournal
-
-        local version = (getCore():getVersion() .. (getSteamModeActive() and " (Steam)" or ""))
-
         return {
-            Version = version,
-            Mode = (isClient() and "MULTIPLAYER" or "SINGLE PLAYER"),
             ["SANDBOX"] = sandboxVars,
             ["CHARACTER"] = character or "NONE",
             ["JOURNALS"] = journals or "NONE",
         }
     end, "Skill Recovery Journal")
 end
-
 
 local contextSRJ = require "Skill Recovery Journal Context"
 if contextSRJ then

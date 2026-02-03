@@ -1,5 +1,8 @@
 local SRJ = {}
 
+local errorMagActive = getActivatedMods():contains("\\errorMagnifier")
+if not errorMagActive then print("ERROR: ","errorMagnifier missing!") return end
+
 SRJ.xpPatched = false
 
 SRJ.xpHandler = require "Skill Recovery Journal XP"
