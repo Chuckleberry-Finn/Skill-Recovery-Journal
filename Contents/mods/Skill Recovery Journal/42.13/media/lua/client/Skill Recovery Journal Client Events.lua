@@ -6,6 +6,7 @@ if errorMagnifier.registerDebugReport then
     errorMagnifier.registerDebugReport("SkillRecoveryJournal", function()
 
         local character
+        local rawData
         local journals
 
         local player = getPlayer()
@@ -55,12 +56,18 @@ if errorMagnifier.registerDebugReport then
                     journals[i] = SRJ.modDataHandler.getItemModData(j)
                 end
             end
+
+            rawData = SRJ.modDataHandler.getPlayerModData(player)
         end
 
         local sandboxVars = SandboxVars.SkillRecoveryJournal
+        local activatedMods = getActivatedMods():size()
+
         return {
             ["SANDBOX"] = sandboxVars,
+            ["MODS"] = activatedMods,
             ["CHARACTER"] = character or "NONE",
+            ["RAW SRJ DATA"] = rawData,
             ["JOURNALS"] = journals or "NONE",
         }
     end, "Skill Recovery Journal")
