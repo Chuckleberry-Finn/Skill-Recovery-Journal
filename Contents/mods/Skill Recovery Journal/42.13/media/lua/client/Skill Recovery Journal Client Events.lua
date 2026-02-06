@@ -66,9 +66,9 @@ if errorMagnifier.registerDebugReport then
         return {
             ["SANDBOX"] = sandboxVars,
             ["MODS"] = activatedMods,
-            ["CHARACTER"] = character or "NONE",
+            ["CHARACTER"] = character,
             ["RAW SRJ DATA"] = rawData,
-            ["JOURNALS"] = journals or "NONE",
+            ["JOURNALS"] = journals,
         }
     end, "Skill Recovery Journal")
 end
