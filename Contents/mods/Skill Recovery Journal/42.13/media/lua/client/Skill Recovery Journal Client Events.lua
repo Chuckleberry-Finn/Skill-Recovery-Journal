@@ -27,12 +27,12 @@ if errorMagnifier.registerDebugReport then
                     local currentXP = player:getXp():getXP(perk)
                     if currentXP > 0 then
                         character[perkID] = {
-                            gainedXP = allGainedXP[perkID],
-                            readXP = charReadXP and charReadXP[perkID],
+                            gainedXP = (allGainedXP and allGainedXP[perkID]),
+                            readXP = (charReadXP and charReadXP[perkID]),
                             currentXP = currentXP,
                             startingLevel = (passiveSkillsInit[perkID] or startingLevels[perkID]),
-                            deductXP = deductibleXP[perkID],
-                            multis = multipliers[perkID],
+                            deductXP = (deductibleXP and deductibleXP[perkID]),
+                            multis = (multipliers and multipliers[perkID]),
                         }
                     end
                 end
