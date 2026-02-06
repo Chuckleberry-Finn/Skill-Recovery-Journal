@@ -67,9 +67,9 @@ function ISSkillProgressBar:updateTooltip(lvlSelected)
             -- show untranscribed xp
             local charReadXP = SRJ.modDataHandler.getReadXP(self.char)
             local readXP = charReadXP and charReadXP[perkID]
-            local startingLevelXP = startingLevel and self.perk:getXpForLevel(startingLevel)
+            local startingLevelXP = startingLevel and startingLevel>0 and self.perk:getXpForLevel(startingLevel)
             local looseXP = currentXP - (startingLevelXP or 0) - (deductedXP or 0) - (readXP or 0) --untranscribed XP
-            if looseXP then
+            if looseXP and (looseXP > 0) then
                 self.message = self.message .. " <LINE> <RED> "..untranscribedXPText..": "..round(looseXP, 2)
             end
         end
