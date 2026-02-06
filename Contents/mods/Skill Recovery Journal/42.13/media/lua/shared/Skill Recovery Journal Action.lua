@@ -79,6 +79,9 @@ function SkillRecoveryJournalAction:serverStop()
             tostring((getTimestampMs() - self.startTime) / 1000) ..
             " at " .. self.updates .. "/" .. self.durationData.intervals)
     end
+
+    if not self.item then print("WARNING: SkillRecoveryJournalAction:serverStop - 'item' not found. ") return end
+    if not self.character then print("WARNING: SkillRecoveryJournalAction:serverStop - 'character' not found. ") return end
     syncItemModData(self.character, self.item)
 end
 
