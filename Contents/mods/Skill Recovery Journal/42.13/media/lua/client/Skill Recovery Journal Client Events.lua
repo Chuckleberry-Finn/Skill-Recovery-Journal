@@ -61,7 +61,17 @@ if errorMagnifier.registerDebugReport then
         end
 
         local sandboxVars = SandboxVars.SkillRecoveryJournal
-        local activatedMods = getActivatedMods():size()
+        ---@type ArrayList
+        local activatedModsArray = getActivatedMods()
+        local activatedMods
+        if activatedModsArray:size() > 0 then
+            for i=0, activatedModsArray:size()-1 do
+                local modID = activatedModsArray:get(i)
+                if modID then
+                    activatedMods[i] = modID
+                end
+            end
+        end
 
         return {
             ["SANDBOX"] = sandboxVars,
