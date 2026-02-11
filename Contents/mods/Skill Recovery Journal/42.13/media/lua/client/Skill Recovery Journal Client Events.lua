@@ -68,6 +68,7 @@ if errorMagnifier.registerDebugReport then
             for i=0, activatedModsArray:size()-1 do
                 local modID = activatedModsArray:get(i)
                 if modID then
+                    activatedMods = activatedMods or {}
                     activatedMods[i] = modID
                 end
             end
