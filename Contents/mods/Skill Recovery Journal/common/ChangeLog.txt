@@ -201,3 +201,10 @@ Credit: anonpony1/pcgames3112.
 - fix derivation error for unix systems
 - remove security check in single player
 [ ------ ]
+
+[ 02/10/26 ]
+- Added custom mod-report to error magnifier.
+   Includes useful info dump of mods, variables, sandbox-options, data.
+- Fixed deduction and loose-XP info in skills window (SP only)
+- Added some safety checks to the recipe sandbox option.
+[ ------ ]
