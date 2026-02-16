@@ -4,7 +4,6 @@ module Base
     {
         Weight	=	0.8,
         ItemType = base:normal,
-        DisplayName	=	Bound Journal,
         DisplayCategory = SkillJournal,
         DisappearOnUse = FALSE,
         Icon	=	SkillRecoveryJournal,
