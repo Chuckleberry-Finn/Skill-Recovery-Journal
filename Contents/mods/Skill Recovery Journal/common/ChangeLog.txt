@@ -213,6 +213,11 @@ Credit: anonpony1/pcgames3112.
 - Made it so the default functionality of the recipe is entirely a recipe-script.
    Script manipulation only occurs if the sandbox option for the recipe is not blank.
    This should avoid strange behaviors if you're not using a custom recipe.
+- Tweaked the recipe to utilize items with the tags of "thread", "twine", "heavythread".
 - Added B42.15 translations.
 - Fixed errorMagnifier lookup for B42.15.
+
+WARNING: There's been alot of strange issues with Journals from before B42.12.
+         We share the official recommendation of starting a new save with each new version of the game.
+         If you wish to try your luck, at the very least craft a new journal and destroy the old one.
 [ ------ ]
