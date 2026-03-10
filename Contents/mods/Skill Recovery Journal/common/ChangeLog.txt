@@ -214,4 +214,5 @@ Credit: anonpony1/pcgames3112.
    Script manipulation only occurs if the sandbox option for the recipe is not blank.
    This should avoid strange behaviors if you're not using a custom recipe.
 - Added B42.15 translations.
+- Fixed errorMagnifier lookup for B42.15.
 [ ------ ]
