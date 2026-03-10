@@ -9,7 +9,10 @@ module Base
 
 		inputs
 		{
-
+            item 1 [Base.Notebook;Base.Journal;Base.Diary1;Base.Diary2;Base.Notepad] flags[Prop2] mode:destroy,
+            item 1 tags[base:glue] flags[Prop1],
+            item 3 [Base.LeatherStrips;Base.LeatherStripsDirty] mode:destroy,
+            item 1 tags[base:thread;base:twine;base:heavythread],
 		}
 
 		outputs

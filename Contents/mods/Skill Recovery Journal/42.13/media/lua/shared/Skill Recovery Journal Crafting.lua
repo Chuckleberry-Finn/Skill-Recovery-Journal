@@ -1,30 +1,49 @@
 local function SkillRecoveryJournalRecipe()
 
-    local defaultRecipe = "item 1 [Base.Notebook;Base.Journal;Base.Diary1;Base.Diary2;Base.Notepad] flags[Prop2] mode:destroy, item 1 tags[Glue] flags[Prop1], item 3 [Base.LeatherStrips;Base.LeatherStripsDirty] mode:destroy, item 1 [Base.Thread;Base.Yarn;Base.Twine],"
-    local sandboxOption = SandboxVars.SkillRecoveryJournal.CraftRecipe
+    ---need to be learned, allows people to disable recipes in a clearer way + open up add-on mod features
     local needToLearn = SandboxVars.SkillRecoveryJournal.CraftRecipeNeedLearn
+    local needToLearnScript = needToLearn and "NeedToBeLearn = ".. tostring(needToLearn == true) ..", " or nil
 
-    --- Maybe a way to validate the recipe would be possible?
-    --correct old sandbox options
-    local modified_option = sandboxOption and string.gsub(sandboxOption, "|", ",")
-    --add missing comma that might be default for some older saves
-    if modified_option and modified_option:sub(-1) ~= "," then modified_option = modified_option .. "," end
+    ---craft recipe now designed to default to the script file and only load() if needed
+    local craftRecipe = SandboxVars.SkillRecoveryJournal.CraftRecipe
+    local craftRecipeScript
 
-    local inputs = (not sandboxOption or sandboxOption == "") and defaultRecipe or modified_option
+    if craftRecipe and craftRecipe ~= "" then
+        --- Maybe a way to validate the recipe would be possible?
+        --correct old sandbox options
+        local modified_option = craftRecipe and string.gsub(craftRecipe, "|", ",")
+        --add missing comma that might be default for some older saves
+        if modified_option and modified_option:sub(-1) ~= "," then modified_option = modified_option .. "," end
+        craftRecipeScript = "inputs { " .. modified_option .. " }, "
+    end
 
-    local newScript = "{ NeedToBeLearn = ".. tostring(needToLearn == true) ..", inputs { " .. inputs .. " } }"
-
-    if getDebug() then print("[SRJ] Final Recipe Script: " .. newScript) end
+    local newScript = (craftRecipeScript or needToLearnScript) and "{ ".. (needToLearnScript or "") .. (craftRecipeScript or "") .. " }"
 
     if newScript then
         local scriptManager = getScriptManager()
         local journalRecipe = scriptManager:getCraftRecipe("BindSkillRecoveryJournal")
         if journalRecipe then
+            ---@type ArrayList
+            local inputs = journalRecipe:getInputs()
+            local ioLines = journalRecipe:getIoLines()
+
+            for i = ioLines:size() - 1, 0, -1 do
+                if inputs:contains(ioLines:get(i)) then
+                    ioLines:remove(i)
+                end
+            end
+
+            print("[SRJ] Final Recipe for BindSkillRecoveryJournal: ", newScript)
+
+            inputs:clear()
             journalRecipe:Load("BindSkillRecoveryJournal", newScript)
+            journalRecipe:OnPostWorldDictionaryInit()
         else
             print("[SRJ] ERROR: Could not find CraftRecipe 'BindSkillRecoveryJournal'")
         end
+    else
+        print("[SRJ] No changes made to 'BindSkillRecoveryJournal'")
     end
 end
 
-Events.OnGameBoot.Add(SkillRecoveryJournalRecipe)
+Events.OnGameStart.Add(SkillRecoveryJournalRecipe)
