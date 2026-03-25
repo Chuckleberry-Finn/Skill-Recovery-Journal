@@ -223,3 +223,7 @@ WARNING: There's been alot of strange issues with Journals from before B42.12.
          We share the official recommendation of starting a new save with each new version of the game.
          If you wish to try your luck, at the very least craft a new journal and destroy the old one.
 [ ------ ]
+
+[ 3/25/26 ]
+- B42.15 Json Translation.
+[ ------ ]

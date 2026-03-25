@@ -1,4 +1,4 @@
 {
-    "DecayedJournal": "将其放入你的背包中以更新。",
-    "SkillJournal": "经验值取决于谁在阅读它们。"
+    "Tooltip_DecayedJournal": "将其放入你的背包中以更新。",
+    "Tooltip_SkillJournal": "经验值取决于谁在阅读它们。"
 }

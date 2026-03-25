@@ -1,4 +1,4 @@
 {
-    "DecayedJournal": "Przenieś to do swojego ekwipunku, aby odnowić.",
-    "SkillJournal": "Wartości XP zależą od tego, kto je czyta."
+    "Tooltip_DecayedJournal": "Przenieś to do swojego ekwipunku, aby odnowić.",
+    "Tooltip_SkillJournal": "Wartości XP zależą od tego, kto je czyta."
 }

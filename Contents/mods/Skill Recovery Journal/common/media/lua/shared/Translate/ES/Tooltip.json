@@ -1,4 +1,4 @@
 {
-    "DecayedJournal": "Muévelo a tu inventario para renovarlo.",
-    "SkillJournal": "Los valores de XP dependen de quién los lea."
+    "Tooltip_DecayedJournal": "Muévelo a tu inventario para renovarlo.",
+    "Tooltip_SkillJournal": "Los valores de XP dependen de quién los lea."
 }
