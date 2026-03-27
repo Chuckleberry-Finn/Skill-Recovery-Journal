@@ -1,4 +1,3 @@
 {
-    "ItemName_Base.SkillRecoveryJournal": "Journal Relié (Détérioré)",
-    "ItemName_Base.SkillRecoveryBoundJournal": "Journal Relié"
+    "Base.SkillRecoveryBoundJournal": "Journal Relié"
 }

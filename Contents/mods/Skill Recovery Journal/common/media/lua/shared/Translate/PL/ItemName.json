@@ -1,4 +1,3 @@
 {
-    "ItemName_Base.SkillRecoveryJournal": "Oprawiony Dziennik (Zniszczony)",
-    "ItemName_Base.SkillRecoveryBoundJournal": "Oprawiony Dziennik"
+    "Base.SkillRecoveryBoundJournal": "Oprawiony Dziennik"
 }

@@ -227,3 +227,9 @@ WARNING: There's been alot of strange issues with Journals from before B42.12.
 [ 3/25/26 ]
 - B42.15 Json Translation.
 [ ------ ]
+
+[ 3/27/26 ]
+- B42.15 Json Translation [hotfix]
+  Fixed recipe name and item name use.
+- Ran PZ-Translator v3.
+[ ------ ]

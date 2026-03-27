@@ -5,6 +5,11 @@
     "IGUI_PlayerText_DoesntFeelRightToRead": "閱讀別人的筆記感覺並不合適.",
     "IGUI_PlayerText_NothingToAddToJournal": "差不多都記好了.",
     "IGUI_PlayerText_AllDoneWithJournal": "搞定了.",
+    "IGUI_PlayerText_Illiterate1": "我無法閱讀。",
+    "IGUI_PlayerText_Illiterate2": "我是文盲。",
+    "IGUI_TranscribeIntoJournal": "轉錄成期刊",
+    "IGUI_PlayerText_NeedGainWeight": "我應該先增重幾磅...",
+    "IGUI_PlayerText_NeedLoseWeight": "我應該先減掉幾斤...",
     "IGUI_Tooltip_Empty": "一本可以添加紀錄的空白筆記本.",
     "IGUI_Tooltip_Start": "紀錄者為",
     "IGUI_Tooltip_End": "的生活.",
@@ -16,5 +21,15 @@
     "IGUI_perks_Sneak": "潛行",
     "IGUI_perks_PlantScavenging": "採集",
     "IGUI_Rename": "重新命名",
-    "IGUI_JournalXPUsedUp": "字跡已經過於斑駁淺淡... (經驗已消耗)"
+    "IGUI_JournalXPUsedUp": "字跡已經過於斑駁淺淡... (經驗已消耗)",
+    "IGUI_CraftCategory_SkillJournal": "技能恢復日記",
+    "IGUI_ItemCat_SkillJournal": "技能日記",
+    "IGUI_GainedXPText": "可恢復經驗值",
+    "IGUI_DeductedXP": "無法恢復的經驗值",
+    "IGUI_UntranscribedXP": "未轉錄的XP",
+    "IGUI_StartingLevelText": "起始等級",
+    "IGUI_OLDXP_WARNING": "警告：此日誌包含更新之前的「舊」XP。該期刊最初存在一些問題。該日誌使用得越多，該警告訊息就會消失。",
+    "IGUI_OneTimeUse_Warning": "啟用讀取時使用 XP 的沙箱選項。",
+    "IGUI_TV_XP_Warning": "從電視節目和 VHS 磁帶獲得的 XP 的沙盒選項已停用。",
+    "IGUI_Rename_Warning": "重新命名此日誌以停用此警報。"
 }

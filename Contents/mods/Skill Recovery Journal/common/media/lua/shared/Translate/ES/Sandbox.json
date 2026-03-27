@@ -8,6 +8,8 @@
     "Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip": "Un multiplicador para la velocidad de lectura de diarios encuadernados.",
     "Sandbox_SkillRecoveryJournalTranscribeTVXP": "Transcribir XP obtenido de TV/VHS",
     "Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip": "Activar esto permitirá transcribir XP obtenido al ver TV/VHS. Nota: Esto significa que los jugadores pueden transferir XP visto entre personajes de forma acumulativa.",
+    "Sandbox_SkillRecoveryJournalRecoverPassiveSkills": "Porcentaje de recuperación de habilidades pasivas",
+    "Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip": "Porcentaje de recuperación de habilidades pasivas (Fitness + Fuerza).<br>Establezca esto en -1 para usar el porcentaje de recuperación de habilidades generales.",
     "Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills": "Porcentaje de Recuperación de Habilidades Físicas",
     "Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills_tooltip": "Porcentaje de recuperación para habilidades físicas.<br>Configúrelo en -1 para usar el Porcentaje General de Recuperación de Habilidades.",
     "Sandbox_SkillRecoveryJournalRecoverCombatMeleeSkills": "Porcentaje de Recuperación de Habilidades de Combate Cuerpo a Cuerpo",
@@ -26,7 +28,15 @@
     "Sandbox_SkillRecoveryJournalUsed_tooltip": "Normalmente, puedes releer el diario tantas veces como quieras; con esto activado, cada punto de XP solo puede ser recuperado una vez. Aún puedes agregar al diario, pero cada punto solo puede ser recuperado una vez por diario. Nota: La descripción del diario ahora mostrará una fracción para los puntos no utilizados.",
     "Sandbox_SkillRecoveryJournalCraftRecipe": "Receta de Diario",
     "Sandbox_SkillRecoveryJournalCraftRecipe_tooltip": "Dejar esto en blanco significa que los diarios no se pueden crear.\\n\\nLa sintaxis sigue los ingredientes de la receta, como sigue:\\nCada artículo está separado por '|'.\\nEsto se introduce directamente en el input{} del script de recetas.",
+    "Sandbox_SkillRecoveryJournalCraftRecipeNeedLearn": "La receta del diario necesita aprendizaje",
+    "Sandbox_SkillRecoveryJournalCraftRecipeNeedLearn_tooltip": "Si se establece en verdadero, para crear el diario es necesario aprender la receta.\\n\\nActualmente no hay forma de aprenderla, lo que hace que la receta no se pueda elaborar.",
     "Sandbox_SkillRecoveryJournalModDataTrack": "Rastrear Valores de ModData",
     "Sandbox_SkillRecoveryJournalModDataTrack_tooltip": "USAR CON PRECAUCIÓN.\\n\\nEjemplo de sintaxis: ModDataKey1|ModDataKey2\\nLa transcripción almacenará una copia de la tabla correspondiente de los datos del mod del jugador.\\nEsto puede crear problemas significativos si los datos son grandes.\\nSi no estás seguro de lo que significa, ignóralo y déjalo en blanco.",
-    "Sandbox_SkillRecoveryJournalKillsTrack": "Porcentaje de Recuperación de Muertes de Zombis/Supervivientes"
+    "Sandbox_SkillRecoveryJournalKillsTrack": "Porcentaje de Recuperación de Muertes de Zombis/Supervivientes",
+    "Sandbox_SkillRecoveryJournalKillsTrack_tooltip": "Porcentaje de recuperación para muertes de zombis y supervivientes.<br>Ajusta esto a -1 para usar el porcentaje de recuperación de habilidades generales.",
+    "Sandbox_SkillRecoveryJournal_SecurityFeatures": "Protecciones de seguridad de la cuenta",
+    "Sandbox_SkillRecoveryJournal_SecurityFeatures_tooltip": "Si las revistas verifican el nombre de usuario, SteamID, ambos o ninguno. Advertencia: Deshabilitar esto por completo significaría que las personas pueden compartir diarios.",
+    "Sandbox_SkillRecoveryJournal_SecFeat_Values_option1": "Evitar que el nombre de usuario/SteamID no coincida",
+    "Sandbox_SkillRecoveryJournal_SecFeat_Values_option2": "Solo previene la discrepancia de SteamID",
+    "Sandbox_SkillRecoveryJournal_SecFeat_Values_option3": "No evites los desajustes"
 }
