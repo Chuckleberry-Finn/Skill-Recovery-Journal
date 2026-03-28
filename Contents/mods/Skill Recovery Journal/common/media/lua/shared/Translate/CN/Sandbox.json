@@ -28,15 +28,7 @@
     "Sandbox_SkillRecoveryJournalUsed_tooltip": "通常你可以无限次重读日志 - 开启此选项后，每个单独的经验值只能恢复一次。<br>你仍然可以向日志中添加内容，但每个点只能在每个日志中恢复一次。<br>注意：日志的提示现在会显示未使用点数的分数。",
     "Sandbox_SkillRecoveryJournalCraftRecipe": "日志配方",
     "Sandbox_SkillRecoveryJournalCraftRecipe_tooltip": "留空意味着无法制作日志。\\n\\n语法如下：\\n每个物品用'|'分隔。\\n这些直接输入到配方脚本的input{}中。",
-    "Sandbox_SkillRecoveryJournalCraftRecipeNeedLearn": "日记食谱需要学习",
-    "Sandbox_SkillRecoveryJournalCraftRecipeNeedLearn_tooltip": "如果设置为 true，则制作日记需要学习配方。\\n\\n目前无法学习它，导致配方无法制作。",
     "Sandbox_SkillRecoveryJournalModDataTrack": "跟踪ModData值",
     "Sandbox_SkillRecoveryJournalModDataTrack_tooltip": "谨慎使用。\\n\\n示例语法：ModDataKey1|ModDataKey2\\n抄写将存储玩家mod数据中相应表的副本。\\n如果数据量大，可能会造成重大问题。\\n如果你不确定这些是什么意思，请忽略它，留空。",
-    "Sandbox_SkillRecoveryJournalKillsTrack": "僵尸/幸存者击杀恢复百分比",
-    "Sandbox_SkillRecoveryJournalKillsTrack_tooltip": "僵尸和幸存者击杀的恢复百分比。<br>将此设置为 -1 以使用一般技能恢复百分比。",
-    "Sandbox_SkillRecoveryJournal_SecurityFeatures": "账户安全保护",
-    "Sandbox_SkillRecoveryJournal_SecurityFeatures_tooltip": "日志是否检查用户名、steamID、两者或都不检查。警告：完全禁用此功能意味着人们可以共享日记。",
-    "Sandbox_SkillRecoveryJournal_SecFeat_Values_option1": "防止用户名/SteamID 不匹配",
-    "Sandbox_SkillRecoveryJournal_SecFeat_Values_option2": "仅防止 SteamID 不匹配",
-    "Sandbox_SkillRecoveryJournal_SecFeat_Values_option3": "不要防止不匹配"
+    "Sandbox_SkillRecoveryJournalKillsTrack": "僵尸/幸存者击杀恢复百分比"
 }

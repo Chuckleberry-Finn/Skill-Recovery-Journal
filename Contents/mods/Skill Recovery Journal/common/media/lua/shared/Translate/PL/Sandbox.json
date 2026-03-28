@@ -8,8 +8,6 @@
     "Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip": "Mnożnik prędkości czytania oprawionych dzienników.",
     "Sandbox_SkillRecoveryJournalTranscribeTVXP": "Przepisuj XP zdobyte z TV/VHS",
     "Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip": "Włączenie tej opcji pozwala na przepisywanie XP zdobytego poprzez oglądanie TV/VHS. Uwaga: Oznacza to, że gracze mogą przenosić XP zdobyte poprzez oglądanie pomiędzy postaciami w sposób kumulatywny.",
-    "Sandbox_SkillRecoveryJournalRecoverPassiveSkills": "Procent regeneracji umiejętności pasywnych",
-    "Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip": "Procent regeneracji umiejętności pasywnych (Sprawność + siła).<br>Ustaw tę opcję na -1, aby użyć procentu regeneracji umiejętności ogólnych.",
     "Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills": "Procent Odzyskiwania Umiejętności Fizycznych",
     "Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills_tooltip": "Procent odzyskiwania umiejętności fizycznych.<br>Ustaw na -1, aby używać Ogólnego Procentu Odzyskiwania Umiejętności.",
     "Sandbox_SkillRecoveryJournalRecoverCombatMeleeSkills": "Procent Odzyskiwania Umiejętności Walki Wręcz",
@@ -28,15 +26,7 @@
     "Sandbox_SkillRecoveryJournalUsed_tooltip": "Normalnie możesz czytać dziennik tyle razy, ile chcesz; włączając tę opcję, każdy punkt XP może być odzyskany tylko raz. Nadal możesz dodawać do dziennika, ale każdy punkt może być odzyskany tylko raz w każdym dzienniku. Uwaga: Wskazówka dziennika będzie teraz wyświetlać ułamek dla niewykorzystanych punktów.",
     "Sandbox_SkillRecoveryJournalCraftRecipe": "Przepis na Dziennik",
     "Sandbox_SkillRecoveryJournalCraftRecipe_tooltip": "Pozostawienie pustego oznacza, że dzienniki nie mogą być tworzone.\\n\\nSkładnia opiera się na składnikach przepisu, jak następuje:\\nKażdy element jest oddzielony przez '|'.\\nSą one wprowadzane bezpośrednio do input{} skryptu przepisu.",
-    "Sandbox_SkillRecoveryJournalCraftRecipeNeedLearn": "Przepis na dziennik wymaga nauki",
-    "Sandbox_SkillRecoveryJournalCraftRecipeNeedLearn_tooltip": "Jeśli ustawione na true, utworzenie dziennika wymaga poznania przepisu.\\n\\nObecnie nie ma możliwości nauczenia się go, co sprawia, że ​​przepisu nie można wytworzyć.",
     "Sandbox_SkillRecoveryJournalModDataTrack": "Śledź Wartości ModData",
     "Sandbox_SkillRecoveryJournalModDataTrack_tooltip": "UŻYWAJ OSTROŻNIE.\\n\\nPrzykład składni: ModDataKey1|ModDataKey2\\nTranskrypcja zapisze kopię odpowiadającej tabeli z danych moda gracza.\\nMoże to powodować znaczące problemy, jeśli dane są duże.\\nJeśli nie wiesz, co to znaczy, zignoruj to i pozostaw puste.",
-    "Sandbox_SkillRecoveryJournalKillsTrack": "Procent Odzyskiwania Zabójstw Zombi/Przetrwania",
-    "Sandbox_SkillRecoveryJournalKillsTrack_tooltip": "Procent regeneracji po zabójstwach zombie i ocalałych.<br>Ustaw tę opcję na -1, aby użyć procentu regeneracji umiejętności ogólnych.",
-    "Sandbox_SkillRecoveryJournal_SecurityFeatures": "Zabezpieczenia konta",
-    "Sandbox_SkillRecoveryJournal_SecurityFeatures_tooltip": "Czy czasopisma sprawdzają nazwę użytkownika, identyfikator Steam, oba, czy żadne. Ostrzeżenie: całkowite wyłączenie tej opcji oznaczałoby, że użytkownicy mogą udostępniać dzienniki.",
-    "Sandbox_SkillRecoveryJournal_SecFeat_Values_option1": "Zapobiegaj niezgodnościom nazwy użytkownika/SteamID",
-    "Sandbox_SkillRecoveryJournal_SecFeat_Values_option2": "Zapobiegaj tylko niezgodnościom SteamID",
-    "Sandbox_SkillRecoveryJournal_SecFeat_Values_option3": "Nie zapobiegaj niedopasowaniom"
+    "Sandbox_SkillRecoveryJournalKillsTrack": "Procent Odzyskiwania Zabójstw Zombi/Przetrwania"
 }

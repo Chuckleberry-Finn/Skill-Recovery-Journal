@@ -8,8 +8,6 @@
     "Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip": "Множитель скорости чтения переплетенных дневников.",
     "Sandbox_SkillRecoveryJournalTranscribeTVXP": "Переписывать Опыт из ТВ/VHS",
     "Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip": "Включение этого параметра позволит переписывать опыт, полученный при просмотре ТВ/VHS. Примечание: Это означает, что игроки могут накапливать опыт просмотра между персонажами.",
-    "Sandbox_SkillRecoveryJournalRecoverPassiveSkills": "Процент восстановления пассивных навыков",
-    "Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip": "Процент восстановления пассивных навыков (физическая подготовка + сила).<br>Установите значение -1, чтобы использовать общий процент восстановления навыков.",
     "Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills": "Процент Восстановления Физических Навыков",
     "Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills_tooltip": "Процент восстановления физических навыков.<br>Установите -1, чтобы использовать Общий Процент Восстановления Навыков.",
     "Sandbox_SkillRecoveryJournalRecoverCombatMeleeSkills": "Процент Восстановления Навыков Ближнего Боя",
@@ -28,15 +26,7 @@
     "Sandbox_SkillRecoveryJournalUsed_tooltip": "Обычно вы можете читать дневник сколько угодно раз; при включении этой опции каждая единица опыта может быть восстановлена только один раз. Вы всё ещё можете добавлять в дневник, но каждая единица опыта восстанавливается только один раз для каждого дневника. Примечание: теперь подсказка для дневника будет показывать дробь для неиспользованных точек.",
     "Sandbox_SkillRecoveryJournalCraftRecipe": "Рецепт Дневника",
     "Sandbox_SkillRecoveryJournalCraftRecipe_tooltip": "Если оставить пустым, дневники нельзя будет создать.\\n\\nСинтаксис следующий для ингредиентов рецепта:\\nКаждый элемент отделяется '|'.\\nОни передаются напрямую в input{} скрипта рецепта.",
-    "Sandbox_SkillRecoveryJournalCraftRecipeNeedLearn": "Рецепт журнала требует изучения",
-    "Sandbox_SkillRecoveryJournalCraftRecipeNeedLearn_tooltip": "Если установлено значение true, для создания журнала необходимо изучить рецепт.\\n\\nВ настоящее время выучить его невозможно, поэтому рецепт невозможно изготовить.",
     "Sandbox_SkillRecoveryJournalModDataTrack": "Отслеживать Значения ModData",
     "Sandbox_SkillRecoveryJournalModDataTrack_tooltip": "ИСПОЛЬЗУЙТЕ С ОСТОРОЖНОСТЬЮ.\\n\\nПример синтаксиса: ModDataKey1|ModDataKey2\\nПереписывание сохранит копию соответствующей таблицы из данных мода игрока.\\nЭто может вызвать серьёзные проблемы, если данные большие.\\nЕсли вы не уверены, что это значит, проигнорируйте и оставьте пустым.",
-    "Sandbox_SkillRecoveryJournalKillsTrack": "Процент Восстановления Убийств (Зомби/Выживших)",
-    "Sandbox_SkillRecoveryJournalKillsTrack_tooltip": "Процент восстановления для убийств зомби и выживших.<br>Установите значение -1, чтобы использовать общий процент восстановления навыков.",
-    "Sandbox_SkillRecoveryJournal_SecurityFeatures": "Защита учетной записи",
-    "Sandbox_SkillRecoveryJournal_SecurityFeatures_tooltip": "Проверяются ли журналы по имени пользователя, SteamID, обоим или нет. Предупреждение: полное отключение этого параметра будет означать, что люди смогут делиться журналами.",
-    "Sandbox_SkillRecoveryJournal_SecFeat_Values_option1": "Предотвращение несоответствия имени пользователя и SteamID",
-    "Sandbox_SkillRecoveryJournal_SecFeat_Values_option2": "Только предотвращайте несовпадение SteamID",
-    "Sandbox_SkillRecoveryJournal_SecFeat_Values_option3": "Не предотвращайте несоответствия"
+    "Sandbox_SkillRecoveryJournalKillsTrack": "Процент Восстановления Убийств (Зомби/Выживших)"
 }

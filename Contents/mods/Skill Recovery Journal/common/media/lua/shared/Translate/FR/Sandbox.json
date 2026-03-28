@@ -8,8 +8,6 @@
     "Sandbox_SkillRecoveryJournalReadTimeSpeed_tooltip": "Un multiplicateur sur la vitesse de lecture des journaux reliés.",
     "Sandbox_SkillRecoveryJournalTranscribeTVXP": "Transcrire l'XP obtenue via TV/VHS",
     "Sandbox_SkillRecoveryJournalTranscribeTVXP_tooltip": "Activer cela permettra de transcrire l'XP obtenue en regardant la TV/VHS. Remarque : Cela signifie que les joueurs peuvent cumuler l'XP regardée entre les personnages.",
-    "Sandbox_SkillRecoveryJournalRecoverPassiveSkills": "Pourcentage de récupération des compétences passives",
-    "Sandbox_SkillRecoveryJournalRecoverPassiveSkills_tooltip": "Pourcentage de récupération pour les compétences passives (Fitness + Force).<br>Réglez ce paramètre sur -1 pour utiliser le pourcentage de récupération des compétences générales.",
     "Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills": "Pourcentage de Récupération des Compétences Physiques",
     "Sandbox_SkillRecoveryJournalRecoverPhysicalCategorySkills_tooltip": "Pourcentage de récupération pour les compétences physiques.<br>Réglez sur -1 pour utiliser le Pourcentage Général de Récupération des Compétences.",
     "Sandbox_SkillRecoveryJournalRecoverCombatMeleeSkills": "Pourcentage de Récupération des Compétences de Combat au Corps à Corps",
@@ -28,15 +26,7 @@
     "Sandbox_SkillRecoveryJournalUsed_tooltip": "Normalement, vous pouvez relire le journal autant de fois que vous le souhaitez ; avec cette option activée, chaque point d'XP ne peut être récupéré qu'une fois. Vous pouvez toujours ajouter au journal, mais chaque point ne peut être récupéré qu'une fois par journal. Remarque : l'infobulle du journal affichera désormais une fraction pour les points inutilisés.",
     "Sandbox_SkillRecoveryJournalCraftRecipe": "Recette du Journal",
     "Sandbox_SkillRecoveryJournalCraftRecipe_tooltip": "Laisser vide signifie que les journaux ne peuvent pas être fabriqués.\\n\\nLa syntaxe suit les ingrédients de recette, comme suit :\\nChaque élément est séparé par '|'.\\nCeux-ci sont directement introduits dans le input{} du script de recette.",
-    "Sandbox_SkillRecoveryJournalCraftRecipeNeedLearn": "La recette du journal doit être apprise",
-    "Sandbox_SkillRecoveryJournalCraftRecipeNeedLearn_tooltip": "Si la valeur est true, la création du journal nécessite l'apprentissage de la recette.\\n\\nActuellement, il n'existe aucun moyen de l'apprendre, ce qui rend la recette impossible à fabriquer.",
     "Sandbox_SkillRecoveryJournalModDataTrack": "Suivre les Valeurs de ModData",
     "Sandbox_SkillRecoveryJournalModDataTrack_tooltip": "UTILISER AVEC PRUDENCE.\\n\\nExemple de syntaxe : ModDataKey1|ModDataKey2\\nLa transcription stockera une copie de la table correspondante des données de mod du joueur.\\nCela peut créer des problèmes significatifs si les données sont importantes.\\nSi vous ne savez pas ce que cela signifie, ignorez-le et laissez vide.",
-    "Sandbox_SkillRecoveryJournalKillsTrack": "Pourcentage de Récupération des Tués (Zombies/Survivants)",
-    "Sandbox_SkillRecoveryJournalKillsTrack_tooltip": "Pourcentage de récupération pour les zombies et les survivants tués.<br>Réglez ce paramètre sur -1 pour utiliser le pourcentage de récupération de compétence générale.",
-    "Sandbox_SkillRecoveryJournal_SecurityFeatures": "Protections de sécurité du compte",
-    "Sandbox_SkillRecoveryJournal_SecurityFeatures_tooltip": "Que les journaux vérifient par rapport au nom d'utilisateur, au steamID, aux deux ou à aucun. Avertissement : la désactivation complète de cette option signifierait que les utilisateurs pourraient partager des journaux.",
-    "Sandbox_SkillRecoveryJournal_SecFeat_Values_option1": "Empêcher les incompatibilités de nom d'utilisateur et d'ID Steam",
-    "Sandbox_SkillRecoveryJournal_SecFeat_Values_option2": "Empêcher uniquement les incompatibilités SteamID",
-    "Sandbox_SkillRecoveryJournal_SecFeat_Values_option3": "N'empêchez pas les discordances"
+    "Sandbox_SkillRecoveryJournalKillsTrack": "Pourcentage de Récupération des Tués (Zombies/Survivants)"
 }
