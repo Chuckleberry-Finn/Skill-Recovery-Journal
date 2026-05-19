@@ -20,6 +20,6 @@ description=[url=https://chuckleberry-finn.github.io/issues/][img]https://raw.gi
 description=
 description=
 description=
-description=[h3]Copyright 2023 Chuckleberry Finn. This item is not authorized for posting on Steam, except under the Steam account named Chuckleberry Finn.[/h3]
+description=[h3]Copyright 2026 Chuckleberry Finn. This item is not authorized for posting on Steam, except under the Steam account named Chuckleberry Finn.[/h3]
 tags=Build 41;Build 42;Balance;Multiplayer
 visibility=public

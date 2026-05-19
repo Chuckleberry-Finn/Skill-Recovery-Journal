@@ -45,7 +45,8 @@ function SRJ.calculateGainedSkill(player, perk, passiveSkillsInit, startingLevel
 				recoverableXP = SRJ.xpHandler.unBoostXP(player,perk,recoverableXP)
 				--if getDebug() then print(" recoverableXP-unboosted: ",recoverableXP) end
 				--end
-				local gainedXP = recoverableXP * recoveryPercentage
+				local normalizedScale = SRJ.xpHandler.getSkillXPNormalizeScale(perkID) or 1
+				local gainedXP = recoverableXP * recoveryPercentage * normalizedScale
 				--if getDebug() then print(" FINAL: ", gainedXP) end
 				return gainedXP
 			end

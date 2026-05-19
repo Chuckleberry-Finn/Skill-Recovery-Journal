@@ -12,6 +12,35 @@ SRJ_XPHandler.perkXpTable = {}
 SRJ_XPHandler.maxXPDifferential = {}
 
 
+---CREDIT to wwwwfly for adding a normalization for modded skills. :)
+SRJ_XPHandler.skillXPNormalizeScale = {}
+function SRJ_XPHandler.getSkillXPNormalizeScale(perk)
+    local perkID = (type(perk) == "string" and perk) or (perk and perk:getId())
+    if not perkID then return 1 end
+
+    if SRJ_XPHandler.skillXPNormalizeScale[perkID] then
+        return SRJ_XPHandler.skillXPNormalizeScale[perkID]
+    end
+
+    local perkObj = Perks[perkID]
+    if not perkObj then
+        SRJ_XPHandler.skillXPNormalizeScale[perkID] = 1
+        return 1
+    end
+
+    local differential = SRJ_XPHandler.getMaxXPDifferential(perkID) or 1
+    local scale = 1 / (differential * differential)
+    if scale < 0.01 then
+        scale = 0.01
+    elseif scale > 100 then
+        scale = 100
+    end
+
+    SRJ_XPHandler.skillXPNormalizeScale[perkID] = scale
+    return scale
+end
+
+
 function SRJ_XPHandler.getMaxXPDifferential(perk)
 	if SRJ_XPHandler.maxXPDifferential[perk] then return SRJ_XPHandler.maxXPDifferential[perk] end
 	local maxXPDefault = Perks.PhysicalCategory:getTotalXpForLevel(10)
@@ -20,6 +49,7 @@ function SRJ_XPHandler.getMaxXPDifferential(perk)
 	SRJ_XPHandler.maxXPDifferential[perk] = maxXPDefault/maxXPPerk
 	return SRJ_XPHandler.maxXPDifferential[perk]
 end
+
 
 ---@param player IsoGameCharacter|IsoPlayer
 function SRJ_XPHandler.getOrStoreXPMultipliers(player)
@@ -66,6 +96,7 @@ function SRJ_XPHandler.reBoostXP(player,perk,XP)
 
     return XP
 end
+
 
 ---This process "flattens" the XP to that of unemployed/traitless as well as sandbox-XP-Multi=1
 ---@param player IsoGameCharacter|IsoPlayer
