@@ -105,7 +105,7 @@ B42: Removed old conversion code from old journal type.
 link1 = Chuck's Kofi = https://steamcommunity.com/linkfilter/?u=https://ko-fi.com/chuckleberryfinn,
 link2 = MassCraxx's Kofi = https://steamcommunity.com/linkfilter/?u=https://ko-fi.com/masscraxx,
 link3 = Workshop = https://steamcommunity.com/id/Chuckleberry_Finn/myworkshopfiles/?appid=108600,
-link4 = Github = https://steamcommunity.com/linkfilter/?u=https://github.com/Chuckleberry-Finn,
+link4 = REPORT BUGS = https://chuckleberry-finn.github.io/issues/?repo=Skill-Recovery-Journal,
 [ ------ ]
 
 [ 1/24/25 ]
@@ -232,4 +232,23 @@ WARNING: There's been alot of strange issues with Journals from before B42.12.
 - B42.15 Json Translation [hotfix]
   Fixed recipe name and item name use.
 - Ran PZ-Translator v3.
+[ ------ ]
+
+[ 5/19/26 ]
+Due to lack of reproducibility some extra measures were added to address the bugs reported:
+- Transcribe-then-read XP exploit: server now syncs readXP state back to client after write completes.
+  This should not be needed but there may be desync or delay between normal syncing.
+- ReadXP table uses a local variable instead of itself, changes are applied after.
+- Recipe chunk size now floors to a minimum of 1 - this should prevent infinite action loops in rare cases.
+- Halotext progress percentage now capped at 100% visually.
+- ModData copy moved to first action tick instead of initialization.
+- Flat XP (addXpNoMultiplier) is now tracked separately and excluded from boost/unboost math during transcription.
+   This should handle edge cases caused by other mods that add XP flatly, namely SOTO/More Traits.
+- Custom recipe sandbox option has more safety checks to avoid invalid values.
+
+Minor:
+- Empty modData no longer marks a journal action tick as having changes.
+- Kill restoration skips ticks after all kills are fully transferred (with other information still pending).
+- SteamID is now assigned directly in identification checks.
+- Illiterate feedback message used incorrect translation key.
 [ ------ ]

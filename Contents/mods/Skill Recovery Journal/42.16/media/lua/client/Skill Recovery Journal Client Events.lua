@@ -101,6 +101,9 @@ function OnServerWriteCommand(module, command, args)
             getPlayer():setZombieKills(args.kills)
         elseif command == "sKills" then
             getPlayer():setSurvivorKills(args.kills)
+        elseif command == "readXP" then
+            local pMD = SRJ.modDataHandler.getPlayerModData(getPlayer())
+            pMD.recoveryJournalXpLog = args.data
         end
     end
 end

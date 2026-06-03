@@ -83,6 +83,9 @@ function SkillRecoveryJournalAction:serverStop()
     if not self.item then print("WARNING: SkillRecoveryJournalAction:serverStop - 'item' not found. ") return end
     if not self.character then print("WARNING: SkillRecoveryJournalAction:serverStop - 'character' not found. ") return end
     syncItemModData(self.character, self.item)
+    if not self.doReading then
+        sendServerCommand(self.character, "SkillRecoveryJournal", "readXP", {data = SRJ.modDataHandler.getReadXP(self.character)})
+    end
 end
 
 
@@ -109,6 +112,9 @@ function SkillRecoveryJournalAction:complete()
 
     self.item:setJobDelta(0.0)
     syncItemModData(self.character, self.item)
+    if not self.doReading then
+        sendServerCommand(self.character, "SkillRecoveryJournal", "readXP", {data = SRJ.modDataHandler.getReadXP(self.character)})
+    end
     return true
 end
 
@@ -313,8 +319,9 @@ function SkillRecoveryJournalAction:new(character, item, doReading, writingTool)
             o.gainedRecipes = SRJ.getGainedRecipes(character, learnedRecipes)
         end
 
-        -- gained XP since last write
-        o.gainedSkills = SRJ.calculateAllGainedSkills(character) or false
+        o.gainedSkills, o.flatGainedSkills = SRJ.calculateAllGainedSkills(character)
+        o.gainedSkills = o.gainedSkills or false
+        o.flatGainedSkills = o.flatGainedSkills or false
 
         
         -- fields specific to writing
@@ -327,7 +334,7 @@ function SkillRecoveryJournalAction:new(character, item, doReading, writingTool)
         -- determine if writing is allowed
         o.willWrite = true
 
-        if not o.gainedSkills and (#o.gainedRecipes <= 0) then
+        if not o.gainedSkills and not o.flatGainedSkills and (#o.gainedRecipes <= 0) then
             sayText = "IGUI_PlayerText_DontHaveAnyXP"
 
             o.willWrite = false
@@ -349,13 +356,14 @@ function SkillRecoveryJournalAction:new(character, item, doReading, writingTool)
         o.timeFactor,
         o.gainedRecipes,
         o.gainedSkills,
+        o.flatGainedSkills,
         doReading,
         o.updateInterval
     )
 
-    -- track changes
-    o.changesBeingMade      = {}
+    o.changesBeingMade = {}
     o.changesBeingMadeIndex = {}
+    o.killsComplete = false
 
     return o
 end

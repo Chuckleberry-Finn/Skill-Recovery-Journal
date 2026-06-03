@@ -67,17 +67,16 @@ end
 
 -- deducted xp from radio and tv
 function SRJ_ModDataHandler.checkIfDeductedXP(player, perksType, XP)
-	-- check if passive levels are init (workaround for mp server)
 	SRJ_ModDataHandler.setPassiveLevels(_, player)
 
-	local fN, lCF = nil, getCoroutineCallframeStack(getCurrentCoroutine(),0)
+	local fN, lCF = nil, getCoroutineCallframeStack(getCurrentCoroutine(), 0)
 	local fD = lCF ~= nil and lCF and getFilenameOfCallframe(lCF)
 	local i = fD and fD:match('^.*()/')
 	fN = i and fD:sub(i+1):gsub(".lua", "")
 
-	if fN and fN=="ISRadioInteractions" then
-		--if getDebug() then print("deductibleXP: `",fN,"` \n (",perksType,", ",XP," )") end
-		local perkID = perksType:getId()
+	local perkID = perksType:getId()
+
+	if fN and fN == "ISRadioInteractions" then
 		local deductibleXP = SRJ_ModDataHandler.getDeductedXP(player)
 		deductibleXP[perkID] = (deductibleXP[perkID] or 0) + XP
 	end
@@ -88,6 +87,39 @@ function SRJ_ModDataHandler.getDeductedXP(player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
 	pMD.deductedXP = pMD.deductedXP or {}
 	return pMD.deductedXP
+end
+
+
+function SRJ_ModDataHandler.getFlatXP(player)
+	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
+	pMD.flatXP = pMD.flatXP or {}
+	return pMD.flatXP
+end
+
+
+function SRJ_ModDataHandler.getReadFlatXP(player)
+	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
+	pMD.readFlatXP = pMD.readFlatXP or {}
+	return pMD.readFlatXP
+end
+
+
+local SRJ_ADDING_FLAT_XP = false
+
+function SRJ_ModDataHandler.setSRJAddingFlatXP(state)
+	SRJ_ADDING_FLAT_XP = state
+end
+
+function SRJ_ModDataHandler.initFlatXPHook()
+	local original = addXpNoMultiplier
+	addXpNoMultiplier = function(character, perk, xp)
+		if not SRJ_ADDING_FLAT_XP and instanceof(character, "IsoGameCharacter") then
+			local perkID = (type(perk) == "string" and perk) or perk:getId()
+			local flatXP = SRJ_ModDataHandler.getFlatXP(character)
+			flatXP[perkID] = (flatXP[perkID] or 0) + xp
+		end
+		original(character, perk, xp)
+	end
 end
 
 
@@ -131,14 +163,17 @@ end
 function SRJ_ModDataHandler.getItemModData(item)
     local iMd = item:getModData()
 	if not iMd["SRJ"] then
-		-- init new journal mod data
-    	iMd["SRJ"] = {}
+		iMd["SRJ"] = {}
 		iMd["SRJ"]["gainedXP"] = {}
+		iMd["SRJ"]["flatGainedXP"] = {}
 		iMd["SRJ"]["learnedRecipes"] = {}
 		iMd["SRJ"]["kills"] = {}
 	end
-	if not iMd["SRJ"]["kills"] then -- for pre-existing journals
+	if not iMd["SRJ"]["kills"] then
 		iMd["SRJ"]["kills"] = {}
+	end
+	if not iMd["SRJ"]["flatGainedXP"] then
+		iMd["SRJ"]["flatGainedXP"] = {}
 	end
     return iMd["SRJ"]
 end
@@ -173,6 +208,27 @@ function SRJ_ModDataHandler.returnCapturedKeys(journalData)
     end
 
     return data
+end
+
+
+function SRJ_ModDataHandler.hasModDataToTransfer(player, item, doReading)
+	local sandbox = SandboxVars.SkillRecoveryJournal.ModDataTrack
+	if (not sandbox) or (sandbox == "") then return false end
+	if #SRJ_ModDataHandler.customKeys <= 0 then SRJ_ModDataHandler.parseSandBoxOption() end
+	local journalData = SRJ_ModDataHandler.getItemModData(item)
+	local playerData = player:getModData()
+	for _, key in pairs(SRJ_ModDataHandler.customKeys) do
+		if doReading then
+			if journalData and journalData.pModData and journalData.pModData[key] then
+				return true
+			end
+		else
+			if playerData and playerData[key] then
+				return true
+			end
+		end
+	end
+	return false
 end
 
 

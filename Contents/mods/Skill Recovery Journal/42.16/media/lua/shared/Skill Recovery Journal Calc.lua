@@ -1,7 +1,7 @@
 local SRJ = require "Skill Recovery Journal Main"
 
 -- returns all gained skills as per config or false if no valid skill xp gained
-function SRJ.calculateGainedSkill(player, perk, passiveSkillsInit, startingLevels, deductibleXP)
+function SRJ.calculateGainedSkill(player, perk, passiveSkillsInit, startingLevels, deductibleXP, flatXP)
 
 	if not passiveSkillsInit then
 		passiveSkillsInit = SRJ.modDataHandler.getPassiveLevels(player)
@@ -13,6 +13,10 @@ function SRJ.calculateGainedSkill(player, perk, passiveSkillsInit, startingLevel
 
 	if not deductibleXP then
 		deductibleXP = SRJ.modDataHandler.getDeductedXP(player)
+	end
+
+	if not flatXP then
+		flatXP = SRJ.modDataHandler.getFlatXP(player)
 	end
 
 	if perk and perk:getParent():getId()~="None" then
@@ -40,15 +44,12 @@ function SRJ.calculateGainedSkill(player, perk, passiveSkillsInit, startingLevel
 
 			if recoverableXP > 0 then
 
-				--local deductBonusXP = SandboxVars.SkillRecoveryJournal.RecoverProfessionAndTraitsBonuses ~= true
-				--if deductBonusXP then
-				recoverableXP = SRJ.xpHandler.unBoostXP(player,perk,recoverableXP)
-				--if getDebug() then print(" recoverableXP-unboosted: ",recoverableXP) end
-				--end
 				local normalizedScale = SRJ.xpHandler.getSkillXPNormalizeScale(perkID) or 1
-				local gainedXP = recoverableXP * recoveryPercentage * normalizedScale
-				--if getDebug() then print(" FINAL: ", gainedXP) end
-				return gainedXP
+				local flatPortion = math.min(flatXP[perkID] or 0, recoverableXP)
+				local boostedPortion = recoverableXP - flatPortion
+				local gainedXP = boostedPortion > 0 and (SRJ.xpHandler.unBoostXP(player, perk, boostedPortion) * recoveryPercentage * normalizedScale) or nil
+				local flatGained = flatPortion > 0 and (flatPortion * recoveryPercentage) or nil
+				return gainedXP, flatGained
 			end
 		end
 	end
@@ -60,23 +61,28 @@ end
 -- returns all gained skills as per config or nil if no valid skill xp gained
 function SRJ.calculateAllGainedSkills(player)
 	local gainedXP
+	local flatGainedXP
 
 	local passiveSkillsInit = SRJ.modDataHandler.getPassiveLevels(player)
 	local startingLevels = SRJ.modDataHandler.getFreeLevelsFromTraitsAndProfession(player)
 	local deductibleXP = SRJ.modDataHandler.getDeductedXP(player)
+	local flatXP = SRJ.modDataHandler.getFlatXP(player)
 
 	for i=1, Perks.getMaxIndex()-1 do
 		---@type PerkFactory.Perk
 		local perk = Perks.fromIndex(i)
-		local gained = SRJ.calculateGainedSkill(player, perk, passiveSkillsInit, startingLevels, deductibleXP)
+		local gained, flatGained = SRJ.calculateGainedSkill(player, perk, passiveSkillsInit, startingLevels, deductibleXP, flatXP)
 		if gained then
-			--if getDebug() then print("calculateAllGainedSkills gained " .. gained) end
 			gainedXP = gainedXP or {}
 			gainedXP[perk:getId()] = gained
 		end
+		if flatGained then
+			flatGainedXP = flatGainedXP or {}
+			flatGainedXP[perk:getId()] = flatGained
+		end
 	end
 
-	return gainedXP
+	return gainedXP, flatGainedXP
 end
 
 
@@ -175,7 +181,7 @@ function SRJ.calculateGainedKills(journalModData, player, doReading)
 end
 
 
-function SRJ.calculateXpRate(perkID, xpToProcess, perkLevelPlusOne, durationData, actionTimeMulti, timeFactor)
+function SRJ.calculateXpRate(perkID, xpToProcess, perkLevelPlusOne, durationData, actionTimeMulti, timeFactor, ratesTable)
     local differential = SRJ.xpHandler.getMaxXPDifferential(perkID) or 1
 
     if getDebug() then print("XP ", xpToProcess, " PlPO ", perkLevelPlusOne, " - multi ", actionTimeMulti, " - time factor ", timeFactor, " - diff ", differential) end
@@ -183,7 +189,8 @@ function SRJ.calculateXpRate(perkID, xpToProcess, perkLevelPlusOne, durationData
     local xpRate = round((math.sqrt(xpToProcess * perkLevelPlusOne) / 25) * actionTimeMulti * timeFactor / differential, 2)
 
     if xpRate and xpRate > 0 then
-        durationData.rates[perkID] = xpRate
+        local targetRates = ratesTable or durationData.rates
+        targetRates[perkID] = xpRate
         local intervalsNeeded = math.ceil(xpToProcess / xpRate)
         if getDebug() then print(" - ", perkID, "- xprate = ", xpRate, ", ", xpToProcess, " (", intervalsNeeded, ")") end
         durationData.intervals = math.max(intervalsNeeded, durationData.intervals)
@@ -192,13 +199,14 @@ end
 
 
 -- Calculate rates and duration for read / writing
-function SRJ.calculateReadWriteRates(player, item, timeFactor, gainedRecipes, gainedSkills, doReading, updateInterval)
+function SRJ.calculateReadWriteRates(player, item, timeFactor, gainedRecipes, gainedSkills, flatGainedSkills, doReading, updateInterval)
 
     local durationData = {
 		rates = {},
+		flatRates = {},
 		intervals = 0,
 		recipeChunk = 0,
-        recipeInterval = 4, -- update recipes every 4th update
+        recipeInterval = 4,
 		kills = {},
 	}
 
@@ -216,15 +224,9 @@ function SRJ.calculateReadWriteRates(player, item, timeFactor, gainedRecipes, ga
 		durationData.intervals = math.max(intervalsNeeded,durationData.intervals)
 	end
 
-	-- modData
-    local modDataStored
-    if doReading then
-        --- the CopyData function actually does the copying - we need a function to JUST check if the data exists for this step
-	    modDataStored = SRJ.modDataHandler.copyDataToPlayer(player, item)
-    else
-	    modDataStored = SRJ.modDataHandler.copyDataToJournal(player, item)
-    end
-	if modDataStored then durationData.intervals = durationData.intervals+1 end
+	if SRJ.modDataHandler.hasModDataToTransfer(player, item, doReading) then
+		durationData.intervals = durationData.intervals + 1
+	end
 
     -- xp
     if gainedSkills and not doReading then
@@ -237,7 +239,20 @@ function SRJ.calculateReadWriteRates(player, item, timeFactor, gainedRecipes, ga
                 SRJ.calculateXpRate(perkID, xpToWrite, perkLevelPlusOne, durationData, actionTimeMulti, timeFactor)
             end
         end
-    elseif doReading then
+    end
+
+    if flatGainedSkills and not doReading then
+        local storedFlatXP = journalModData.flatGainedXP or {}
+        for perkID, xp in pairs(flatGainedSkills) do
+            local xpToWrite = xp - (storedFlatXP[perkID] or 0)
+            if xpToWrite > 0 then
+                local perkLevelPlusOne = player:getPerkLevel(Perks[perkID]) + 1
+                SRJ.calculateXpRate(perkID, xpToWrite, perkLevelPlusOne, durationData, actionTimeMulti, timeFactor, durationData.flatRates)
+            end
+        end
+    end
+
+    if doReading then
         -- read journal
         local validSkills = {}
         local greatestXp = 0
@@ -265,8 +280,7 @@ function SRJ.calculateReadWriteRates(player, item, timeFactor, gainedRecipes, ga
         for perkID, journalXP in pairs(storedJournalXP) do
             if Perks[perkID] and validSkills[perkID] then
 
-                readXP[perkID] = readXP[perkID] or 0
-                local currentlyReadXP = readXP[perkID]
+                local currentlyReadXP = readXP[perkID] or 0
 
                 if oneTimeUse and jmdUsedXP[perkID] then
                     currentlyReadXP = math.max(currentlyReadXP, jmdUsedXP[perkID])
@@ -279,6 +293,20 @@ function SRJ.calculateReadWriteRates(player, item, timeFactor, gainedRecipes, ga
 					-- for perkLevelPlusOne assume we have acquired the skill xp we are heading for (max 10 +1)
                     local perkLevelPlusOne = math.min(11, SRJ.xpHandler.getPerkLevelAfterJournalRead(SRJ, player, perkID, multi, journalXP) + 1)
                     SRJ.calculateXpRate(perkID, xpToRead, perkLevelPlusOne, durationData, actionTimeMulti, timeFactor)
+                end
+            end
+        end
+
+        local storedFlatJournalXP = journalModData.flatGainedXP or {}
+        local readFlatXP = SRJ.modDataHandler.getReadFlatXP(player)
+        for perkID, journalFlatXP in pairs(storedFlatJournalXP) do
+            local perk = Perks[perkID]
+            if perk and SRJ.bSkillValid(perk) then
+                local currentlyReadFlatXP = readFlatXP[perkID] or 0
+                if currentlyReadFlatXP < journalFlatXP then
+                    local xpToRead = journalFlatXP - currentlyReadFlatXP
+                    local perkLevelPlusOne = math.min(11, SRJ.xpHandler.getPerkLevelFromXP(perkID, journalFlatXP) + 1)
+                    SRJ.calculateXpRate(perkID, xpToRead, perkLevelPlusOne, durationData, actionTimeMulti, timeFactor, durationData.flatRates)
                 end
             end
         end

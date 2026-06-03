@@ -13,23 +13,17 @@ function SRJ.handleIdentity(player, JMD)
 	---2 = "Only Prevent SteamID Mismatch",
 	---3 = "Don't Prevent Mismatches",
 
-	if protections <= 2  and pSteamID ~= 0 then
-        -- return false if steamID set and does not match
+	if protections <= 2 and pSteamID ~= 0 then
 		if journalID["steamID"] and (journalID["steamID"] ~= pSteamID) then
 			return false
 		end
-        -- set steamID if available
-		if pSteamID then
-			journalID["steamID"] = pSteamID
-		end
+		journalID["steamID"] = pSteamID
 	end
 
 	if protections == 1 then
-        -- return false if username set and does not match
 		if pUsername and journalID["username"] and (journalID["username"] ~= pUsername) then
 			return false
 		end
-        -- set username if available and not set
 		if pUsername and (not journalID["username"]) then
 			journalID["username"] = pUsername
 		end
@@ -48,7 +42,7 @@ function SRJ.checkStaticConditions(player, JMD, doReading)
 
 	-- check illiterate
 	elseif player:hasTrait(CharacterTrait.ILLITERATE) then
-		return false, "IGUI_PlayerText_IGUI_PlayerText_Illiterate"
+		return false, "IGUI_PlayerText_Illiterate"
 	
 	-- check permissions only in MP
 	elseif (isClient() or isServer()) and not SRJ.handleIdentity(player, JMD) then
@@ -223,7 +217,9 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
                             usedXP[perkID] = (usedXP[perkID] or 0) + rate
 
                             local addedXP = SRJ.xpHandler.reBoostXP(player, perk, rate)
+                            SRJ.modDataHandler.setSRJAddingFlatXP(true)
                             addXpNoMultiplier(player, perk, addedXP)
+                            SRJ.modDataHandler.setSRJAddingFlatXP(false)
 
                             changesMade = true
 
@@ -240,19 +236,76 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
         end
     end
 
+    -- FLAT XP
+    local processFlatXpMap = (not doReading) and self.flatGainedSkills
+    if processFlatXpMap then
+        JMD.flatGainedXP = JMD.flatGainedXP or {}
+        local readFlatXP = SRJ.modDataHandler.getReadFlatXP(player)
+        for perkID, perkFlatXP in pairs(processFlatXpMap) do
+            local perk = Perks[perkID]
+            if perk and SRJ.bSkillValid(perk) then
+                local currentFlatXP = readFlatXP[perkID] or 0
+                local flatRate = self.durationData.flatRates[perkID] or 0
+                JMD.flatGainedXP[perkID] = JMD.flatGainedXP[perkID] or 0
+                if perkFlatXP > JMD.flatGainedXP[perkID] and flatRate > 0 then
+                    changesMade = true
+                    local resulting = math.min(perkFlatXP, JMD.flatGainedXP[perkID] + flatRate)
+                    JMD.flatGainedXP[perkID] = resulting
+                    readFlatXP[perkID] = math.max(resulting, currentFlatXP)
+                    local skillName = "IGUI_perks_" .. perkID
+                    if not self.changesBeingMadeIndex[skillName] then
+                        self.changesBeingMadeIndex[skillName] = true
+                        table.insert(self.changesBeingMade, skillName)
+                    end
+                end
+            end
+        end
+    end
+
+    if doReading and JMD.flatGainedXP then
+        local readFlatXP = SRJ.modDataHandler.getReadFlatXP(player)
+        for perkID, journalFlatXP in pairs(JMD.flatGainedXP) do
+            local perk = Perks[perkID]
+            if perk and SRJ.bSkillValid(perk) then
+                local currentFlatXP = readFlatXP[perkID] or 0
+                local flatRate = self.durationData.flatRates[perkID] or 0
+                if currentFlatXP < journalFlatXP then
+                    if player:getPerkLevel(perk) == 10 then flatRate = false end
+                    if flatRate and flatRate > 0 then
+                        if currentFlatXP + flatRate > journalFlatXP then
+                            flatRate = math.max(journalFlatXP - currentFlatXP, 0.001)
+                        end
+                        readFlatXP[perkID] = currentFlatXP + flatRate
+                        addXpNoMultiplier(player, perk, flatRate)
+                        changesMade = true
+                        local skillName = "IGUI_perks_" .. perkID
+                        if not self.changesBeingMadeIndex[skillName] then
+                            self.changesBeingMadeIndex[skillName] = true
+                            table.insert(self.changesBeingMade, skillName)
+                        end
+                    end
+                end
+            end
+        end
+    end
+
     -- KILLS
     local killsEnabled = self.durationData.kills.Zombie > 0 or self.durationData.kills.Survivor > 0
-    if killsEnabled then
+    if killsEnabled and not self.killsComplete then
         local zombies, survivors = SRJ.handleKills(self.durationData, player, JMD, doReading)
 
         if survivors > 0 then
-            self.changesBeingMadeIndex.survivors  = (self.changesBeingMadeIndex.survivors or 0) + survivors
+            self.changesBeingMadeIndex.survivors = (self.changesBeingMadeIndex.survivors or 0) + survivors
             changesMade = true
         end
 
         if zombies > 0 then
-            self.changesBeingMadeIndex.zombies =  (self.changesBeingMadeIndex.zombies or 0) + zombies
+            self.changesBeingMadeIndex.zombies = (self.changesBeingMadeIndex.zombies or 0) + zombies
             changesMade = true
+        end
+
+        if zombies == 0 and survivors == 0 then
+            self.killsComplete = true
         end
     end
 
@@ -261,7 +314,7 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
         if not self.modDataReadComplete then
             self.modDataReadComplete = true
             local data = SRJ.modDataHandler.copyDataToPlayer(player, self.item)
-            if data then
+            if data and #data > 0 then
                 for _, id in pairs(data) do
                     table.insert(self.changesBeingMade, id)
                 end
@@ -272,7 +325,7 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
         if not self.modDataStoredComplete then
             self.modDataStoredComplete = true
             local data = SRJ.modDataHandler.copyDataToJournal(player, self.item)
-            if data then
+            if data and #data > 0 then
                 for _, id in pairs(data) do
                     table.insert(self.changesBeingMade, id)
                 end

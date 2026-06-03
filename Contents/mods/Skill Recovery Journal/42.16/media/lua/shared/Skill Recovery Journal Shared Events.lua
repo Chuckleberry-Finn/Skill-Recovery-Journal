@@ -31,5 +31,8 @@ if isServer() then Events.OnClientCommand.Add(SkillRecoveryJournalOnClientComman
 
 
 ---Ideally this will be loaded in last
-local function loadOnBoot() Events.AddXP.Add(SRJmodHandler.checkIfDeductedXP) end
+local function loadOnBoot()
+    Events.AddXP.Add(SRJmodHandler.checkIfDeductedXP)
+    SRJmodHandler.initFlatXPHook()
+end
 Events.OnGameBoot.Add(loadOnBoot)

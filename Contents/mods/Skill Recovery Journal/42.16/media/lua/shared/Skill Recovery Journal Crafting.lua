@@ -9,11 +9,9 @@ local function SkillRecoveryJournalRecipe()
     local craftRecipeScript
 
     if craftRecipe and craftRecipe ~= "" then
-        --- Maybe a way to validate the recipe would be possible?
-        --correct old sandbox options
-        local modified_option = craftRecipe and string.gsub(craftRecipe, "|", ",")
-        --add missing comma that might be default for some older saves
-        if modified_option and modified_option:sub(-1) ~= "," then modified_option = modified_option .. "," end
+        local modified_option = string.gsub(craftRecipe, "|", ",")
+        modified_option = modified_option:match("^(.-)%s*$")
+        if modified_option:sub(-1) ~= "," then modified_option = modified_option .. "," end
         craftRecipeScript = "inputs { " .. modified_option .. " }, "
     end
 
