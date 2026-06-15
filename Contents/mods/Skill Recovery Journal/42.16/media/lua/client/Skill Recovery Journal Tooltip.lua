@@ -10,7 +10,7 @@ local function SRJ_generateTooltip(JMD, player)
 	local storedJournalXP = JMD["gainedXP"]
 	if not storedJournalXP then return blankJournalTooltip end
 
-	local warning --= {}
+	local warning
 
 	local oneTimeUse = (SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true)
 	
@@ -43,24 +43,26 @@ local function SRJ_generateTooltip(JMD, player)
 			if show then
 				local journalXP = xp
 				local jmdUsedXP = JMD.recoveryJournalXpLog
-				if oneTimeUse and jmdUsedXP and jmdUsedXP[perkID] and jmdUsedXP[perkID] then
-					journalXP = math.max(0, journalXP-jmdUsedXP[perkID])
+				if oneTimeUse and jmdUsedXP and jmdUsedXP[perkID] then
+					journalXP = math.max(0, journalXP - jmdUsedXP[perkID])
 				end
 
 				local perkName = perk:getName()
 				local multi = multipliers[perkID] or 1
-				local availableXP = round(((journalXP)*multi), 2)
+				local availableXP = round((journalXP * multi), 2)
 				
 				local levelString = ""
-				-- this would need to be cached, but not available in MP anyway because client has no player mod data
 				if not isClient() and getDebug() then
-					local level = SRJ.xpHandler.getPerkLevelAfterJournalRead(SRJ ,player, perkID, multi, journalXP)
-					levelString = " to Level "..level
+					local currentLevel = player:getPerkLevel(perk)
+					local projectedLevel = SRJ.xpHandler.getPerkLevelAfterJournalRead(SRJ, player, perkID, multi, journalXP)
+					if projectedLevel > currentLevel then
+						levelString = " to Level " .. projectedLevel
+					end
 				end
 
 				skillsRecord = skillsRecord..perkName..levelString.." ("..availableXP
 				if oneTimeUse then
-					local totalXP = round(((xp)*multi), 2)
+					local totalXP = round((xp * multi), 2)
 					skillsRecord = skillsRecord.."/"..totalXP
 				end
 				skillsRecord = skillsRecord.." xp)\n"
@@ -72,8 +74,7 @@ local function SRJ_generateTooltip(JMD, player)
 		local learnedRecipes = JMD["learnedRecipes"] or {}
 		if learnedRecipes then
 			local recipeNum = 0
-
-			if SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then for k,v in pairs(learnedRecipes) do recipeNum = recipeNum+1 end end
+			for k,v in pairs(learnedRecipes) do recipeNum = recipeNum+1 end
 
 			if recipeNum>0 then
 				local properPlural = getText("IGUI_Tooltip_Recipe")
@@ -105,7 +106,7 @@ local function SRJ_generateTooltip(JMD, player)
 	local tooltipStart = getText("IGUI_Tooltip_Start").." "..JMD["author"]..usernameInsert..getText("IGUI_Tooltip_End")
 
 	return tooltipStart, skillsRecord, warning
-	end
+end
 
 
 local function drawDetailsTooltip(tooltip, tooltipStart, skillsRecord, warning, x, y, fontType)

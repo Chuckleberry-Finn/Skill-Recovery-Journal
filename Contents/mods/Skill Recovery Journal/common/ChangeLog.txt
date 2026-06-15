@@ -252,3 +252,13 @@ Minor:
 - SteamID is now assigned directly in identification checks.
 - Illiterate feedback message used incorrect translation key.
 [ ------ ]
+
+[ 6/16/26 ]
+- Implemented a stop-gap server-auth ledger for reading/writing.
+   This should tackle the ongoing issue of desync leading to being able to stack read/trasncribes.
+- Fix: Strength/Fitness math issue introduced with the previous patch.
+- More aggressive regex/sanity checks on the recipe option.
+- Added incompatible mods to the mod.info
+
+IT IS RECOMMENDED TO MAKE A NEW JOURNAL
+[ ------ ]

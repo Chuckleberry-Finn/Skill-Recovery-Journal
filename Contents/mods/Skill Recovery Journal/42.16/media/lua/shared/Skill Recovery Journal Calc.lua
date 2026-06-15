@@ -1,14 +1,9 @@
 local SRJ = require "Skill Recovery Journal Main"
 
--- returns all gained skills as per config or false if no valid skill xp gained
-function SRJ.calculateGainedSkill(player, perk, passiveSkillsInit, startingLevels, deductibleXP, flatXP)
+function SRJ.calculateGainedSkill(player, perk, startingXP, deductibleXP, flatXP)
 
-	if not passiveSkillsInit then
-		passiveSkillsInit = SRJ.modDataHandler.getPassiveLevels(player)
-	end
-
-	if not startingLevels then
-		startingLevels = SRJ.modDataHandler.getFreeLevelsFromTraitsAndProfession(player)
+	if startingXP == nil then
+		startingXP = SRJ.modDataHandler.getStartingXP(player)
 	end
 
 	if not deductibleXP then
@@ -23,27 +18,27 @@ function SRJ.calculateGainedSkill(player, perk, passiveSkillsInit, startingLevel
 		local perkXP = player:getXp():getXP(perk)
 		if perkXP > 0 then
 			local perkID = perk:getId()
-			--if getDebug() then print("perkXP: ",perkID," = ",perkXP) end
 
-			---figure out how much XP was present at player start
-			local passivePerkFixLevel = passiveSkillsInit and passiveSkillsInit[perkID]
-			local passiveFixXP = passivePerkFixLevel and perk:getTotalXpForLevel(passivePerkFixLevel)
-			--if getDebug() then print(" -passiveFixXP:",passiveFixXP,"  (",passivePerkFixLevel,")") end
-
-			local startingPerkLevel = startingLevels[perkID]
-			local startingPerkXP = startingPerkLevel and perk:getTotalXpForLevel(startingPerkLevel) or 0
-			--if getDebug() then print(" -startingPerkXP:",startingPerkXP,  "(",startingPerkLevel,")") end
+			local baseXP
+			if startingXP then
+				baseXP = startingXP[perkID] or 0
+			else
+				local passiveSkillsInit = SRJ.modDataHandler.getPassiveLevels(player)
+				local startingLevels   = SRJ.modDataHandler.getFreeLevelsFromTraitsAndProfession(player)
+				local passivePerkFixLevel = passiveSkillsInit and passiveSkillsInit[perkID]
+				local passiveFixXP = passivePerkFixLevel and perk:getTotalXpForLevel(passivePerkFixLevel)
+				local startingPerkLevel = startingLevels[perkID]
+				local startingPerkXP = startingPerkLevel and perk:getTotalXpForLevel(startingPerkLevel) or 0
+				baseXP = passiveFixXP or startingPerkXP
+			end
 
 			local deductedXP = (SandboxVars.SkillRecoveryJournal.TranscribeTVXP==false) and deductibleXP[perkID] or 0
-			--if getDebug() then print(" -deductedXP:",deductedXP) end
 
 			local sandboxOptionRecover, recoveryPercentage = SRJ.bSkillValid(perk)
 
-			local recoverableXP = sandboxOptionRecover and perkXP-(passiveFixXP or startingPerkXP)-deductedXP or 0
-			--if getDebug() then print(" -recoverableXP-deductions: ",recoverableXP) end
+			local recoverableXP = sandboxOptionRecover and perkXP - baseXP - deductedXP or 0
 
 			if recoverableXP > 0 then
-
 				local normalizedScale = SRJ.xpHandler.getSkillXPNormalizeScale(perkID) or 1
 				local flatPortion = math.min(flatXP[perkID] or 0, recoverableXP)
 				local boostedPortion = recoverableXP - flatPortion
@@ -58,20 +53,20 @@ function SRJ.calculateGainedSkill(player, perk, passiveSkillsInit, startingLevel
 end
 
 
--- returns all gained skills as per config or nil if no valid skill xp gained
+
 function SRJ.calculateAllGainedSkills(player)
 	local gainedXP
 	local flatGainedXP
 
-	local passiveSkillsInit = SRJ.modDataHandler.getPassiveLevels(player)
-	local startingLevels = SRJ.modDataHandler.getFreeLevelsFromTraitsAndProfession(player)
+
+	local startingXP   = SRJ.modDataHandler.getStartingXP(player)
 	local deductibleXP = SRJ.modDataHandler.getDeductedXP(player)
-	local flatXP = SRJ.modDataHandler.getFlatXP(player)
+	local flatXP       = SRJ.modDataHandler.getFlatXP(player)
 
 	for i=1, Perks.getMaxIndex()-1 do
 		---@type PerkFactory.Perk
 		local perk = Perks.fromIndex(i)
-		local gained, flatGained = SRJ.calculateGainedSkill(player, perk, passiveSkillsInit, startingLevels, deductibleXP, flatXP)
+		local gained, flatGained = SRJ.calculateGainedSkill(player, perk, startingXP, deductibleXP, flatXP)
 		if gained then
 			gainedXP = gainedXP or {}
 			gainedXP[perk:getId()] = gained
@@ -95,8 +90,6 @@ function SRJ.getGainedRecipes(player, exclude)
 	for i=0, knownRecipes:size()-1 do
 		local recipeID = knownRecipes:get(i)
 		gainedRecipes[recipeID] = true
-		
-		--if getDebug() then print("Adding known recipe " .. tostring(recipeID)) end
 	end
 
 	---@type SurvivorDesc
@@ -109,7 +102,6 @@ function SRJ.getGainedRecipes(player, exclude)
 	for i=0, profFreeRecipes:size()-1 do
 		local profRecipe = profFreeRecipes:get(i)
 		gainedRecipes[profRecipe] = nil
-		--if getDebug() then print("Removing gained prof recipe " .. tostring(profRecipe)) end
 	end
 
 	-- remove freebies granted by trait
@@ -121,7 +113,6 @@ function SRJ.getGainedRecipes(player, exclude)
 		for ii=0, traitRecipes:size()-1 do
 			local traitRecipe = traitRecipes:get(ii)
 			gainedRecipes[traitRecipe] = nil
-			--if getDebug() then print("Removing gained trait recipe " .. tostring(traitRecipe)) end
 		end
 	end
 
@@ -129,9 +120,7 @@ function SRJ.getGainedRecipes(player, exclude)
 	local returnedGainedRecipes = {}
 	for recipeID,_ in pairs(gainedRecipes) do
 		if not exclude or exclude[recipeID] ~= true then
-			-- TODO: remove auto learned recipes from skills (maybe we had higher level/xpBoost last life)
 			table.insert(returnedGainedRecipes, recipeID)
-			--if getDebug() then print("Resulting gained recipe " .. tostring(recipeID) .. " -> " .. tostring(_)) end
 		end
 	end
 
@@ -156,20 +145,13 @@ function SRJ.calculateGainedKills(journalModData, player, doReading)
 
     if doReading then
 		local readXP = SRJ.modDataHandler.getReadXP(player)
-       -- read journal kills
         zKills = journalModData.kills and journalModData.kills.Zombie or 0
         sKills = journalModData.kills and journalModData.kills.Survivor or 0
-
-        -- dont count kills already read 
         accountedZombieKills = readXP.kills and readXP.kills.Zombie or 0
         accountedSurvivorKills = readXP.kills and readXP.kills.Survivor or 0
-
     else
-        -- write player kills
 	    zKills = math.floor(player:getZombieKills() * (killsRecoveryPercentage / 100))
 	    sKills = math.floor(player:getSurvivorKills() * (killsRecoveryPercentage / 100))
-
-        -- dont count kills already transcribed 
         accountedZombieKills = (journalModData.kills.Zombie or 0)
         accountedSurvivorKills = (journalModData.kills.Survivor or 0)
     end
@@ -218,7 +200,7 @@ function SRJ.calculateReadWriteRates(player, item, timeFactor, gainedRecipes, ga
 
 	-- recipes
 	if gainedRecipes and #gainedRecipes > 0 then
-		durationData.recipeChunk = math.min(#gainedRecipes, math.floor(1.09^math.sqrt(#gainedRecipes))) * actionTimeMulti
+		durationData.recipeChunk = math.max(1, math.min(#gainedRecipes, math.floor(1.09^math.sqrt(#gainedRecipes)))) * actionTimeMulti
 		local intervalsNeeded = math.ceil((#gainedRecipes / (durationData.recipeChunk / durationData.recipeInterval)))
         if getDebug() then print("New Recipes ", #gainedRecipes, " recipeChunk ", durationData.recipeChunk, " neededI ", intervalsNeeded) end
 		durationData.intervals = math.max(intervalsNeeded,durationData.intervals)
@@ -230,10 +212,8 @@ function SRJ.calculateReadWriteRates(player, item, timeFactor, gainedRecipes, ga
 
     -- xp
     if gainedSkills and not doReading then
-        -- write gainedSkills
         for perkID, xp in pairs(gainedSkills) do
             local xpToWrite = xp - (storedJournalXP[perkID] or 0)
-
             if xpToWrite > 0 then
                 local perkLevelPlusOne = player:getPerkLevel(Perks[perkID]) + 1
                 SRJ.calculateXpRate(perkID, xpToWrite, perkLevelPlusOne, durationData, actionTimeMulti, timeFactor)
@@ -253,9 +233,7 @@ function SRJ.calculateReadWriteRates(player, item, timeFactor, gainedRecipes, ga
     end
 
     if doReading then
-        -- read journal
         local validSkills = {}
-        local greatestXp = 0
 
         for skill, xp in pairs(storedJournalXP) do
             local perk = Perks[skill]
@@ -265,8 +243,6 @@ function SRJ.calculateReadWriteRates(player, item, timeFactor, gainedRecipes, ga
                     validSkills[skill] = true
                     if skill == "NONE" or skill == "MAX" then
                         storedJournalXP[skill] = nil
-                    else
-                        if xp > greatestXp then greatestXp = xp end
                     end
                 end
             end
@@ -279,18 +255,13 @@ function SRJ.calculateReadWriteRates(player, item, timeFactor, gainedRecipes, ga
 
         for perkID, journalXP in pairs(storedJournalXP) do
             if Perks[perkID] and validSkills[perkID] then
-
                 local currentlyReadXP = readXP[perkID] or 0
-
                 if oneTimeUse and jmdUsedXP[perkID] then
                     currentlyReadXP = math.max(currentlyReadXP, jmdUsedXP[perkID])
                 end
-
                 if currentlyReadXP < journalXP then
                     local xpToRead = journalXP - currentlyReadXP
                     local multi = multipliers[perkID] or 1
-
-					-- for perkLevelPlusOne assume we have acquired the skill xp we are heading for (max 10 +1)
                     local perkLevelPlusOne = math.min(11, SRJ.xpHandler.getPerkLevelAfterJournalRead(SRJ, player, perkID, multi, journalXP) + 1)
                     SRJ.calculateXpRate(perkID, xpToRead, perkLevelPlusOne, durationData, actionTimeMulti, timeFactor)
                 end
@@ -318,9 +289,8 @@ function SRJ.calculateReadWriteRates(player, item, timeFactor, gainedRecipes, ga
     durationData.kills.Survivor = gainedSurvivorKills
     
     if gainedZombieKills > 0 or gainedSurvivorKills > 0 then
-        durationData.rates.zKills = math.min(gainedZombieKills, math.floor(1.05^math.sqrt(gainedZombieKills))) * actionTimeMulti
-        durationData.rates.sKills = math.min(gainedSurvivorKills, math.floor(1.05^math.sqrt(gainedSurvivorKills))) * actionTimeMulti
-        -- interval is either old interval or kills per rate
+        durationData.rates.zKills = math.max(1, math.min(gainedZombieKills, math.floor(1.05^math.sqrt(gainedZombieKills)))) * actionTimeMulti
+        durationData.rates.sKills = math.max(1, math.min(gainedSurvivorKills, math.floor(1.05^math.sqrt(gainedSurvivorKills)))) * actionTimeMulti
         durationData.intervals = math.max(durationData.intervals, math.max(math.ceil(gainedZombieKills / durationData.rates.zKills), math.ceil(gainedSurvivorKills / durationData.rates.sKills)))
     end
 

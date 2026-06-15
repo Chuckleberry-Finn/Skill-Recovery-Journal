@@ -85,6 +85,8 @@ function SkillRecoveryJournalAction:serverStop()
     syncItemModData(self.character, self.item)
     if not self.doReading then
         sendServerCommand(self.character, "SkillRecoveryJournal", "readXP", {data = SRJ.modDataHandler.getReadXP(self.character)})
+    else
+        SRJ.modDataHandler.saveServerLedger(self.character)
     end
 end
 
@@ -114,6 +116,8 @@ function SkillRecoveryJournalAction:complete()
     syncItemModData(self.character, self.item)
     if not self.doReading then
         sendServerCommand(self.character, "SkillRecoveryJournal", "readXP", {data = SRJ.modDataHandler.getReadXP(self.character)})
+    else
+        SRJ.modDataHandler.saveServerLedger(self.character)
     end
     return true
 end
@@ -284,7 +288,7 @@ function SkillRecoveryJournalAction:new(character, item, doReading, writingTool)
         return o 
     end
 
-    local JMD = SRJ.modDataHandler.getItemModData(item)
+    local JMD = SRJ.modDataHandler.migrateJournalIfNeeded(item, character)
     local isAllowed, sayText = SRJ.checkStaticConditions(character, JMD, doReading)
 	o.isAllowed = isAllowed
 

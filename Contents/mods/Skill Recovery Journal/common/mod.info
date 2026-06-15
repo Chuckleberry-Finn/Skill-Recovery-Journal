@@ -9,3 +9,4 @@ author=Chuckleberry Finn
 icon=icon.png
 versionMin=42.16
 require=\ChuckleberryFinnAlertSystem,\errorMagnifier,
+incompatible=BurdSurvivalJournals,JeevesJournals,SkillRecoveryJournalRoyPatch,

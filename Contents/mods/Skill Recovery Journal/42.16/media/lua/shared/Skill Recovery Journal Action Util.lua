@@ -33,18 +33,14 @@ function SRJ.handleIdentity(player, JMD)
 end
 
 
--- used for isValid. Checking conditions that do not change during action runtime.
 function SRJ.checkStaticConditions(player, JMD, doReading)
 
-	-- for reading, check if journal contains writing
 	if doReading and (not JMD or not JMD["ID"]) then
 		return false, "IGUI_PlayerText_NothingWritten"
 
-	-- check illiterate
 	elseif player:hasTrait(CharacterTrait.ILLITERATE) then
 		return false, "IGUI_PlayerText_Illiterate"
-	
-	-- check permissions only in MP
+
 	elseif (isClient() or isServer()) and not SRJ.handleIdentity(player, JMD) then
 		return false, (doReading and "IGUI_PlayerText_DoesntFeelRightToRead") or "IGUI_PlayerText_DoesntFeelRightToWrite"
 	end
@@ -53,8 +49,9 @@ function SRJ.checkStaticConditions(player, JMD, doReading)
 end
 
 
-function  SRJ.handleKills(durationData, player, journalModData, doReading)
-	local readXP = SRJ.modDataHandler.getReadXP(player)
+function  SRJ.handleKills(durationData, player, journalModData, doReading, serverReadXP)
+
+	local readXP = (isServer() and doReading and serverReadXP) or SRJ.modDataHandler.getReadXP(player)
     local zKillGainRate = durationData.rates.zKills
     local sKillGainRate = durationData.rates.sKills
 	--if getDebug() then print("--handleKills - Z", zKillGainRate,", S",  sKillGainRate) end
@@ -67,16 +64,15 @@ function  SRJ.handleKills(durationData, player, journalModData, doReading)
 		if doReading then
             oldZKills = player:getZombieKills() or 0
 			newZKills = zKillGainRate + oldZKills
-			newZKills = math.min(newZKills, journalModData.kills.Zombie) -- max is stored value
+			newZKills = math.min(newZKills, journalModData.kills.Zombie)
 			player:setZombieKills(newZKills) 
 			if isServer() then
-				-- let the client know about the change
 				sendServerCommand(player, "SkillRecoveryJournal", "zKills", {kills = newZKills})
 			end
 		else
             oldZKills = journalModData.kills.Zombie or 0
 			newZKills = zKillGainRate + oldZKills
-			newZKills = math.min(newZKills, player:getZombieKills()) -- max is player value
+			newZKills = math.min(newZKills, player:getZombieKills())
 			journalModData.kills.Zombie = newZKills
 		end
         zKillsAdded = newZKills - oldZKills
@@ -89,16 +85,15 @@ function  SRJ.handleKills(durationData, player, journalModData, doReading)
 		if doReading then
             oldSKills = player:getSurvivorKills() or 0
 		 	newSKills = sKillGainRate + oldSKills
-			newSKills = math.min(newSKills, journalModData.kills.Survivor) -- max is stored value
+			newSKills = math.min(newSKills, journalModData.kills.Survivor)
 			player:setSurvivorKills(newSKills)
 			if isServer() then
-				-- let the client know about the change
 				sendServerCommand(player, "SkillRecoveryJournal", "sKills", {kills = newSKills})
 			end
 		else
             oldSKills = journalModData.kills.Survivor or 0
 		 	newSKills = sKillGainRate + oldSKills
-			newSKills = math.min(newSKills, player:getSurvivorKills()) -- max is player value
+			newSKills = math.min(newSKills, player:getSurvivorKills())
 			journalModData.kills.Survivor = newSKills
 		end
         sKillsAdded = newSKills - oldSKills
@@ -114,6 +109,12 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
     local changesMade = false
     local sayText = nil
 
+    local steamID   = isServer() and tostring(player:getSteamID()) or nil
+    local journalID = isServer() and SRJ.modDataHandler.buildJournalID(JMD) or nil
+    local serverReadXP = (isServer() and doReading)
+        and SRJ.modDataHandler.getServerReadXP(steamID, journalID)
+        or nil
+
     -- RECIPES
     local recipeList = self.gainedRecipes
     if #recipeList > 0 then
@@ -126,12 +127,10 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
 
                 if doReading then
                     player:learnRecipe(recipeID)
-                    -- if server, sync recipes with client
                     if isServer() and sendSyncPlayerFields then
                         sendSyncPlayerFields(player, 0x00000001)
                     end
                 else
-                    -- store recipe in journal
                     JMD.learnedRecipes[recipeID] = true
                 end
 
@@ -144,7 +143,9 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
 
     -- XP - on read process journal xp, otherwise player xp
     local processXpMap = (doReading and JMD.gainedXP) or self.gainedSkills
-    local readXP = SRJ.modDataHandler.getReadXP(player)
+
+    -- readXP used for gating:
+    local readXP = serverReadXP or SRJ.modDataHandler.getReadXP(player)
 
     if processXpMap then
         if doReading then
@@ -169,8 +170,14 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
 
                             local resulting = math.min(gained, JMD.gainedXP[perkID] + rate)
                             JMD.gainedXP[perkID] = resulting
-                            -- store amount as already read in player data, so it cant be gained again
+                            -- client-visible readXP so the UI is consistent
                             readXP[perkID] = math.max(resulting, currentXP)
+
+                            -- server ledger to match, so that a read action cannot re-grant XP that was just written
+                            if isServer() and steamID and journalID then
+                                local ledger = SRJ.modDataHandler.getServerReadXP(steamID, journalID)
+                                ledger[perkID] = math.max(resulting, ledger[perkID] or 0)
+                            end
 
                             -- build halo text
                             local skillName = "IGUI_perks_" .. perkID
@@ -211,9 +218,9 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
                                 rate = math.max(perkXP - currentXP, 0.001)
                             end
 
-                            -- store amount already red in player data
+                            -- advance the authoritative ledger (server read path)
                             readXP[perkID] = currentXP + rate
-                            -- and in journal for decay
+                            -- and in journal for decay / oneTimeUse tracking
                             usedXP[perkID] = (usedXP[perkID] or 0) + rate
 
                             local addedXP = SRJ.xpHandler.reBoostXP(player, perk, rate)
@@ -252,6 +259,15 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
                     local resulting = math.min(perkFlatXP, JMD.flatGainedXP[perkID] + flatRate)
                     JMD.flatGainedXP[perkID] = resulting
                     readFlatXP[perkID] = math.max(resulting, currentFlatXP)
+
+                    -- stamp server ledger for flat XP as well (write path)
+                    if isServer() and steamID and journalID then
+                        local ledger = SRJ.modDataHandler.getServerReadXP(steamID, journalID)
+                        -- flat XP is keyed separately; use a prefix to avoid collision with gainedXP keys
+                        local flatKey = "flat|" .. perkID
+                        ledger[flatKey] = math.max(resulting, ledger[flatKey] or 0)
+                    end
+
                     local skillName = "IGUI_perks_" .. perkID
                     if not self.changesBeingMadeIndex[skillName] then
                         self.changesBeingMadeIndex[skillName] = true
@@ -263,17 +279,31 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
     end
 
     if doReading and JMD.flatGainedXP then
+        local serverReadFlatXP = serverReadXP
         local readFlatXP = SRJ.modDataHandler.getReadFlatXP(player)
+
         for perkID, journalFlatXP in pairs(JMD.flatGainedXP) do
             local perk = Perks[perkID]
             if perk and SRJ.bSkillValid(perk) then
-                local currentFlatXP = readFlatXP[perkID] or 0
+
+                local flatKey = "flat|" .. perkID
+                local currentFlatXP
+                if isServer() and serverReadFlatXP then
+                    currentFlatXP = serverReadFlatXP[flatKey] or 0
+                else
+                    currentFlatXP = readFlatXP[perkID] or 0
+                end
+
                 local flatRate = self.durationData.flatRates[perkID] or 0
                 if currentFlatXP < journalFlatXP then
                     if player:getPerkLevel(perk) == 10 then flatRate = false end
                     if flatRate and flatRate > 0 then
                         if currentFlatXP + flatRate > journalFlatXP then
                             flatRate = math.max(journalFlatXP - currentFlatXP, 0.001)
+                        end
+
+                        if isServer() and serverReadFlatXP then
+                            serverReadFlatXP[flatKey] = currentFlatXP + flatRate
                         end
                         readFlatXP[perkID] = currentFlatXP + flatRate
                         addXpNoMultiplier(player, perk, flatRate)
@@ -292,7 +322,7 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
     -- KILLS
     local killsEnabled = self.durationData.kills.Zombie > 0 or self.durationData.kills.Survivor > 0
     if killsEnabled and not self.killsComplete then
-        local zombies, survivors = SRJ.handleKills(self.durationData, player, JMD, doReading)
+        local zombies, survivors = SRJ.handleKills(self.durationData, player, JMD, doReading, serverReadXP)
 
         if survivors > 0 then
             self.changesBeingMadeIndex.survivors = (self.changesBeingMadeIndex.survivors or 0) + survivors
@@ -334,7 +364,6 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
         end
     end
 
-    -- FEEDBACK
     if not changesMade then
         if doReading then
             sayText = sayText or "IGUI_PlayerText_KnowSkill"
@@ -344,7 +373,6 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
                 or  "IGUI_PlayerText_NothingToAddToJournal"
         end
     else
-        -- in writing, server needs to sync mod data with client
         if not doReading then
             self.wroteNewContent = true
             if isServer() then

@@ -1,8 +1,31 @@
 local SRJ_ModDataHandler = {}
 
--- player mod data
+
+function SRJ_ModDataHandler.initStartingXP(id, player)
+	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
+	if pMD.SRJStartingXP then return end
+	pMD.SRJStartingXP = {}
+	for i = 1, Perks.getMaxIndex() - 1 do
+		local perk = Perks.fromIndex(i)
+		if perk and perk:getParent():getId() ~= "None" then
+			local xp = player:getXp():getXP(perk)
+			if xp and xp > 0 then
+				pMD.SRJStartingXP[perk:getId()] = xp
+			end
+		end
+	end
+	if getDebug() then print("SRJ: captured SRJStartingXP for new character") end
+end
+
+
+function SRJ_ModDataHandler.getStartingXP(player)
+	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
+	return pMD.SRJStartingXP
+end
+
 
 -- store initial skill levels from traits and profession in player mod data
+--- kept for fallback in calculateGainedSkill and tooltip
 function SRJ_ModDataHandler.getFreeLevelsFromTraitsAndProfession(player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
 	if not pMD.SRJTraitSkillsInit then
@@ -36,11 +59,13 @@ function SRJ_ModDataHandler.getFreeLevelsFromTraitsAndProfession(player)
 			end
 		end
 	end
-	
+
 	return pMD.SRJTraitSkillsInit
 end
 
+
 -- store initial passive levels in player mod data
+-- kept for legacy fallback
 function SRJ_ModDataHandler.setPassiveLevels(id, player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
 	if not pMD.SRJPassiveSkillsInit then
@@ -126,8 +151,6 @@ end
 function SRJ_ModDataHandler.getPassiveLevels(player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
 	if not pMD.SRJPassiveSkillsInit then
-		-- on the rare chance it was not init before, check again
-		-- can happen if on mp server and player uses SRJ before gaining xp
 		SRJ_ModDataHandler.setPassiveLevels(_, player)
 	end
 	return pMD.SRJPassiveSkillsInit
@@ -139,11 +162,104 @@ function SRJ_ModDataHandler.getReadXP(player)
 	if not pMD.recoveryJournalXpLog then
 		pMD.recoveryJournalXpLog = {}
 	end
-	if not pMD.recoveryJournalXpLog.kills then -- for pre-existing journals
+	if not pMD.recoveryJournalXpLog.kills then
 		pMD.recoveryJournalXpLog.kills = {}
 	end
 	return pMD.recoveryJournalXpLog
 end
+
+
+local SRJ_ServerLedger = {}
+
+
+local function getLedgerPath(steamID)
+	return "SRJ/ledger_" .. tostring(steamID) .. ".json"
+end
+
+
+function SRJ_ModDataHandler.getServerReadXP(steamID, journalID)
+	SRJ_ServerLedger[steamID] = SRJ_ServerLedger[steamID] or {}
+	SRJ_ServerLedger[steamID][journalID] = SRJ_ServerLedger[steamID][journalID] or {}
+	SRJ_ServerLedger[steamID][journalID].kills = SRJ_ServerLedger[steamID][journalID].kills or {}
+	return SRJ_ServerLedger[steamID][journalID]
+end
+
+
+function SRJ_ModDataHandler.buildJournalID(JMD)
+	local id = JMD and JMD["ID"]
+	if not id then return "unkeyed" end
+	local steam = tostring(id["steamID"] or "nosteam")
+	local user  = tostring(id["username"] or "nouser")
+	return steam .. "|" .. user
+end
+
+
+function SRJ_ModDataHandler.loadServerLedger(player)
+	if not isServer() then return end
+	local steamID = tostring(player:getSteamID())
+	local path = getLedgerPath(steamID)
+
+	local stream = getFileInput(path)
+	if not stream then
+		SRJ_ServerLedger[steamID] = {}
+		if getDebug() then print("SRJ: no ledger file found for " .. steamID .. ", starting fresh") end
+		return
+	end
+
+	local chars = {}
+	local ok, err = pcall(function()
+		local b = stream:read()
+		while b ~= -1 do
+			table.insert(chars, string.char(b))
+			b = stream:read()
+		end
+	end)
+	stream:close()
+
+	if not ok then
+		print("SRJ ERROR: failed reading ledger for " .. steamID .. ": " .. tostring(err))
+		SRJ_ServerLedger[steamID] = {}
+		return
+	end
+
+	local raw = table.concat(chars)
+	if raw == "" then
+		SRJ_ServerLedger[steamID] = {}
+		return
+	end
+
+	local parsed = json.parse(raw)
+	SRJ_ServerLedger[steamID] = parsed or {}
+
+	if getDebug() then print("SRJ: loaded ledger for " .. steamID) end
+end
+
+
+function SRJ_ModDataHandler.saveServerLedger(player)
+	if not isServer() then return end
+	local steamID = tostring(player:getSteamID())
+	local data = SRJ_ServerLedger[steamID]
+	if not data then return end
+
+	local path = getLedgerPath(steamID)
+	local writer = getFileWriter(path, true, false)
+	if not writer then
+		print("SRJ ERROR: could not open ledger file for writing: " .. path)
+		return
+	end
+
+	local ok, err = pcall(function()
+		writer:write(json.stringify(data))
+	end)
+	writer:close()
+
+	if not ok then
+		print("SRJ ERROR: failed writing ledger for " .. steamID .. ": " .. tostring(err))
+	elseif getDebug() then
+		print("SRJ: saved ledger for " .. steamID)
+	end
+end
+
 
 
 function SRJ_ModDataHandler.getPlayerModData(player)
@@ -159,7 +275,6 @@ function SRJ_ModDataHandler.setPlayerModData(player, newModData)
 end
 
 
--- item mod data
 function SRJ_ModDataHandler.getItemModData(item)
     local iMd = item:getModData()
 	if not iMd["SRJ"] then
@@ -185,7 +300,45 @@ function SRJ_ModDataHandler.setItemModData(item, newModdata)
 end
 
 
--- modData capture --
+function SRJ_ModDataHandler.migrateJournalIfNeeded(item, player)
+	local JMD = SRJ_ModDataHandler.getItemModData(item)
+	local dirty = false
+
+	if not JMD["ID"] or not JMD["ID"]["steamID"] then
+		JMD["ID"] = JMD["ID"] or {}
+		local steamID = player:getSteamID()
+		local username = player:getUsername()
+		local protections = SandboxVars.SkillRecoveryJournal.SecurityFeatures or 1
+		if steamID and steamID ~= 0 and protections <= 2 then
+			JMD["ID"]["steamID"] = steamID
+			dirty = true
+		end
+		if username and protections == 1 then
+			JMD["ID"]["username"] = username
+			dirty = true
+		end
+		if dirty and getDebug() then print("SRJ migrate: stamped identity on old journal") end
+	end
+
+	if not JMD["flatGainedXP"] then
+		JMD["flatGainedXP"] = {}
+		dirty = true
+		if getDebug() then print("SRJ migrate: created missing flatGainedXP table") end
+	end
+
+	if not JMD["kills"] then
+		JMD["kills"] = {}
+		dirty = true
+	end
+
+	if dirty and isServer() then
+		syncItemModData(player, item)
+	end
+
+	return JMD
+end
+
+
 SRJ_ModDataHandler.customKeys = {}
 function SRJ_ModDataHandler.parseSandBoxOption()
     local option = SandboxVars.SkillRecoveryJournal.ModDataTrack

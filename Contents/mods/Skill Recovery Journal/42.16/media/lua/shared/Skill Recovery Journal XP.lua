@@ -13,6 +13,8 @@ SRJ_XPHandler.maxXPDifferential = {}
 
 
 ---CREDIT to wwwwfly for adding a normalization for modded skills. :)
+SRJ_XPHandler.VANILLA_BASELINE_XP = 32775
+
 SRJ_XPHandler.skillXPNormalizeScale = {}
 function SRJ_XPHandler.getSkillXPNormalizeScale(perk)
     local perkID = (type(perk) == "string" and perk) or (perk and perk:getId())
@@ -30,10 +32,11 @@ function SRJ_XPHandler.getSkillXPNormalizeScale(perk)
 
     local differential = SRJ_XPHandler.getMaxXPDifferential(perkID) or 1
     local scale = 1 / (differential * differential)
+
     if scale < 0.01 then
         scale = 0.01
-    elseif scale > 100 then
-        scale = 100
+    elseif scale > 1 then
+        scale = 1
     end
 
     SRJ_XPHandler.skillXPNormalizeScale[perkID] = scale
@@ -42,12 +45,16 @@ end
 
 
 function SRJ_XPHandler.getMaxXPDifferential(perk)
-	if SRJ_XPHandler.maxXPDifferential[perk] then return SRJ_XPHandler.maxXPDifferential[perk] end
-	local maxXPDefault = Perks.PhysicalCategory:getTotalXpForLevel(10)
-	local maxXPPerk = Perks[perk]:getTotalXpForLevel(10)
+    if SRJ_XPHandler.maxXPDifferential[perk] then return SRJ_XPHandler.maxXPDifferential[perk] end
 
-	SRJ_XPHandler.maxXPDifferential[perk] = maxXPDefault/maxXPPerk
-	return SRJ_XPHandler.maxXPDifferential[perk]
+    local maxXPPerk = Perks[perk] and Perks[perk]:getTotalXpForLevel(10)
+    if not maxXPPerk or maxXPPerk == 0 then
+        SRJ_XPHandler.maxXPDifferential[perk] = 1
+        return 1
+    end
+
+    SRJ_XPHandler.maxXPDifferential[perk] = SRJ_XPHandler.VANILLA_BASELINE_XP / maxXPPerk
+    return SRJ_XPHandler.maxXPDifferential[perk]
 end
 
 

@@ -1,12 +1,19 @@
 local SRJmodHandler = require "Skill Recovery Journal ModData"
-Events.OnCreatePlayer.Add(SRJmodHandler.setPassiveLevels) -- not invoked on server
+
+local function onCreatePlayer(id, player)
+	SRJmodHandler.initStartingXP(id, player)
+	SRJmodHandler.setPassiveLevels(id, player)
+end
+Events.OnCreatePlayer.Add(onCreatePlayer)
 
 
--- handle receive data from client
 local function SkillRecoveryJournalOnClientCommand(module, command, player, args)
 	if module == "SkillRecoveryJournal" then 
 		local playerID = player:getOnlineID()
-		if command == "rename" then
+		if command == "ready" then
+			SRJmodHandler.loadServerLedger(player)
+			if getDebug() then print("SRJ: loaded ledger for player " .. tostring(playerID)) end
+		elseif command == "rename" then
 			if getDebug() then print("SkillRecoveryJournal received rename for item " .. tostring(args.itemID) .. " from player " .. tostring(playerID)) end
 			local item = player:getInventory():getItemWithIDRecursiv(args.itemID)
 			if item then
@@ -30,9 +37,41 @@ end
 if isServer() then Events.OnClientCommand.Add(SkillRecoveryJournalOnClientCommand) end
 
 
+if isServer() then
+
+	local function onPlayerConnect(player)
+		SRJmodHandler.loadServerLedger(player)
+	end
+
+	local function onPlayerDeath(player)
+		SRJmodHandler.saveServerLedger(player)
+	end
+
+	local function onSave()
+		local players = getOnlinePlayers()
+		for i = 0, players:size() - 1 do
+			local p = players:get(i)
+			if p then SRJmodHandler.saveServerLedger(p) end
+		end
+	end
+
+	Events.OnClientConnect.Add(onPlayerConnect)
+	Events.OnPlayerDeath.Add(onPlayerDeath)
+	Events.OnSave.Add(onSave)
+
+end
+
+
 ---Ideally this will be loaded in last
 local function loadOnBoot()
     Events.AddXP.Add(SRJmodHandler.checkIfDeductedXP)
     SRJmodHandler.initFlatXPHook()
 end
 Events.OnGameBoot.Add(loadOnBoot)
+
+if isClient() then
+    local function onGameStart()
+        sendClientCommand(getPlayer(), "SkillRecoveryJournal", "ready", {})
+    end
+    Events.OnGameStart.Add(onGameStart)
+end

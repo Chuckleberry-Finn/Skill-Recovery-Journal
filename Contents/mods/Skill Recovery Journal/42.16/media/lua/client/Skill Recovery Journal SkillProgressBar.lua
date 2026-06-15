@@ -12,7 +12,6 @@ local SRJ = require "Skill Recovery Journal Main"
 local ISSkillProgressBar_updateTooltip = ISSkillProgressBar.updateTooltip
 function ISSkillProgressBar:updateTooltip(lvlSelected)
     ISSkillProgressBar_updateTooltip(self, lvlSelected)
-    ---Show XP even when unlocked - helpful for tracking XP values
 
     local xpForLvl = ISSkillProgressBar.getXpForLvl(self.perk, lvlSelected)
     if self.level ~= lvlSelected then
@@ -36,11 +35,21 @@ function ISSkillProgressBar:updateTooltip(lvlSelected)
 
         self.message = self.message.." <LINE><LINE> <RGB:0.3,0.3,0.3> Skill Recovery Journal"
 
-        -- show starting level
-        local traitLevels = SRJ.modDataHandler.getFreeLevelsFromTraitsAndProfession(self.char)
-        local passiveLevels = SRJ.modDataHandler.getPassiveLevels(self.char)
-        local startingLevel = passiveLevels[perkID] or traitLevels[perkID] or 0
-        if startingLevel then
+        local startingLevel = 0
+        local startingXP = SRJ.modDataHandler.getStartingXP(self.char)
+        if startingXP then
+            local rawStartXP = startingXP[perkID] or 0
+            if rawStartXP > 0 then
+                startingLevel = SRJ.xpHandler.getPerkLevelFromXP(perkID, rawStartXP)
+            end
+        else
+            -- legacy path for pre-existing characters
+            local traitLevels   = SRJ.modDataHandler.getFreeLevelsFromTraitsAndProfession(self.char)
+            local passiveLevels = SRJ.modDataHandler.getPassiveLevels(self.char)
+            startingLevel = passiveLevels[perkID] or traitLevels[perkID] or 0
+        end
+
+        if startingLevel and startingLevel > 0 then
             self.message = self.message.." <LINE> <RGB:0.8,0.8,0.8> "..startingLevelText..": "..startingLevel
         end
 
@@ -48,8 +57,7 @@ function ISSkillProgressBar:updateTooltip(lvlSelected)
         local currentXP = tostring(self.char:getXp():getXP(self.perk))
         self.message = self.message .. " <LINE> <RGB:1,1,1> "..totalXPText..": "..round(currentXP, 2)
 
-        -- show mod data values on SP only (in MP client does not have up2date info)
-        if getDebug() and not isClient() then 
+        if getDebug() and not isClient() then
             -- show gained xp
             if gainedXP then
                 local currentSkillGainedXP = tostring(gainedXP * (multipliers[perkID] or 1))
@@ -65,11 +73,23 @@ function ISSkillProgressBar:updateTooltip(lvlSelected)
             end
 
             -- show untranscribed xp
+            local currentXPNum = tonumber(currentXP) or 0
+            local baseXP = 0
+            if startingXP then
+                baseXP = startingXP[perkID] or 0
+            else
+                -- legacy: getTotalXpForLevel gives cumulative XP, which is correct here
+                local traitLevels   = SRJ.modDataHandler.getFreeLevelsFromTraitsAndProfession(self.char)
+                local passiveLevels = SRJ.modDataHandler.getPassiveLevels(self.char)
+                local legacyLevel   = passiveLevels[perkID] or traitLevels[perkID]
+                baseXP = legacyLevel and self.perk:getTotalXpForLevel(legacyLevel) or 0
+            end
+
             local charReadXP = SRJ.modDataHandler.getReadXP(self.char)
-            local readXP = charReadXP and charReadXP[perkID]
-            local startingLevelXP = startingLevel and startingLevel>0 and self.perk:getXpForLevel(startingLevel)
-            local looseXP = currentXP - (startingLevelXP or 0) - (deductedXP or 0) - (readXP or 0) --untranscribed XP
-            if looseXP and (looseXP > 0) then
+            local readXP = charReadXP and charReadXP[perkID] or 0
+            local looseXP = currentXPNum - baseXP - (deductedXP or 0) - readXP
+
+            if looseXP and looseXP > 0 then
                 self.message = self.message .. " <LINE> <RED> "..untranscribedXPText..": "..round(looseXP, 2)
             end
         end
