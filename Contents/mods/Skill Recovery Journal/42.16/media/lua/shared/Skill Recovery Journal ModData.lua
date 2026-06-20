@@ -172,6 +172,129 @@ function SRJ_ModDataHandler.getReadXP(player)
 end
 
 
+local function jsonEncode(val, depth)
+	depth = depth or 0
+	local t = type(val)
+	if val == nil then return "null"
+	elseif t == "boolean" then return val and "true" or "false"
+	elseif t == "number" then
+		if val == math.floor(val) and val == val then return string.format("%.0f", val)
+		else return tostring(val) end
+	elseif t == "string" then
+		return '"'..val:gsub('\\','\\\\'):gsub('"','\\"'):gsub('\n','\\n'):gsub('\r','\\r'):gsub('\t','\\t')..'"'
+	elseif t == "table" then
+		local n = 0
+		for _ in pairs(val) do n = n+1 end
+		if n == 0 then return "{}" end
+		local indent = string.rep("  ", depth+1)
+		local closing = string.rep("  ", depth)
+		if n == #val then
+			local parts = {}
+			for i=1,n do parts[i] = indent..jsonEncode(val[i], depth+1) end
+			return "[\n"..table.concat(parts, ",\n").."\n"..closing.."]"
+		else
+			local parts = {}
+			for k,v in pairs(val) do
+				table.insert(parts, indent..jsonEncode(tostring(k)).." : "..jsonEncode(v, depth+1))
+			end
+			return "{\n"..table.concat(parts, ",\n").."\n"..closing.."}"
+		end
+	end
+	return "null"
+end
+
+
+local jp = {}
+
+function jp.skip(p)
+	while p.pos <= p.len do
+		local b = p.str:byte(p.pos)
+		if b==32 or b==9 or b==10 or b==13 then p.pos=p.pos+1 else break end
+	end
+end
+
+function jp.parseString(p)
+	p.pos = p.pos+1
+	local parts = {}
+	while p.pos <= p.len do
+		local c = p.str:sub(p.pos,p.pos)
+		if c == '"' then p.pos=p.pos+1 return table.concat(parts)
+		elseif c == '\\' then
+			p.pos = p.pos+1
+			local e = p.str:sub(p.pos,p.pos)
+			if     e=='"'  then parts[#parts+1]='"'
+			elseif e=='\\'then parts[#parts+1]='\\'
+			elseif e=='/'  then parts[#parts+1]='/'
+			elseif e=='n'  then parts[#parts+1]='\n'
+			elseif e=='r'  then parts[#parts+1]='\r'
+			elseif e=='t'  then parts[#parts+1]='\t'
+			else                parts[#parts+1]=e end
+			p.pos = p.pos+1
+		else parts[#parts+1]=c p.pos=p.pos+1 end
+	end
+	error("unterminated string")
+end
+
+function jp.parseObject(p)
+	p.pos = p.pos+1
+	local t = {}
+	jp.skip(p)
+	if p.str:sub(p.pos,p.pos)=='}' then p.pos=p.pos+1 return t end
+	while p.pos <= p.len do
+		jp.skip(p)
+		local key = jp.parseString(p)
+		jp.skip(p)
+		p.pos = p.pos+1
+		jp.skip(p)
+		t[key] = jp.parseValue(p)
+		jp.skip(p)
+		local c = p.str:sub(p.pos,p.pos)
+		p.pos = p.pos+1
+		if c=='}' then return t elseif c~=',' then error("expected ',' or '}'") end
+	end
+	error("unterminated object")
+end
+
+function jp.parseArray(p)
+	p.pos = p.pos+1
+	local t = {}
+	jp.skip(p)
+	if p.str:sub(p.pos,p.pos)==']' then p.pos=p.pos+1 return t end
+	while p.pos <= p.len do
+		jp.skip(p)
+		t[#t+1] = jp.parseValue(p)
+		jp.skip(p)
+		local c = p.str:sub(p.pos,p.pos)
+		p.pos = p.pos+1
+		if c==']' then return t elseif c~=',' then error("expected ',' or ']'") end
+	end
+	error("unterminated array")
+end
+
+function jp.parseValue(p)
+	jp.skip(p)
+	local c = p.str:sub(p.pos,p.pos)
+	if c=='"' then return jp.parseString(p)
+	elseif c=='{' then return jp.parseObject(p)
+	elseif c=='[' then return jp.parseArray(p)
+	elseif p.str:sub(p.pos,p.pos+3)=="null"  then p.pos=p.pos+4 return nil
+	elseif p.str:sub(p.pos,p.pos+3)=="true"  then p.pos=p.pos+4 return true
+	elseif p.str:sub(p.pos,p.pos+4)=="false" then p.pos=p.pos+5 return false
+	else
+		local numStr = p.str:match("^-?%d+%.?%d*[eE]?[+%-]?%d*", p.pos)
+		if numStr then p.pos=p.pos+#numStr return tonumber(numStr) end
+		error("unexpected character '"..c.."' at pos "..p.pos)
+	end
+end
+
+local function jsonDecode(str)
+	if not str or str == "" then return nil end
+	local p = {str=str, pos=1, len=#str}
+	return jp.parseValue(p)
+end
+
+
+
 local SRJ_ServerLedger = {}
 
 
@@ -201,7 +324,6 @@ end
 function SRJ_ModDataHandler.buildJournalID(JMD)
 	local id = JMD and JMD["ID"]
 	if not id then return "unkeyed" end
-
 	local user = tostring(id["username"] or "nouser")
 	return user
 end
@@ -220,20 +342,12 @@ function SRJ_ModDataHandler.loadServerLedger(player)
 	end
 
 	local chars = {}
-	local ok, err = pcall(function()
-		local b = stream:read()
-		while b ~= -1 do
-			table.insert(chars, string.char(b))
-			b = stream:read()
-		end
-	end)
-	stream:close()
-
-	if not ok then
-		print("SRJ ERROR: failed reading ledger for " .. ledgerKey .. ": " .. tostring(err))
-		SRJ_ServerLedger[ledgerKey] = {}
-		return
+	local b = stream:read()
+	while b ~= -1 do
+		table.insert(chars, string.char(b))
+		b = stream:read()
 	end
+	stream:close()
 
 	local raw = table.concat(chars)
 	if raw == "" then
@@ -241,7 +355,7 @@ function SRJ_ModDataHandler.loadServerLedger(player)
 		return
 	end
 
-	local parsed = json.parse(raw)
+	local parsed = jsonDecode(raw)
 	SRJ_ServerLedger[ledgerKey] = parsed or {}
 
 	if getDebug() then print("SRJ: loaded ledger for " .. ledgerKey) end
@@ -261,16 +375,10 @@ function SRJ_ModDataHandler.saveServerLedger(player)
 		return
 	end
 
-	local ok, err = pcall(function()
-		writer:write(json.stringify(data))
-	end)
+	writer:write(jsonEncode(data))
 	writer:close()
 
-	if not ok then
-		print("SRJ ERROR: failed writing ledger for " .. ledgerKey .. ": " .. tostring(err))
-	elseif getDebug() then
-		print("SRJ: saved ledger for " .. ledgerKey)
-	end
+	if getDebug() then print("SRJ: saved ledger for " .. ledgerKey) end
 end
 
 

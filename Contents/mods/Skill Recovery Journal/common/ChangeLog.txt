@@ -253,12 +253,14 @@ Minor:
 - Illiterate feedback message used incorrect translation key.
 [ ------ ]
 
-[ 6/19/26 - HotFix 1 ]
+[ 6/20/26 - HotFix 3 ]
 - Fix: Strength/Fitness math issue introduced with the previous patch.
 - More aggressive regex/sanity checks on the recipe option.
 - Added incompatible mods to the mod.info
 
 IT IS RECOMMENDED TO MAKE A NEW JOURNAL
 
-HOTFIX: Fixed a typo in the recipe syntax check.
+HOTFIX 1: Fixed a typo in the recipe syntax check.
+HOTFIX 2: Reworked the initialization for skills- slight revert to the old system, so data should be lost.
+HOTFIX 3: Included a JSON paser used in Shops and Traders.
 [ ------ ]
