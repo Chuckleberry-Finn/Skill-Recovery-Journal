@@ -8,7 +8,7 @@ local function SkillRecoveryJournalRecipe()
     local craftRecipe = SandboxVars.SkillRecoveryJournal.CraftRecipe
     local craftRecipeScript
 
-    if not craftRecipe or craftRecipe:match("^%s*$") then
+    if craftRecipe and not craftRecipe:match("^%s*$") then
         local modified_option = string.gsub(craftRecipe, "|", ",")
         modified_option = modified_option:match("^(.-)%s*$")
         if modified_option:sub(-1) ~= "," then modified_option = modified_option .. "," end
