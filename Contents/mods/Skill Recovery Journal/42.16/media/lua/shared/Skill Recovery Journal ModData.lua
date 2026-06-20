@@ -3,33 +3,44 @@ local SRJ_ModDataHandler = {}
 
 function SRJ_ModDataHandler.initStartingXP(id, player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
-	if pMD.SRJStartingXP then return end
-	pMD.SRJStartingXP = {}
+
+	-- Migrate
+	if (not pMD.SRJSkillsInit) and pMD.SRJTraitSkillsInit then
+		pMD.SRJSkillsInit = copyTable(pMD.SRJTraitSkillsInit)
+		if getDebug() then print("SRJ: migrated SRJTraitSkillsInit -> SRJSkillsInit") end
+	end
+
+	---defunct
+	pMD.SRJTraitSkillsInit = nil
+	pMD.SRJStartingXP = nil
+	pMD.SRJPassiveLevelsCaptured = nil
+
+	if pMD.SRJSkillsInit then return end
+
+	local hoursSurvived = player.getHoursSurvived and player:getHoursSurvived() or 0
+	if hoursSurvived >= 1 then
+		if getDebug() then print("SRJ: skipped starting-level snapshot for existing character (hours survived: " .. tostring(hoursSurvived) .. ")") end
+		return
+	end
+
+	pMD.SRJSkillsInit = {}
 	for i = 1, Perks.getMaxIndex() - 1 do
 		local perk = Perks.fromIndex(i)
 		if perk and perk:getParent():getId() ~= "None" then
-			local xp = player:getXp():getXP(perk)
-			if xp and xp > 0 then
-				pMD.SRJStartingXP[perk:getId()] = xp
+			local level = player:getPerkLevel(perk)
+			if level and level > 0 then
+				pMD.SRJSkillsInit[perk:getId()] = level
 			end
 		end
 	end
-	if getDebug() then print("SRJ: captured SRJStartingXP for new character") end
+	if getDebug() then print("SRJ: captured starting levels for new character") end
 end
 
 
-function SRJ_ModDataHandler.getStartingXP(player)
-	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
-	return pMD.SRJStartingXP
-end
-
-
--- store initial skill levels from traits and profession in player mod data
---- kept for fallback in calculateGainedSkill and tooltip
 function SRJ_ModDataHandler.getFreeLevelsFromTraitsAndProfession(player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
-	if not pMD.SRJTraitSkillsInit then
-		pMD.SRJTraitSkillsInit = {}
+	if not pMD.SRJSkillsInit then
+		pMD.SRJSkillsInit = {}
 
 		-- xp granted by profession
 		local playerDesc = player:getDescriptor()
@@ -40,7 +51,7 @@ function SRJ_ModDataHandler.getFreeLevelsFromTraitsAndProfession(player)
 			for perk,level in pairs(profXpBoost) do
 				local perky = tostring(perk)
 				local levely = tonumber(tostring(level))
-				pMD.SRJTraitSkillsInit[perky] = levely
+				pMD.SRJSkillsInit[perky] = levely
 			end
 		end
 
@@ -54,22 +65,12 @@ function SRJ_ModDataHandler.getFreeLevelsFromTraitsAndProfession(player)
 				for perk,level in pairs(traitXpBoost) do
 					local perky = tostring(perk)
 					local levely = tonumber(tostring(level))
-					pMD.SRJTraitSkillsInit[perky] = (pMD.SRJTraitSkillsInit[perky] or 0) + levely
+					pMD.SRJSkillsInit[perky] = (pMD.SRJSkillsInit[perky] or 0) + levely
 				end
 			end
 		end
-	end
-
-	return pMD.SRJTraitSkillsInit
-end
 
 
--- store initial passive levels in player mod data
--- kept for legacy fallback
-function SRJ_ModDataHandler.setPassiveLevels(id, player)
-	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
-	if not pMD.SRJPassiveSkillsInit then
-		pMD.SRJPassiveSkillsInit = {}
 		for i=1, Perks.getMaxIndex()-1 do
 			---@type PerkFactory.Perks
 			local perks = Perks.fromIndex(i)
@@ -77,22 +78,28 @@ function SRJ_ModDataHandler.setPassiveLevels(id, player)
 				---@type PerkFactory.Perk
 				local perk = PerkFactory.getPerk(perks)
 				if perk and perk:isPassiv() and tostring(perk:getParent():getType())~="None" then
-					local currentLevel = player:getPerkLevel(perk)
-					if currentLevel > 0 then
-						local perkType = tostring(perk:getType())
-						pMD.SRJPassiveSkillsInit[perkType] = currentLevel
+					local perkID = perk:getId()
+					if not pMD.SRJSkillsInit[perkID] then
+						local currentLevel = player:getPerkLevel(perk)
+						if currentLevel > 0 then
+							pMD.SRJSkillsInit[perkID] = currentLevel
+						end
 					end
 				end
 			end
 		end
-		if getDebug() then for k,v in pairs(pMD.SRJPassiveSkillsInit) do print(" -- PASSIVE-INIT: "..k.." = "..v) end end
+
+		if getDebug() then for k,v in pairs(pMD.SRJSkillsInit) do print(" -- STARTING-LEVEL: "..k.." = "..v) end end
 	end
+
+	return pMD.SRJSkillsInit
 end
 
 
 -- deducted xp from radio and tv
 function SRJ_ModDataHandler.checkIfDeductedXP(player, perksType, XP)
-	SRJ_ModDataHandler.setPassiveLevels(_, player)
+
+	SRJ_ModDataHandler.getFreeLevelsFromTraitsAndProfession(player)
 
 	local fN, lCF = nil, getCoroutineCallframeStack(getCurrentCoroutine(), 0)
 	local fD = lCF ~= nil and lCF and getFilenameOfCallframe(lCF)
@@ -149,11 +156,7 @@ end
 
 
 function SRJ_ModDataHandler.getPassiveLevels(player)
-	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
-	if not pMD.SRJPassiveSkillsInit then
-		SRJ_ModDataHandler.setPassiveLevels(_, player)
-	end
-	return pMD.SRJPassiveSkillsInit
+	return SRJ_ModDataHandler.getFreeLevelsFromTraitsAndProfession(player)
 end
 
 
@@ -172,37 +175,47 @@ end
 local SRJ_ServerLedger = {}
 
 
-local function getLedgerPath(steamID)
-	return "SRJ/ledger_" .. tostring(steamID) .. ".json"
+function SRJ_ModDataHandler.getLedgerKey(player)
+	local username = player:getUsername()
+	if username and username ~= "" then
+		return username
+	end
+
+	return "sp"
 end
 
 
-function SRJ_ModDataHandler.getServerReadXP(steamID, journalID)
-	SRJ_ServerLedger[steamID] = SRJ_ServerLedger[steamID] or {}
-	SRJ_ServerLedger[steamID][journalID] = SRJ_ServerLedger[steamID][journalID] or {}
-	SRJ_ServerLedger[steamID][journalID].kills = SRJ_ServerLedger[steamID][journalID].kills or {}
-	return SRJ_ServerLedger[steamID][journalID]
+local function getLedgerPath(ledgerKey)
+	return "SRJ/ledger_" .. ledgerKey .. ".json"
+end
+
+
+function SRJ_ModDataHandler.getServerReadXP(ledgerKey, journalID)
+	SRJ_ServerLedger[ledgerKey] = SRJ_ServerLedger[ledgerKey] or {}
+	SRJ_ServerLedger[ledgerKey][journalID] = SRJ_ServerLedger[ledgerKey][journalID] or {}
+	SRJ_ServerLedger[ledgerKey][journalID].kills = SRJ_ServerLedger[ledgerKey][journalID].kills or {}
+	return SRJ_ServerLedger[ledgerKey][journalID]
 end
 
 
 function SRJ_ModDataHandler.buildJournalID(JMD)
 	local id = JMD and JMD["ID"]
 	if not id then return "unkeyed" end
-	local steam = tostring(id["steamID"] or "nosteam")
-	local user  = tostring(id["username"] or "nouser")
-	return steam .. "|" .. user
+
+	local user = tostring(id["username"] or "nouser")
+	return user
 end
 
 
 function SRJ_ModDataHandler.loadServerLedger(player)
 	if not isServer() then return end
-	local steamID = tostring(player:getSteamID())
-	local path = getLedgerPath(steamID)
+	local ledgerKey = SRJ_ModDataHandler.getLedgerKey(player)
+	local path = getLedgerPath(ledgerKey)
 
 	local stream = getFileInput(path)
 	if not stream then
-		SRJ_ServerLedger[steamID] = {}
-		if getDebug() then print("SRJ: no ledger file found for " .. steamID .. ", starting fresh") end
+		SRJ_ServerLedger[ledgerKey] = {}
+		if getDebug() then print("SRJ: no ledger file found for " .. ledgerKey .. ", starting fresh") end
 		return
 	end
 
@@ -217,31 +230,31 @@ function SRJ_ModDataHandler.loadServerLedger(player)
 	stream:close()
 
 	if not ok then
-		print("SRJ ERROR: failed reading ledger for " .. steamID .. ": " .. tostring(err))
-		SRJ_ServerLedger[steamID] = {}
+		print("SRJ ERROR: failed reading ledger for " .. ledgerKey .. ": " .. tostring(err))
+		SRJ_ServerLedger[ledgerKey] = {}
 		return
 	end
 
 	local raw = table.concat(chars)
 	if raw == "" then
-		SRJ_ServerLedger[steamID] = {}
+		SRJ_ServerLedger[ledgerKey] = {}
 		return
 	end
 
 	local parsed = json.parse(raw)
-	SRJ_ServerLedger[steamID] = parsed or {}
+	SRJ_ServerLedger[ledgerKey] = parsed or {}
 
-	if getDebug() then print("SRJ: loaded ledger for " .. steamID) end
+	if getDebug() then print("SRJ: loaded ledger for " .. ledgerKey) end
 end
 
 
 function SRJ_ModDataHandler.saveServerLedger(player)
 	if not isServer() then return end
-	local steamID = tostring(player:getSteamID())
-	local data = SRJ_ServerLedger[steamID]
+	local ledgerKey = SRJ_ModDataHandler.getLedgerKey(player)
+	local data = SRJ_ServerLedger[ledgerKey]
 	if not data then return end
 
-	local path = getLedgerPath(steamID)
+	local path = getLedgerPath(ledgerKey)
 	local writer = getFileWriter(path, true, false)
 	if not writer then
 		print("SRJ ERROR: could not open ledger file for writing: " .. path)
@@ -254,9 +267,9 @@ function SRJ_ModDataHandler.saveServerLedger(player)
 	writer:close()
 
 	if not ok then
-		print("SRJ ERROR: failed writing ledger for " .. steamID .. ": " .. tostring(err))
+		print("SRJ ERROR: failed writing ledger for " .. ledgerKey .. ": " .. tostring(err))
 	elseif getDebug() then
-		print("SRJ: saved ledger for " .. steamID)
+		print("SRJ: saved ledger for " .. ledgerKey)
 	end
 end
 

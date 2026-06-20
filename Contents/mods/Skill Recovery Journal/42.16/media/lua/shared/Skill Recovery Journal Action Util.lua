@@ -109,7 +109,7 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
     local changesMade = false
     local sayText = nil
 
-    local steamID   = isServer() and tostring(player:getSteamID()) or nil
+    local steamID   = isServer() and SRJ.modDataHandler.getLedgerKey(player) or nil
     local journalID = isServer() and SRJ.modDataHandler.buildJournalID(JMD) or nil
     local serverReadXP = (isServer() and doReading)
         and SRJ.modDataHandler.getServerReadXP(steamID, journalID)

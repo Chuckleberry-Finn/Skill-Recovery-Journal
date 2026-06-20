@@ -1,9 +1,10 @@
 local SRJ = require "Skill Recovery Journal Main"
 
-function SRJ.calculateGainedSkill(player, perk, startingXP, deductibleXP, flatXP)
-
-	if startingXP == nil then
-		startingXP = SRJ.modDataHandler.getStartingXP(player)
+-- returns all gained skills as per config or false if no valid skill xp gained
+function SRJ.calculateGainedSkill(player, perk, startingLevels, deductibleXP, flatXP)
+	
+	if not startingLevels then
+		startingLevels = SRJ.modDataHandler.getFreeLevelsFromTraitsAndProfession(player)
 	end
 
 	if not deductibleXP then
@@ -19,24 +20,14 @@ function SRJ.calculateGainedSkill(player, perk, startingXP, deductibleXP, flatXP
 		if perkXP > 0 then
 			local perkID = perk:getId()
 
-			local baseXP
-			if startingXP then
-				baseXP = startingXP[perkID] or 0
-			else
-				local passiveSkillsInit = SRJ.modDataHandler.getPassiveLevels(player)
-				local startingLevels   = SRJ.modDataHandler.getFreeLevelsFromTraitsAndProfession(player)
-				local passivePerkFixLevel = passiveSkillsInit and passiveSkillsInit[perkID]
-				local passiveFixXP = passivePerkFixLevel and perk:getTotalXpForLevel(passivePerkFixLevel)
-				local startingPerkLevel = startingLevels[perkID]
-				local startingPerkXP = startingPerkLevel and perk:getTotalXpForLevel(startingPerkLevel) or 0
-				baseXP = passiveFixXP or startingPerkXP
-			end
+			local startingPerkLevel = startingLevels[perkID]
+			local startingPerkXP = startingPerkLevel and perk:getTotalXpForLevel(startingPerkLevel) or 0
 
 			local deductedXP = (SandboxVars.SkillRecoveryJournal.TranscribeTVXP==false) and deductibleXP[perkID] or 0
 
 			local sandboxOptionRecover, recoveryPercentage = SRJ.bSkillValid(perk)
 
-			local recoverableXP = sandboxOptionRecover and perkXP - baseXP - deductedXP or 0
+			local recoverableXP = sandboxOptionRecover and perkXP-startingPerkXP-deductedXP or 0
 
 			if recoverableXP > 0 then
 				local normalizedScale = SRJ.xpHandler.getSkillXPNormalizeScale(perkID) or 1
@@ -58,15 +49,14 @@ function SRJ.calculateAllGainedSkills(player)
 	local gainedXP
 	local flatGainedXP
 
-
-	local startingXP   = SRJ.modDataHandler.getStartingXP(player)
+	local startingLevels = SRJ.modDataHandler.getFreeLevelsFromTraitsAndProfession(player)
 	local deductibleXP = SRJ.modDataHandler.getDeductedXP(player)
-	local flatXP       = SRJ.modDataHandler.getFlatXP(player)
+	local flatXP = SRJ.modDataHandler.getFlatXP(player)
 
 	for i=1, Perks.getMaxIndex()-1 do
 		---@type PerkFactory.Perk
 		local perk = Perks.fromIndex(i)
-		local gained, flatGained = SRJ.calculateGainedSkill(player, perk, startingXP, deductibleXP, flatXP)
+		local gained, flatGained = SRJ.calculateGainedSkill(player, perk, startingLevels, deductibleXP, flatXP)
 		if gained then
 			gainedXP = gainedXP or {}
 			gainedXP[perk:getId()] = gained
@@ -234,6 +224,7 @@ function SRJ.calculateReadWriteRates(player, item, timeFactor, gainedRecipes, ga
 
     if doReading then
         local validSkills = {}
+        local greatestXp = 0
 
         for skill, xp in pairs(storedJournalXP) do
             local perk = Perks[skill]
@@ -243,6 +234,8 @@ function SRJ.calculateReadWriteRates(player, item, timeFactor, gainedRecipes, ga
                     validSkills[skill] = true
                     if skill == "NONE" or skill == "MAX" then
                         storedJournalXP[skill] = nil
+                    else
+                        if xp > greatestXp then greatestXp = xp end
                     end
                 end
             end

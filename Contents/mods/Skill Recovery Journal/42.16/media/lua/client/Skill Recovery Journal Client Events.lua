@@ -12,7 +12,6 @@ if errorMagnifier.registerDebugReport then
         local player = getPlayer()
         if player then
             character = {}
-            local passiveSkillsInit = SRJ.modDataHandler.getPassiveLevels(player)
             local startingLevels = SRJ.modDataHandler.getFreeLevelsFromTraitsAndProfession(player)
             local deductibleXP = SRJ.modDataHandler.getDeductedXP(player)
             local multipliers = SRJ.xpHandler.getOrStoreXPMultipliers(player)
@@ -30,7 +29,7 @@ if errorMagnifier.registerDebugReport then
                             gainedXP = (allGainedXP and allGainedXP[perkID]),
                             readXP = (charReadXP and charReadXP[perkID]),
                             currentXP = currentXP,
-                            startingLevel = (passiveSkillsInit[perkID] or startingLevels[perkID]),
+                            startingLevel = startingLevels[perkID],
                             deductXP = (deductibleXP and deductibleXP[perkID]),
                             multis = (multipliers and multipliers[perkID]),
                         }

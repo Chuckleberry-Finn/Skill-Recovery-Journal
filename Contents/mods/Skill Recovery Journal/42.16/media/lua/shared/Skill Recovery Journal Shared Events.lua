@@ -2,7 +2,6 @@ local SRJmodHandler = require "Skill Recovery Journal ModData"
 
 local function onCreatePlayer(id, player)
 	SRJmodHandler.initStartingXP(id, player)
-	SRJmodHandler.setPassiveLevels(id, player)
 end
 Events.OnCreatePlayer.Add(onCreatePlayer)
 
@@ -36,16 +35,7 @@ end
 
 if isServer() then Events.OnClientCommand.Add(SkillRecoveryJournalOnClientCommand) end
 
-
 if isServer() then
-
-	local function onPlayerConnect(player)
-		SRJmodHandler.loadServerLedger(player)
-	end
-
-	local function onPlayerDeath(player)
-		SRJmodHandler.saveServerLedger(player)
-	end
 
 	local function onSave()
 		local players = getOnlinePlayers()
@@ -55,8 +45,6 @@ if isServer() then
 		end
 	end
 
-	Events.OnClientConnect.Add(onPlayerConnect)
-	Events.OnPlayerDeath.Add(onPlayerDeath)
 	Events.OnSave.Add(onSave)
 
 end
