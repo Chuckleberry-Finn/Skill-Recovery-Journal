@@ -110,9 +110,8 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
     local sayText = nil
 
     local ledgerKey   = isServer() and SRJ.modDataHandler.getLedgerKey(player) or nil
-    local journalID = isServer() and SRJ.modDataHandler.buildJournalID(JMD) or nil
     local serverReadXP = (isServer() and doReading)
-        and SRJ.modDataHandler.getServerReadXP(ledgerKey, journalID)
+        and SRJ.modDataHandler.getServerReadXP(ledgerKey)
         or nil
 
     if serverReadXP then
@@ -178,8 +177,8 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
                             readXP[perkID] = math.max(resulting, currentXP)
 
                             -- server ledger to match, so that a read action cannot re-grant XP that was just written
-                            if isServer() and ledgerKey and journalID then
-                                local ledger = SRJ.modDataHandler.getServerReadXP(ledgerKey, journalID)
+                            if isServer() and ledgerKey then
+                                local ledger = SRJ.modDataHandler.getServerReadXP(ledgerKey)
                                 ledger[perkID] = math.max(resulting, ledger[perkID] or 0)
                             end
 
@@ -265,8 +264,8 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
                     readFlatXP[perkID] = math.max(resulting, currentFlatXP)
 
                     -- stamp server ledger for flat XP as well (write path)
-                    if isServer() and ledgerKey and journalID then
-                        local ledger = SRJ.modDataHandler.getServerReadXP(ledgerKey, journalID)
+                    if isServer() and ledgerKey then
+                        local ledger = SRJ.modDataHandler.getServerReadXP(ledgerKey)
                         -- flat XP is keyed separately; use a prefix to avoid collision with gainedXP keys
                         local flatKey = "flat|" .. perkID
                         ledger[flatKey] = math.max(resulting, ledger[flatKey] or 0)

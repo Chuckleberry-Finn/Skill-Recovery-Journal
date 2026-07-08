@@ -335,19 +335,11 @@ local function getLedgerPath(ledgerKey)
 end
 
 
-function SRJ_ModDataHandler.getServerReadXP(ledgerKey, journalID)
+function SRJ_ModDataHandler.getServerReadXP(ledgerKey)
 	SRJ_ServerLedger[ledgerKey] = SRJ_ServerLedger[ledgerKey] or {}
-	SRJ_ServerLedger[ledgerKey][journalID] = SRJ_ServerLedger[ledgerKey][journalID] or {}
-	SRJ_ServerLedger[ledgerKey][journalID].kills = SRJ_ServerLedger[ledgerKey][journalID].kills or {}
-	return SRJ_ServerLedger[ledgerKey][journalID]
-end
-
-
-function SRJ_ModDataHandler.buildJournalID(JMD)
-	local id = JMD and JMD["ID"]
-	if not id then return "unkeyed" end
-	local user = tostring(id["username"] or "nouser")
-	return user
+	SRJ_ServerLedger[ledgerKey] = SRJ_ServerLedger[ledgerKey] or {}
+	SRJ_ServerLedger[ledgerKey].kills = SRJ_ServerLedger[ledgerKey].kills or {}
+	return SRJ_ServerLedger[ledgerKey]
 end
 
 
@@ -378,6 +370,15 @@ function SRJ_ModDataHandler.loadServerLedger(player)
 	end
 
 	local parsed = jsonDecode(raw)
+
+	if parsed then
+		for accountKey, entry in pairs(parsed) do
+			if entry.lifeAge == nil and next(entry) ~= nil then
+				parsed[accountKey] = {}
+			end
+		end
+	end
+
 	SRJ_ServerLedger[ledgerKey] = parsed or {}
 
 	if getDebug() then print("SRJ: loaded ledger for " .. ledgerKey) end
