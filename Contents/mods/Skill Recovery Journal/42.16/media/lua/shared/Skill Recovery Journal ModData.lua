@@ -172,6 +172,28 @@ function SRJ_ModDataHandler.getReadXP(player)
 end
 
 
+function SRJ_ModDataHandler.reconcileLedgerAge(player, ledger)
+	local hours = player:getHoursSurvived() or 0
+	local lastAge = ledger.lifeAge
+
+	-- nil lastAge = pre-patch ledger (migrate), hours < lastAge = a younger/new life reusing this account
+	if lastAge == nil or hours < lastAge then
+		for k in pairs(ledger) do
+			if k ~= "lifeAge" then
+				if type(ledger[k]) == "table" then
+					ledger[k] = {}
+				else
+					ledger[k] = nil
+				end
+			end
+		end
+		if getDebug() then print("SRJ: new life detected, reset ledger entry for journal") end
+	end
+
+	ledger.lifeAge = math.max(hours, lastAge or 0)
+end
+
+
 local function jsonEncode(val, depth)
 	depth = depth or 0
 	local t = type(val)

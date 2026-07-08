@@ -109,11 +109,15 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
     local changesMade = false
     local sayText = nil
 
-    local steamID   = isServer() and SRJ.modDataHandler.getLedgerKey(player) or nil
+    local ledgerKey   = isServer() and SRJ.modDataHandler.getLedgerKey(player) or nil
     local journalID = isServer() and SRJ.modDataHandler.buildJournalID(JMD) or nil
     local serverReadXP = (isServer() and doReading)
-        and SRJ.modDataHandler.getServerReadXP(steamID, journalID)
+        and SRJ.modDataHandler.getServerReadXP(ledgerKey, journalID)
         or nil
+
+    if serverReadXP then
+        SRJ.modDataHandler.reconcileLedgerAge(player, serverReadXP)
+    end
 
     -- RECIPES
     local recipeList = self.gainedRecipes
@@ -174,8 +178,8 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
                             readXP[perkID] = math.max(resulting, currentXP)
 
                             -- server ledger to match, so that a read action cannot re-grant XP that was just written
-                            if isServer() and steamID and journalID then
-                                local ledger = SRJ.modDataHandler.getServerReadXP(steamID, journalID)
+                            if isServer() and ledgerKey and journalID then
+                                local ledger = SRJ.modDataHandler.getServerReadXP(ledgerKey, journalID)
                                 ledger[perkID] = math.max(resulting, ledger[perkID] or 0)
                             end
 
@@ -261,8 +265,8 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
                     readFlatXP[perkID] = math.max(resulting, currentFlatXP)
 
                     -- stamp server ledger for flat XP as well (write path)
-                    if isServer() and steamID and journalID then
-                        local ledger = SRJ.modDataHandler.getServerReadXP(steamID, journalID)
+                    if isServer() and ledgerKey and journalID then
+                        local ledger = SRJ.modDataHandler.getServerReadXP(ledgerKey, journalID)
                         -- flat XP is keyed separately; use a prefix to avoid collision with gainedXP keys
                         local flatKey = "flat|" .. perkID
                         ledger[flatKey] = math.max(resulting, ledger[flatKey] or 0)

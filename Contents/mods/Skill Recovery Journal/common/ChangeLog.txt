@@ -264,3 +264,7 @@ HOTFIX 1: Fixed a typo in the recipe syntax check.
 HOTFIX 2: Reworked the initialization for skills- slight revert to the old system, so data should be lost.
 HOTFIX 3: Included a JSON paser used in Shops and Traders.
 [ ------ ]
+
+[ 7/7/26 ]
+- Added a character-age check to the ledger system which was locking people out from their journals.
+[ ------ ]
