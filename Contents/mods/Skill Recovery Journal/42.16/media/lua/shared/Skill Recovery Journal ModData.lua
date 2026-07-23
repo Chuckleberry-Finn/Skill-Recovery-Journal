@@ -172,28 +172,6 @@ function SRJ_ModDataHandler.getReadXP(player)
 end
 
 
-function SRJ_ModDataHandler.reconcileLedgerAge(player, ledger)
-	local hours = player:getHoursSurvived() or 0
-	local lastAge = ledger.lifeAge
-
-	-- nil lastAge = pre-patch ledger (migrate), hours < lastAge = a younger/new life reusing this account
-	if lastAge == nil or hours < lastAge then
-		for k in pairs(ledger) do
-			if k ~= "lifeAge" then
-				if type(ledger[k]) == "table" then
-					ledger[k] = {}
-				else
-					ledger[k] = nil
-				end
-			end
-		end
-		if getDebug() then print("SRJ: new life detected, reset ledger entry for journal") end
-	end
-
-	ledger.lifeAge = math.max(hours, lastAge or 0)
-end
-
-
 local function jsonEncode(val, depth)
 	depth = depth or 0
 	local t = type(val)
@@ -316,94 +294,8 @@ local function jsonDecode(str)
 end
 
 
-
-local SRJ_ServerLedger = {}
-
-
-function SRJ_ModDataHandler.getLedgerKey(player)
-	local username = player:getUsername()
-	if username and username ~= "" then
-		return username
-	end
-
-	return "sp"
-end
-
-
-local function getLedgerPath(ledgerKey)
-	return "SRJ/ledger_" .. ledgerKey .. ".json"
-end
-
-
-function SRJ_ModDataHandler.getServerReadXP(ledgerKey)
-	SRJ_ServerLedger[ledgerKey] = SRJ_ServerLedger[ledgerKey] or {}
-	SRJ_ServerLedger[ledgerKey] = SRJ_ServerLedger[ledgerKey] or {}
-	SRJ_ServerLedger[ledgerKey].kills = SRJ_ServerLedger[ledgerKey].kills or {}
-	return SRJ_ServerLedger[ledgerKey]
-end
-
-
-function SRJ_ModDataHandler.loadServerLedger(player)
-	if not isServer() then return end
-	local ledgerKey = SRJ_ModDataHandler.getLedgerKey(player)
-	local path = getLedgerPath(ledgerKey)
-
-	local stream = getFileInput(path)
-	if not stream then
-		SRJ_ServerLedger[ledgerKey] = {}
-		if getDebug() then print("SRJ: no ledger file found for " .. ledgerKey .. ", starting fresh") end
-		return
-	end
-
-	local chars = {}
-	local b = stream:read()
-	while b ~= -1 do
-		table.insert(chars, string.char(b))
-		b = stream:read()
-	end
-	stream:close()
-
-	local raw = table.concat(chars)
-	if raw == "" then
-		SRJ_ServerLedger[ledgerKey] = {}
-		return
-	end
-
-	local parsed = jsonDecode(raw)
-
-	if parsed then
-		for accountKey, entry in pairs(parsed) do
-			if entry.lifeAge == nil and next(entry) ~= nil then
-				parsed[accountKey] = {}
-			end
-		end
-	end
-
-	SRJ_ServerLedger[ledgerKey] = parsed or {}
-
-	if getDebug() then print("SRJ: loaded ledger for " .. ledgerKey) end
-end
-
-
-function SRJ_ModDataHandler.saveServerLedger(player)
-	if not isServer() then return end
-	local ledgerKey = SRJ_ModDataHandler.getLedgerKey(player)
-	local data = SRJ_ServerLedger[ledgerKey]
-	if not data then return end
-
-	local path = getLedgerPath(ledgerKey)
-	local writer = getFileWriter(path, true, false)
-	if not writer then
-		print("SRJ ERROR: could not open ledger file for writing: " .. path)
-		return
-	end
-
-	writer:write(jsonEncode(data))
-	writer:close()
-
-	if getDebug() then print("SRJ: saved ledger for " .. ledgerKey) end
-end
-
+SRJ_ModDataHandler.jsonEncode = jsonEncode
+SRJ_ModDataHandler.jsonDecode = jsonDecode
 
 
 function SRJ_ModDataHandler.getPlayerModData(player)

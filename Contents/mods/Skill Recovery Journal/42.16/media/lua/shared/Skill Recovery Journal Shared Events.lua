@@ -1,7 +1,9 @@
 local SRJmodHandler = require "Skill Recovery Journal ModData"
+local SRJledger = require "Skill Recovery Journal Ledger"
 
 local function onCreatePlayer(id, player)
 	SRJmodHandler.initStartingXP(id, player)
+	if isServer() then SRJledger.mintLifeStamp(player) end
 end
 Events.OnCreatePlayer.Add(onCreatePlayer)
 
@@ -9,10 +11,7 @@ Events.OnCreatePlayer.Add(onCreatePlayer)
 local function SkillRecoveryJournalOnClientCommand(module, command, player, args)
 	if module == "SkillRecoveryJournal" then 
 		local playerID = player:getOnlineID()
-		if command == "ready" then
-			SRJmodHandler.loadServerLedger(player)
-			if getDebug() then print("SRJ: loaded ledger for player " .. tostring(playerID)) end
-		elseif command == "rename" then
+		if command == "rename" then
 			if getDebug() then print("SkillRecoveryJournal received rename for item " .. tostring(args.itemID) .. " from player " .. tostring(playerID)) end
 			local item = player:getInventory():getItemWithIDRecursiv(args.itemID)
 			if item then
@@ -38,11 +37,7 @@ if isServer() then Events.OnClientCommand.Add(SkillRecoveryJournalOnClientComman
 if isServer() then
 
 	local function onSave()
-		local players = getOnlinePlayers()
-		for i = 0, players:size() - 1 do
-			local p = players:get(i)
-			if p then SRJmodHandler.saveServerLedger(p) end
-		end
+		SRJledger.save()
 	end
 
 	Events.OnSave.Add(onSave)

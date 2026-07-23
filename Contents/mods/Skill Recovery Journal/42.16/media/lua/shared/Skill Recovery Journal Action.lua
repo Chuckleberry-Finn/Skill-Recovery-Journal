@@ -86,7 +86,7 @@ function SkillRecoveryJournalAction:serverStop()
     if not self.doReading then
         sendServerCommand(self.character, "SkillRecoveryJournal", "readXP", {data = SRJ.modDataHandler.getReadXP(self.character)})
     else
-        SRJ.modDataHandler.saveServerLedger(self.character)
+        SRJ.ledger.save()
     end
 end
 
@@ -117,7 +117,7 @@ function SkillRecoveryJournalAction:complete()
     if not self.doReading then
         sendServerCommand(self.character, "SkillRecoveryJournal", "readXP", {data = SRJ.modDataHandler.getReadXP(self.character)})
     else
-        SRJ.modDataHandler.saveServerLedger(self.character)
+        SRJ.ledger.save()
     end
     return true
 end
@@ -290,6 +290,15 @@ function SkillRecoveryJournalAction:new(character, item, doReading, writingTool)
 
     local JMD = SRJ.modDataHandler.migrateJournalIfNeeded(item, character)
     local isAllowed, sayText = SRJ.checkStaticConditions(character, JMD, doReading)
+
+    if isAllowed and doReading and isServer() then
+        local canRead, readSayText = SRJ.ledger.canRead(item, character)
+        if not canRead then
+            isAllowed = false
+            sayText = readSayText
+        end
+    end
+
 	o.isAllowed = isAllowed
 
     -- if not allowed, give feedback and stop here
@@ -297,6 +306,8 @@ function SkillRecoveryJournalAction:new(character, item, doReading, writingTool)
         if sayText then character:Say(getText(sayText)) end
         return o
     end
+
+    if isServer() then SRJ.ledger.touchInteraction(item, character) end
 
     -- ACTION SETUP
     o.gainedRecipes = {}
@@ -350,6 +361,8 @@ function SkillRecoveryJournalAction:new(character, item, doReading, writingTool)
             -- store author name in journal, init ID for security
             JMD["ID"] = JMD["ID"] or {}
             JMD.author = character:getFullName()
+
+            if isServer() then SRJ.ledger.markWriter(item, character) end
         end
     end
     

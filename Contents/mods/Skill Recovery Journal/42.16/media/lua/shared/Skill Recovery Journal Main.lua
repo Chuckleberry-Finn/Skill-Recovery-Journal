@@ -7,6 +7,7 @@ SRJ.xpPatched = false
 
 SRJ.xpHandler = require "Skill Recovery Journal XP"
 SRJ.modDataHandler = require "Skill Recovery Journal ModData"
+SRJ.ledger = require "Skill Recovery Journal Ledger"
 
 Events.OnGameTimeLoaded.Add(function()
     SRJ.gameTime = GameTime.getInstance()

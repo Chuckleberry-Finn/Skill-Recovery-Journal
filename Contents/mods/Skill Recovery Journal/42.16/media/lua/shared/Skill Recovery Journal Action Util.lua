@@ -49,9 +49,8 @@ function SRJ.checkStaticConditions(player, JMD, doReading)
 end
 
 
-function  SRJ.handleKills(durationData, player, journalModData, doReading, serverReadXP)
+function  SRJ.handleKills(durationData, player, journalModData, doReading)
 
-	local readXP = (isServer() and doReading and serverReadXP) or SRJ.modDataHandler.getReadXP(player)
     local zKillGainRate = durationData.rates.zKills
     local sKillGainRate = durationData.rates.sKills
 	--if getDebug() then print("--handleKills - Z", zKillGainRate,", S",  sKillGainRate) end
@@ -76,7 +75,6 @@ function  SRJ.handleKills(durationData, player, journalModData, doReading, serve
 			journalModData.kills.Zombie = newZKills
 		end
         zKillsAdded = newZKills - oldZKills
-		readXP.kills.Zombie = (readXP.kills.Zombie or 0) + zKillsAdded
 	end
 
 	if (sKillGainRate > 0) then
@@ -97,7 +95,6 @@ function  SRJ.handleKills(durationData, player, journalModData, doReading, serve
 			journalModData.kills.Survivor = newSKills
 		end
         sKillsAdded = newSKills - oldSKills
-		readXP.kills.Survivor = (readXP.kills.Survivor or 0) + sKillsAdded
 	end
 
 	return zKillsAdded, sKillsAdded
@@ -108,15 +105,6 @@ end
 function SRJ.processJournalTick(self, player, JMD, doReading)
     local changesMade = false
     local sayText = nil
-
-    local ledgerKey   = isServer() and SRJ.modDataHandler.getLedgerKey(player) or nil
-    local serverReadXP = (isServer() and doReading)
-        and SRJ.modDataHandler.getServerReadXP(ledgerKey)
-        or nil
-
-    if serverReadXP then
-        SRJ.modDataHandler.reconcileLedgerAge(player, serverReadXP)
-    end
 
     -- RECIPES
     local recipeList = self.gainedRecipes
@@ -147,42 +135,27 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
     -- XP - on read process journal xp, otherwise player xp
     local processXpMap = (doReading and JMD.gainedXP) or self.gainedSkills
 
-    -- readXP used for gating:
-    local readXP = serverReadXP or SRJ.modDataHandler.getReadXP(player)
+    local readXP = SRJ.modDataHandler.getReadXP(player)
 
     if processXpMap then
-        if doReading then
-            JMD.recoveryJournalXpLog = JMD.recoveryJournalXpLog or {}
-        end
-
         for perkID, perkXP in pairs(processXpMap) do
             local perk = Perks[perkID]
             if perk and SRJ.bSkillValid(perk) then
 
-                local currentXP = readXP[perkID] or 0
                 local rate = self.durationData.rates[perkID] or 0
 
                 -- WRITE MODE: processXP → storedXP
                 if not doReading then
+                    local currentXP = readXP[perkID] or 0
                     local gained = perkXP
-                    -- if gained xp is higher than stored xp
                     JMD.gainedXP[perkID] = JMD.gainedXP[perkID] or 0
                     if gained and gained > JMD.gainedXP[perkID] then
                         if rate > 0 then
                             changesMade = true
-
                             local resulting = math.min(gained, JMD.gainedXP[perkID] + rate)
                             JMD.gainedXP[perkID] = resulting
-                            -- client-visible readXP so the UI is consistent
                             readXP[perkID] = math.max(resulting, currentXP)
 
-                            -- server ledger to match, so that a read action cannot re-grant XP that was just written
-                            if isServer() and ledgerKey then
-                                local ledger = SRJ.modDataHandler.getServerReadXP(ledgerKey)
-                                ledger[perkID] = math.max(resulting, ledger[perkID] or 0)
-                            end
-
-                            -- build halo text
                             local skillName = "IGUI_perks_" .. perkID
                             if not self.changesBeingMadeIndex[skillName] then
                                 self.changesBeingMadeIndex[skillName] = true
@@ -191,22 +164,15 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
                         end
                     end
 
-                -- READ MODE: processXP → player XP
                 else
-                    local usedXP = JMD.recoveryJournalXpLog
-                    local oneTimeUse = SandboxVars.SkillRecoveryJournal.RecoveryJournalUsed == true
-
-                    if oneTimeUse and usedXP[perkID] then
-                        currentXP = math.max(currentXP, usedXP[perkID])
-                    end
+                    local cap = isServer() and SRJ.ledger.getRedemptionRecord(self.item, player, perkID, false) or nil
+                    local currentXP = cap and cap.granted or (readXP[perkID] or 0)
 
                     if currentXP < perkXP then
-                        -- abort if max level
                         if player:getPerkLevel(perk) == 10 then
                             rate = false
                         end
 
-                        -- if reading fitness, we have additional requirements
                         if perkID == "Fitness" then
                             local cannot, msg = SRJ.checkFitnessCanAddXp(player)
                             if cannot then
@@ -216,15 +182,12 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
                         end
 
                         if rate and rate > 0 then
-                            -- normalize rate
                             if currentXP + rate > perkXP then
                                 rate = math.max(perkXP - currentXP, 0.001)
                             end
 
-                            -- advance the authoritative ledger (server read path)
+                            if cap then cap.granted = currentXP + rate end
                             readXP[perkID] = currentXP + rate
-                            -- and in journal for decay / oneTimeUse tracking
-                            usedXP[perkID] = (usedXP[perkID] or 0) + rate
 
                             local addedXP = SRJ.xpHandler.reBoostXP(player, perk, rate)
                             SRJ.modDataHandler.setSRJAddingFlatXP(true)
@@ -233,7 +196,8 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
 
                             changesMade = true
 
-                            -- build halo text
+                            if isServer() then SRJ.ledger.sealIfOneTimeUse(self.item, player) end
+
                             local skillName = "IGUI_perks_" .. perkID
                             if not self.changesBeingMadeIndex[skillName] then
                                 self.changesBeingMadeIndex[skillName] = true
@@ -263,14 +227,6 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
                     JMD.flatGainedXP[perkID] = resulting
                     readFlatXP[perkID] = math.max(resulting, currentFlatXP)
 
-                    -- stamp server ledger for flat XP as well (write path)
-                    if isServer() and ledgerKey then
-                        local ledger = SRJ.modDataHandler.getServerReadXP(ledgerKey)
-                        -- flat XP is keyed separately; use a prefix to avoid collision with gainedXP keys
-                        local flatKey = "flat|" .. perkID
-                        ledger[flatKey] = math.max(resulting, ledger[flatKey] or 0)
-                    end
-
                     local skillName = "IGUI_perks_" .. perkID
                     if not self.changesBeingMadeIndex[skillName] then
                         self.changesBeingMadeIndex[skillName] = true
@@ -282,20 +238,14 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
     end
 
     if doReading and JMD.flatGainedXP then
-        local serverReadFlatXP = serverReadXP
         local readFlatXP = SRJ.modDataHandler.getReadFlatXP(player)
 
         for perkID, journalFlatXP in pairs(JMD.flatGainedXP) do
             local perk = Perks[perkID]
             if perk and SRJ.bSkillValid(perk) then
 
-                local flatKey = "flat|" .. perkID
-                local currentFlatXP
-                if isServer() and serverReadFlatXP then
-                    currentFlatXP = serverReadFlatXP[flatKey] or 0
-                else
-                    currentFlatXP = readFlatXP[perkID] or 0
-                end
+                local cap = isServer() and SRJ.ledger.getRedemptionRecord(self.item, player, perkID, true) or nil
+                local currentFlatXP = cap and cap.granted or (readFlatXP[perkID] or 0)
 
                 local flatRate = self.durationData.flatRates[perkID] or 0
                 if currentFlatXP < journalFlatXP then
@@ -305,12 +255,13 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
                             flatRate = math.max(journalFlatXP - currentFlatXP, 0.001)
                         end
 
-                        if isServer() and serverReadFlatXP then
-                            serverReadFlatXP[flatKey] = currentFlatXP + flatRate
-                        end
+                        if cap then cap.granted = currentFlatXP + flatRate end
                         readFlatXP[perkID] = currentFlatXP + flatRate
                         addXpNoMultiplier(player, perk, flatRate)
                         changesMade = true
+
+                        if isServer() then SRJ.ledger.sealIfOneTimeUse(self.item, player) end
+
                         local skillName = "IGUI_perks_" .. perkID
                         if not self.changesBeingMadeIndex[skillName] then
                             self.changesBeingMadeIndex[skillName] = true
@@ -325,7 +276,7 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
     -- KILLS
     local killsEnabled = self.durationData.kills.Zombie > 0 or self.durationData.kills.Survivor > 0
     if killsEnabled and not self.killsComplete then
-        local zombies, survivors = SRJ.handleKills(self.durationData, player, JMD, doReading, serverReadXP)
+        local zombies, survivors = SRJ.handleKills(self.durationData, player, JMD, doReading)
 
         if survivors > 0 then
             self.changesBeingMadeIndex.survivors = (self.changesBeingMadeIndex.survivors or 0) + survivors
