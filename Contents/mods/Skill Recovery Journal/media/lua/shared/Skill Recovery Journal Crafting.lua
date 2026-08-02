@@ -71,5 +71,5 @@ end
 
 
 Events.OnLoad.Add(SkillRecoveryJournalRecipe)
-if isServer() then Events.OnGameBoot.Add(SkillRecoveryJournalRecipe) end
+Events.OnServerStarted.Add(SkillRecoveryJournalRecipe)
 

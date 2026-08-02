@@ -68,6 +68,10 @@ end
 
 -- SERVER START
 function SkillRecoveryJournalAction:serverStart()
+    if not self.isAllowed then
+        if self.netAction then self.netAction:forceComplete() end
+        return
+    end
     emulateAnimEvent(self.netAction, 10, "update", nil)
 end
 
@@ -160,7 +164,12 @@ end
 function SkillRecoveryJournalAction:updateTick()
     -- should not be called if not isValid()
     if not self.isAllowed then
-        print("SRJ ERROR: Action is not valid!")
+        if getDebug() then print("SRJ ERROR: Action is not valid! Forcing stop.") end
+        if isServer() then
+            if self.netAction then self.netAction:forceComplete() end
+        else
+            self:forceStop()
+        end
         return false
     end
 
@@ -304,6 +313,10 @@ function SkillRecoveryJournalAction:new(character, item, doReading, writingTool)
     -- if not allowed, give feedback and stop here
 	if not o.isAllowed then 
         if sayText then character:Say(getText(sayText)) end
+        -- safe stub so any later debug print / access to durationData.intervals can't crash on nil
+        o.durationData = { intervals = 0 }
+        o.changesBeingMade = {}
+        o.changesBeingMadeIndex = {}
         return o
     end
 
