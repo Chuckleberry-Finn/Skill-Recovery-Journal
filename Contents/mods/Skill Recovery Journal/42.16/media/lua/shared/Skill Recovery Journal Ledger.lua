@@ -50,33 +50,50 @@ local function ensureLoaded()
     if loaded or not isServer() then return end
     loaded = true
 
-    -- Prefer .json, fall back to .txt
-    local raw = readAllAndClose(getFileInput(LEDGER_PATH_JSON))
-    local source = LEDGER_PATH_JSON
-    if not raw then
-        raw = readAllAndClose(getFileInput(LEDGER_PATH_TXT))
-        source = LEDGER_PATH_TXT
+    local candidates = {}
+
+    local jsonRaw = readAllAndClose(getFileInput(LEDGER_PATH_JSON))
+    if jsonRaw then
+        local ok, parsed = pcall(SRJ_ModDataHandler.jsonDecode, jsonRaw)
+        if ok and parsed and parsed.journals then
+            table.insert(candidates, { source = LEDGER_PATH_JSON, parsed = parsed })
+        elseif getDebug() then
+            print("SRJ Ledger: " .. LEDGER_PATH_JSON .. " failed to parse")
+        end
     end
 
-    if not raw then
+    local txtRaw = readAllAndClose(getFileInput(LEDGER_PATH_TXT))
+    if txtRaw then
+        local ok, parsed = pcall(SRJ_ModDataHandler.jsonDecode, txtRaw)
+        if ok and parsed and parsed.journals then
+            table.insert(candidates, { source = LEDGER_PATH_TXT, parsed = parsed })
+        elseif getDebug() then
+            print("SRJ Ledger: " .. LEDGER_PATH_TXT .. " failed to parse")
+        end
+    end
+
+    if #candidates == 0 then
         if getDebug() then print("SRJ Ledger: no journals.json/.txt found, starting fresh") end
         return
     end
 
-    local ok, parsed = pcall(SRJ_ModDataHandler.jsonDecode, raw)
-    if ok and parsed and parsed.journals then
-        state = parsed
-    elseif getDebug() then
-        print("SRJ Ledger: " .. source .. " failed to parse, starting fresh")
+    local best = candidates[1]
+    for i = 2, #candidates do
+        if (candidates[i].parsed.savedAt or 0) > (best.parsed.savedAt or 0) then
+            best = candidates[i]
+        end
     end
+
+    state = best.parsed
+    if getDebug() then print("SRJ Ledger: loaded " .. best.source .. " (savedAt " .. tostring(state.savedAt) .. ")") end
 end
 
 
 function SRJ_Ledger.save()
     if not isServer() then return end
+    state.savedAt = getTimestampMs()
     local encoded = SRJ_ModDataHandler.jsonEncode(state)
 
-    -- Try .json first, fall back to .txt
     local ok = false
     local writer = getFileWriter(LEDGER_PATH_JSON, true, false)
     if writer then
