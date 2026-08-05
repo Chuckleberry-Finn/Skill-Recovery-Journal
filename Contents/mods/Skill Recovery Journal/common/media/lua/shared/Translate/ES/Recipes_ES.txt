@@ -1,3 +1,0 @@
-Recipe_ES = {
-    Recipe_BindSkillRecoveryJournal = "Encuadernar Diario de Recuperación de Habilidades",
-}

@@ -1,3 +1,0 @@
-ItemName_IT = {
-    ItemName_Base.SkillRecoveryJournal = "Diario rilegato",
-}

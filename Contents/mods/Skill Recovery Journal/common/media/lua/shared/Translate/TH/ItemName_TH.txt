@@ -1,3 +1,0 @@
-ItemName_TH = {
-    ItemName_Base.SkillRecoveryJournal = "บันทึกประสบการณ์ชีวิต",
-}

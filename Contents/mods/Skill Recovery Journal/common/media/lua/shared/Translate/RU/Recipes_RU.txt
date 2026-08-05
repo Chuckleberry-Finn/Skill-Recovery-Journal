@@ -1,3 +1,0 @@
-Recipe_RU = {
-    Recipe_BindSkillRecoveryJournal = "Переплести Дневник Восстановления Навыков",
-}

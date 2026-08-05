@@ -1,3 +1,0 @@
-Recipe_PTBR = {
-    Recipe_BindSkillRecoveryJournal = "Vincular diário",
-}

@@ -1,4 +1,0 @@
-ItemName_CN = {
-	ItemName_Base.SkillRecoveryJournal = "技能日志（衰退）",
-	ItemName_Base.SkillRecoveryBoundJournal = "技能日志",
-}

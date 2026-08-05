@@ -1,4 +1,0 @@
-ItemName_FR = {
-    ItemName_Base.SkillRecoveryJournal = "Journal Relié (Détérioré)",
-    ItemName_Base.SkillRecoveryBoundJournal = "Journal Relié",
-}

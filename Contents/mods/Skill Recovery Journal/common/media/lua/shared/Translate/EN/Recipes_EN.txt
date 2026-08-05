@@ -1,3 +1,0 @@
-Recipe_EN = {
-    Recipe_BindSkillRecoveryJournal = "Bind Skill Recovery Journal",
-}

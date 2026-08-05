@@ -1,3 +1,0 @@
-ItemName_JP = {
-    ItemName_Base.SkillRecoveryJournal = "スキルリカバリー ジャーナル",
-}

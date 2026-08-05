@@ -1,4 +1,0 @@
-Tooltip_RU = {
-    Tooltip_DecayedJournal = "Переместите это в инвентарь, чтобы обновить.",
-    Tooltip_SkillJournal = "Значения опыта зависят от того, кто их читает."
-}

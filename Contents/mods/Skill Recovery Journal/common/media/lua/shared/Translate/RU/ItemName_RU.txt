@@ -1,4 +1,0 @@
-ItemName_RU = {
-    ItemName_Base.SkillRecoveryJournal = "Переплетенный Дневник (Испорченный)",
-    ItemName_Base.SkillRecoveryBoundJournal = "Переплетенный Дневник",
-}

@@ -24,6 +24,8 @@
     "Sandbox_SkillRecoveryJournalRecoverFarmingCategorySkills_tooltip": "Recovery percentage for farming skills.<br>Set this to -1 to use the General Skill Recovery Percentage.",
     "Sandbox_SkillRecoveryJournalRecoverRecipes": "Recover Recipes",
     "Sandbox_SkillRecoveryJournalRecoverRecipes_tooltip": "Toggle off to prevent journals from recovering/transcribing recipes.",
+    "Sandbox_SkillRecoveryJournalIlliterateSpeedMultiplier": "Illiterate Speed Multiplier",
+    "Sandbox_SkillRecoveryJournalIlliterateSpeedMultiplier_tooltip": "Set to 0 to prevent illiterate people from reading.",
     "Sandbox_SkillRecoveryJournalUsed": "Journal XP Used When Read",
     "Sandbox_SkillRecoveryJournalUsed_tooltip": "Normally you can reread the journal as many times as you like - with this toggled on each individual XP point can only be recovered once. You can still add onto the journal, but each point can only be recovered once on each journal. Note: the tooltip for the journal will now display a fraction for unused points.",
     "Sandbox_SkillRecoveryJournalCraftRecipe": "Custom Journal Recipe",

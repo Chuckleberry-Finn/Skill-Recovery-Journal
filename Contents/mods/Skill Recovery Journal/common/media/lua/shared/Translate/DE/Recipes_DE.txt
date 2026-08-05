@@ -1,3 +1,0 @@
-Recipe_DE = {
-    Recipe_BindSkillRecoveryJournal = "Gebundenes Journal herstellen",
-}

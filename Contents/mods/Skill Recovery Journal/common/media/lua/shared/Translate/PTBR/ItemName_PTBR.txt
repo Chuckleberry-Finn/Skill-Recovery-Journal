@@ -1,4 +1,0 @@
-ItemName_PTBR = {
-    ItemName_Base.SkillRecoveryJournal = "Diario Encadernado (Desgastado)",
-    ItemName_Base.SkillRecoveryBoundJournal = "Diario Encadernado",
-}

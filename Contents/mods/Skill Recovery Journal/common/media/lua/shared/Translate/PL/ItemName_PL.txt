@@ -1,4 +1,0 @@
-ItemName_PL = {
-    ItemName_Base.SkillRecoveryJournal = "Oprawiony Dziennik (Zniszczony)",
-    ItemName_Base.SkillRecoveryBoundJournal = "Oprawiony Dziennik",
-}

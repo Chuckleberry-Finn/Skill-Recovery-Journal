@@ -1,0 +1,13 @@
+module Base
+{
+    item SkillRecoveryBoundJournal
+    {
+        Weight = 0.8,
+        ItemType = base:normal,
+        DisplayCategory = SkillJournal,
+        DisappearOnUse = FALSE,
+        Icon = SkillRecoveryJournal,
+        StaticModel = SkillRecoveryJournal,
+        WorldStaticModel = SkillRecoveryJournal_ground,
+    }
+}

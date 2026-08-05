@@ -1,4 +1,0 @@
-ItemName_UA = {
-    ItemName_Base.SkillRecoveryJournal = "Переплетений Щоденник (Зношений)",
-    ItemName_Base.SkillRecoveryBoundJournal = "Переплетений Щоденник",
-}

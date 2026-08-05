@@ -1,3 +1,0 @@
-ItemName_CH = {
-    ItemName_Base.SkillRecoveryJournal = "綁定日誌",
-}

@@ -1,3 +1,0 @@
-ItemName_EN = {
-    ItemName_Base.SkillRecoveryBoundJournal = "Bound Journal",
-}
