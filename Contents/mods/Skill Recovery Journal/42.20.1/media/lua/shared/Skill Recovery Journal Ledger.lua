@@ -217,6 +217,16 @@ local function migrateLegacyJournal(item, player, srj)
 
     u.journals[ledgerID] = rec
 
+    local readXP = SRJ_Ledger.getReadXP(player)
+    if readXP then
+        for perkID, xp in pairs(rec.gainedXP) do
+            readXP[perkID] = math.max(readXP[perkID] or 0, xp)
+        end
+        for perkID, xp in pairs(rec.flatGainedXP) do
+            readXP.flat[perkID] = math.max(readXP.flat[perkID] or 0, xp)
+        end
+    end
+
     srj.ledgerID = ledgerID
     srj.routingKey = routingKey
     srj.owner = owner
