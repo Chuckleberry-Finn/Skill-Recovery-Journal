@@ -269,10 +269,9 @@ HOTFIX 3: Included a JSON paser used in Shops and Traders.
 - Added a character-age check to the ledger system which was locking people out from their journals.
 [ ------ ]
 
-[ 8/4/26 ]
+[ B42.20.2+ Update ]
 Notice: B42.16 versioning has been moved to B42.19. B42.19 is also no longer supported and will remain as is.
 
-B42.20.1 Update:
 - Fix: Read/Transcribe action that could loop forever and also fail on stop.
 - Fix: Transcribing into a journal never actually saved the ledger - only Reading did. Both now save correctly.
 - Fix?: BindSkillRecoveryJournal recipe accounts for people forcing their B41 configs onto B42 and breaking their server. (???)
@@ -287,6 +286,9 @@ New:
      (SkillRecoveryJournal/<username>.txt)
 - Read XP is now also tracked server-side per life
 - Added Illiterate transcription/reading multiplier (default 0, illiterate can't use journals), upon request of Grimscribe. :)
+- Made tooltip information on skill-progress bars non-debug.
+ - Added bars to reflect the gained XP's recoverable, untranscribed, deducted, starting, status.
+- Journals will need to migrate from the version prior to ths one, migrated-XP cannot be read on the current life.
 
 Minor:
 - Fixed Debug-only skill tooltip (gained/deducted/untranscribed XP).
