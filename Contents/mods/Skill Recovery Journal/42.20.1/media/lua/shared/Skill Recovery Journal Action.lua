@@ -77,9 +77,7 @@ function SkillRecoveryJournalAction:serverStop()
     if not self.item then print("WARNING: SkillRecoveryJournalAction:serverStop - 'item' not found. ") return end
     if not self.character then print("WARNING: SkillRecoveryJournalAction:serverStop - 'character' not found. ") return end
     SRJ.ledger.syncDisplay(self.item, self.character)
-    if not self.doReading then
-        sendServerCommand(self.character, "SkillRecoveryJournal", "readXP", {data = SRJ.ledger.getReadXP(self.character)})
-    end
+    sendServerCommand(self.character, "SkillRecoveryJournal", "readXP", {data = SRJ.ledger.getReadXP(self.character)})
     SRJ.ledger.save(self.character)
     print("SRJ TRACE: serverStop() finished")
 end
@@ -104,9 +102,7 @@ function SkillRecoveryJournalAction:complete()
 
     self.item:setJobDelta(0.0)
     SRJ.ledger.syncDisplay(self.item, self.character)
-    if not self.doReading then
-        sendServerCommand(self.character, "SkillRecoveryJournal", "readXP", {data = SRJ.ledger.getReadXP(self.character)})
-    end
+    sendServerCommand(self.character, "SkillRecoveryJournal", "readXP", {data = SRJ.ledger.getReadXP(self.character)})
     SRJ.ledger.save(self.character)
     print("SRJ TRACE: complete() finished")
     return true
