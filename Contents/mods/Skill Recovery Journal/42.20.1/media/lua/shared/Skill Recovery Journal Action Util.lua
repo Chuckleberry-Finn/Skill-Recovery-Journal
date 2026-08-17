@@ -1,5 +1,9 @@
 local SRJ = require "Skill Recovery Journal Main"
 
+local function floorTo2(x)
+    return math.floor(x * 100) / 100
+end
+
 
 function SRJ.handleIdentity(player, JMD)
 
@@ -153,7 +157,7 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
             .. " updates=" .. tostring(self.updates))
     end
 
-    local readXP = SRJ.ledger.getReadXP(player) or { flat = {}, kills = {} }
+    local readXP = self.readXP or SRJ.ledger.getReadXP(player) or { flat = {}, kills = {} }
     readXP.flat = readXP.flat or {}
     readXP.kills = readXP.kills or {}
 
@@ -179,15 +183,17 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
 
                     if gained and gained > JMD.gainedXP[perkID] then
                         if rate > 0 then
-                            changesMade = true
-                            local resulting = math.min(gained, JMD.gainedXP[perkID] + rate)
-                            JMD.gainedXP[perkID] = resulting
-                            readXP[perkID] = math.max(resulting, currentXP)
+                            local resulting = floorTo2(math.min(gained, JMD.gainedXP[perkID] + rate))
+                            if resulting > JMD.gainedXP[perkID] then
+                                changesMade = true
+                                JMD.gainedXP[perkID] = resulting
+                                readXP[perkID] = floorTo2(math.max(resulting, currentXP))
 
-                            local skillName = "IGUI_perks_" .. perkID
-                            if not self.changesBeingMadeIndex[skillName] then
-                                self.changesBeingMadeIndex[skillName] = true
-                                table.insert(self.changesBeingMade, skillName)
+                                local skillName = "IGUI_perks_" .. perkID
+                                if not self.changesBeingMadeIndex[skillName] then
+                                    self.changesBeingMadeIndex[skillName] = true
+                                    table.insert(self.changesBeingMade, skillName)
+                                end
                             end
                         end
                     end
@@ -223,20 +229,23 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
                         end
 
                         if rate and rate > 0 then
-                            readXP[perkID] = currentXP + rate
-                            JMD.usedXP[perkID] = (JMD.usedXP[perkID] or 0) + rate
+                            local newReadXP = floorTo2(currentXP + rate)
+                            if newReadXP > currentXP then
+                                readXP[perkID] = newReadXP
+                                JMD.usedXP[perkID] = floorTo2((JMD.usedXP[perkID] or 0) + rate)
 
-                            local addedXP = SRJ.xpHandler.reBoostXP(player, perk, rate)
-                            SRJ.modDataHandler.setSRJAddingFlatXP(true)
-                            addXpNoMultiplier(player, perk, addedXP)
-                            SRJ.modDataHandler.setSRJAddingFlatXP(false)
+                                local addedXP = SRJ.xpHandler.reBoostXP(player, perk, rate)
+                                SRJ.modDataHandler.setSRJAddingFlatXP(true)
+                                addXpNoMultiplier(player, perk, addedXP)
+                                SRJ.modDataHandler.setSRJAddingFlatXP(false)
 
-                            changesMade = true
+                                changesMade = true
 
-                            local skillName = "IGUI_perks_" .. perkID
-                            if not self.changesBeingMadeIndex[skillName] then
-                                self.changesBeingMadeIndex[skillName] = true
-                                table.insert(self.changesBeingMade, skillName)
+                                local skillName = "IGUI_perks_" .. perkID
+                                if not self.changesBeingMadeIndex[skillName] then
+                                    self.changesBeingMadeIndex[skillName] = true
+                                    table.insert(self.changesBeingMade, skillName)
+                                end
                             end
                         end
                     end
@@ -257,15 +266,17 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
                 local flatRate = self.durationData.flatRates[perkID] or 0
                 JMD.flatGainedXP[perkID] = JMD.flatGainedXP[perkID] or 0
                 if perkFlatXP > JMD.flatGainedXP[perkID] and flatRate > 0 then
-                    changesMade = true
-                    local resulting = math.min(perkFlatXP, JMD.flatGainedXP[perkID] + flatRate)
-                    JMD.flatGainedXP[perkID] = resulting
-                    readFlatXP[perkID] = math.max(resulting, currentFlatXP)
+                    local resulting = floorTo2(math.min(perkFlatXP, JMD.flatGainedXP[perkID] + flatRate))
+                    if resulting > JMD.flatGainedXP[perkID] then
+                        changesMade = true
+                        JMD.flatGainedXP[perkID] = resulting
+                        readFlatXP[perkID] = floorTo2(math.max(resulting, currentFlatXP))
 
-                    local skillName = "IGUI_perks_" .. perkID
-                    if not self.changesBeingMadeIndex[skillName] then
-                        self.changesBeingMadeIndex[skillName] = true
-                        table.insert(self.changesBeingMade, skillName)
+                        local skillName = "IGUI_perks_" .. perkID
+                        if not self.changesBeingMadeIndex[skillName] then
+                            self.changesBeingMadeIndex[skillName] = true
+                            table.insert(self.changesBeingMade, skillName)
+                        end
                     end
                 end
             end
@@ -300,15 +311,18 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
                     end
 
                     if flatRate and flatRate > 0 then
-                        readFlatXP[perkID] = currentFlatXP + flatRate
-                        JMD.usedXP.flat[perkID] = (JMD.usedXP.flat[perkID] or 0) + flatRate
-                        addXpNoMultiplier(player, perk, flatRate)
-                        changesMade = true
+                        local newReadFlatXP = floorTo2(currentFlatXP + flatRate)
+                        if newReadFlatXP > currentFlatXP then
+                            readFlatXP[perkID] = newReadFlatXP
+                            JMD.usedXP.flat[perkID] = floorTo2((JMD.usedXP.flat[perkID] or 0) + flatRate)
+                            addXpNoMultiplier(player, perk, flatRate)
+                            changesMade = true
 
-                        local skillName = "IGUI_perks_" .. perkID
-                        if not self.changesBeingMadeIndex[skillName] then
-                            self.changesBeingMadeIndex[skillName] = true
-                            table.insert(self.changesBeingMade, skillName)
+                            local skillName = "IGUI_perks_" .. perkID
+                            if not self.changesBeingMadeIndex[skillName] then
+                                self.changesBeingMadeIndex[skillName] = true
+                                table.insert(self.changesBeingMade, skillName)
+                            end
                         end
                     end
                 end

@@ -100,6 +100,22 @@ local function freshUserState()
 end
 
 
+local function saveUsername(username)
+    local u = userStates[username]
+    if not u then return end
+
+    local encoded = SRJ_ModDataHandler.jsonEncode(u)
+    local writer = getFileWriter(filePath(username), true, false)
+    if not writer then
+        print("SRJ ERROR: could not open " .. filePath(username) .. " for writing")
+        return
+    end
+    writer:write(encoded)
+    writer:close()
+    if getDebug() then print("SRJ Ledger: saved " .. filePath(username)) end
+end
+
+
 local function ensureUserLoaded(username)
     if loadedUsers[username] then return userStates[username] end
     loadedUsers[username] = true
@@ -119,22 +135,6 @@ local function ensureUserLoaded(username)
 
     userStates[username] = freshUserState()
     return userStates[username]
-end
-
-
-local function saveUsername(username)
-    local u = userStates[username]
-    if not u then return end
-
-    local encoded = SRJ_ModDataHandler.jsonEncode(u)
-    local writer = getFileWriter(filePath(username), true, false)
-    if not writer then
-        print("SRJ ERROR: could not open " .. filePath(username) .. " for writing")
-        return
-    end
-    writer:write(encoded)
-    writer:close()
-    if getDebug() then print("SRJ Ledger: saved " .. filePath(username)) end
 end
 
 
@@ -158,6 +158,7 @@ end
 
 
 function SRJ_Ledger.mintLifeStamp(player)
+    if not isAuthoritative() then return nil end
     local pMD = SRJ_ModDataHandler.getPlayerModData(player)
     pMD.SRJLifeStamp = fileRoutingIdentity(player) .. ":" .. tostring(getTimestampMs()) .. ":" .. tostring(ZombRand(100000, 999999))
     return pMD.SRJLifeStamp
@@ -165,6 +166,7 @@ end
 
 
 function SRJ_Ledger.getLifeStamp(player)
+    if not isAuthoritative() then return nil end
     local pMD = SRJ_ModDataHandler.getPlayerModData(player)
     if not pMD.SRJLifeStamp then
         SRJ_Ledger.mintLifeStamp(player)
@@ -173,10 +175,28 @@ function SRJ_Ledger.getLifeStamp(player)
 end
 
 
+function SRJ_Ledger.pruneReadXP(player)
+    if not isAuthoritative() then return end
+    local pMD = SRJ_ModDataHandler.getPlayerModData(player)
+    local lifeStamp = pMD.SRJLifeStamp
+    if not lifeStamp then return end
+
+    local routingKey = fileRoutingIdentity(player)
+    local u = ensureUserLoaded(routingKey)
+    if u.readXP[lifeStamp] then
+        u.readXP[lifeStamp] = nil
+        saveUsername(routingKey)
+        if getDebug() then print("SRJ Ledger: pruned readXP for dead life " .. lifeStamp) end
+    end
+end
+
+
 function SRJ_Ledger.getReadXP(player)
     if not isAuthoritative() then return nil end
-    local u = ensureUserLoaded(fileRoutingIdentity(player))
+    local routingKey = fileRoutingIdentity(player)
+    local u = ensureUserLoaded(routingKey)
     local lifeStamp = SRJ_Ledger.getLifeStamp(player)
+
     u.readXP[lifeStamp] = u.readXP[lifeStamp] or {}
     local rec = u.readXP[lifeStamp]
     rec.flat = rec.flat or {}

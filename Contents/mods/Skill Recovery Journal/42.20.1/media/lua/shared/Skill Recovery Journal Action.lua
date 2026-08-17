@@ -77,7 +77,7 @@ function SkillRecoveryJournalAction:serverStop()
     if not self.item then print("WARNING: SkillRecoveryJournalAction:serverStop - 'item' not found. ") return end
     if not self.character then print("WARNING: SkillRecoveryJournalAction:serverStop - 'character' not found. ") return end
     SRJ.ledger.syncDisplay(self.item, self.character)
-    sendServerCommand(self.character, "SkillRecoveryJournal", "readXP", {data = SRJ.ledger.getReadXP(self.character)})
+    sendServerCommand(self.character, "SkillRecoveryJournal", "readXP", {data = self.readXP or SRJ.ledger.getReadXP(self.character)})
     SRJ.ledger.save(self.character)
     print("SRJ TRACE: serverStop() finished")
 end
@@ -102,7 +102,7 @@ function SkillRecoveryJournalAction:complete()
 
     self.item:setJobDelta(0.0)
     SRJ.ledger.syncDisplay(self.item, self.character)
-    sendServerCommand(self.character, "SkillRecoveryJournal", "readXP", {data = SRJ.ledger.getReadXP(self.character)})
+    sendServerCommand(self.character, "SkillRecoveryJournal", "readXP", {data = self.readXP or SRJ.ledger.getReadXP(self.character)})
     SRJ.ledger.save(self.character)
     print("SRJ TRACE: complete() finished")
     return true
@@ -218,6 +218,8 @@ function SkillRecoveryJournalAction:updateTick()
                 haloKey
             )
 
+            sendServerCommand(player, "SkillRecoveryJournal", "readXP", {data = self.readXP or SRJ.ledger.getReadXP(player)})
+
             self.changesBeingMade = {}
             self.changesBeingMadeIndex = {}
             self.lastUpdateTime = now
@@ -318,6 +320,7 @@ function SkillRecoveryJournalAction:new(character, item, doReading, writingTool)
     end
 
     if SRJ.isAuthoritative() then SRJ.ledger.touchInteraction(item, character) end
+    o.readXP = SRJ.isAuthoritative() and SRJ.ledger.getReadXP(character) or nil
 
     -- ACTION SETUP
     o.gainedRecipes = {}

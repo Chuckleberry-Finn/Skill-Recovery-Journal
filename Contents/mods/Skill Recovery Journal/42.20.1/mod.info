@@ -7,6 +7,6 @@ description=
 poster=poster.png
 author=Chuckleberry Finn
 icon=icon.png
-versionMin=42.20.1
+versionMin=42.20.2
 require=\ChuckleberryFinnAlertSystem,\errorMagnifier,
 incompatible=BurdSurvivalJournals,JeevesJournals,SkillRecoveryJournalRoyPatch,

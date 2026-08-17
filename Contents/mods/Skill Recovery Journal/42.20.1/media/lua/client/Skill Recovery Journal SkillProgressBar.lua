@@ -22,8 +22,11 @@ local function SRJ_getProgressAmounts(char, perk)
     local perkID = perk:getId()
     local totalXP = char:getXp():getXP(perk)
 
-    local charDeductedXP = SRJ.modDataHandler.getDeductedXP(char)
-    local deductedXP = (charDeductedXP and charDeductedXP[perkID]) or 0
+    local deductedXP = 0
+    if SandboxVars.SkillRecoveryJournal.TranscribeTVXP ~= true then
+        local charDeductedXP = SRJ.modDataHandler.getDeductedXP(char)
+        deductedXP = (charDeductedXP and charDeductedXP[perkID]) or 0
+    end
 
     local traitLevels = SRJ.modDataHandler.getFreeLevelsFromTraitsAndProfession(char)
     local startingLevel = traitLevels[perkID] or 0

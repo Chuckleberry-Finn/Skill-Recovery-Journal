@@ -1,10 +1,42 @@
 local SRJmodHandler = require "Skill Recovery Journal ModData"
 local SRJledger = require "Skill Recovery Journal Ledger"
 
+local READY_COOLDOWN_MS = 3000
+local lastReadyMs = {}   -- routingKey -> timestampMs of last processed 'ready'
+
 local function onCreatePlayer(id, player)
-	SRJmodHandler.initStartingXP(id, player)
+    SRJmodHandler.initStartingXP(id, player)
+    if isClient() then
+        sendClientCommand(getPlayer(), "SkillRecoveryJournal", "ready", {})
+    end
 end
-Events.OnCreatePlayer.Add(onCreatePlayer)
+
+local function onCreateBuffer(playerIndex, player)
+    local playerCreateBuffer = 2
+    local function OnTickFunc()
+        if playerCreateBuffer <= 0 then
+            onCreatePlayer(nil, player)
+            Events.OnTick.Remove(OnTickFunc)
+        end
+        playerCreateBuffer = playerCreateBuffer - 1
+    end
+    Events.OnTick.Add(OnTickFunc)
+end
+
+Events.OnCreatePlayer.Add(onCreateBuffer)
+
+
+local function stablePlayerKey(player)
+	local username = player.getUsername and player:getUsername()
+	if not username or username == "" then return "sp" end
+	return username
+end
+
+local function onCharacterDeath(character)
+	if not instanceof(character, "IsoPlayer") then return end
+	SRJledger.pruneReadXP(character)
+end
+Events.OnCharacterDeath.Add(onCharacterDeath)
 
 
 local function SkillRecoveryJournalOnClientCommand(module, command, player, args)
@@ -26,6 +58,18 @@ local function SkillRecoveryJournalOnClientCommand(module, command, player, args
 			else
 				if getDebug() then print("SkillRecoveryJournal rename failed for player " .. tostring(playerID)) end
 			end
+		elseif command == "ready" then
+			local readyKey = stablePlayerKey(player)
+			local now = getTimestampMs()
+			local last = lastReadyMs[readyKey]
+			if last and (now - last) < READY_COOLDOWN_MS then
+				if getDebug() then print("SRJ TRACE: ignoring 'ready' from " .. tostring(readyKey) .. " within cooldown") end
+				return
+			end
+			lastReadyMs[readyKey] = now
+
+			local readXP = SRJledger.getReadXP(player)
+			sendServerCommand(player, "SkillRecoveryJournal", "readXP", {data = readXP})
 		end
 	end
 end
@@ -45,10 +89,3 @@ local function loadOnBoot()
     SRJmodHandler.initFlatXPHook()
 end
 Events.OnGameBoot.Add(loadOnBoot)
-
-if isClient() then
-    local function onGameStart()
-        sendClientCommand(getPlayer(), "SkillRecoveryJournal", "ready", {})
-    end
-    Events.OnGameStart.Add(onGameStart)
-end
