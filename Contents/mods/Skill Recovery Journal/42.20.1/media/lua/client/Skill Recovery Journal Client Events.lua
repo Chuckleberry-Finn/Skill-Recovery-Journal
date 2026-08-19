@@ -83,11 +83,13 @@ if errorMagnifier.registerDebugReport then
     end, "Skill Recovery Journal")
 end
 
+
 local contextSRJ = require "Skill Recovery Journal Context"
 if contextSRJ then
     Events.OnPreFillInventoryObjectContextMenu.Add(contextSRJ.doContextMenu)
     Events.OnFillInventoryObjectContextMenu.Add(contextSRJ.postContextMenu)
 end
+
 
 local function OnServerWriteCommand(module, command, args)
     -- server sends changes for client to show
@@ -102,9 +104,12 @@ local function OnServerWriteCommand(module, command, args)
             getPlayer():setSurvivorKills(args.kills)
         elseif command == "readXP" then
             local pMD = SRJ.modDataHandler.getPlayerModData(getPlayer())
-            pMD.readXPDisplay = args.data
+            pMD.readXP = args.data
         end
     end
 end
+Events.OnServerCommand.Add(OnServerWriteCommand)--what clients gets from the server
 
-Events.OnServerCommand.Add(OnServerWriteCommand)
+
+local adminEvents = require "Skill Recovery Journal Admin Events.lua"
+Events.OnServerCommand.Add(adminEvents.SkillRecoveryJournalAdminOnClientCommand)

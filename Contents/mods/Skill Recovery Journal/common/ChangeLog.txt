@@ -294,19 +294,44 @@ New:
 
 - Journals will need to migrate from the version prior to this one, migrated-XP cannot be read on the current life.
 
-AS WITH ANY LARGE UPDATE TO THIS MOD OR THE BASE GAME!
+AS WITH ANY LARGE UPDATE TO THIS MOD OR THE BASE GAME,
   DESTROY OLD JOURNALS AND CRAFT NEW ONES FOR SAFE MEASURE!
 [ ------ ]
 
 [ B42.20.3 Hotfix ]
 Fix: Rewrote the ledger-ID system to be even more server-sided
- - This should fix the XP resetting mid transcribe, but I was not able to recreate the issue on my end.
+ - This should fix the XP resetting mid transcribe, but I was not able to recreate the issue on my end to confirm.
 Fix: Progress bars for TV/VHS now reflect the current sandbox setting.
      (the XP was being transcribed/read but the bars displayed orange regardless.)
 Tweak: Flooring internal XP values to their 2-decimal places for the sake of legibility.
 
 If you want to avoid any possible interference with old data you should delete the SkillRecoveryJournal folder in your cache/Lua/. This applies to both single player and MP.
 
-AS WITH ANY LARGE UPDATE TO THIS MOD OR THE BASE GAME!
+AS WITH ANY LARGE UPDATE TO THIS MOD OR THE BASE GAME,
   DESTROY OLD JOURNALS AND CRAFT NEW ONES FOR SAFE MEASURE!
+[ ------ ]
+
+[ 8/18/26 - B42.20.3 hotfix2 ]
+BIG SHOUT OUT to the Sunday Drivers Community for helping with the closed Beta testing; Girth and Lect for subjugating their playerbase to frequent updates!
+
+Tweak/Fix:  ReadXP no longer stored on the ledger, now on player object (server-side).
+            The ledger is automatically purged, any fragmented ReadXPs are collapsed into 1 (taking the highest of each skill).
+            The only data on the ledger's should be the contents of the journals.
+            Migration is automatic upon logging in, you should not need to interact with the journal to trigger it.
+
+Tweak/Fix: Recipes as a list no longer get sent over network, for display purposes just the length of the recipe list is sent.
+
+AS WITH ANY LARGE UPDATE TO THIS MOD OR THE BASE GAME, DESTROY OLD JOURNALS AND CRAFT NEW ONES FOR SAFE MEASURE!
+If you are still experiencing issues you should delete the SkillRecoveryJournal folder in your cache/Lua/. This applies to both single player and MP.
+[ ------ ]
+
+[ 9/3/26 ]
+BIG FIX: There was an issue with saving files using non-ASCII characters, as such the system now escapes those characters. The purpose in using usernames for filenames was to make managing the ledgers easier for admin, but I had not accounted for non-ASCII. So, apologies to those regions that were impacted. As the filename will now be escaped (as well as the Author name) file sizes and data retrieval should become consistent and not bloat/corrupt.
+
+Your current ledgers if you were using non-ASCII (Chinese, Japanese, Thai, Korean, Russian, etc) might not be able to be loaded, but the file is still there if you wish to fix the issues manually.
+
+Added: Admin Manager Panel which allows admins to view, edit, save ledger contents; as well as spawn books matching the ledger.
+Refactor: Ledgers will be read by line instead of by character (led to lag and performance drops coupled with the above big-issue.)
+Fix: Transcription no longer interrupted if only 1 recipe chunk remains. (CoKeFish)
+Fix: Added script manipulation on the server's end, only impacted people utilizing the custom craft recipe.
 [ ------ ]

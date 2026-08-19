@@ -5,15 +5,18 @@ function SRJ_ModDataHandler.initStartingXP(id, player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
 
 	-- Migrate
-	if (not pMD.SRJSkillsInit) and pMD.SRJTraitSkillsInit then
+	if (not pMD.SRJSkillsInit) and type(pMD.SRJTraitSkillsInit) == "table" then
 		pMD.SRJSkillsInit = copyTable(pMD.SRJTraitSkillsInit)
 		if getDebug() then print("SRJ: migrated SRJTraitSkillsInit -> SRJSkillsInit") end
+	elseif pMD.SRJTraitSkillsInit ~= nil and type(pMD.SRJTraitSkillsInit) ~= "table" then
+		print("SRJ WARNING: SRJTraitSkillsInit was not a table (" .. type(pMD.SRJTraitSkillsInit) .. "), discarding malformed legacy data")
 	end
 
 	---defunct
 	pMD.SRJTraitSkillsInit = nil
 	pMD.SRJStartingXP = nil
 	pMD.SRJPassiveLevelsCaptured = nil
+	pMD.readXPDisplay = nil
 
 	if pMD.SRJSkillsInit then return end
 
@@ -117,14 +120,24 @@ end
 
 function SRJ_ModDataHandler.getDeductedXP(player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
-	pMD.deductedXP = pMD.deductedXP or {}
+	if type(pMD.deductedXP) ~= "table" then
+		if pMD.deductedXP ~= nil then
+			print("SRJ WARNING: deductedXP was not a table (" .. type(pMD.deductedXP) .. "), discarding malformed legacy data")
+		end
+		pMD.deductedXP = {}
+	end
 	return pMD.deductedXP
 end
 
 
 function SRJ_ModDataHandler.getFlatXP(player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
-	pMD.flatXP = pMD.flatXP or {}
+	if type(pMD.flatXP) ~= "table" then
+		if pMD.flatXP ~= nil then
+			print("SRJ WARNING: flatXP was not a table (" .. type(pMD.flatXP) .. "), discarding malformed legacy data")
+		end
+		pMD.flatXP = {}
+	end
 	return pMD.flatXP
 end
 
@@ -153,6 +166,77 @@ function SRJ_ModDataHandler.getPassiveLevels(player)
 end
 
 
+local function utf8Codepoints(s)
+	local codepoints = {}
+	local i = 1
+	local len = #s
+	while i <= len do
+		local b1 = s:byte(i)
+		if b1 < 0x80 then
+			codepoints[#codepoints+1] = b1
+			i = i + 1
+		elseif b1 >= 0xC0 and b1 < 0xE0 and i+1 <= len then
+			local b2 = s:byte(i+1)
+			codepoints[#codepoints+1] = ((b1 - 0xC0) * 0x40) + (b2 - 0x80)
+			i = i + 2
+		elseif b1 >= 0xE0 and b1 < 0xF0 and i+2 <= len then
+			local b2, b3 = s:byte(i+1), s:byte(i+2)
+			codepoints[#codepoints+1] = ((b1 - 0xE0) * 0x1000) + ((b2 - 0x80) * 0x40) + (b3 - 0x80)
+			i = i + 3
+		elseif b1 >= 0xF0 and b1 < 0xF8 and i+3 <= len then
+			local b2, b3, b4 = s:byte(i+1), s:byte(i+2), s:byte(i+3)
+			codepoints[#codepoints+1] = ((b1 - 0xF0) * 0x40000) + ((b2 - 0x80) * 0x1000) + ((b3 - 0x80) * 0x40) + (b4 - 0x80)
+			i = i + 4
+		else
+			codepoints[#codepoints+1] = b1
+			i = i + 1
+		end
+	end
+	return codepoints
+end
+
+
+local function utf8Encode(cp)
+	if cp < 0x80 then
+		return string.char(cp)
+	elseif cp < 0x800 then
+		return string.char(0xC0 + math.floor(cp / 0x40), 0x80 + (cp % 0x40))
+	elseif cp < 0x10000 then
+		return string.char(
+			0xE0 + math.floor(cp / 0x1000),
+			0x80 + (math.floor(cp / 0x40) % 0x40),
+			0x80 + (cp % 0x40)
+		)
+	else
+		return string.char(
+			0xF0 + math.floor(cp / 0x40000),
+			0x80 + (math.floor(cp / 0x1000) % 0x40),
+			0x80 + (math.floor(cp / 0x40) % 0x40),
+			0x80 + (cp % 0x40)
+		)
+	end
+end
+
+
+local function jsonEscapeString(s)
+	local codepoints = utf8Codepoints(s)
+	local parts = {}
+	for _, cp in ipairs(codepoints) do
+		if cp < 0x80 then
+			parts[#parts+1] = string.char(cp)
+		elseif cp <= 0xFFFF then
+			parts[#parts+1] = string.format("\\u%04x", cp)
+		else
+			local cp2 = cp - 0x10000
+			local hi = 0xD800 + math.floor(cp2 / 0x400)
+			local lo = 0xDC00 + (cp2 % 0x400)
+			parts[#parts+1] = string.format("\\u%04x\\u%04x", hi, lo)
+		end
+	end
+	return table.concat(parts)
+end
+
+
 local function jsonEncode(val, depth)
 	depth = depth or 0
 	local t = type(val)
@@ -162,7 +246,8 @@ local function jsonEncode(val, depth)
 		if val == math.floor(val) and val == val then return string.format("%.0f", val)
 		else return tostring(val) end
 	elseif t == "string" then
-		return '"'..val:gsub('\\','\\\\'):gsub('"','\\"'):gsub('\n','\\n'):gsub('\r','\\r'):gsub('\t','\\t')..'"'
+		local escaped = val:gsub('\\','\\\\'):gsub('"','\\"'):gsub('\n','\\n'):gsub('\r','\\r'):gsub('\t','\\t')
+		return '"'..jsonEscapeString(escaped)..'"'
 	elseif t == "table" then
 		local n = 0
 		for _ in pairs(val) do n = n+1 end
@@ -209,6 +294,26 @@ function jp.parseString(p)
 			elseif e=='n'  then parts[#parts+1]='\n'
 			elseif e=='r'  then parts[#parts+1]='\r'
 			elseif e=='t'  then parts[#parts+1]='\t'
+			elseif e=='u'  then
+				local hex1 = p.str:sub(p.pos+1, p.pos+4)
+				local cp1 = tonumber(hex1, 16)
+				if cp1 and cp1 >= 0xD800 and cp1 <= 0xDBFF and p.str:sub(p.pos+5,p.pos+5)=='\\' and p.str:sub(p.pos+6,p.pos+6)=='u' then
+					local hex2 = p.str:sub(p.pos+7, p.pos+10)
+					local cp2 = tonumber(hex2, 16)
+					if cp2 and cp2 >= 0xDC00 and cp2 <= 0xDFFF then
+						local combined = 0x10000 + (cp1 - 0xD800) * 0x400 + (cp2 - 0xDC00)
+						parts[#parts+1] = utf8Encode(combined)
+						p.pos = p.pos + 10
+					else
+						parts[#parts+1] = utf8Encode(cp1)
+						p.pos = p.pos + 4
+					end
+				elseif cp1 then
+					parts[#parts+1] = utf8Encode(cp1)
+					p.pos = p.pos + 4
+				else
+					parts[#parts+1] = 'u'
+				end
 			else                parts[#parts+1]=e end
 			p.pos = p.pos+1
 		else parts[#parts+1]=c p.pos=p.pos+1 end
@@ -298,7 +403,7 @@ function SRJ_ModDataHandler.getDisplayData(item)
     local display = (srj and srj.display) or {}
     display.gainedXP = display.gainedXP or {}
     display.flatGainedXP = display.flatGainedXP or {}
-    display.learnedRecipes = display.learnedRecipes or {}
+    display.learnedRecipeCount = display.learnedRecipeCount or 0
     display.kills = display.kills or {}
     display.pModData = display.pModData or {}
     display.usedXP = display.usedXP or {}
@@ -307,12 +412,12 @@ function SRJ_ModDataHandler.getDisplayData(item)
 end
 
 
-function SRJ_ModDataHandler.getReadXPDisplay(player)
+function SRJ_ModDataHandler.getReadXP(player)
     local pMD = SRJ_ModDataHandler.getPlayerModData(player)
-    pMD.readXPDisplay = pMD.readXPDisplay or {}
-    pMD.readXPDisplay.flat = pMD.readXPDisplay.flat or {}
-    pMD.readXPDisplay.kills = pMD.readXPDisplay.kills or {}
-    return pMD.readXPDisplay
+    pMD.readXP = pMD.readXP or {}
+    pMD.readXP.flat = pMD.readXP.flat or {}
+    pMD.readXP.kills = pMD.readXP.kills or {}
+    return pMD.readXP
 end
 
 

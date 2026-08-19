@@ -65,3 +65,4 @@ local function SkillRecoveryJournalRecipe()
 end
 
 Events.OnGameStart.Add(SkillRecoveryJournalRecipe)
+if isServer() then Events.OnGameBoot.Add(SkillRecoveryJournalRecipe) end
