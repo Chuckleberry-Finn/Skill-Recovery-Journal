@@ -8,7 +8,7 @@ end
 
 local LEDGER_NAMESPACE = "SkillRecoveryJournal"
 
-local userStates  = {}   -- username -> { readXP, journals }
+local userStates  = {}   -- username -> { journals }
 local loadedUsers = {}   -- username -> true
 
 
@@ -96,7 +96,7 @@ end
 
 
 local function freshUserState()
-    return { readXP = {}, journals = {} }
+    return { journals = {} }
 end
 
 
@@ -124,7 +124,6 @@ local function ensureUserLoaded(username)
     if raw then
         local parsed = SRJ_ModDataHandler.jsonDecode(raw)
         if parsed and parsed.journals then
-            parsed.readXP = parsed.readXP or {}
             userStates[username] = parsed
             if getDebug() then print("SRJ Ledger: loaded " .. filePath(username)) end
             return userStates[username]
@@ -157,57 +156,83 @@ function SRJ_Ledger.saveAll()
 end
 
 
-function SRJ_Ledger.mintLifeStamp(player)
-    if not isAuthoritative() then return nil end
-    local pMD = SRJ_ModDataHandler.getPlayerModData(player)
-    pMD.SRJLifeStamp = fileRoutingIdentity(player) .. ":" .. tostring(getTimestampMs()) .. ":" .. tostring(ZombRand(100000, 999999))
-    return pMD.SRJLifeStamp
-end
-
-
-function SRJ_Ledger.getLifeStamp(player)
-    if not isAuthoritative() then return nil end
-    local pMD = SRJ_ModDataHandler.getPlayerModData(player)
-    if not pMD.SRJLifeStamp then
-        SRJ_Ledger.mintLifeStamp(player)
-    end
-    return pMD.SRJLifeStamp
-end
-
-
-function SRJ_Ledger.pruneReadXP(player)
+function SRJ_Ledger.migrateReadXPIfNeeded(player)
     if not isAuthoritative() then return end
     local pMD = SRJ_ModDataHandler.getPlayerModData(player)
-    local lifeStamp = pMD.SRJLifeStamp
-    if not lifeStamp then return end
 
     local routingKey = fileRoutingIdentity(player)
     local u = ensureUserLoaded(routingKey)
-    if u.readXP[lifeStamp] then
-        u.readXP[lifeStamp] = nil
+
+    if not u.readXP then return end
+    local found = false
+    for _,_ in pairs(u.readXP) do
+        found = true
+        break
+    end
+    if not found then return end
+
+    local merged = { flat = {}, kills = {} }
+
+    if type(pMD.readXP) == "table" then
+        for skill, val in pairs(pMD.readXP) do
+            if skill == "flat" or skill == "kills" then
+                if type(val) == "table" then
+                    for subKey, subVal in pairs(val) do
+                        if type(subVal) == "number" then
+                            merged[skill][subKey] = math.max(merged[skill][subKey] or 0, subVal)
+                        end
+                    end
+                end
+            elseif type(val) == "number" then
+                merged[skill] = math.max(merged[skill] or 0, val)
+            end
+        end
+    end
+
+    if u.readXP then
+        local stampCount = 0
+        for stampKey, rec in pairs(u.readXP) do
+            if type(rec) == "table" then
+                stampCount = stampCount + 1
+                for skill, val in pairs(rec) do
+                    if skill == "flat" or skill == "kills" then
+                        if type(val) == "table" then
+                            for subKey, subVal in pairs(val) do
+                                if type(subVal) == "number" then
+                                    merged[skill][subKey] = math.max(merged[skill][subKey] or 0, subVal)
+                                end
+                            end
+                        end
+                    elseif type(val) == "number" then
+                        merged[skill] = math.max(merged[skill] or 0, val)
+                    end
+                end
+            end
+        end
+        if getDebug() then print("SRJ Ledger: merged " .. stampCount .. " legacy readXP stamp(s) from " .. filePath(routingKey) .. " into player ModData") end
+    end
+
+    pMD.readXP = merged
+    pMD.SRJLifeStamp = nil
+
+    if u.readXP then
+        u.readXP = nil
         saveUsername(routingKey)
-        if getDebug() then print("SRJ Ledger: pruned readXP for dead life " .. lifeStamp) end
+        if getDebug() then print("SRJ Ledger: cleared legacy readXP block from " .. filePath(routingKey)) end
     end
 end
 
 
 function SRJ_Ledger.getReadXP(player)
     if not isAuthoritative() then return nil end
-    local routingKey = fileRoutingIdentity(player)
-    local u = ensureUserLoaded(routingKey)
-    local lifeStamp = SRJ_Ledger.getLifeStamp(player)
-
-    u.readXP[lifeStamp] = u.readXP[lifeStamp] or {}
-    local rec = u.readXP[lifeStamp]
-    rec.flat = rec.flat or {}
-    rec.kills = rec.kills or {}
-    return rec
+    SRJ_Ledger.migrateReadXPIfNeeded(player)
+    return SRJ_ModDataHandler.getReadXP(player)
 end
 
 
 function SRJ_Ledger.getReadXPAny(player)
     if isAuthoritative() then return SRJ_Ledger.getReadXP(player) end
-    return SRJ_ModDataHandler.getReadXPDisplay(player)
+    return SRJ_ModDataHandler.getReadXP(player)
 end
 
 
@@ -279,14 +304,8 @@ local function ensureJournalIdentity(item, player)
         return srj.ledgerID, srj.routingKey
     end
 
-    if not isAuthoritative() then
-        return nil, nil
-    end
-
-    -- old-style journal: content lives directly on the item already
-    if srj.gainedXP or srj.author or srj.ID then
-        return migrateLegacyJournal(item, player, srj)
-    end
+    if not isAuthoritative() then return nil, nil end
+    if srj.gainedXP or srj.author or srj.ID then return migrateLegacyJournal(item, player, srj) end
 
     local ledgerID = mintJournalID(player)
     local routingKey = fileRoutingIdentity(player)

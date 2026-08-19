@@ -102,7 +102,7 @@ local function OnServerWriteCommand(module, command, args)
             getPlayer():setSurvivorKills(args.kills)
         elseif command == "readXP" then
             local pMD = SRJ.modDataHandler.getPlayerModData(getPlayer())
-            pMD.readXPDisplay = args.data
+            pMD.readXP = args.data
         end
     end
 end

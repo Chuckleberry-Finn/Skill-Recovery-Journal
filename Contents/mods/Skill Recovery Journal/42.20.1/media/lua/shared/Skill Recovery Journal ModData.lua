@@ -14,6 +14,7 @@ function SRJ_ModDataHandler.initStartingXP(id, player)
 	pMD.SRJTraitSkillsInit = nil
 	pMD.SRJStartingXP = nil
 	pMD.SRJPassiveLevelsCaptured = nil
+	pMD.readXPDisplay = nil
 
 	if pMD.SRJSkillsInit then return end
 
@@ -298,7 +299,7 @@ function SRJ_ModDataHandler.getDisplayData(item)
     local display = (srj and srj.display) or {}
     display.gainedXP = display.gainedXP or {}
     display.flatGainedXP = display.flatGainedXP or {}
-    display.learnedRecipes = display.learnedRecipes or {}
+    display.learnedRecipeCount = display.learnedRecipeCount or 0
     display.kills = display.kills or {}
     display.pModData = display.pModData or {}
     display.usedXP = display.usedXP or {}
@@ -307,12 +308,12 @@ function SRJ_ModDataHandler.getDisplayData(item)
 end
 
 
-function SRJ_ModDataHandler.getReadXPDisplay(player)
+function SRJ_ModDataHandler.getReadXP(player)
     local pMD = SRJ_ModDataHandler.getPlayerModData(player)
-    pMD.readXPDisplay = pMD.readXPDisplay or {}
-    pMD.readXPDisplay.flat = pMD.readXPDisplay.flat or {}
-    pMD.readXPDisplay.kills = pMD.readXPDisplay.kills or {}
-    return pMD.readXPDisplay
+    pMD.readXP = pMD.readXP or {}
+    pMD.readXP.flat = pMD.readXP.flat or {}
+    pMD.readXP.kills = pMD.readXP.kills or {}
+    return pMD.readXP
 end
 
 

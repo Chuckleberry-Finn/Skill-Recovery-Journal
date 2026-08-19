@@ -78,6 +78,7 @@ function SkillRecoveryJournalAction:serverStop()
     if not self.character then print("WARNING: SkillRecoveryJournalAction:serverStop - 'character' not found. ") return end
     SRJ.ledger.syncDisplay(self.item, self.character)
     sendServerCommand(self.character, "SkillRecoveryJournal", "readXP", {data = self.readXP or SRJ.ledger.getReadXP(self.character)})
+    self.character:flagForHotSave()
     SRJ.ledger.save(self.character)
     print("SRJ TRACE: serverStop() finished")
 end
@@ -103,6 +104,7 @@ function SkillRecoveryJournalAction:complete()
     self.item:setJobDelta(0.0)
     SRJ.ledger.syncDisplay(self.item, self.character)
     sendServerCommand(self.character, "SkillRecoveryJournal", "readXP", {data = self.readXP or SRJ.ledger.getReadXP(self.character)})
+    self.character:flagForHotSave()
     SRJ.ledger.save(self.character)
     print("SRJ TRACE: complete() finished")
     return true
@@ -329,12 +331,18 @@ function SkillRecoveryJournalAction:new(character, item, doReading, writingTool)
     if doReading then
         -- collect recipes from journal not yet known by the player
         if JMD and SandboxVars.SkillRecoveryJournal.RecoverRecipes == true then
-            local learnedRecipes = JMD.learnedRecipes
-            if learnedRecipes then
-                for recipeID,_ in pairs(learnedRecipes) do
-                    if not character:isRecipeActuallyKnown(recipeID) then
-                        table.insert(o.gainedRecipes, recipeID)
+            if SRJ.isAuthoritative() then
+                local learnedRecipes = JMD.learnedRecipes
+                if learnedRecipes then
+                    for recipeID,_ in pairs(learnedRecipes) do
+                        if not character:isRecipeActuallyKnown(recipeID) then
+                            table.insert(o.gainedRecipes, recipeID)
+                        end
                     end
+                end
+            else
+                for i = 1, (JMD.learnedRecipeCount or 0) do
+                    table.insert(o.gainedRecipes, i)
                 end
             end
         end
