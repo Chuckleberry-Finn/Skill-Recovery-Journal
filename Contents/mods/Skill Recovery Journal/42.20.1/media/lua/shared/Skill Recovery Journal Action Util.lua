@@ -114,6 +114,7 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
     -- RECIPES
     local recipeList = self.gainedRecipes
     if #recipeList > 0 then
+        changesMade = true
         local chunk = self.durationData.recipeChunk
 
         if getDebug() and self.updates % 20 == 0 then
@@ -123,7 +124,6 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
         end
 
         if chunk > 0 and self.updates % self.durationData.recipeInterval == 0 then
-            changesMade = true
             for i = 1, chunk do
                 local recipeID = recipeList[#recipeList]
                 if not recipeID then break end

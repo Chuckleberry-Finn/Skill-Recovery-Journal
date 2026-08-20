@@ -167,6 +167,8 @@ function SkillRecoveryJournalAction:updateTick()
     self.updateTime = self.updateTime + self.updateInterval
     self.updates = self.updates + 1
 
+    self.item:setJobDelta(math.min(self.updates / math.max(self.durationData.intervals, 1), 0.99))
+
     if isClient() then return true end -- update is handled by server
 
     -- Shared references

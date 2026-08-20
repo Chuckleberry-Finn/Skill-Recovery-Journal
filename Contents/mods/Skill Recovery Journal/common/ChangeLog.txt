@@ -324,3 +324,7 @@ Tweak/Fix: Recipes as a list no longer get sent over network, for display purpos
 AS WITH ANY LARGE UPDATE TO THIS MOD OR THE BASE GAME, DESTROY OLD JOURNALS AND CRAFT NEW ONES FOR SAFE MEASURE!
 If you are still experiencing issues you should delete the SkillRecoveryJournal folder in your cache/Lua/. This applies to both single player and MP.
 [ ------ ]
+
+[ 8/20/26 ]
+Fix: Transcription no longer interrupted if only 1 recipe chunk remains. (CoKeFish)
+[ ------ ]
