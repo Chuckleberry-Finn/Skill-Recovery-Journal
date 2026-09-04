@@ -127,6 +127,32 @@ local function saveUsername(username)
 end
 
 
+local function tryLoadLedger(path, requireNonEmptyJournals)
+    local okRead, raw = pcall(readAllAndClose, getFileReader(path, false))
+    if not (okRead and raw) then
+        if not okRead then
+            print("SRJ ERROR: exception reading " .. path .. ": " .. tostring(raw))
+        end
+        return nil
+    end
+
+    local okParse, parsed = pcall(SRJ_ModDataHandler.jsonDecode, raw)
+    if not okParse then
+        print("SRJ ERROR: exception parsing " .. path .. ": " .. tostring(parsed))
+        return nil
+    end
+    if not (parsed and parsed.journals) then
+        if getDebug() then print("SRJ Ledger: " .. path .. " failed to parse, starting fresh") end
+        return nil
+    end
+    if requireNonEmptyJournals and next(parsed.journals) == nil then
+        return nil
+    end
+
+    return parsed
+end
+
+
 local function ensureUserLoaded(username)
     if loadedUsers[username] then return userStates[username] end
 
@@ -134,40 +160,31 @@ local function ensureUserLoaded(username)
     local legacyPath = legacyFilePath(username)
     local currentPath = filePath(username)
 
-    local okRead, raw = pcall(readAllAndClose, getFileReader(legacyPath, false))
-    local sourcePath = legacyPath
+    local parsed = tryLoadLedger(legacyPath, true)
+    if parsed then
+        userStates[username] = parsed
+        loadedUsers[username] = true
+        existsOnDisk[username] = true
+        if getDebug() then print("SRJ Ledger: loaded " .. legacyPath) end
 
-    if not (okRead and raw) then
-        okRead, raw = pcall(readAllAndClose, getFileReader(currentPath, false))
-        sourcePath = currentPath
+        saveUsername(username)
+        local neutralWriter = getFileWriter(legacyPath, true, false)
+        if neutralWriter then
+            neutralWriter:write("")
+            neutralWriter:close()
+        end
+        if getDebug() then print("SRJ Ledger: migrated " .. legacyPath .. " -> " .. currentPath .. ", legacy file neutralized") end
+
+        return userStates[username]
     end
 
-    if okRead and raw then
-        local okParse, parsed = pcall(SRJ_ModDataHandler.jsonDecode, raw)
-        if okParse and parsed and parsed.journals then
-            userStates[username] = parsed
-            loadedUsers[username] = true
-            existsOnDisk[username] = true
-            if getDebug() then print("SRJ Ledger: loaded " .. sourcePath) end
-
-            if sourcePath == legacyPath then
-                saveUsername(username)
-                local neutralWriter = getFileWriter(legacyPath, true, false)
-                if neutralWriter then
-                    neutralWriter:write(SRJ_ModDataHandler.jsonEncode({journals = {}, migrated = true}))
-                    neutralWriter:close()
-                end
-                if getDebug() then print("SRJ Ledger: migrated " .. legacyPath .. " -> " .. currentPath .. ", legacy file neutralized") end
-            end
-
-            return userStates[username]
-        elseif not okParse then
-            print("SRJ ERROR: exception parsing " .. sourcePath .. ": " .. tostring(parsed))
-        elseif getDebug() then
-            print("SRJ Ledger: " .. sourcePath .. " failed to parse, starting fresh")
-        end
-    elseif not okRead then
-        print("SRJ ERROR: exception reading " .. sourcePath .. ": " .. tostring(raw))
+    parsed = tryLoadLedger(currentPath, false)
+    if parsed then
+        userStates[username] = parsed
+        loadedUsers[username] = true
+        existsOnDisk[username] = true
+        if getDebug() then print("SRJ Ledger: loaded " .. currentPath) end
+        return userStates[username]
     end
 
     userStates[username] = freshUserState()
