@@ -145,8 +145,15 @@ local function tryLoadLedger(path, requireNonEmptyJournals)
         if getDebug() then print("SRJ Ledger: " .. path .. " failed to parse, starting fresh") end
         return nil
     end
-    if requireNonEmptyJournals and next(parsed.journals) == nil then
-        return nil
+    if requireNonEmptyJournals then
+        local hasAny = false
+        for _, _ in pairs(parsed.journals) do
+            hasAny = true
+            break
+        end
+        if not hasAny then
+            return nil
+        end
     end
 
     return parsed
