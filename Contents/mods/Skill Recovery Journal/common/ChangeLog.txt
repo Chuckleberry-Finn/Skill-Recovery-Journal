@@ -325,7 +325,8 @@ AS WITH ANY LARGE UPDATE TO THIS MOD OR THE BASE GAME, DESTROY OLD JOURNALS AND 
 If you are still experiencing issues you should delete the SkillRecoveryJournal folder in your cache/Lua/. This applies to both single player and MP.
 [ ------ ]
 
-[ 9/3/26 - Hotfix 1 ]
+[ 9/3/26 - Hotfix 2 ]
+HOTFIX 2: Fixed loading of ledger issue.
 HOTFIX 1: Fixed less-than-edge case where the migration from txt could wipe the active json.
 
 BIG FIX: There was an issue with saving files using non-ASCII characters, as such the system now escapes those characters. The purpose in using usernames for filenames was to make managing the ledgers easier for admin, but I had not accounted for non-ASCII. So, apologies to those regions that were impacted. As the filename will now be escaped (as well as the Author name) file sizes and data retrieval should become consistent and not bloat/corrupt.
