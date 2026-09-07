@@ -311,8 +311,8 @@ function SRJAdminPanel:collectEditedRecord()
             rec.kills.Zombie = tonumber(text) or 0
         elseif path == "kills.Survivor" then
             rec.kills.Survivor = tonumber(text) or 0
-        elseif path:sub(1, 14) == "usedXP.flat." then
-            rec.usedXP.flat[path:sub(15)] = tonumber(text) or 0
+        elseif path:sub(1, 12) == "usedXP.flat." then
+            rec.usedXP.flat[path:sub(13)] = tonumber(text) or 0
         elseif path:sub(1, 7) == "usedXP." then
             rec.usedXP[path:sub(8)] = tonumber(text) or 0
         end
@@ -368,10 +368,11 @@ function SRJAdminPanel:onServerResponse(command, args)
     if command == "ledgerData" then
         self:onLedgerData(args.username, args.ledger)
     elseif command == "saveResult" then
+        if args.username ~= self.currentUsername then return end
         if args.success then
             self:setStatus("Saved " .. args.ledgerID .. ".")
             if self.currentLedger and self.currentLedger.journals then
-                self.currentLedger.journals[args.ledgerID] = self:collectEditedRecord()
+                self.currentLedger.journals[args.ledgerID] = args.record
             end
         else
             local reasonText = args.reason == "no_existing_ledger" and "no existing ledger for this username"

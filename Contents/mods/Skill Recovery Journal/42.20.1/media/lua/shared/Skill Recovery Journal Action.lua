@@ -167,7 +167,7 @@ function SkillRecoveryJournalAction:updateTick()
     self.updateTime = self.updateTime + self.updateInterval
     self.updates = self.updates + 1
 
-    self.item:setJobDelta(math.min(self.updates / math.max(self.durationData.intervals, 1), 0.99))
+    self.item:setJobDelta(math.min((self.updates + 1) / math.max(self.durationData.intervals, 1), 0.99))
 
     if isClient() then return true end -- update is handled by server
 
@@ -183,9 +183,11 @@ function SkillRecoveryJournalAction:updateTick()
             self.spoke = true
             SRJ.showCharacterFeedback(player, sayText)
         end
-    else
-        -- Halo text not before X in game time
-        if (now - self.lastUpdateTime) * 3600 > 45 then
+    end
+
+    if changesMade or next(self.changesBeingMadeIndex) or #self.changesBeingMade > 0 then
+        -- Halo text not before X in game time, except for the final pending changes
+        if not changesMade or (now - self.lastUpdateTime) * 3600 > 45 then
 
             -- summarize recipe chunk
             local recipeChunk = self.changesBeingMadeIndex.recipes
@@ -217,7 +219,7 @@ function SkillRecoveryJournalAction:updateTick()
             SRJ.showHaloProgressText(
                 player,
                 self.changesBeingMade,
-                self.updates,
+                self.updates + 1,
                 self.durationData.intervals,
                 haloKey
             )

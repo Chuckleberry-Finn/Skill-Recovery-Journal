@@ -79,7 +79,7 @@ function SRJ.showHaloProgressText(character, changesBeingMade, updateCount, maxU
 		args.title = title
 		sendServerCommand(character, "SkillRecoveryJournal", "write_changes", args)
 	else
-		local percentFinished = math.floor(updateCount / maxUpdates * 100 + 0.5)
+		local percentFinished = math.min(100, math.floor(updateCount / math.max(maxUpdates, 1) * 100 + 0.5))
 		local progressText = "?%"
 		if percentFinished >= 0 then
 			progressText = math.floor(percentFinished) .. "%"

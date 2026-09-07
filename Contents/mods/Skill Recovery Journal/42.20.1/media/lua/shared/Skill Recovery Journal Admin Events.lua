@@ -65,6 +65,7 @@ local function SkillRecoveryJournalAdminOnClientCommand(module, command, player,
 			ledgerID = ledgerID,
 			success = ok,
 			reason = reason,
+			record = ok and SRJledger.adminGetJournalRecord(username, ledgerID) or nil,
 		})
 
 	elseif command == "deleteJournal" then

@@ -55,8 +55,9 @@ end
 
 function  SRJ.handleKills(durationData, player, journalModData, doReading)
 
-    local zKillGainRate = durationData.rates.zKills
-    local sKillGainRate = durationData.rates.sKills
+    local remainingZKills, remainingSKills = SRJ.calculateGainedKills(journalModData, player, doReading)
+    local zKillGainRate = math.min(durationData.rates.zKills, remainingZKills)
+    local sKillGainRate = math.min(durationData.rates.sKills, remainingSKills)
 	--if getDebug() then print("--handleKills - Z", zKillGainRate,", S",  sKillGainRate) end
 
     local zKillsAdded, sKillsAdded = 0, 0

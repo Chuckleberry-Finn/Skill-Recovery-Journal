@@ -22,9 +22,9 @@ local function SRJ_getProgressAmounts(char, perk)
     local perkID = perk:getId()
     local totalXP = char:getXp():getXP(perk)
 
+    local charDeductedXP = SRJ.modDataHandler.getDeductedXP(char)
     local deductedXP = 0
     if SandboxVars.SkillRecoveryJournal.TranscribeTVXP ~= true then
-        local charDeductedXP = SRJ.modDataHandler.getDeductedXP(char)
         deductedXP = (charDeductedXP and charDeductedXP[perkID]) or 0
     end
 
@@ -33,11 +33,21 @@ local function SRJ_getProgressAmounts(char, perk)
     local settledXP = (startingLevel > 0) and perk:getTotalXpForLevel(startingLevel) or 0
 
     local charReadXP = SRJ.ledger.getReadXPAny(char)
-    local readXP = (charReadXP and charReadXP[perkID]) or 0
+    local multipliers = SRJ.xpHandler.getOrStoreXPMultipliers(char)
+    local multi = multipliers[perkID] or 1
+    local readXP = ((charReadXP and charReadXP[perkID]) or 0) * multi
+    local readFlatXP = (charReadXP and charReadXP.flat and charReadXP.flat[perkID]) or 0
 
     local remaining = math.max(totalXP - settledXP - deductedXP, 0)
-    local greenXP = math.min(readXP, remaining)
-    local deficitXP = remaining - greenXP
+    local charFlatXP = SRJ.modDataHandler.getFlatXP(char)
+    local flatXP = math.min(charFlatXP[perkID] or 0, remaining)
+    local gainedXP, gainedFlatXP = SRJ.calculateGainedSkill(char, perk, traitLevels, charDeductedXP, charFlatXP)
+    local greenBoostedXP = math.min(readXP, remaining - flatXP)
+    local greenFlatXP = math.min(readFlatXP, flatXP)
+    local greenXP = greenBoostedXP + greenFlatXP
+    local deficitXP = math.max((gainedXP or 0) * multi - greenBoostedXP, 0)
+        + math.max((gainedFlatXP or 0) - greenFlatXP, 0)
+    deductedXP = deductedXP + math.max(remaining - greenXP - deficitXP, 0)
 
     return {
         totalXP = totalXP,

@@ -35,21 +35,29 @@ local function SRJ_generateTooltip(JMD, player, itemObj)
 	local multipliers = SRJ.xpHandler.getOrStoreXPMultipliers(player)
 
 
-	for perkID,xp in pairs(storedJournalXP) do
+	local storedFlatXP = JMD.flatGainedXP or {}
+	local displayedSkills = copyTable(storedJournalXP)
+	for perkID in pairs(storedFlatXP) do
+		displayedSkills[perkID] = displayedSkills[perkID] or 0
+	end
+
+	for perkID,xp in pairs(displayedSkills) do
 		local perk = Perks[perkID]
 		if perk then
 
 			local show, percent = SRJ.bSkillValid(perk)
 			if show then
 				local journalXP = xp
+				local journalFlatXP = storedFlatXP[perkID] or 0
 				local usedXP = JMD.usedXP
-				if oneTimeUse and usedXP and usedXP[perkID] then
-					journalXP = math.max(0, journalXP - usedXP[perkID])
+				if oneTimeUse and usedXP then
+					journalXP = math.max(0, journalXP - (usedXP[perkID] or 0))
+					journalFlatXP = math.max(0, journalFlatXP - ((usedXP.flat and usedXP.flat[perkID]) or 0))
 				end
 
 				local perkName = perk:getName()
 				local multi = multipliers[perkID] or 1
-				local availableXP = round((journalXP * multi), 2)
+				local availableXP = round((journalXP * multi) + journalFlatXP, 2)
 				
 				local levelString = ""
 				if getDebug() then
@@ -62,7 +70,7 @@ local function SRJ_generateTooltip(JMD, player, itemObj)
 
 				skillsRecord = skillsRecord..perkName..levelString.." ("..availableXP
 				if oneTimeUse then
-					local totalXP = round((xp * multi), 2)
+					local totalXP = round((xp * multi) + (storedFlatXP[perkID] or 0), 2)
 					skillsRecord = skillsRecord.."/"..totalXP
 				end
 				skillsRecord = skillsRecord.." xp)\n"

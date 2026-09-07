@@ -137,8 +137,8 @@ function SRJ.calculateGainedKills(journalModData, player, doReading)
 		local readXP = SRJ.ledger.getReadXPAny(player)
         zKills = journalModData.kills and journalModData.kills.Zombie or 0
         sKills = journalModData.kills and journalModData.kills.Survivor or 0
-        accountedZombieKills = readXP.kills and readXP.kills.Zombie or 0
-        accountedSurvivorKills = readXP.kills and readXP.kills.Survivor or 0
+        accountedZombieKills = math.max(readXP.kills and readXP.kills.Zombie or 0, player:getZombieKills())
+        accountedSurvivorKills = math.max(readXP.kills and readXP.kills.Survivor or 0, player:getSurvivorKills())
     else
 	    zKills = math.floor(player:getZombieKills() * (killsRecoveryPercentage / 100))
 	    sKills = math.floor(player:getSurvivorKills() * (killsRecoveryPercentage / 100))
@@ -201,8 +201,8 @@ function SRJ.calculateReadWriteRates(player, item, timeFactor, gainedRecipes, ga
 
 	-- recipes
 	if gainedRecipes and #gainedRecipes > 0 then
-		durationData.recipeChunk = math.max(1, math.min(#gainedRecipes, math.floor(1.09^math.sqrt(#gainedRecipes))) * actionTimeMulti)
-		local intervalsNeeded = math.ceil((#gainedRecipes / (durationData.recipeChunk / durationData.recipeInterval)))
+		durationData.recipeChunk = math.max(1, math.floor(math.min(#gainedRecipes, math.floor(1.09^math.sqrt(#gainedRecipes))) * actionTimeMulti))
+		local intervalsNeeded = (math.ceil(#gainedRecipes / durationData.recipeChunk) - 1) * durationData.recipeInterval + 1
         if getDebug() then print("New Recipes ", #gainedRecipes, " recipeChunk ", durationData.recipeChunk, " neededI ", intervalsNeeded) end
 		durationData.intervals = math.max(intervalsNeeded,durationData.intervals)
 	end

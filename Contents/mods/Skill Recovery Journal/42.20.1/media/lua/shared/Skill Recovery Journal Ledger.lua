@@ -10,7 +10,8 @@ local LEDGER_NAMESPACE = "SkillRecoveryJournal"
 
 local userStates  = {}   -- username -> { journals }
 local loadedUsers = {}   -- username -> true
-local existsOnDisk = {}  -- username -> true, ONLY set when a real file was actually found and loaded
+local existsOnDisk = {}  -- username -> true, set after a ledger is loaded or saved
+local pendingLegacyMigration = {}
 
 
 local function sanitizeUsername(username)
@@ -113,17 +114,29 @@ end
 
 local function saveUsername(username)
     local u = userStates[username]
-    if not u then return end
+    if not u then return false end
 
     local encoded = SRJ_ModDataHandler.jsonEncode(u)
     local writer = getFileWriter(filePath(username), true, false)
     if not writer then
         print("SRJ ERROR: could not open " .. filePath(username) .. " for writing")
-        return
+        return false
     end
     writer:write(encoded)
     writer:close()
+    existsOnDisk[username] = true
     if getDebug() then print("SRJ Ledger: saved " .. filePath(username)) end
+    if pendingLegacyMigration[username] then
+        local legacyPath = legacyFilePath(username)
+        local neutralWriter = getFileWriter(legacyPath, true, false)
+        if neutralWriter then
+            neutralWriter:write("")
+            neutralWriter:close()
+            pendingLegacyMigration[username] = nil
+            if getDebug() then print("SRJ Ledger: migrated " .. legacyPath .. " -> " .. filePath(username) .. ", legacy file neutralized") end
+        end
+    end
+    return true
 end
 
 
@@ -174,13 +187,8 @@ local function ensureUserLoaded(username)
         existsOnDisk[username] = true
         if getDebug() then print("SRJ Ledger: loaded " .. legacyPath) end
 
+        pendingLegacyMigration[username] = true
         saveUsername(username)
-        local neutralWriter = getFileWriter(legacyPath, true, false)
-        if neutralWriter then
-            neutralWriter:write("")
-            neutralWriter:close()
-        end
-        if getDebug() then print("SRJ Ledger: migrated " .. legacyPath .. " -> " .. currentPath .. ", legacy file neutralized") end
 
         return userStates[username]
     end
@@ -488,8 +496,12 @@ function SRJ_Ledger.adminSaveJournalRecord(username, ledgerID, record)
         return false, "no_existing_record"
     end
 
+    local previous = u.journals[ledgerID]
     u.journals[ledgerID] = deepCopy(record)
-    saveUsername(username)
+    if not saveUsername(username) then
+        u.journals[ledgerID] = previous
+        return false, "save_failed"
+    end
     if getDebug() then print("SRJ Admin: saved journal " .. ledgerID .. " for " .. username) end
     return true
 end
@@ -502,8 +514,12 @@ function SRJ_Ledger.adminDeleteJournalRecord(username, ledgerID)
     local u = ensureUserLoaded(username)
     if not u.journals[ledgerID] then return false end
 
+    local previous = u.journals[ledgerID]
     u.journals[ledgerID] = nil
-    saveUsername(username)
+    if not saveUsername(username) then
+        u.journals[ledgerID] = previous
+        return false
+    end
     if getDebug() then print("SRJ Admin: deleted journal " .. ledgerID .. " for " .. username) end
     return true
 end
