@@ -43,34 +43,37 @@ end
 function SRJ_ModDataHandler.getFreeLevelsFromTraitsAndProfession(player)
 	local pMD = SRJ_ModDataHandler.getPlayerModData(player)
 	if not pMD.SRJSkillsInit then
-		pMD.SRJSkillsInit = {}
+		pMD.SRJSkillsInit = { Fitness = 5, Strength = 5 }
 
 		-- xp granted by profession
 		local playerDesc = player:getDescriptor()
 		local playerProfessionID = playerDesc:getCharacterProfession()
-		local profDef = CharacterProfessionDefinition.getCharacterProfessionDefinition(playerProfessionID)
-		local profXpBoost = transformIntoKahluaTable(profDef:getXpBoosts())
+		local profDef = playerProfessionID and CharacterProfessionDefinition.getCharacterProfessionDefinition(playerProfessionID)
+		local profXpBoost = profDef and transformIntoKahluaTable(profDef:getXpBoosts())
 		if profXpBoost then
 			for perk,level in pairs(profXpBoost) do
 				local perky = tostring(perk)
-				local levely = tonumber(tostring(level))
-				pMD.SRJSkillsInit[perky] = levely
+				local levely = tonumber(tostring(level)) or 0
+				pMD.SRJSkillsInit[perky] = (pMD.SRJSkillsInit[perky] or 0) + levely
 			end
 		end
 
 		-- xp granted by trait
-		local playerTraits = player:getCharacterTraits()
-		for i=0, playerTraits:getKnownTraits():size()-1 do
-			local traitTrait = playerTraits:getKnownTraits():get(i)
-			local traitDef = CharacterTraitDefinition.getCharacterTraitDefinition(traitTrait)
-			local traitXpBoost = transformIntoKahluaTable(traitDef:getXpBoosts())
+		local knownTraits = player:getCharacterTraits():getKnownTraits()
+		for i=0, knownTraits:size()-1 do
+			local traitDef = CharacterTraitDefinition.getCharacterTraitDefinition(knownTraits:get(i))
+			local traitXpBoost = traitDef and transformIntoKahluaTable(traitDef:getXpBoosts())
 			if traitXpBoost then
 				for perk,level in pairs(traitXpBoost) do
 					local perky = tostring(perk)
-					local levely = tonumber(tostring(level))
+					local levely = tonumber(tostring(level)) or 0
 					pMD.SRJSkillsInit[perky] = (pMD.SRJSkillsInit[perky] or 0) + levely
 				end
 			end
+		end
+
+		for perkID,level in pairs(pMD.SRJSkillsInit) do
+			pMD.SRJSkillsInit[perkID] = math.max(0, math.min(10, level))
 		end
 
 
@@ -151,12 +154,20 @@ end
 function SRJ_ModDataHandler.initFlatXPHook()
 	local original = addXpNoMultiplier
 	addXpNoMultiplier = function(character, perk, xp)
-		if not SRJ_ADDING_FLAT_XP and instanceof(character, "IsoGameCharacter") then
-			local perkID = (type(perk) == "string" and perk) or perk:getId()
-			local flatXP = SRJ_ModDataHandler.getFlatXP(character)
-			flatXP[perkID] = (flatXP[perkID] or 0) + xp
+		if SRJ_ADDING_FLAT_XP or not instanceof(character, "IsoGameCharacter") then
+			original(character, perk, xp)
+			return
 		end
+
+		local xpBefore = character:getXp():getXP(perk)
 		original(character, perk, xp)
+		local gained = character:getXp():getXP(perk) - xpBefore
+
+		if gained > 0 then
+			local perkID = perk:getId()
+			local flatXP = SRJ_ModDataHandler.getFlatXP(character)
+			flatXP[perkID] = (flatXP[perkID] or 0) + gained
+		end
 	end
 end
 

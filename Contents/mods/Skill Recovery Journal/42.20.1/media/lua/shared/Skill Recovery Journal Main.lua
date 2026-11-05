@@ -22,39 +22,10 @@ end)
 function SRJ.checkFitnessCanAddXp(player)
 	if player:getNutrition():canAddFitnessXp() then return end
 
-	local fitness = player:getPerkLevel(Perks.Fitness)
+	local under = player:hasTrait(CharacterTrait.UNDERWEIGHT) or player:hasTrait(CharacterTrait.VERY_UNDERWEIGHT) or player:hasTrait(CharacterTrait.EMACIATED)
+	local message = (under and "IGUI_PlayerText_NeedGainWeight") or "IGUI_PlayerText_NeedLoseWeight"
 
-	local under, extremeUnder = player:hasTrait(CharacterTrait.UNDERWEIGHT), (player:hasTrait(CharacterTrait.EMACIATED) or player:hasTrait(CharacterTrait.VERY_UNDERWEIGHT))
-	local over, extremeOver = player:hasTrait(CharacterTrait.OVERWEIGHT), player:hasTrait(CharacterTrait.OBESE)
-
-	local mildIssue = under or over
-	local extremeIssue = extremeUnder or extremeOver
-
-	local blockAddXp = false
-
-	if ( fitness >= 9 and (extremeIssue or mildIssue) ) then
-		blockAddXp = true
-
-	elseif ( fitness < 6 ) then
-		--blockAddXp = false
-
-	elseif extremeIssue then
-		blockAddXp = true
-	end
-
-	local message = ((under or extremeUnder) and "IGUI_PlayerText_NeedGainWeight") or ((over or extremeOver) and "IGUI_PlayerText_NeedLoseWeight")
-
-	return blockAddXp, message
-end
-
-
---TODO: Implement this
-function SRJ.checkProteinLevelMulti(player)
-	local multi = 1
-	if player:getNutrition():getProteins() > 50 and player:getNutrition():getProteins() < 300 then multi = 1.5
-	elseif player:getNutrition():getProteins() < -300 then multi = 0.7
-	end
-	return multi
+	return true, message
 end
 
 

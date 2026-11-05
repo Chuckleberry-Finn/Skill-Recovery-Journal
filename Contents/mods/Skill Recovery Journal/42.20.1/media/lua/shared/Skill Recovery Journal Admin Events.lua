@@ -22,7 +22,7 @@ function adminEvents.isAdmin(player)
 	if not player then return false end
 	if isSinglePlayer() then return true end
 	local level = player.getAccessLevel and player:getAccessLevel()
-	return (level == "Admin") or getDebug()
+	return (level and string.lower(level) == "admin") or getDebug()
 end
 
 function adminEvents.processCommand(player, command, args)
@@ -104,7 +104,7 @@ local function SkillRecoveryJournalAdminOnClientCommand(module, command, player,
 		}
 
 		SRJledger.syncDisplay(item, player)
-		sendItemStats(item)
+		sendAddItemToContainer(player:getInventory(), item)
 		if player.flagForHotSave then player:flagForHotSave() end
 
 		sendAdminResponse(player, "spawnResult", {success = true, ledgerID = ledgerID})

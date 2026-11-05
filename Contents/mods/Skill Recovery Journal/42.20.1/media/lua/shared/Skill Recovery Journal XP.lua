@@ -99,6 +99,10 @@ function SRJ_XPHandler.reBoostXP(player,perk,XP)
     XP = XP*xpBoostMultiplier
     if getDebug() then debugPrint = debugPrint.."\n   xpBoostMultiplier: "..xpBoostMultiplier.." -> "..XP end
 
+    local exerciseMultiplier = SRJ_XPHandler.getExerciseMultiplier(player,perk)
+    XP = XP/exerciseMultiplier
+    if getDebug() then debugPrint = debugPrint.."\n   exerciseMultiplier: "..exerciseMultiplier.." -> "..XP end
+
     --if getDebug() then print(debugPrint.."\n"..tostring(perk).." to be recorded: "..XP) end
 
     return XP
@@ -127,28 +131,25 @@ function SRJ_XPHandler.unBoostXP(player,perk,XP)
 end
 
 
+---@param player IsoGameCharacter|IsoPlayer
+---@param perk PerkFactory.Perk
+function SRJ_XPHandler.getExerciseMultiplier(player,perk)
+    if perk ~= Perks.Strength or not instanceof(player,"IsoPlayer") then return 1 end
+    local proteins = player:getNutrition():getProteins()
+    if proteins > 50 and proteins < 300 then return 1.5 end
+    if proteins < -300 then return 0.7 end
+    return 1
+end
+
+
 function SRJ_XPHandler.fetchMultipliers(player,perk)
-
-    --[[
-    local exerciseMultiplier = 1
-    --if perk == Perks.Fitness and (not player:getNutrition():canAddFitnessXp()) then exerciseMultiplier 0 end
-    --]]
-
-    --[[
-    if perk == Perks.Strength and instanceof(player,"IsoPlayer") then
-        if player:getNutrition():getProteins() > 50 and player:getNutrition():getProteins() < 300 then exerciseMultiplier = 1.5
-        elseif player:getNutrition():getProteins() < -300 then exerciseMultiplier = 0.7
-        end
-    end
-    --]]
 
     ---trait impacting XP gains
     local traitMultiplier = 1
-    --if not SRJ_XPHandler.isSkillExcludedFrom.SpeedReduction(perk) then traitMultiplier = 0.25 end
-    if player:hasTrait(CharacterTrait.FAST_LEARNER) and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedIncrease(perk)) then traitMultiplier = 1.3 end
-    if player:hasTrait(CharacterTrait.SLOW_LEARNER) and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedReduction(perk)) then traitMultiplier = 0.7 end
-    if player:hasTrait(CharacterTrait.PACIFIST) and (perk:getParent()==Perks.Combat or perk==Perks.Aiming) then traitMultiplier = 0.75 end
-    if player:hasTrait(CharacterTrait.CRAFTY) and (perk:getParent()==Perks.Crafting) then traitMultiplier = 1.3 end
+    if player:hasTrait(CharacterTrait.FAST_LEARNER) and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedIncrease(perk)) then traitMultiplier = traitMultiplier*1.3 end
+    if player:hasTrait(CharacterTrait.SLOW_LEARNER) and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedReduction(perk)) then traitMultiplier = traitMultiplier*0.7 end
+    if player:hasTrait(CharacterTrait.PACIFIST) and ((perk:getParent()==Perks.Combat and perk~=Perks.Maintenance) or perk==Perks.Aiming) then traitMultiplier = traitMultiplier*0.75 end
+    if player:hasTrait(CharacterTrait.CRAFTY) and (perk:getParent()==Perks.Crafting) then traitMultiplier = traitMultiplier*1.3 end
     --[[
     local sandboxMultiplier = 1
     if (not perk:isPassiv()) then
@@ -167,7 +168,7 @@ function SRJ_XPHandler.fetchMultipliers(player,perk)
     elseif xpBoostID == 1 and perk==Perks.Sprinting then xpBoostMultiplier = 1.25
     elseif xpBoostID == 1 then xpBoostMultiplier = 1
     elseif xpBoostID == 2 and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedIncrease(perk)) then xpBoostMultiplier = 1.33
-    elseif xpBoostID == 3 and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedIncrease(perk)) then xpBoostMultiplier = 1.66
+    elseif xpBoostID >= 3 and (not SRJ_XPHandler.isSkillExcludedFrom.SpeedIncrease(perk)) then xpBoostMultiplier = 1.66
     end
 
     ---Something to consider later I guess?

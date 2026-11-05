@@ -132,6 +132,7 @@ local function tryLoadLedger(path, requireNonEmptyJournals)
     if not (okRead and raw) then
         if not okRead then
             print("SRJ ERROR: exception reading " .. path .. ": " .. tostring(raw))
+            print("SRJ WARNING: " .. path .. " could not be read, a fresh ledger will be used and will overwrite this file on next save")
         end
         return nil
     end
@@ -139,10 +140,11 @@ local function tryLoadLedger(path, requireNonEmptyJournals)
     local okParse, parsed = pcall(SRJ_ModDataHandler.jsonDecode, raw)
     if not okParse then
         print("SRJ ERROR: exception parsing " .. path .. ": " .. tostring(parsed))
+        print("SRJ WARNING: " .. path .. " is malformed, a fresh ledger will be used and will overwrite this file on next save")
         return nil
     end
     if not (parsed and parsed.journals) then
-        if getDebug() then print("SRJ Ledger: " .. path .. " failed to parse, starting fresh") end
+        print("SRJ WARNING: " .. path .. " has no journals table, a fresh ledger will be used and will overwrite this file on next save")
         return nil
     end
     if requireNonEmptyJournals then

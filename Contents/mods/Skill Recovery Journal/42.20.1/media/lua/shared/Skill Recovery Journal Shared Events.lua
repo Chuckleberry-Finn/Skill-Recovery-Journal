@@ -26,6 +26,12 @@ end
 Events.OnCreatePlayer.Add(onCreateBuffer)
 
 
+local function onNewGame(player)
+    SRJmodHandler.initStartingXP(nil, player)
+end
+Events.OnNewGame.Add(onNewGame)
+
+
 local function SkillRecoveryJournalOnClientCommand(module, command, player, args)
 	if module == "SkillRecoveryJournal" then 
 		local playerID = player:getOnlineID()

@@ -1,5 +1,10 @@
 local SRJ = require "Skill Recovery Journal Main"
 
+local function floorTo2(x)
+    return math.floor(x * 100) / 100
+end
+
+
 -- returns all gained skills as per config or false if no valid skill xp gained
 function SRJ.calculateGainedSkill(player, perk, startingLevels, deductibleXP, flatXP)
 	
@@ -33,9 +38,9 @@ function SRJ.calculateGainedSkill(player, perk, startingLevels, deductibleXP, fl
 				local normalizedScale = SRJ.xpHandler.getSkillXPNormalizeScale(perkID) or 1
 				local flatPortion = math.min(flatXP[perkID] or 0, recoverableXP)
 				local boostedPortion = recoverableXP - flatPortion
-				local gainedXP = boostedPortion > 0 and (SRJ.xpHandler.unBoostXP(player, perk, boostedPortion) * recoveryPercentage * normalizedScale) or nil
-				local flatGained = flatPortion > 0 and (flatPortion * recoveryPercentage) or nil
-				return gainedXP, flatGained
+				local gainedXP = floorTo2(SRJ.xpHandler.unBoostXP(player, perk, boostedPortion) * recoveryPercentage * normalizedScale)
+				local flatGained = floorTo2(flatPortion * recoveryPercentage * normalizedScale)
+				return (gainedXP > 0 and gainedXP) or nil, (flatGained > 0 and flatGained) or nil
 			end
 		end
 	end
@@ -87,22 +92,25 @@ function SRJ.getGainedRecipes(player, exclude)
 
 	-- remove freebies granted by profession
 	local playerProfessionID = playerDesc:getCharacterProfession()
-	local profDef = CharacterProfessionDefinition.getCharacterProfessionDefinition(playerProfessionID)
-	local profFreeRecipes = profDef:getGrantedRecipes() 
-	for i=0, profFreeRecipes:size()-1 do
-		local profRecipe = profFreeRecipes:get(i)
-		gainedRecipes[profRecipe] = nil
+	local profDef = playerProfessionID and CharacterProfessionDefinition.getCharacterProfessionDefinition(playerProfessionID)
+	if profDef then
+		local profFreeRecipes = profDef:getGrantedRecipes()
+		for i=0, profFreeRecipes:size()-1 do
+			local profRecipe = profFreeRecipes:get(i)
+			gainedRecipes[profRecipe] = nil
+		end
 	end
 
 	-- remove freebies granted by trait
-	local playerTraits = player:getCharacterTraits()
-	for i=0, playerTraits:getKnownTraits():size()-1 do
-		local traitTrait = playerTraits:getKnownTraits():get(i)
-		local traitDef = CharacterTraitDefinition.getCharacterTraitDefinition(traitTrait)
-		local traitRecipes = traitDef:getGrantedRecipes()
-		for ii=0, traitRecipes:size()-1 do
-			local traitRecipe = traitRecipes:get(ii)
-			gainedRecipes[traitRecipe] = nil
+	local knownTraits = player:getCharacterTraits():getKnownTraits()
+	for i=0, knownTraits:size()-1 do
+		local traitDef = CharacterTraitDefinition.getCharacterTraitDefinition(knownTraits:get(i))
+		if traitDef then
+			local traitRecipes = traitDef:getGrantedRecipes()
+			for ii=0, traitRecipes:size()-1 do
+				local traitRecipe = traitRecipes:get(ii)
+				gainedRecipes[traitRecipe] = nil
+			end
 		end
 	end
 

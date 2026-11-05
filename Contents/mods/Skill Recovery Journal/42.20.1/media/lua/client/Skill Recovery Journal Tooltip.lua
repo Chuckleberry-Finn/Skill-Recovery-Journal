@@ -137,7 +137,7 @@ local function ISToolTipInv_render_Override(self,hardSetWidth)
 			end
 		end
 
-		self.tooltip:setX(mx+11)
+		self.tooltip:setX(mx)
 		self.tooltip:setY(my)
 		self.tooltip:setWidth(50)
 		self.tooltip:setMeasureOnly(true)
@@ -150,19 +150,30 @@ local function ISToolTipInv_render_Override(self,hardSetWidth)
 		local tw = self.tooltip:getWidth()
 		local th = self.tooltip:getHeight()
 
-		self.tooltip:setX(math.max(0, math.min(mx + 11, maxX - tw - 1)))
+		self.tooltip:setX(math.max(0, math.min(mx, maxX - tw - 1)))
 		if not self.followMouse and self.anchorBottomLeft then
 			self.tooltip:setY(math.max(0, math.min(my - th, maxY - th - 1)))
 		else
 			self.tooltip:setY(math.max(0, math.min(my, maxY - th - 1)))
 		end
 
-		self:setX(self.tooltip:getX() - 11)
+		if self.contextMenu and self.contextMenu.joyfocus then
+			local playerNum = self.contextMenu.player
+			self.tooltip:setX(getPlayerScreenLeft(playerNum) + 60)
+			self.tooltip:setY(getPlayerScreenTop(playerNum) + 60)
+		elseif self.contextMenu and self.contextMenu.currentOptionRect then
+			if self.contextMenu.currentOptionRect.height > 32 then
+				self:setY(my + self.contextMenu.currentOptionRect.height)
+			end
+			self:adjustPositionToAvoidOverlap(self.contextMenu.currentOptionRect)
+		end
+
+		self:setX(self.tooltip:getX())
 		self:setY(self.tooltip:getY())
-		self:setWidth(hardSetWidth or (tw + 11))
+		self:setWidth(hardSetWidth or tw)
 		self:setHeight(th)
 
-		if self.followMouse then
+		if self.followMouse and (self.contextMenu == nil) then
 			self:adjustPositionToAvoidOverlap({ x = mx - 24 * 2, y = my - 24 * 2, width = 24 * 2, height = 24 * 2 })
 		end
 
@@ -259,7 +270,6 @@ function ISToolTipInv:render()
 
 			local tooltipY = self.tooltip:getHeight()-1
 
-			self:setX(self.tooltip:getX() - 11)
 			if self.x > 1 and self.y > 1 then
 				local yoff = tooltipY + 8
 				local bgColor = self.backgroundColor

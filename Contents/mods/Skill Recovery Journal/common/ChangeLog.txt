@@ -338,3 +338,21 @@ Refactor: Ledgers will be read by line instead of by character (led to lag and p
 Fix: Transcription no longer interrupted if only 1 recipe chunk remains. (CoKeFish)
 Fix: Added script manipulation on the server's end, only impacted people utilizing the custom craft recipe.
 [ ------ ]
+
+[ 11/5/26 ]
+Big shout out to Lect for pointing these out and providing patch-code to fix them.
+Fix: Fitness and Strength now start from the base level of 5 when starting levels have to be calculated (characters without a starting snapshot).
+Fix: Starting levels are now captured server-side for new characters in MP, previously this was only being captured on the client.
+Fix: Strength XP read from journals is no longer impacted by the reader's protein levels.
+Fix: Flat XP being read from a journal is no longer lost when the Fitness weight check blocks XP gain, it now waits like regular XP.
+Fix: Flat XP is now tracked by the XP actually gained rather than the amount requested.
+Fix: XP multipliers now match vanilla - trait multipliers stack, Pacifist no longer impacts Maintenance, XP boosts above 3 are accounted for.
+Fix: Modded skill normalization now applies to flat XP as well.
+Fix: Admin panel access check updated for B42 roles, admins were being rejected outside of debug mode.
+Fix: Journals spawned from the admin panel now properly show up for the player in MP.
+Fix: Missing translations for the illiterate feedback and the transcribing progress label.
+Fix: Journal tooltip positioning updated to match vanilla (context menus/controllers).
+Tweak: Ledger loading failures now always print a warning to the console.
+Tweak: Recipes are synced once per chunk instead of once per recipe.
+Refactor: Removed old B41 context menu code.
+[ ------ ]

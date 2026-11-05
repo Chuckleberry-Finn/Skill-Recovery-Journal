@@ -43,7 +43,7 @@ function SRJ.checkStaticConditions(player, JMD, doReading)
 		return false, "IGUI_PlayerText_NothingWritten"
 
 	elseif player:hasTrait(CharacterTrait.ILLITERATE) and (SandboxVars.SkillRecoveryJournal.IlliterateSpeedMultiplier or 0) <= 0 then
-		return false, "IGUI_PlayerText_Illiterate"
+		return false, "IGUI_PlayerText_Illiterate1"
 
 	elseif not SRJ.handleIdentity(player, JMD) then
 		return false, (doReading and "IGUI_PlayerText_DoesntFeelRightToRead") or "IGUI_PlayerText_DoesntFeelRightToWrite"
@@ -130,9 +130,6 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
 
                 if doReading then
                     player:learnRecipe(recipeID)
-                    if isServer() and sendSyncPlayerFields then
-                        sendSyncPlayerFields(player, 0x00000001)
-                    end
                 else
                     JMD.learnedRecipes[recipeID] = true
                 end
@@ -140,6 +137,10 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
                 table.remove(recipeList)
                 self.changesBeingMadeIndex.recipes =
                     (self.changesBeingMadeIndex.recipes or 0) + 1
+            end
+
+            if doReading and isServer() then
+                sendSyncPlayerFields(player, 0x00000001)
             end
         end
     end
@@ -296,6 +297,14 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
                 if currentFlatXP < journalFlatXP then
                     if player:getPerkLevel(perk) == 10 then flatRate = false end
 
+                    if perkID == "Fitness" then
+                        local cannot, msg = SRJ.checkFitnessCanAddXp(player)
+                        if cannot then
+                            sayText = msg
+                            flatRate = false
+                        end
+                    end
+
                     if flatRate and flatRate > 0 and currentFlatXP + flatRate > journalFlatXP then
                         flatRate = math.max(journalFlatXP - currentFlatXP, 0.001)
                     end
@@ -315,7 +324,7 @@ function SRJ.processJournalTick(self, player, JMD, doReading)
                         if newReadFlatXP > currentFlatXP then
                             readFlatXP[perkID] = newReadFlatXP
                             JMD.usedXP.flat[perkID] = floorTo2((JMD.usedXP.flat[perkID] or 0) + flatRate)
-                            addXpNoMultiplier(player, perk, flatRate)
+                            addXpNoMultiplier(player, perk, flatRate / SRJ.xpHandler.getExerciseMultiplier(player, perk))
                             changesMade = true
 
                             local skillName = "IGUI_perks_" .. perkID

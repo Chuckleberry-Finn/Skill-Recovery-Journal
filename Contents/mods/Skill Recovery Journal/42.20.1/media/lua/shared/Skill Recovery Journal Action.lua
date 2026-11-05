@@ -24,7 +24,7 @@ end
 -- START (client)
 function SkillRecoveryJournalAction:start()
     self.item:setJobDelta(0.0)
-    local jobType = getText(((self.doReading and "ContextMenu_Read") or "ContextMenu_Write")) .. " " .. self.item:getName()
+    local jobType = getText(((self.doReading and "ContextMenu_Read") or "IGUI_TranscribeIntoJournal")) .. " " .. self.item:getName()
     self.item:setJobType(jobType)
     
     self:setAnimVariable("ReadType", "book")
