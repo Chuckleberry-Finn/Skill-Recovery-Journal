@@ -339,8 +339,8 @@ Fix: Transcription no longer interrupted if only 1 recipe chunk remains. (CoKeFi
 Fix: Added script manipulation on the server's end, only impacted people utilizing the custom craft recipe.
 [ ------ ]
 
-[ 11/5/26 ]
-Big shout out to Lect for pointing these out and providing patch-code to fix them.
+[ 11/10/26 ]
+[b]Big shout out to Lect of Sunday Drivers for documenting these issues (and even providing patch-code to review.)[/b]
 Fix: Fitness and Strength now start from the base level of 5 when starting levels have to be calculated (characters without a starting snapshot).
 Fix: Starting levels are now captured server-side for new characters in MP, previously this was only being captured on the client.
 Fix: Strength XP read from journals is no longer impacted by the reader's protein levels.
