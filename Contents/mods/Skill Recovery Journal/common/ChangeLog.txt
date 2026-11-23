@@ -340,6 +340,8 @@ Fix: Added script manipulation on the server's end, only impacted people utilizi
 [ ------ ]
 
 [ 11/10/26 ]
+HOTFIX: Min-Ver changed to 42.19 (from 42.20.2)
+
 [b]Big shout out to Lect of Sunday Drivers for documenting these issues (and even providing patch-code to review.)[/b]
 Fix: Fitness and Strength now start from the base level of 5 when starting levels have to be calculated (characters without a starting snapshot).
 Fix: Starting levels are now captured server-side for new characters in MP, previously this was only being captured on the client.
